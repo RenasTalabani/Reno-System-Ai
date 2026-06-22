@@ -23,4 +23,6 @@ export type {
   SysFeatureFlag,
   SysApiKey,
   SysTranslation,
+  SysUiTranslation,
+  AiUsageLog,
 } from './generated/prisma/index.js'

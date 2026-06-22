@@ -1,6 +1,6 @@
 // =============================================================================
 // Reno System — Prisma Schema
-// Phase 0: Core Foundation
+// Phase 0.1: Core Foundation + Translation & AI Usage Infrastructure
 // =============================================================================
 // Naming conventions:
 //   Tables:  module_entity (e.g. core_users, hr_employees)
@@ -23,30 +23,34 @@ datasource db {
 // =============================================================================
 
 model CoreTenant {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String    @db.VarChar(255)
-  slug        String    @unique @db.VarChar(100)
-  plan        String    @default("starter") @db.VarChar(50)
-  status      String    @default("trial") @db.VarChar(50)
-  trialEndsAt DateTime? @map("trial_ends_at")
-  settings    Json      @default("{}") @db.JsonB
-  metadata    Json      @default("{}") @db.JsonB
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-  isActive    Boolean   @default(true) @map("is_active")
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String    @db.VarChar(255)
+  slug                String    @unique @db.VarChar(100)
+  plan                String    @default("starter") @db.VarChar(50)
+  status              String    @default("trial") @db.VarChar(50)
+  trialEndsAt         DateTime? @map("trial_ends_at")
+  aiMonthlyTokenQuota Int?      @map("ai_monthly_token_quota")
+  settings            Json      @default("{}") @db.JsonB
+  metadata            Json      @default("{}") @db.JsonB
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  deletedAt           DateTime? @map("deleted_at")
+  isActive            Boolean   @default(true) @map("is_active")
 
   // Relations
-  companies    CoreCompany[]
-  users        CoreUser[]
-  roles        CoreRole[]
-  settings_kv  SysSetting[]
-  branding     SysBranding?
-  featureFlags SysFeatureFlag[]
-  auditLogs    SysAuditLog[]
-  notifications SysNotification[]
-  jobs         SysJob[]
-  apiKeys      SysApiKey[]
+  companies       CoreCompany[]
+  users           CoreUser[]
+  roles           CoreRole[]
+  settings_kv     SysSetting[]
+  branding        SysBranding?
+  featureFlags    SysFeatureFlag[]
+  auditLogs       SysAuditLog[]
+  notifications   SysNotification[]
+  jobs            SysJob[]
+  apiKeys         SysApiKey[]
+  translations    SysTranslation[]
+  uiTranslations  SysUiTranslation[]
+  aiUsageLogs     AiUsageLog[]
 
   @@map("core_tenants")
 }
@@ -574,6 +578,8 @@ model SysApiKey {
   @@map("sys_api_keys")
 }
 
+// sys_translations — User-generated content translations (entity-level)
+// e.g. product descriptions, HR document names, custom field values
 model SysTranslation {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId   String    @map("tenant_id") @db.Uuid
@@ -582,6 +588,10 @@ model SysTranslation {
   field      String    @db.VarChar(100)
   locale     String    @db.VarChar(20)
   value      String    @db.Text
+  source     String    @default("manual") @db.VarChar(50)
+  isApproved Boolean   @default(true) @map("is_approved")
+  approvedBy String?   @map("approved_by") @db.Uuid
+  approvedAt DateTime? @map("approved_at")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   createdBy  String?   @map("created_by") @db.Uuid
@@ -589,8 +599,77 @@ model SysTranslation {
   deletedAt  DateTime? @map("deleted_at")
   isActive   Boolean   @default(true) @map("is_active")
 
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
   @@unique([tenantId, entityType, entityId, field, locale])
   @@index([tenantId, entityType, entityId])
   @@index([tenantId, locale])
+  @@index([tenantId, isApproved])
+  @@index([source])
   @@map("sys_translations")
+}
+
+// sys_ui_translations — Static UI/module string translations
+// e.g. labels, button text, error messages, module names, report headers
+model SysUiTranslation {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String?   @map("tenant_id") @db.Uuid
+  namespace  String    @db.VarChar(255)
+  key        String    @db.VarChar(500)
+  locale     String    @db.VarChar(20)
+  value      String    @db.Text
+  source     String    @default("system") @db.VarChar(50)
+  isApproved Boolean   @default(true) @map("is_approved")
+  approvedBy String?   @map("approved_by") @db.Uuid
+  approvedAt DateTime? @map("approved_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant? @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, namespace, key, locale])
+  @@index([locale])
+  @@index([namespace, locale])
+  @@index([tenantId, isApproved])
+  @@map("sys_ui_translations")
+}
+
+// =============================================================================
+// AI MODULE — Usage Tracking & Cost Governance
+// =============================================================================
+
+// ai_usage_logs — Immutable AI request ledger for cost control and analytics
+// Every call to any AI model (Reno Brain, agents, translation) is logged here
+model AiUsageLog {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  userId            String?  @map("user_id") @db.Uuid
+  sessionId         String?  @map("session_id") @db.Uuid
+  module            String   @db.VarChar(100)
+  feature           String   @db.VarChar(100)
+  provider          String   @default("anthropic") @db.VarChar(50)
+  model             String   @db.VarChar(100)
+  promptTokens      Int      @default(0) @map("prompt_tokens")
+  completionTokens  Int      @default(0) @map("completion_tokens")
+  totalTokens       Int      @default(0) @map("total_tokens")
+  estimatedCostUsd  Decimal  @default(0) @map("estimated_cost_usd") @db.Decimal(12, 8)
+  requestDurationMs Int?     @map("request_duration_ms")
+  status            String   @default("success") @db.VarChar(50)
+  errorCode         String?  @map("error_code") @db.VarChar(100)
+  requestId         String?  @map("request_id") @db.Uuid
+  metadata          Json?    @db.JsonB
+  occurredAt        DateTime @default(now()) @map("occurred_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, userId])
+  @@index([tenantId, module, feature])
+  @@index([tenantId, model])
+  @@index([tenantId, status])
+  @@map("ai_usage_logs")
 }

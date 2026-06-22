@@ -123,6 +123,16 @@ export type SysApiKey = $Result.DefaultSelection<Prisma.$SysApiKeyPayload>
  * 
  */
 export type SysTranslation = $Result.DefaultSelection<Prisma.$SysTranslationPayload>
+/**
+ * Model SysUiTranslation
+ * 
+ */
+export type SysUiTranslation = $Result.DefaultSelection<Prisma.$SysUiTranslationPayload>
+/**
+ * Model AiUsageLog
+ * 
+ */
+export type AiUsageLog = $Result.DefaultSelection<Prisma.$AiUsageLogPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -461,6 +471,26 @@ export class PrismaClient<
     * ```
     */
   get sysTranslation(): Prisma.SysTranslationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sysUiTranslation`: Exposes CRUD operations for the **SysUiTranslation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SysUiTranslations
+    * const sysUiTranslations = await prisma.sysUiTranslation.findMany()
+    * ```
+    */
+  get sysUiTranslation(): Prisma.SysUiTranslationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aiUsageLog`: Exposes CRUD operations for the **AiUsageLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AiUsageLogs
+    * const aiUsageLogs = await prisma.aiUsageLog.findMany()
+    * ```
+    */
+  get aiUsageLog(): Prisma.AiUsageLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -923,7 +953,9 @@ export namespace Prisma {
     SysJob: 'SysJob',
     SysFeatureFlag: 'SysFeatureFlag',
     SysApiKey: 'SysApiKey',
-    SysTranslation: 'SysTranslation'
+    SysTranslation: 'SysTranslation',
+    SysUiTranslation: 'SysUiTranslation',
+    AiUsageLog: 'AiUsageLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -942,7 +974,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "coreTenant" | "coreCompany" | "coreBranch" | "coreDepartment" | "coreTeam" | "coreUser" | "coreUserProfile" | "coreUserMembership" | "coreRole" | "corePermission" | "coreRolePermission" | "coreUserRole" | "coreUserPermissionOverride" | "coreSession" | "sysAuditLog" | "sysNotification" | "sysSetting" | "sysBranding" | "sysJob" | "sysFeatureFlag" | "sysApiKey" | "sysTranslation"
+      modelProps: "coreTenant" | "coreCompany" | "coreBranch" | "coreDepartment" | "coreTeam" | "coreUser" | "coreUserProfile" | "coreUserMembership" | "coreRole" | "corePermission" | "coreRolePermission" | "coreUserRole" | "coreUserPermissionOverride" | "coreSession" | "sysAuditLog" | "sysNotification" | "sysSetting" | "sysBranding" | "sysJob" | "sysFeatureFlag" | "sysApiKey" | "sysTranslation" | "sysUiTranslation" | "aiUsageLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2574,6 +2606,154 @@ export namespace Prisma {
           }
         }
       }
+      SysUiTranslation: {
+        payload: Prisma.$SysUiTranslationPayload<ExtArgs>
+        fields: Prisma.SysUiTranslationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SysUiTranslationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SysUiTranslationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>
+          }
+          findFirst: {
+            args: Prisma.SysUiTranslationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SysUiTranslationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>
+          }
+          findMany: {
+            args: Prisma.SysUiTranslationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>[]
+          }
+          create: {
+            args: Prisma.SysUiTranslationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>
+          }
+          createMany: {
+            args: Prisma.SysUiTranslationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SysUiTranslationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>[]
+          }
+          delete: {
+            args: Prisma.SysUiTranslationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>
+          }
+          update: {
+            args: Prisma.SysUiTranslationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>
+          }
+          deleteMany: {
+            args: Prisma.SysUiTranslationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SysUiTranslationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SysUiTranslationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>[]
+          }
+          upsert: {
+            args: Prisma.SysUiTranslationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SysUiTranslationPayload>
+          }
+          aggregate: {
+            args: Prisma.SysUiTranslationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSysUiTranslation>
+          }
+          groupBy: {
+            args: Prisma.SysUiTranslationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SysUiTranslationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SysUiTranslationCountArgs<ExtArgs>
+            result: $Utils.Optional<SysUiTranslationCountAggregateOutputType> | number
+          }
+        }
+      }
+      AiUsageLog: {
+        payload: Prisma.$AiUsageLogPayload<ExtArgs>
+        fields: Prisma.AiUsageLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AiUsageLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AiUsageLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>
+          }
+          findFirst: {
+            args: Prisma.AiUsageLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AiUsageLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>
+          }
+          findMany: {
+            args: Prisma.AiUsageLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>[]
+          }
+          create: {
+            args: Prisma.AiUsageLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>
+          }
+          createMany: {
+            args: Prisma.AiUsageLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AiUsageLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>[]
+          }
+          delete: {
+            args: Prisma.AiUsageLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>
+          }
+          update: {
+            args: Prisma.AiUsageLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.AiUsageLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AiUsageLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AiUsageLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.AiUsageLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiUsageLogPayload>
+          }
+          aggregate: {
+            args: Prisma.AiUsageLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAiUsageLog>
+          }
+          groupBy: {
+            args: Prisma.AiUsageLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AiUsageLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AiUsageLogCountArgs<ExtArgs>
+            result: $Utils.Optional<AiUsageLogCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2692,6 +2872,8 @@ export namespace Prisma {
     sysFeatureFlag?: SysFeatureFlagOmit
     sysApiKey?: SysApiKeyOmit
     sysTranslation?: SysTranslationOmit
+    sysUiTranslation?: SysUiTranslationOmit
+    aiUsageLog?: AiUsageLogOmit
   }
 
   /* Types for Logging */
@@ -2781,6 +2963,9 @@ export namespace Prisma {
     notifications: number
     jobs: number
     apiKeys: number
+    translations: number
+    uiTranslations: number
+    aiUsageLogs: number
   }
 
   export type CoreTenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2793,6 +2978,9 @@ export namespace Prisma {
     notifications?: boolean | CoreTenantCountOutputTypeCountNotificationsArgs
     jobs?: boolean | CoreTenantCountOutputTypeCountJobsArgs
     apiKeys?: boolean | CoreTenantCountOutputTypeCountApiKeysArgs
+    translations?: boolean | CoreTenantCountOutputTypeCountTranslationsArgs
+    uiTranslations?: boolean | CoreTenantCountOutputTypeCountUiTranslationsArgs
+    aiUsageLogs?: boolean | CoreTenantCountOutputTypeCountAiUsageLogsArgs
   }
 
   // Custom InputTypes
@@ -2867,6 +3055,27 @@ export namespace Prisma {
    */
   export type CoreTenantCountOutputTypeCountApiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SysApiKeyWhereInput
+  }
+
+  /**
+   * CoreTenantCountOutputType without action
+   */
+  export type CoreTenantCountOutputTypeCountTranslationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SysTranslationWhereInput
+  }
+
+  /**
+   * CoreTenantCountOutputType without action
+   */
+  export type CoreTenantCountOutputTypeCountUiTranslationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SysUiTranslationWhereInput
+  }
+
+  /**
+   * CoreTenantCountOutputType without action
+   */
+  export type CoreTenantCountOutputTypeCountAiUsageLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AiUsageLogWhereInput
   }
 
 
@@ -3196,8 +3405,18 @@ export namespace Prisma {
 
   export type AggregateCoreTenant = {
     _count: CoreTenantCountAggregateOutputType | null
+    _avg: CoreTenantAvgAggregateOutputType | null
+    _sum: CoreTenantSumAggregateOutputType | null
     _min: CoreTenantMinAggregateOutputType | null
     _max: CoreTenantMaxAggregateOutputType | null
+  }
+
+  export type CoreTenantAvgAggregateOutputType = {
+    aiMonthlyTokenQuota: number | null
+  }
+
+  export type CoreTenantSumAggregateOutputType = {
+    aiMonthlyTokenQuota: number | null
   }
 
   export type CoreTenantMinAggregateOutputType = {
@@ -3207,6 +3426,7 @@ export namespace Prisma {
     plan: string | null
     status: string | null
     trialEndsAt: Date | null
+    aiMonthlyTokenQuota: number | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -3220,6 +3440,7 @@ export namespace Prisma {
     plan: string | null
     status: string | null
     trialEndsAt: Date | null
+    aiMonthlyTokenQuota: number | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -3233,6 +3454,7 @@ export namespace Prisma {
     plan: number
     status: number
     trialEndsAt: number
+    aiMonthlyTokenQuota: number
     settings: number
     metadata: number
     createdAt: number
@@ -3243,6 +3465,14 @@ export namespace Prisma {
   }
 
 
+  export type CoreTenantAvgAggregateInputType = {
+    aiMonthlyTokenQuota?: true
+  }
+
+  export type CoreTenantSumAggregateInputType = {
+    aiMonthlyTokenQuota?: true
+  }
+
   export type CoreTenantMinAggregateInputType = {
     id?: true
     name?: true
@@ -3250,6 +3480,7 @@ export namespace Prisma {
     plan?: true
     status?: true
     trialEndsAt?: true
+    aiMonthlyTokenQuota?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -3263,6 +3494,7 @@ export namespace Prisma {
     plan?: true
     status?: true
     trialEndsAt?: true
+    aiMonthlyTokenQuota?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -3276,6 +3508,7 @@ export namespace Prisma {
     plan?: true
     status?: true
     trialEndsAt?: true
+    aiMonthlyTokenQuota?: true
     settings?: true
     metadata?: true
     createdAt?: true
@@ -3323,6 +3556,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: CoreTenantAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CoreTenantSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CoreTenantMinAggregateInputType
@@ -3353,6 +3598,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: CoreTenantCountAggregateInputType | true
+    _avg?: CoreTenantAvgAggregateInputType
+    _sum?: CoreTenantSumAggregateInputType
     _min?: CoreTenantMinAggregateInputType
     _max?: CoreTenantMaxAggregateInputType
   }
@@ -3364,6 +3611,7 @@ export namespace Prisma {
     plan: string
     status: string
     trialEndsAt: Date | null
+    aiMonthlyTokenQuota: number | null
     settings: JsonValue
     metadata: JsonValue
     createdAt: Date
@@ -3371,6 +3619,8 @@ export namespace Prisma {
     deletedAt: Date | null
     isActive: boolean
     _count: CoreTenantCountAggregateOutputType | null
+    _avg: CoreTenantAvgAggregateOutputType | null
+    _sum: CoreTenantSumAggregateOutputType | null
     _min: CoreTenantMinAggregateOutputType | null
     _max: CoreTenantMaxAggregateOutputType | null
   }
@@ -3396,6 +3646,7 @@ export namespace Prisma {
     plan?: boolean
     status?: boolean
     trialEndsAt?: boolean
+    aiMonthlyTokenQuota?: boolean
     settings?: boolean
     metadata?: boolean
     createdAt?: boolean
@@ -3412,6 +3663,9 @@ export namespace Prisma {
     notifications?: boolean | CoreTenant$notificationsArgs<ExtArgs>
     jobs?: boolean | CoreTenant$jobsArgs<ExtArgs>
     apiKeys?: boolean | CoreTenant$apiKeysArgs<ExtArgs>
+    translations?: boolean | CoreTenant$translationsArgs<ExtArgs>
+    uiTranslations?: boolean | CoreTenant$uiTranslationsArgs<ExtArgs>
+    aiUsageLogs?: boolean | CoreTenant$aiUsageLogsArgs<ExtArgs>
     _count?: boolean | CoreTenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["coreTenant"]>
 
@@ -3422,6 +3676,7 @@ export namespace Prisma {
     plan?: boolean
     status?: boolean
     trialEndsAt?: boolean
+    aiMonthlyTokenQuota?: boolean
     settings?: boolean
     metadata?: boolean
     createdAt?: boolean
@@ -3437,6 +3692,7 @@ export namespace Prisma {
     plan?: boolean
     status?: boolean
     trialEndsAt?: boolean
+    aiMonthlyTokenQuota?: boolean
     settings?: boolean
     metadata?: boolean
     createdAt?: boolean
@@ -3452,6 +3708,7 @@ export namespace Prisma {
     plan?: boolean
     status?: boolean
     trialEndsAt?: boolean
+    aiMonthlyTokenQuota?: boolean
     settings?: boolean
     metadata?: boolean
     createdAt?: boolean
@@ -3460,7 +3717,7 @@ export namespace Prisma {
     isActive?: boolean
   }
 
-  export type CoreTenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "plan" | "status" | "trialEndsAt" | "settings" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "isActive", ExtArgs["result"]["coreTenant"]>
+  export type CoreTenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "plan" | "status" | "trialEndsAt" | "aiMonthlyTokenQuota" | "settings" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "isActive", ExtArgs["result"]["coreTenant"]>
   export type CoreTenantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     companies?: boolean | CoreTenant$companiesArgs<ExtArgs>
     users?: boolean | CoreTenant$usersArgs<ExtArgs>
@@ -3472,6 +3729,9 @@ export namespace Prisma {
     notifications?: boolean | CoreTenant$notificationsArgs<ExtArgs>
     jobs?: boolean | CoreTenant$jobsArgs<ExtArgs>
     apiKeys?: boolean | CoreTenant$apiKeysArgs<ExtArgs>
+    translations?: boolean | CoreTenant$translationsArgs<ExtArgs>
+    uiTranslations?: boolean | CoreTenant$uiTranslationsArgs<ExtArgs>
+    aiUsageLogs?: boolean | CoreTenant$aiUsageLogsArgs<ExtArgs>
     _count?: boolean | CoreTenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CoreTenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3490,6 +3750,9 @@ export namespace Prisma {
       notifications: Prisma.$SysNotificationPayload<ExtArgs>[]
       jobs: Prisma.$SysJobPayload<ExtArgs>[]
       apiKeys: Prisma.$SysApiKeyPayload<ExtArgs>[]
+      translations: Prisma.$SysTranslationPayload<ExtArgs>[]
+      uiTranslations: Prisma.$SysUiTranslationPayload<ExtArgs>[]
+      aiUsageLogs: Prisma.$AiUsageLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3498,6 +3761,7 @@ export namespace Prisma {
       plan: string
       status: string
       trialEndsAt: Date | null
+      aiMonthlyTokenQuota: number | null
       settings: Prisma.JsonValue
       metadata: Prisma.JsonValue
       createdAt: Date
@@ -3908,6 +4172,9 @@ export namespace Prisma {
     notifications<T extends CoreTenant$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenant$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     jobs<T extends CoreTenant$jobsArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenant$jobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     apiKeys<T extends CoreTenant$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenant$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    translations<T extends CoreTenant$translationsArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenant$translationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    uiTranslations<T extends CoreTenant$uiTranslationsArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenant$uiTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    aiUsageLogs<T extends CoreTenant$aiUsageLogsArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenant$aiUsageLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3943,6 +4210,7 @@ export namespace Prisma {
     readonly plan: FieldRef<"CoreTenant", 'String'>
     readonly status: FieldRef<"CoreTenant", 'String'>
     readonly trialEndsAt: FieldRef<"CoreTenant", 'DateTime'>
+    readonly aiMonthlyTokenQuota: FieldRef<"CoreTenant", 'Int'>
     readonly settings: FieldRef<"CoreTenant", 'Json'>
     readonly metadata: FieldRef<"CoreTenant", 'Json'>
     readonly createdAt: FieldRef<"CoreTenant", 'DateTime'>
@@ -4569,6 +4837,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SysApiKeyScalarFieldEnum | SysApiKeyScalarFieldEnum[]
+  }
+
+  /**
+   * CoreTenant.translations
+   */
+  export type CoreTenant$translationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysTranslation
+     */
+    select?: SysTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysTranslation
+     */
+    omit?: SysTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+    where?: SysTranslationWhereInput
+    orderBy?: SysTranslationOrderByWithRelationInput | SysTranslationOrderByWithRelationInput[]
+    cursor?: SysTranslationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SysTranslationScalarFieldEnum | SysTranslationScalarFieldEnum[]
+  }
+
+  /**
+   * CoreTenant.uiTranslations
+   */
+  export type CoreTenant$uiTranslationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    where?: SysUiTranslationWhereInput
+    orderBy?: SysUiTranslationOrderByWithRelationInput | SysUiTranslationOrderByWithRelationInput[]
+    cursor?: SysUiTranslationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SysUiTranslationScalarFieldEnum | SysUiTranslationScalarFieldEnum[]
+  }
+
+  /**
+   * CoreTenant.aiUsageLogs
+   */
+  export type CoreTenant$aiUsageLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    where?: AiUsageLogWhereInput
+    orderBy?: AiUsageLogOrderByWithRelationInput | AiUsageLogOrderByWithRelationInput[]
+    cursor?: AiUsageLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AiUsageLogScalarFieldEnum | AiUsageLogScalarFieldEnum[]
   }
 
   /**
@@ -29280,6 +29620,10 @@ export namespace Prisma {
     field: string | null
     locale: string | null
     value: string | null
+    source: string | null
+    isApproved: boolean | null
+    approvedBy: string | null
+    approvedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     createdBy: string | null
@@ -29296,6 +29640,10 @@ export namespace Prisma {
     field: string | null
     locale: string | null
     value: string | null
+    source: string | null
+    isApproved: boolean | null
+    approvedBy: string | null
+    approvedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     createdBy: string | null
@@ -29312,6 +29660,10 @@ export namespace Prisma {
     field: number
     locale: number
     value: number
+    source: number
+    isApproved: number
+    approvedBy: number
+    approvedAt: number
     createdAt: number
     updatedAt: number
     createdBy: number
@@ -29330,6 +29682,10 @@ export namespace Prisma {
     field?: true
     locale?: true
     value?: true
+    source?: true
+    isApproved?: true
+    approvedBy?: true
+    approvedAt?: true
     createdAt?: true
     updatedAt?: true
     createdBy?: true
@@ -29346,6 +29702,10 @@ export namespace Prisma {
     field?: true
     locale?: true
     value?: true
+    source?: true
+    isApproved?: true
+    approvedBy?: true
+    approvedAt?: true
     createdAt?: true
     updatedAt?: true
     createdBy?: true
@@ -29362,6 +29722,10 @@ export namespace Prisma {
     field?: true
     locale?: true
     value?: true
+    source?: true
+    isApproved?: true
+    approvedBy?: true
+    approvedAt?: true
     createdAt?: true
     updatedAt?: true
     createdBy?: true
@@ -29451,6 +29815,10 @@ export namespace Prisma {
     field: string
     locale: string
     value: string
+    source: string
+    isApproved: boolean
+    approvedBy: string | null
+    approvedAt: Date | null
     createdAt: Date
     updatedAt: Date
     createdBy: string | null
@@ -29484,12 +29852,17 @@ export namespace Prisma {
     field?: boolean
     locale?: boolean
     value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdBy?: boolean
     updatedBy?: boolean
     deletedAt?: boolean
     isActive?: boolean
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sysTranslation"]>
 
   export type SysTranslationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -29500,12 +29873,17 @@ export namespace Prisma {
     field?: boolean
     locale?: boolean
     value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdBy?: boolean
     updatedBy?: boolean
     deletedAt?: boolean
     isActive?: boolean
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sysTranslation"]>
 
   export type SysTranslationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -29516,12 +29894,17 @@ export namespace Prisma {
     field?: boolean
     locale?: boolean
     value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdBy?: boolean
     updatedBy?: boolean
     deletedAt?: boolean
     isActive?: boolean
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sysTranslation"]>
 
   export type SysTranslationSelectScalar = {
@@ -29532,6 +29915,10 @@ export namespace Prisma {
     field?: boolean
     locale?: boolean
     value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdBy?: boolean
@@ -29540,11 +29927,22 @@ export namespace Prisma {
     isActive?: boolean
   }
 
-  export type SysTranslationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "entityType" | "entityId" | "field" | "locale" | "value" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "deletedAt" | "isActive", ExtArgs["result"]["sysTranslation"]>
+  export type SysTranslationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "entityType" | "entityId" | "field" | "locale" | "value" | "source" | "isApproved" | "approvedBy" | "approvedAt" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "deletedAt" | "isActive", ExtArgs["result"]["sysTranslation"]>
+  export type SysTranslationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }
+  export type SysTranslationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }
+  export type SysTranslationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }
 
   export type $SysTranslationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SysTranslation"
-    objects: {}
+    objects: {
+      tenant: Prisma.$CoreTenantPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       tenantId: string
@@ -29553,6 +29951,10 @@ export namespace Prisma {
       field: string
       locale: string
       value: string
+      source: string
+      isApproved: boolean
+      approvedBy: string | null
+      approvedAt: Date | null
       createdAt: Date
       updatedAt: Date
       createdBy: string | null
@@ -29953,6 +30355,7 @@ export namespace Prisma {
    */
   export interface Prisma__SysTranslationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends CoreTenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenantDefaultArgs<ExtArgs>>): Prisma__CoreTenantClient<$Result.GetResult<Prisma.$CoreTenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -29989,6 +30392,10 @@ export namespace Prisma {
     readonly field: FieldRef<"SysTranslation", 'String'>
     readonly locale: FieldRef<"SysTranslation", 'String'>
     readonly value: FieldRef<"SysTranslation", 'String'>
+    readonly source: FieldRef<"SysTranslation", 'String'>
+    readonly isApproved: FieldRef<"SysTranslation", 'Boolean'>
+    readonly approvedBy: FieldRef<"SysTranslation", 'String'>
+    readonly approvedAt: FieldRef<"SysTranslation", 'DateTime'>
     readonly createdAt: FieldRef<"SysTranslation", 'DateTime'>
     readonly updatedAt: FieldRef<"SysTranslation", 'DateTime'>
     readonly createdBy: FieldRef<"SysTranslation", 'String'>
@@ -30012,6 +30419,10 @@ export namespace Prisma {
      */
     omit?: SysTranslationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+    /**
      * Filter, which SysTranslation to fetch.
      */
     where: SysTranslationWhereUniqueInput
@@ -30030,6 +30441,10 @@ export namespace Prisma {
      */
     omit?: SysTranslationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+    /**
      * Filter, which SysTranslation to fetch.
      */
     where: SysTranslationWhereUniqueInput
@@ -30047,6 +30462,10 @@ export namespace Prisma {
      * Omit specific fields from the SysTranslation
      */
     omit?: SysTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
     /**
      * Filter, which SysTranslation to fetch.
      */
@@ -30096,6 +30515,10 @@ export namespace Prisma {
      */
     omit?: SysTranslationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+    /**
      * Filter, which SysTranslation to fetch.
      */
     where?: SysTranslationWhereInput
@@ -30144,6 +30567,10 @@ export namespace Prisma {
      */
     omit?: SysTranslationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+    /**
      * Filter, which SysTranslations to fetch.
      */
     where?: SysTranslationWhereInput
@@ -30187,6 +30614,10 @@ export namespace Prisma {
      */
     omit?: SysTranslationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+    /**
      * The data needed to create a SysTranslation.
      */
     data: XOR<SysTranslationCreateInput, SysTranslationUncheckedCreateInput>
@@ -30220,6 +30651,10 @@ export namespace Prisma {
      */
     data: SysTranslationCreateManyInput | SysTranslationCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -30234,6 +30669,10 @@ export namespace Prisma {
      * Omit specific fields from the SysTranslation
      */
     omit?: SysTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
     /**
      * The data needed to update a SysTranslation.
      */
@@ -30286,6 +30725,10 @@ export namespace Prisma {
      * Limit how many SysTranslations to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -30300,6 +30743,10 @@ export namespace Prisma {
      * Omit specific fields from the SysTranslation
      */
     omit?: SysTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
     /**
      * The filter to search for the SysTranslation to update in case it exists.
      */
@@ -30326,6 +30773,10 @@ export namespace Prisma {
      * Omit specific fields from the SysTranslation
      */
     omit?: SysTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
     /**
      * Filter which SysTranslation to delete.
      */
@@ -30358,6 +30809,2503 @@ export namespace Prisma {
      * Omit specific fields from the SysTranslation
      */
     omit?: SysTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysTranslationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SysUiTranslation
+   */
+
+  export type AggregateSysUiTranslation = {
+    _count: SysUiTranslationCountAggregateOutputType | null
+    _min: SysUiTranslationMinAggregateOutputType | null
+    _max: SysUiTranslationMaxAggregateOutputType | null
+  }
+
+  export type SysUiTranslationMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    namespace: string | null
+    key: string | null
+    locale: string | null
+    value: string | null
+    source: string | null
+    isApproved: boolean | null
+    approvedBy: string | null
+    approvedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    deletedAt: Date | null
+    isActive: boolean | null
+  }
+
+  export type SysUiTranslationMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    namespace: string | null
+    key: string | null
+    locale: string | null
+    value: string | null
+    source: string | null
+    isApproved: boolean | null
+    approvedBy: string | null
+    approvedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    deletedAt: Date | null
+    isActive: boolean | null
+  }
+
+  export type SysUiTranslationCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    namespace: number
+    key: number
+    locale: number
+    value: number
+    source: number
+    isApproved: number
+    approvedBy: number
+    approvedAt: number
+    createdAt: number
+    updatedAt: number
+    createdBy: number
+    updatedBy: number
+    deletedAt: number
+    isActive: number
+    _all: number
+  }
+
+
+  export type SysUiTranslationMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    namespace?: true
+    key?: true
+    locale?: true
+    value?: true
+    source?: true
+    isApproved?: true
+    approvedBy?: true
+    approvedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    deletedAt?: true
+    isActive?: true
+  }
+
+  export type SysUiTranslationMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    namespace?: true
+    key?: true
+    locale?: true
+    value?: true
+    source?: true
+    isApproved?: true
+    approvedBy?: true
+    approvedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    deletedAt?: true
+    isActive?: true
+  }
+
+  export type SysUiTranslationCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    namespace?: true
+    key?: true
+    locale?: true
+    value?: true
+    source?: true
+    isApproved?: true
+    approvedBy?: true
+    approvedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    deletedAt?: true
+    isActive?: true
+    _all?: true
+  }
+
+  export type SysUiTranslationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SysUiTranslation to aggregate.
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SysUiTranslations to fetch.
+     */
+    orderBy?: SysUiTranslationOrderByWithRelationInput | SysUiTranslationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SysUiTranslationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SysUiTranslations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SysUiTranslations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SysUiTranslations
+    **/
+    _count?: true | SysUiTranslationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SysUiTranslationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SysUiTranslationMaxAggregateInputType
+  }
+
+  export type GetSysUiTranslationAggregateType<T extends SysUiTranslationAggregateArgs> = {
+        [P in keyof T & keyof AggregateSysUiTranslation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSysUiTranslation[P]>
+      : GetScalarType<T[P], AggregateSysUiTranslation[P]>
+  }
+
+
+
+
+  export type SysUiTranslationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SysUiTranslationWhereInput
+    orderBy?: SysUiTranslationOrderByWithAggregationInput | SysUiTranslationOrderByWithAggregationInput[]
+    by: SysUiTranslationScalarFieldEnum[] | SysUiTranslationScalarFieldEnum
+    having?: SysUiTranslationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SysUiTranslationCountAggregateInputType | true
+    _min?: SysUiTranslationMinAggregateInputType
+    _max?: SysUiTranslationMaxAggregateInputType
+  }
+
+  export type SysUiTranslationGroupByOutputType = {
+    id: string
+    tenantId: string | null
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source: string
+    isApproved: boolean
+    approvedBy: string | null
+    approvedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    createdBy: string | null
+    updatedBy: string | null
+    deletedAt: Date | null
+    isActive: boolean
+    _count: SysUiTranslationCountAggregateOutputType | null
+    _min: SysUiTranslationMinAggregateOutputType | null
+    _max: SysUiTranslationMaxAggregateOutputType | null
+  }
+
+  type GetSysUiTranslationGroupByPayload<T extends SysUiTranslationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SysUiTranslationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SysUiTranslationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SysUiTranslationGroupByOutputType[P]>
+            : GetScalarType<T[P], SysUiTranslationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SysUiTranslationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    namespace?: boolean
+    key?: boolean
+    locale?: boolean
+    value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    deletedAt?: boolean
+    isActive?: boolean
+    tenant?: boolean | SysUiTranslation$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["sysUiTranslation"]>
+
+  export type SysUiTranslationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    namespace?: boolean
+    key?: boolean
+    locale?: boolean
+    value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    deletedAt?: boolean
+    isActive?: boolean
+    tenant?: boolean | SysUiTranslation$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["sysUiTranslation"]>
+
+  export type SysUiTranslationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    namespace?: boolean
+    key?: boolean
+    locale?: boolean
+    value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    deletedAt?: boolean
+    isActive?: boolean
+    tenant?: boolean | SysUiTranslation$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["sysUiTranslation"]>
+
+  export type SysUiTranslationSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    namespace?: boolean
+    key?: boolean
+    locale?: boolean
+    value?: boolean
+    source?: boolean
+    isApproved?: boolean
+    approvedBy?: boolean
+    approvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    deletedAt?: boolean
+    isActive?: boolean
+  }
+
+  export type SysUiTranslationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "namespace" | "key" | "locale" | "value" | "source" | "isApproved" | "approvedBy" | "approvedAt" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "deletedAt" | "isActive", ExtArgs["result"]["sysUiTranslation"]>
+  export type SysUiTranslationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | SysUiTranslation$tenantArgs<ExtArgs>
+  }
+  export type SysUiTranslationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | SysUiTranslation$tenantArgs<ExtArgs>
+  }
+  export type SysUiTranslationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | SysUiTranslation$tenantArgs<ExtArgs>
+  }
+
+  export type $SysUiTranslationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SysUiTranslation"
+    objects: {
+      tenant: Prisma.$CoreTenantPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string | null
+      namespace: string
+      key: string
+      locale: string
+      value: string
+      source: string
+      isApproved: boolean
+      approvedBy: string | null
+      approvedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+      createdBy: string | null
+      updatedBy: string | null
+      deletedAt: Date | null
+      isActive: boolean
+    }, ExtArgs["result"]["sysUiTranslation"]>
+    composites: {}
+  }
+
+  type SysUiTranslationGetPayload<S extends boolean | null | undefined | SysUiTranslationDefaultArgs> = $Result.GetResult<Prisma.$SysUiTranslationPayload, S>
+
+  type SysUiTranslationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SysUiTranslationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SysUiTranslationCountAggregateInputType | true
+    }
+
+  export interface SysUiTranslationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SysUiTranslation'], meta: { name: 'SysUiTranslation' } }
+    /**
+     * Find zero or one SysUiTranslation that matches the filter.
+     * @param {SysUiTranslationFindUniqueArgs} args - Arguments to find a SysUiTranslation
+     * @example
+     * // Get one SysUiTranslation
+     * const sysUiTranslation = await prisma.sysUiTranslation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SysUiTranslationFindUniqueArgs>(args: SelectSubset<T, SysUiTranslationFindUniqueArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SysUiTranslation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SysUiTranslationFindUniqueOrThrowArgs} args - Arguments to find a SysUiTranslation
+     * @example
+     * // Get one SysUiTranslation
+     * const sysUiTranslation = await prisma.sysUiTranslation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SysUiTranslationFindUniqueOrThrowArgs>(args: SelectSubset<T, SysUiTranslationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SysUiTranslation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationFindFirstArgs} args - Arguments to find a SysUiTranslation
+     * @example
+     * // Get one SysUiTranslation
+     * const sysUiTranslation = await prisma.sysUiTranslation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SysUiTranslationFindFirstArgs>(args?: SelectSubset<T, SysUiTranslationFindFirstArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SysUiTranslation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationFindFirstOrThrowArgs} args - Arguments to find a SysUiTranslation
+     * @example
+     * // Get one SysUiTranslation
+     * const sysUiTranslation = await prisma.sysUiTranslation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SysUiTranslationFindFirstOrThrowArgs>(args?: SelectSubset<T, SysUiTranslationFindFirstOrThrowArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SysUiTranslations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SysUiTranslations
+     * const sysUiTranslations = await prisma.sysUiTranslation.findMany()
+     * 
+     * // Get first 10 SysUiTranslations
+     * const sysUiTranslations = await prisma.sysUiTranslation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sysUiTranslationWithIdOnly = await prisma.sysUiTranslation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SysUiTranslationFindManyArgs>(args?: SelectSubset<T, SysUiTranslationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SysUiTranslation.
+     * @param {SysUiTranslationCreateArgs} args - Arguments to create a SysUiTranslation.
+     * @example
+     * // Create one SysUiTranslation
+     * const SysUiTranslation = await prisma.sysUiTranslation.create({
+     *   data: {
+     *     // ... data to create a SysUiTranslation
+     *   }
+     * })
+     * 
+     */
+    create<T extends SysUiTranslationCreateArgs>(args: SelectSubset<T, SysUiTranslationCreateArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SysUiTranslations.
+     * @param {SysUiTranslationCreateManyArgs} args - Arguments to create many SysUiTranslations.
+     * @example
+     * // Create many SysUiTranslations
+     * const sysUiTranslation = await prisma.sysUiTranslation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SysUiTranslationCreateManyArgs>(args?: SelectSubset<T, SysUiTranslationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SysUiTranslations and returns the data saved in the database.
+     * @param {SysUiTranslationCreateManyAndReturnArgs} args - Arguments to create many SysUiTranslations.
+     * @example
+     * // Create many SysUiTranslations
+     * const sysUiTranslation = await prisma.sysUiTranslation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SysUiTranslations and only return the `id`
+     * const sysUiTranslationWithIdOnly = await prisma.sysUiTranslation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SysUiTranslationCreateManyAndReturnArgs>(args?: SelectSubset<T, SysUiTranslationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SysUiTranslation.
+     * @param {SysUiTranslationDeleteArgs} args - Arguments to delete one SysUiTranslation.
+     * @example
+     * // Delete one SysUiTranslation
+     * const SysUiTranslation = await prisma.sysUiTranslation.delete({
+     *   where: {
+     *     // ... filter to delete one SysUiTranslation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SysUiTranslationDeleteArgs>(args: SelectSubset<T, SysUiTranslationDeleteArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SysUiTranslation.
+     * @param {SysUiTranslationUpdateArgs} args - Arguments to update one SysUiTranslation.
+     * @example
+     * // Update one SysUiTranslation
+     * const sysUiTranslation = await prisma.sysUiTranslation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SysUiTranslationUpdateArgs>(args: SelectSubset<T, SysUiTranslationUpdateArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SysUiTranslations.
+     * @param {SysUiTranslationDeleteManyArgs} args - Arguments to filter SysUiTranslations to delete.
+     * @example
+     * // Delete a few SysUiTranslations
+     * const { count } = await prisma.sysUiTranslation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SysUiTranslationDeleteManyArgs>(args?: SelectSubset<T, SysUiTranslationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SysUiTranslations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SysUiTranslations
+     * const sysUiTranslation = await prisma.sysUiTranslation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SysUiTranslationUpdateManyArgs>(args: SelectSubset<T, SysUiTranslationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SysUiTranslations and returns the data updated in the database.
+     * @param {SysUiTranslationUpdateManyAndReturnArgs} args - Arguments to update many SysUiTranslations.
+     * @example
+     * // Update many SysUiTranslations
+     * const sysUiTranslation = await prisma.sysUiTranslation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SysUiTranslations and only return the `id`
+     * const sysUiTranslationWithIdOnly = await prisma.sysUiTranslation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SysUiTranslationUpdateManyAndReturnArgs>(args: SelectSubset<T, SysUiTranslationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SysUiTranslation.
+     * @param {SysUiTranslationUpsertArgs} args - Arguments to update or create a SysUiTranslation.
+     * @example
+     * // Update or create a SysUiTranslation
+     * const sysUiTranslation = await prisma.sysUiTranslation.upsert({
+     *   create: {
+     *     // ... data to create a SysUiTranslation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SysUiTranslation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SysUiTranslationUpsertArgs>(args: SelectSubset<T, SysUiTranslationUpsertArgs<ExtArgs>>): Prisma__SysUiTranslationClient<$Result.GetResult<Prisma.$SysUiTranslationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SysUiTranslations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationCountArgs} args - Arguments to filter SysUiTranslations to count.
+     * @example
+     * // Count the number of SysUiTranslations
+     * const count = await prisma.sysUiTranslation.count({
+     *   where: {
+     *     // ... the filter for the SysUiTranslations we want to count
+     *   }
+     * })
+    **/
+    count<T extends SysUiTranslationCountArgs>(
+      args?: Subset<T, SysUiTranslationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SysUiTranslationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SysUiTranslation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SysUiTranslationAggregateArgs>(args: Subset<T, SysUiTranslationAggregateArgs>): Prisma.PrismaPromise<GetSysUiTranslationAggregateType<T>>
+
+    /**
+     * Group by SysUiTranslation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SysUiTranslationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SysUiTranslationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SysUiTranslationGroupByArgs['orderBy'] }
+        : { orderBy?: SysUiTranslationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SysUiTranslationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSysUiTranslationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SysUiTranslation model
+   */
+  readonly fields: SysUiTranslationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SysUiTranslation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SysUiTranslationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends SysUiTranslation$tenantArgs<ExtArgs> = {}>(args?: Subset<T, SysUiTranslation$tenantArgs<ExtArgs>>): Prisma__CoreTenantClient<$Result.GetResult<Prisma.$CoreTenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SysUiTranslation model
+   */
+  interface SysUiTranslationFieldRefs {
+    readonly id: FieldRef<"SysUiTranslation", 'String'>
+    readonly tenantId: FieldRef<"SysUiTranslation", 'String'>
+    readonly namespace: FieldRef<"SysUiTranslation", 'String'>
+    readonly key: FieldRef<"SysUiTranslation", 'String'>
+    readonly locale: FieldRef<"SysUiTranslation", 'String'>
+    readonly value: FieldRef<"SysUiTranslation", 'String'>
+    readonly source: FieldRef<"SysUiTranslation", 'String'>
+    readonly isApproved: FieldRef<"SysUiTranslation", 'Boolean'>
+    readonly approvedBy: FieldRef<"SysUiTranslation", 'String'>
+    readonly approvedAt: FieldRef<"SysUiTranslation", 'DateTime'>
+    readonly createdAt: FieldRef<"SysUiTranslation", 'DateTime'>
+    readonly updatedAt: FieldRef<"SysUiTranslation", 'DateTime'>
+    readonly createdBy: FieldRef<"SysUiTranslation", 'String'>
+    readonly updatedBy: FieldRef<"SysUiTranslation", 'String'>
+    readonly deletedAt: FieldRef<"SysUiTranslation", 'DateTime'>
+    readonly isActive: FieldRef<"SysUiTranslation", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SysUiTranslation findUnique
+   */
+  export type SysUiTranslationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * Filter, which SysUiTranslation to fetch.
+     */
+    where: SysUiTranslationWhereUniqueInput
+  }
+
+  /**
+   * SysUiTranslation findUniqueOrThrow
+   */
+  export type SysUiTranslationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * Filter, which SysUiTranslation to fetch.
+     */
+    where: SysUiTranslationWhereUniqueInput
+  }
+
+  /**
+   * SysUiTranslation findFirst
+   */
+  export type SysUiTranslationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * Filter, which SysUiTranslation to fetch.
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SysUiTranslations to fetch.
+     */
+    orderBy?: SysUiTranslationOrderByWithRelationInput | SysUiTranslationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SysUiTranslations.
+     */
+    cursor?: SysUiTranslationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SysUiTranslations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SysUiTranslations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SysUiTranslations.
+     */
+    distinct?: SysUiTranslationScalarFieldEnum | SysUiTranslationScalarFieldEnum[]
+  }
+
+  /**
+   * SysUiTranslation findFirstOrThrow
+   */
+  export type SysUiTranslationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * Filter, which SysUiTranslation to fetch.
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SysUiTranslations to fetch.
+     */
+    orderBy?: SysUiTranslationOrderByWithRelationInput | SysUiTranslationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SysUiTranslations.
+     */
+    cursor?: SysUiTranslationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SysUiTranslations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SysUiTranslations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SysUiTranslations.
+     */
+    distinct?: SysUiTranslationScalarFieldEnum | SysUiTranslationScalarFieldEnum[]
+  }
+
+  /**
+   * SysUiTranslation findMany
+   */
+  export type SysUiTranslationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * Filter, which SysUiTranslations to fetch.
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SysUiTranslations to fetch.
+     */
+    orderBy?: SysUiTranslationOrderByWithRelationInput | SysUiTranslationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SysUiTranslations.
+     */
+    cursor?: SysUiTranslationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SysUiTranslations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SysUiTranslations.
+     */
+    skip?: number
+    distinct?: SysUiTranslationScalarFieldEnum | SysUiTranslationScalarFieldEnum[]
+  }
+
+  /**
+   * SysUiTranslation create
+   */
+  export type SysUiTranslationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SysUiTranslation.
+     */
+    data: XOR<SysUiTranslationCreateInput, SysUiTranslationUncheckedCreateInput>
+  }
+
+  /**
+   * SysUiTranslation createMany
+   */
+  export type SysUiTranslationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SysUiTranslations.
+     */
+    data: SysUiTranslationCreateManyInput | SysUiTranslationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SysUiTranslation createManyAndReturn
+   */
+  export type SysUiTranslationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * The data used to create many SysUiTranslations.
+     */
+    data: SysUiTranslationCreateManyInput | SysUiTranslationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SysUiTranslation update
+   */
+  export type SysUiTranslationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SysUiTranslation.
+     */
+    data: XOR<SysUiTranslationUpdateInput, SysUiTranslationUncheckedUpdateInput>
+    /**
+     * Choose, which SysUiTranslation to update.
+     */
+    where: SysUiTranslationWhereUniqueInput
+  }
+
+  /**
+   * SysUiTranslation updateMany
+   */
+  export type SysUiTranslationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SysUiTranslations.
+     */
+    data: XOR<SysUiTranslationUpdateManyMutationInput, SysUiTranslationUncheckedUpdateManyInput>
+    /**
+     * Filter which SysUiTranslations to update
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * Limit how many SysUiTranslations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SysUiTranslation updateManyAndReturn
+   */
+  export type SysUiTranslationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * The data used to update SysUiTranslations.
+     */
+    data: XOR<SysUiTranslationUpdateManyMutationInput, SysUiTranslationUncheckedUpdateManyInput>
+    /**
+     * Filter which SysUiTranslations to update
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * Limit how many SysUiTranslations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SysUiTranslation upsert
+   */
+  export type SysUiTranslationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SysUiTranslation to update in case it exists.
+     */
+    where: SysUiTranslationWhereUniqueInput
+    /**
+     * In case the SysUiTranslation found by the `where` argument doesn't exist, create a new SysUiTranslation with this data.
+     */
+    create: XOR<SysUiTranslationCreateInput, SysUiTranslationUncheckedCreateInput>
+    /**
+     * In case the SysUiTranslation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SysUiTranslationUpdateInput, SysUiTranslationUncheckedUpdateInput>
+  }
+
+  /**
+   * SysUiTranslation delete
+   */
+  export type SysUiTranslationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+    /**
+     * Filter which SysUiTranslation to delete.
+     */
+    where: SysUiTranslationWhereUniqueInput
+  }
+
+  /**
+   * SysUiTranslation deleteMany
+   */
+  export type SysUiTranslationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SysUiTranslations to delete
+     */
+    where?: SysUiTranslationWhereInput
+    /**
+     * Limit how many SysUiTranslations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SysUiTranslation.tenant
+   */
+  export type SysUiTranslation$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CoreTenant
+     */
+    select?: CoreTenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CoreTenant
+     */
+    omit?: CoreTenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CoreTenantInclude<ExtArgs> | null
+    where?: CoreTenantWhereInput
+  }
+
+  /**
+   * SysUiTranslation without action
+   */
+  export type SysUiTranslationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SysUiTranslation
+     */
+    select?: SysUiTranslationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SysUiTranslation
+     */
+    omit?: SysUiTranslationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SysUiTranslationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AiUsageLog
+   */
+
+  export type AggregateAiUsageLog = {
+    _count: AiUsageLogCountAggregateOutputType | null
+    _avg: AiUsageLogAvgAggregateOutputType | null
+    _sum: AiUsageLogSumAggregateOutputType | null
+    _min: AiUsageLogMinAggregateOutputType | null
+    _max: AiUsageLogMaxAggregateOutputType | null
+  }
+
+  export type AiUsageLogAvgAggregateOutputType = {
+    promptTokens: number | null
+    completionTokens: number | null
+    totalTokens: number | null
+    estimatedCostUsd: Decimal | null
+    requestDurationMs: number | null
+  }
+
+  export type AiUsageLogSumAggregateOutputType = {
+    promptTokens: number | null
+    completionTokens: number | null
+    totalTokens: number | null
+    estimatedCostUsd: Decimal | null
+    requestDurationMs: number | null
+  }
+
+  export type AiUsageLogMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    sessionId: string | null
+    module: string | null
+    feature: string | null
+    provider: string | null
+    model: string | null
+    promptTokens: number | null
+    completionTokens: number | null
+    totalTokens: number | null
+    estimatedCostUsd: Decimal | null
+    requestDurationMs: number | null
+    status: string | null
+    errorCode: string | null
+    requestId: string | null
+    occurredAt: Date | null
+  }
+
+  export type AiUsageLogMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    sessionId: string | null
+    module: string | null
+    feature: string | null
+    provider: string | null
+    model: string | null
+    promptTokens: number | null
+    completionTokens: number | null
+    totalTokens: number | null
+    estimatedCostUsd: Decimal | null
+    requestDurationMs: number | null
+    status: string | null
+    errorCode: string | null
+    requestId: string | null
+    occurredAt: Date | null
+  }
+
+  export type AiUsageLogCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    userId: number
+    sessionId: number
+    module: number
+    feature: number
+    provider: number
+    model: number
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
+    estimatedCostUsd: number
+    requestDurationMs: number
+    status: number
+    errorCode: number
+    requestId: number
+    metadata: number
+    occurredAt: number
+    _all: number
+  }
+
+
+  export type AiUsageLogAvgAggregateInputType = {
+    promptTokens?: true
+    completionTokens?: true
+    totalTokens?: true
+    estimatedCostUsd?: true
+    requestDurationMs?: true
+  }
+
+  export type AiUsageLogSumAggregateInputType = {
+    promptTokens?: true
+    completionTokens?: true
+    totalTokens?: true
+    estimatedCostUsd?: true
+    requestDurationMs?: true
+  }
+
+  export type AiUsageLogMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    sessionId?: true
+    module?: true
+    feature?: true
+    provider?: true
+    model?: true
+    promptTokens?: true
+    completionTokens?: true
+    totalTokens?: true
+    estimatedCostUsd?: true
+    requestDurationMs?: true
+    status?: true
+    errorCode?: true
+    requestId?: true
+    occurredAt?: true
+  }
+
+  export type AiUsageLogMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    sessionId?: true
+    module?: true
+    feature?: true
+    provider?: true
+    model?: true
+    promptTokens?: true
+    completionTokens?: true
+    totalTokens?: true
+    estimatedCostUsd?: true
+    requestDurationMs?: true
+    status?: true
+    errorCode?: true
+    requestId?: true
+    occurredAt?: true
+  }
+
+  export type AiUsageLogCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    sessionId?: true
+    module?: true
+    feature?: true
+    provider?: true
+    model?: true
+    promptTokens?: true
+    completionTokens?: true
+    totalTokens?: true
+    estimatedCostUsd?: true
+    requestDurationMs?: true
+    status?: true
+    errorCode?: true
+    requestId?: true
+    metadata?: true
+    occurredAt?: true
+    _all?: true
+  }
+
+  export type AiUsageLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiUsageLog to aggregate.
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiUsageLogs to fetch.
+     */
+    orderBy?: AiUsageLogOrderByWithRelationInput | AiUsageLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AiUsageLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiUsageLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiUsageLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AiUsageLogs
+    **/
+    _count?: true | AiUsageLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AiUsageLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AiUsageLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AiUsageLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AiUsageLogMaxAggregateInputType
+  }
+
+  export type GetAiUsageLogAggregateType<T extends AiUsageLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateAiUsageLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAiUsageLog[P]>
+      : GetScalarType<T[P], AggregateAiUsageLog[P]>
+  }
+
+
+
+
+  export type AiUsageLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AiUsageLogWhereInput
+    orderBy?: AiUsageLogOrderByWithAggregationInput | AiUsageLogOrderByWithAggregationInput[]
+    by: AiUsageLogScalarFieldEnum[] | AiUsageLogScalarFieldEnum
+    having?: AiUsageLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AiUsageLogCountAggregateInputType | true
+    _avg?: AiUsageLogAvgAggregateInputType
+    _sum?: AiUsageLogSumAggregateInputType
+    _min?: AiUsageLogMinAggregateInputType
+    _max?: AiUsageLogMaxAggregateInputType
+  }
+
+  export type AiUsageLogGroupByOutputType = {
+    id: string
+    tenantId: string
+    userId: string | null
+    sessionId: string | null
+    module: string
+    feature: string
+    provider: string
+    model: string
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
+    estimatedCostUsd: Decimal
+    requestDurationMs: number | null
+    status: string
+    errorCode: string | null
+    requestId: string | null
+    metadata: JsonValue | null
+    occurredAt: Date
+    _count: AiUsageLogCountAggregateOutputType | null
+    _avg: AiUsageLogAvgAggregateOutputType | null
+    _sum: AiUsageLogSumAggregateOutputType | null
+    _min: AiUsageLogMinAggregateOutputType | null
+    _max: AiUsageLogMaxAggregateOutputType | null
+  }
+
+  type GetAiUsageLogGroupByPayload<T extends AiUsageLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AiUsageLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AiUsageLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AiUsageLogGroupByOutputType[P]>
+            : GetScalarType<T[P], AiUsageLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AiUsageLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    sessionId?: boolean
+    module?: boolean
+    feature?: boolean
+    provider?: boolean
+    model?: boolean
+    promptTokens?: boolean
+    completionTokens?: boolean
+    totalTokens?: boolean
+    estimatedCostUsd?: boolean
+    requestDurationMs?: boolean
+    status?: boolean
+    errorCode?: boolean
+    requestId?: boolean
+    metadata?: boolean
+    occurredAt?: boolean
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aiUsageLog"]>
+
+  export type AiUsageLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    sessionId?: boolean
+    module?: boolean
+    feature?: boolean
+    provider?: boolean
+    model?: boolean
+    promptTokens?: boolean
+    completionTokens?: boolean
+    totalTokens?: boolean
+    estimatedCostUsd?: boolean
+    requestDurationMs?: boolean
+    status?: boolean
+    errorCode?: boolean
+    requestId?: boolean
+    metadata?: boolean
+    occurredAt?: boolean
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aiUsageLog"]>
+
+  export type AiUsageLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    sessionId?: boolean
+    module?: boolean
+    feature?: boolean
+    provider?: boolean
+    model?: boolean
+    promptTokens?: boolean
+    completionTokens?: boolean
+    totalTokens?: boolean
+    estimatedCostUsd?: boolean
+    requestDurationMs?: boolean
+    status?: boolean
+    errorCode?: boolean
+    requestId?: boolean
+    metadata?: boolean
+    occurredAt?: boolean
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aiUsageLog"]>
+
+  export type AiUsageLogSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    sessionId?: boolean
+    module?: boolean
+    feature?: boolean
+    provider?: boolean
+    model?: boolean
+    promptTokens?: boolean
+    completionTokens?: boolean
+    totalTokens?: boolean
+    estimatedCostUsd?: boolean
+    requestDurationMs?: boolean
+    status?: boolean
+    errorCode?: boolean
+    requestId?: boolean
+    metadata?: boolean
+    occurredAt?: boolean
+  }
+
+  export type AiUsageLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "sessionId" | "module" | "feature" | "provider" | "model" | "promptTokens" | "completionTokens" | "totalTokens" | "estimatedCostUsd" | "requestDurationMs" | "status" | "errorCode" | "requestId" | "metadata" | "occurredAt", ExtArgs["result"]["aiUsageLog"]>
+  export type AiUsageLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }
+  export type AiUsageLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }
+  export type AiUsageLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | CoreTenantDefaultArgs<ExtArgs>
+  }
+
+  export type $AiUsageLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AiUsageLog"
+    objects: {
+      tenant: Prisma.$CoreTenantPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      userId: string | null
+      sessionId: string | null
+      module: string
+      feature: string
+      provider: string
+      model: string
+      promptTokens: number
+      completionTokens: number
+      totalTokens: number
+      estimatedCostUsd: Prisma.Decimal
+      requestDurationMs: number | null
+      status: string
+      errorCode: string | null
+      requestId: string | null
+      metadata: Prisma.JsonValue | null
+      occurredAt: Date
+    }, ExtArgs["result"]["aiUsageLog"]>
+    composites: {}
+  }
+
+  type AiUsageLogGetPayload<S extends boolean | null | undefined | AiUsageLogDefaultArgs> = $Result.GetResult<Prisma.$AiUsageLogPayload, S>
+
+  type AiUsageLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AiUsageLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AiUsageLogCountAggregateInputType | true
+    }
+
+  export interface AiUsageLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AiUsageLog'], meta: { name: 'AiUsageLog' } }
+    /**
+     * Find zero or one AiUsageLog that matches the filter.
+     * @param {AiUsageLogFindUniqueArgs} args - Arguments to find a AiUsageLog
+     * @example
+     * // Get one AiUsageLog
+     * const aiUsageLog = await prisma.aiUsageLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AiUsageLogFindUniqueArgs>(args: SelectSubset<T, AiUsageLogFindUniqueArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AiUsageLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AiUsageLogFindUniqueOrThrowArgs} args - Arguments to find a AiUsageLog
+     * @example
+     * // Get one AiUsageLog
+     * const aiUsageLog = await prisma.aiUsageLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AiUsageLogFindUniqueOrThrowArgs>(args: SelectSubset<T, AiUsageLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiUsageLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogFindFirstArgs} args - Arguments to find a AiUsageLog
+     * @example
+     * // Get one AiUsageLog
+     * const aiUsageLog = await prisma.aiUsageLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AiUsageLogFindFirstArgs>(args?: SelectSubset<T, AiUsageLogFindFirstArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiUsageLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogFindFirstOrThrowArgs} args - Arguments to find a AiUsageLog
+     * @example
+     * // Get one AiUsageLog
+     * const aiUsageLog = await prisma.aiUsageLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AiUsageLogFindFirstOrThrowArgs>(args?: SelectSubset<T, AiUsageLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AiUsageLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AiUsageLogs
+     * const aiUsageLogs = await prisma.aiUsageLog.findMany()
+     * 
+     * // Get first 10 AiUsageLogs
+     * const aiUsageLogs = await prisma.aiUsageLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aiUsageLogWithIdOnly = await prisma.aiUsageLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AiUsageLogFindManyArgs>(args?: SelectSubset<T, AiUsageLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AiUsageLog.
+     * @param {AiUsageLogCreateArgs} args - Arguments to create a AiUsageLog.
+     * @example
+     * // Create one AiUsageLog
+     * const AiUsageLog = await prisma.aiUsageLog.create({
+     *   data: {
+     *     // ... data to create a AiUsageLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends AiUsageLogCreateArgs>(args: SelectSubset<T, AiUsageLogCreateArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AiUsageLogs.
+     * @param {AiUsageLogCreateManyArgs} args - Arguments to create many AiUsageLogs.
+     * @example
+     * // Create many AiUsageLogs
+     * const aiUsageLog = await prisma.aiUsageLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AiUsageLogCreateManyArgs>(args?: SelectSubset<T, AiUsageLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AiUsageLogs and returns the data saved in the database.
+     * @param {AiUsageLogCreateManyAndReturnArgs} args - Arguments to create many AiUsageLogs.
+     * @example
+     * // Create many AiUsageLogs
+     * const aiUsageLog = await prisma.aiUsageLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AiUsageLogs and only return the `id`
+     * const aiUsageLogWithIdOnly = await prisma.aiUsageLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AiUsageLogCreateManyAndReturnArgs>(args?: SelectSubset<T, AiUsageLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AiUsageLog.
+     * @param {AiUsageLogDeleteArgs} args - Arguments to delete one AiUsageLog.
+     * @example
+     * // Delete one AiUsageLog
+     * const AiUsageLog = await prisma.aiUsageLog.delete({
+     *   where: {
+     *     // ... filter to delete one AiUsageLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AiUsageLogDeleteArgs>(args: SelectSubset<T, AiUsageLogDeleteArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AiUsageLog.
+     * @param {AiUsageLogUpdateArgs} args - Arguments to update one AiUsageLog.
+     * @example
+     * // Update one AiUsageLog
+     * const aiUsageLog = await prisma.aiUsageLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AiUsageLogUpdateArgs>(args: SelectSubset<T, AiUsageLogUpdateArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AiUsageLogs.
+     * @param {AiUsageLogDeleteManyArgs} args - Arguments to filter AiUsageLogs to delete.
+     * @example
+     * // Delete a few AiUsageLogs
+     * const { count } = await prisma.aiUsageLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AiUsageLogDeleteManyArgs>(args?: SelectSubset<T, AiUsageLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiUsageLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AiUsageLogs
+     * const aiUsageLog = await prisma.aiUsageLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AiUsageLogUpdateManyArgs>(args: SelectSubset<T, AiUsageLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiUsageLogs and returns the data updated in the database.
+     * @param {AiUsageLogUpdateManyAndReturnArgs} args - Arguments to update many AiUsageLogs.
+     * @example
+     * // Update many AiUsageLogs
+     * const aiUsageLog = await prisma.aiUsageLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AiUsageLogs and only return the `id`
+     * const aiUsageLogWithIdOnly = await prisma.aiUsageLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AiUsageLogUpdateManyAndReturnArgs>(args: SelectSubset<T, AiUsageLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AiUsageLog.
+     * @param {AiUsageLogUpsertArgs} args - Arguments to update or create a AiUsageLog.
+     * @example
+     * // Update or create a AiUsageLog
+     * const aiUsageLog = await prisma.aiUsageLog.upsert({
+     *   create: {
+     *     // ... data to create a AiUsageLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AiUsageLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AiUsageLogUpsertArgs>(args: SelectSubset<T, AiUsageLogUpsertArgs<ExtArgs>>): Prisma__AiUsageLogClient<$Result.GetResult<Prisma.$AiUsageLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AiUsageLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogCountArgs} args - Arguments to filter AiUsageLogs to count.
+     * @example
+     * // Count the number of AiUsageLogs
+     * const count = await prisma.aiUsageLog.count({
+     *   where: {
+     *     // ... the filter for the AiUsageLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AiUsageLogCountArgs>(
+      args?: Subset<T, AiUsageLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AiUsageLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AiUsageLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AiUsageLogAggregateArgs>(args: Subset<T, AiUsageLogAggregateArgs>): Prisma.PrismaPromise<GetAiUsageLogAggregateType<T>>
+
+    /**
+     * Group by AiUsageLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiUsageLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AiUsageLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AiUsageLogGroupByArgs['orderBy'] }
+        : { orderBy?: AiUsageLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AiUsageLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAiUsageLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AiUsageLog model
+   */
+  readonly fields: AiUsageLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AiUsageLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AiUsageLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends CoreTenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CoreTenantDefaultArgs<ExtArgs>>): Prisma__CoreTenantClient<$Result.GetResult<Prisma.$CoreTenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AiUsageLog model
+   */
+  interface AiUsageLogFieldRefs {
+    readonly id: FieldRef<"AiUsageLog", 'String'>
+    readonly tenantId: FieldRef<"AiUsageLog", 'String'>
+    readonly userId: FieldRef<"AiUsageLog", 'String'>
+    readonly sessionId: FieldRef<"AiUsageLog", 'String'>
+    readonly module: FieldRef<"AiUsageLog", 'String'>
+    readonly feature: FieldRef<"AiUsageLog", 'String'>
+    readonly provider: FieldRef<"AiUsageLog", 'String'>
+    readonly model: FieldRef<"AiUsageLog", 'String'>
+    readonly promptTokens: FieldRef<"AiUsageLog", 'Int'>
+    readonly completionTokens: FieldRef<"AiUsageLog", 'Int'>
+    readonly totalTokens: FieldRef<"AiUsageLog", 'Int'>
+    readonly estimatedCostUsd: FieldRef<"AiUsageLog", 'Decimal'>
+    readonly requestDurationMs: FieldRef<"AiUsageLog", 'Int'>
+    readonly status: FieldRef<"AiUsageLog", 'String'>
+    readonly errorCode: FieldRef<"AiUsageLog", 'String'>
+    readonly requestId: FieldRef<"AiUsageLog", 'String'>
+    readonly metadata: FieldRef<"AiUsageLog", 'Json'>
+    readonly occurredAt: FieldRef<"AiUsageLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AiUsageLog findUnique
+   */
+  export type AiUsageLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AiUsageLog to fetch.
+     */
+    where: AiUsageLogWhereUniqueInput
+  }
+
+  /**
+   * AiUsageLog findUniqueOrThrow
+   */
+  export type AiUsageLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AiUsageLog to fetch.
+     */
+    where: AiUsageLogWhereUniqueInput
+  }
+
+  /**
+   * AiUsageLog findFirst
+   */
+  export type AiUsageLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AiUsageLog to fetch.
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiUsageLogs to fetch.
+     */
+    orderBy?: AiUsageLogOrderByWithRelationInput | AiUsageLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiUsageLogs.
+     */
+    cursor?: AiUsageLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiUsageLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiUsageLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiUsageLogs.
+     */
+    distinct?: AiUsageLogScalarFieldEnum | AiUsageLogScalarFieldEnum[]
+  }
+
+  /**
+   * AiUsageLog findFirstOrThrow
+   */
+  export type AiUsageLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AiUsageLog to fetch.
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiUsageLogs to fetch.
+     */
+    orderBy?: AiUsageLogOrderByWithRelationInput | AiUsageLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiUsageLogs.
+     */
+    cursor?: AiUsageLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiUsageLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiUsageLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiUsageLogs.
+     */
+    distinct?: AiUsageLogScalarFieldEnum | AiUsageLogScalarFieldEnum[]
+  }
+
+  /**
+   * AiUsageLog findMany
+   */
+  export type AiUsageLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AiUsageLogs to fetch.
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiUsageLogs to fetch.
+     */
+    orderBy?: AiUsageLogOrderByWithRelationInput | AiUsageLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AiUsageLogs.
+     */
+    cursor?: AiUsageLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiUsageLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiUsageLogs.
+     */
+    skip?: number
+    distinct?: AiUsageLogScalarFieldEnum | AiUsageLogScalarFieldEnum[]
+  }
+
+  /**
+   * AiUsageLog create
+   */
+  export type AiUsageLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AiUsageLog.
+     */
+    data: XOR<AiUsageLogCreateInput, AiUsageLogUncheckedCreateInput>
+  }
+
+  /**
+   * AiUsageLog createMany
+   */
+  export type AiUsageLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AiUsageLogs.
+     */
+    data: AiUsageLogCreateManyInput | AiUsageLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AiUsageLog createManyAndReturn
+   */
+  export type AiUsageLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many AiUsageLogs.
+     */
+    data: AiUsageLogCreateManyInput | AiUsageLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AiUsageLog update
+   */
+  export type AiUsageLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AiUsageLog.
+     */
+    data: XOR<AiUsageLogUpdateInput, AiUsageLogUncheckedUpdateInput>
+    /**
+     * Choose, which AiUsageLog to update.
+     */
+    where: AiUsageLogWhereUniqueInput
+  }
+
+  /**
+   * AiUsageLog updateMany
+   */
+  export type AiUsageLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AiUsageLogs.
+     */
+    data: XOR<AiUsageLogUpdateManyMutationInput, AiUsageLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AiUsageLogs to update
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * Limit how many AiUsageLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiUsageLog updateManyAndReturn
+   */
+  export type AiUsageLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * The data used to update AiUsageLogs.
+     */
+    data: XOR<AiUsageLogUpdateManyMutationInput, AiUsageLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AiUsageLogs to update
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * Limit how many AiUsageLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AiUsageLog upsert
+   */
+  export type AiUsageLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AiUsageLog to update in case it exists.
+     */
+    where: AiUsageLogWhereUniqueInput
+    /**
+     * In case the AiUsageLog found by the `where` argument doesn't exist, create a new AiUsageLog with this data.
+     */
+    create: XOR<AiUsageLogCreateInput, AiUsageLogUncheckedCreateInput>
+    /**
+     * In case the AiUsageLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AiUsageLogUpdateInput, AiUsageLogUncheckedUpdateInput>
+  }
+
+  /**
+   * AiUsageLog delete
+   */
+  export type AiUsageLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
+    /**
+     * Filter which AiUsageLog to delete.
+     */
+    where: AiUsageLogWhereUniqueInput
+  }
+
+  /**
+   * AiUsageLog deleteMany
+   */
+  export type AiUsageLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiUsageLogs to delete
+     */
+    where?: AiUsageLogWhereInput
+    /**
+     * Limit how many AiUsageLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiUsageLog without action
+   */
+  export type AiUsageLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiUsageLog
+     */
+    select?: AiUsageLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiUsageLog
+     */
+    omit?: AiUsageLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiUsageLogInclude<ExtArgs> | null
   }
 
 
@@ -30382,6 +33330,7 @@ export namespace Prisma {
     plan: 'plan',
     status: 'status',
     trialEndsAt: 'trialEndsAt',
+    aiMonthlyTokenQuota: 'aiMonthlyTokenQuota',
     settings: 'settings',
     metadata: 'metadata',
     createdAt: 'createdAt',
@@ -30834,6 +33783,10 @@ export namespace Prisma {
     field: 'field',
     locale: 'locale',
     value: 'value',
+    source: 'source',
+    isApproved: 'isApproved',
+    approvedBy: 'approvedBy',
+    approvedAt: 'approvedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     createdBy: 'createdBy',
@@ -30843,6 +33796,52 @@ export namespace Prisma {
   };
 
   export type SysTranslationScalarFieldEnum = (typeof SysTranslationScalarFieldEnum)[keyof typeof SysTranslationScalarFieldEnum]
+
+
+  export const SysUiTranslationScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    namespace: 'namespace',
+    key: 'key',
+    locale: 'locale',
+    value: 'value',
+    source: 'source',
+    isApproved: 'isApproved',
+    approvedBy: 'approvedBy',
+    approvedAt: 'approvedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    createdBy: 'createdBy',
+    updatedBy: 'updatedBy',
+    deletedAt: 'deletedAt',
+    isActive: 'isActive'
+  };
+
+  export type SysUiTranslationScalarFieldEnum = (typeof SysUiTranslationScalarFieldEnum)[keyof typeof SysUiTranslationScalarFieldEnum]
+
+
+  export const AiUsageLogScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    userId: 'userId',
+    sessionId: 'sessionId',
+    module: 'module',
+    feature: 'feature',
+    provider: 'provider',
+    model: 'model',
+    promptTokens: 'promptTokens',
+    completionTokens: 'completionTokens',
+    totalTokens: 'totalTokens',
+    estimatedCostUsd: 'estimatedCostUsd',
+    requestDurationMs: 'requestDurationMs',
+    status: 'status',
+    errorCode: 'errorCode',
+    requestId: 'requestId',
+    metadata: 'metadata',
+    occurredAt: 'occurredAt'
+  };
+
+  export type AiUsageLogScalarFieldEnum = (typeof AiUsageLogScalarFieldEnum)[keyof typeof AiUsageLogScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -30927,6 +33926,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -30948,16 +33961,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'Decimal'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
     
 
 
   /**
-   * Reference to a field of type 'Int[]'
+   * Reference to a field of type 'Decimal[]'
    */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -30988,6 +34001,7 @@ export namespace Prisma {
     plan?: StringFilter<"CoreTenant"> | string
     status?: StringFilter<"CoreTenant"> | string
     trialEndsAt?: DateTimeNullableFilter<"CoreTenant"> | Date | string | null
+    aiMonthlyTokenQuota?: IntNullableFilter<"CoreTenant"> | number | null
     settings?: JsonFilter<"CoreTenant">
     metadata?: JsonFilter<"CoreTenant">
     createdAt?: DateTimeFilter<"CoreTenant"> | Date | string
@@ -31004,6 +34018,9 @@ export namespace Prisma {
     notifications?: SysNotificationListRelationFilter
     jobs?: SysJobListRelationFilter
     apiKeys?: SysApiKeyListRelationFilter
+    translations?: SysTranslationListRelationFilter
+    uiTranslations?: SysUiTranslationListRelationFilter
+    aiUsageLogs?: AiUsageLogListRelationFilter
   }
 
   export type CoreTenantOrderByWithRelationInput = {
@@ -31013,6 +34030,7 @@ export namespace Prisma {
     plan?: SortOrder
     status?: SortOrder
     trialEndsAt?: SortOrderInput | SortOrder
+    aiMonthlyTokenQuota?: SortOrderInput | SortOrder
     settings?: SortOrder
     metadata?: SortOrder
     createdAt?: SortOrder
@@ -31029,6 +34047,9 @@ export namespace Prisma {
     notifications?: SysNotificationOrderByRelationAggregateInput
     jobs?: SysJobOrderByRelationAggregateInput
     apiKeys?: SysApiKeyOrderByRelationAggregateInput
+    translations?: SysTranslationOrderByRelationAggregateInput
+    uiTranslations?: SysUiTranslationOrderByRelationAggregateInput
+    aiUsageLogs?: AiUsageLogOrderByRelationAggregateInput
   }
 
   export type CoreTenantWhereUniqueInput = Prisma.AtLeast<{
@@ -31041,6 +34062,7 @@ export namespace Prisma {
     plan?: StringFilter<"CoreTenant"> | string
     status?: StringFilter<"CoreTenant"> | string
     trialEndsAt?: DateTimeNullableFilter<"CoreTenant"> | Date | string | null
+    aiMonthlyTokenQuota?: IntNullableFilter<"CoreTenant"> | number | null
     settings?: JsonFilter<"CoreTenant">
     metadata?: JsonFilter<"CoreTenant">
     createdAt?: DateTimeFilter<"CoreTenant"> | Date | string
@@ -31057,6 +34079,9 @@ export namespace Prisma {
     notifications?: SysNotificationListRelationFilter
     jobs?: SysJobListRelationFilter
     apiKeys?: SysApiKeyListRelationFilter
+    translations?: SysTranslationListRelationFilter
+    uiTranslations?: SysUiTranslationListRelationFilter
+    aiUsageLogs?: AiUsageLogListRelationFilter
   }, "id" | "slug">
 
   export type CoreTenantOrderByWithAggregationInput = {
@@ -31066,6 +34091,7 @@ export namespace Prisma {
     plan?: SortOrder
     status?: SortOrder
     trialEndsAt?: SortOrderInput | SortOrder
+    aiMonthlyTokenQuota?: SortOrderInput | SortOrder
     settings?: SortOrder
     metadata?: SortOrder
     createdAt?: SortOrder
@@ -31073,8 +34099,10 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     isActive?: SortOrder
     _count?: CoreTenantCountOrderByAggregateInput
+    _avg?: CoreTenantAvgOrderByAggregateInput
     _max?: CoreTenantMaxOrderByAggregateInput
     _min?: CoreTenantMinOrderByAggregateInput
+    _sum?: CoreTenantSumOrderByAggregateInput
   }
 
   export type CoreTenantScalarWhereWithAggregatesInput = {
@@ -31087,6 +34115,7 @@ export namespace Prisma {
     plan?: StringWithAggregatesFilter<"CoreTenant"> | string
     status?: StringWithAggregatesFilter<"CoreTenant"> | string
     trialEndsAt?: DateTimeNullableWithAggregatesFilter<"CoreTenant"> | Date | string | null
+    aiMonthlyTokenQuota?: IntNullableWithAggregatesFilter<"CoreTenant"> | number | null
     settings?: JsonWithAggregatesFilter<"CoreTenant">
     metadata?: JsonWithAggregatesFilter<"CoreTenant">
     createdAt?: DateTimeWithAggregatesFilter<"CoreTenant"> | Date | string
@@ -33367,12 +36396,17 @@ export namespace Prisma {
     field?: StringFilter<"SysTranslation"> | string
     locale?: StringFilter<"SysTranslation"> | string
     value?: StringFilter<"SysTranslation"> | string
+    source?: StringFilter<"SysTranslation"> | string
+    isApproved?: BoolFilter<"SysTranslation"> | boolean
+    approvedBy?: UuidNullableFilter<"SysTranslation"> | string | null
+    approvedAt?: DateTimeNullableFilter<"SysTranslation"> | Date | string | null
     createdAt?: DateTimeFilter<"SysTranslation"> | Date | string
     updatedAt?: DateTimeFilter<"SysTranslation"> | Date | string
     createdBy?: UuidNullableFilter<"SysTranslation"> | string | null
     updatedBy?: UuidNullableFilter<"SysTranslation"> | string | null
     deletedAt?: DateTimeNullableFilter<"SysTranslation"> | Date | string | null
     isActive?: BoolFilter<"SysTranslation"> | boolean
+    tenant?: XOR<CoreTenantScalarRelationFilter, CoreTenantWhereInput>
   }
 
   export type SysTranslationOrderByWithRelationInput = {
@@ -33383,12 +36417,17 @@ export namespace Prisma {
     field?: SortOrder
     locale?: SortOrder
     value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdBy?: SortOrderInput | SortOrder
     updatedBy?: SortOrderInput | SortOrder
     deletedAt?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    tenant?: CoreTenantOrderByWithRelationInput
   }
 
   export type SysTranslationWhereUniqueInput = Prisma.AtLeast<{
@@ -33403,12 +36442,17 @@ export namespace Prisma {
     field?: StringFilter<"SysTranslation"> | string
     locale?: StringFilter<"SysTranslation"> | string
     value?: StringFilter<"SysTranslation"> | string
+    source?: StringFilter<"SysTranslation"> | string
+    isApproved?: BoolFilter<"SysTranslation"> | boolean
+    approvedBy?: UuidNullableFilter<"SysTranslation"> | string | null
+    approvedAt?: DateTimeNullableFilter<"SysTranslation"> | Date | string | null
     createdAt?: DateTimeFilter<"SysTranslation"> | Date | string
     updatedAt?: DateTimeFilter<"SysTranslation"> | Date | string
     createdBy?: UuidNullableFilter<"SysTranslation"> | string | null
     updatedBy?: UuidNullableFilter<"SysTranslation"> | string | null
     deletedAt?: DateTimeNullableFilter<"SysTranslation"> | Date | string | null
     isActive?: BoolFilter<"SysTranslation"> | boolean
+    tenant?: XOR<CoreTenantScalarRelationFilter, CoreTenantWhereInput>
   }, "id" | "tenantId_entityType_entityId_field_locale">
 
   export type SysTranslationOrderByWithAggregationInput = {
@@ -33419,6 +36463,10 @@ export namespace Prisma {
     field?: SortOrder
     locale?: SortOrder
     value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdBy?: SortOrderInput | SortOrder
@@ -33441,12 +36489,249 @@ export namespace Prisma {
     field?: StringWithAggregatesFilter<"SysTranslation"> | string
     locale?: StringWithAggregatesFilter<"SysTranslation"> | string
     value?: StringWithAggregatesFilter<"SysTranslation"> | string
+    source?: StringWithAggregatesFilter<"SysTranslation"> | string
+    isApproved?: BoolWithAggregatesFilter<"SysTranslation"> | boolean
+    approvedBy?: UuidNullableWithAggregatesFilter<"SysTranslation"> | string | null
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"SysTranslation"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"SysTranslation"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SysTranslation"> | Date | string
     createdBy?: UuidNullableWithAggregatesFilter<"SysTranslation"> | string | null
     updatedBy?: UuidNullableWithAggregatesFilter<"SysTranslation"> | string | null
     deletedAt?: DateTimeNullableWithAggregatesFilter<"SysTranslation"> | Date | string | null
     isActive?: BoolWithAggregatesFilter<"SysTranslation"> | boolean
+  }
+
+  export type SysUiTranslationWhereInput = {
+    AND?: SysUiTranslationWhereInput | SysUiTranslationWhereInput[]
+    OR?: SysUiTranslationWhereInput[]
+    NOT?: SysUiTranslationWhereInput | SysUiTranslationWhereInput[]
+    id?: UuidFilter<"SysUiTranslation"> | string
+    tenantId?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    namespace?: StringFilter<"SysUiTranslation"> | string
+    key?: StringFilter<"SysUiTranslation"> | string
+    locale?: StringFilter<"SysUiTranslation"> | string
+    value?: StringFilter<"SysUiTranslation"> | string
+    source?: StringFilter<"SysUiTranslation"> | string
+    isApproved?: BoolFilter<"SysUiTranslation"> | boolean
+    approvedBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    approvedAt?: DateTimeNullableFilter<"SysUiTranslation"> | Date | string | null
+    createdAt?: DateTimeFilter<"SysUiTranslation"> | Date | string
+    updatedAt?: DateTimeFilter<"SysUiTranslation"> | Date | string
+    createdBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    updatedBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    deletedAt?: DateTimeNullableFilter<"SysUiTranslation"> | Date | string | null
+    isActive?: BoolFilter<"SysUiTranslation"> | boolean
+    tenant?: XOR<CoreTenantNullableScalarRelationFilter, CoreTenantWhereInput> | null
+  }
+
+  export type SysUiTranslationOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    namespace?: SortOrder
+    key?: SortOrder
+    locale?: SortOrder
+    value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    updatedBy?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    tenant?: CoreTenantOrderByWithRelationInput
+  }
+
+  export type SysUiTranslationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tenantId_namespace_key_locale?: SysUiTranslationTenantIdNamespaceKeyLocaleCompoundUniqueInput
+    AND?: SysUiTranslationWhereInput | SysUiTranslationWhereInput[]
+    OR?: SysUiTranslationWhereInput[]
+    NOT?: SysUiTranslationWhereInput | SysUiTranslationWhereInput[]
+    tenantId?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    namespace?: StringFilter<"SysUiTranslation"> | string
+    key?: StringFilter<"SysUiTranslation"> | string
+    locale?: StringFilter<"SysUiTranslation"> | string
+    value?: StringFilter<"SysUiTranslation"> | string
+    source?: StringFilter<"SysUiTranslation"> | string
+    isApproved?: BoolFilter<"SysUiTranslation"> | boolean
+    approvedBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    approvedAt?: DateTimeNullableFilter<"SysUiTranslation"> | Date | string | null
+    createdAt?: DateTimeFilter<"SysUiTranslation"> | Date | string
+    updatedAt?: DateTimeFilter<"SysUiTranslation"> | Date | string
+    createdBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    updatedBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    deletedAt?: DateTimeNullableFilter<"SysUiTranslation"> | Date | string | null
+    isActive?: BoolFilter<"SysUiTranslation"> | boolean
+    tenant?: XOR<CoreTenantNullableScalarRelationFilter, CoreTenantWhereInput> | null
+  }, "id" | "tenantId_namespace_key_locale">
+
+  export type SysUiTranslationOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    namespace?: SortOrder
+    key?: SortOrder
+    locale?: SortOrder
+    value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    updatedBy?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    _count?: SysUiTranslationCountOrderByAggregateInput
+    _max?: SysUiTranslationMaxOrderByAggregateInput
+    _min?: SysUiTranslationMinOrderByAggregateInput
+  }
+
+  export type SysUiTranslationScalarWhereWithAggregatesInput = {
+    AND?: SysUiTranslationScalarWhereWithAggregatesInput | SysUiTranslationScalarWhereWithAggregatesInput[]
+    OR?: SysUiTranslationScalarWhereWithAggregatesInput[]
+    NOT?: SysUiTranslationScalarWhereWithAggregatesInput | SysUiTranslationScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"SysUiTranslation"> | string
+    tenantId?: UuidNullableWithAggregatesFilter<"SysUiTranslation"> | string | null
+    namespace?: StringWithAggregatesFilter<"SysUiTranslation"> | string
+    key?: StringWithAggregatesFilter<"SysUiTranslation"> | string
+    locale?: StringWithAggregatesFilter<"SysUiTranslation"> | string
+    value?: StringWithAggregatesFilter<"SysUiTranslation"> | string
+    source?: StringWithAggregatesFilter<"SysUiTranslation"> | string
+    isApproved?: BoolWithAggregatesFilter<"SysUiTranslation"> | boolean
+    approvedBy?: UuidNullableWithAggregatesFilter<"SysUiTranslation"> | string | null
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"SysUiTranslation"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SysUiTranslation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SysUiTranslation"> | Date | string
+    createdBy?: UuidNullableWithAggregatesFilter<"SysUiTranslation"> | string | null
+    updatedBy?: UuidNullableWithAggregatesFilter<"SysUiTranslation"> | string | null
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"SysUiTranslation"> | Date | string | null
+    isActive?: BoolWithAggregatesFilter<"SysUiTranslation"> | boolean
+  }
+
+  export type AiUsageLogWhereInput = {
+    AND?: AiUsageLogWhereInput | AiUsageLogWhereInput[]
+    OR?: AiUsageLogWhereInput[]
+    NOT?: AiUsageLogWhereInput | AiUsageLogWhereInput[]
+    id?: UuidFilter<"AiUsageLog"> | string
+    tenantId?: UuidFilter<"AiUsageLog"> | string
+    userId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    sessionId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    module?: StringFilter<"AiUsageLog"> | string
+    feature?: StringFilter<"AiUsageLog"> | string
+    provider?: StringFilter<"AiUsageLog"> | string
+    model?: StringFilter<"AiUsageLog"> | string
+    promptTokens?: IntFilter<"AiUsageLog"> | number
+    completionTokens?: IntFilter<"AiUsageLog"> | number
+    totalTokens?: IntFilter<"AiUsageLog"> | number
+    estimatedCostUsd?: DecimalFilter<"AiUsageLog"> | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: IntNullableFilter<"AiUsageLog"> | number | null
+    status?: StringFilter<"AiUsageLog"> | string
+    errorCode?: StringNullableFilter<"AiUsageLog"> | string | null
+    requestId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    metadata?: JsonNullableFilter<"AiUsageLog">
+    occurredAt?: DateTimeFilter<"AiUsageLog"> | Date | string
+    tenant?: XOR<CoreTenantScalarRelationFilter, CoreTenantWhereInput>
+  }
+
+  export type AiUsageLogOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    sessionId?: SortOrderInput | SortOrder
+    module?: SortOrder
+    feature?: SortOrder
+    provider?: SortOrder
+    model?: SortOrder
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrderInput | SortOrder
+    status?: SortOrder
+    errorCode?: SortOrderInput | SortOrder
+    requestId?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    occurredAt?: SortOrder
+    tenant?: CoreTenantOrderByWithRelationInput
+  }
+
+  export type AiUsageLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AiUsageLogWhereInput | AiUsageLogWhereInput[]
+    OR?: AiUsageLogWhereInput[]
+    NOT?: AiUsageLogWhereInput | AiUsageLogWhereInput[]
+    tenantId?: UuidFilter<"AiUsageLog"> | string
+    userId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    sessionId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    module?: StringFilter<"AiUsageLog"> | string
+    feature?: StringFilter<"AiUsageLog"> | string
+    provider?: StringFilter<"AiUsageLog"> | string
+    model?: StringFilter<"AiUsageLog"> | string
+    promptTokens?: IntFilter<"AiUsageLog"> | number
+    completionTokens?: IntFilter<"AiUsageLog"> | number
+    totalTokens?: IntFilter<"AiUsageLog"> | number
+    estimatedCostUsd?: DecimalFilter<"AiUsageLog"> | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: IntNullableFilter<"AiUsageLog"> | number | null
+    status?: StringFilter<"AiUsageLog"> | string
+    errorCode?: StringNullableFilter<"AiUsageLog"> | string | null
+    requestId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    metadata?: JsonNullableFilter<"AiUsageLog">
+    occurredAt?: DateTimeFilter<"AiUsageLog"> | Date | string
+    tenant?: XOR<CoreTenantScalarRelationFilter, CoreTenantWhereInput>
+  }, "id">
+
+  export type AiUsageLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    sessionId?: SortOrderInput | SortOrder
+    module?: SortOrder
+    feature?: SortOrder
+    provider?: SortOrder
+    model?: SortOrder
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrderInput | SortOrder
+    status?: SortOrder
+    errorCode?: SortOrderInput | SortOrder
+    requestId?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    occurredAt?: SortOrder
+    _count?: AiUsageLogCountOrderByAggregateInput
+    _avg?: AiUsageLogAvgOrderByAggregateInput
+    _max?: AiUsageLogMaxOrderByAggregateInput
+    _min?: AiUsageLogMinOrderByAggregateInput
+    _sum?: AiUsageLogSumOrderByAggregateInput
+  }
+
+  export type AiUsageLogScalarWhereWithAggregatesInput = {
+    AND?: AiUsageLogScalarWhereWithAggregatesInput | AiUsageLogScalarWhereWithAggregatesInput[]
+    OR?: AiUsageLogScalarWhereWithAggregatesInput[]
+    NOT?: AiUsageLogScalarWhereWithAggregatesInput | AiUsageLogScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"AiUsageLog"> | string
+    tenantId?: UuidWithAggregatesFilter<"AiUsageLog"> | string
+    userId?: UuidNullableWithAggregatesFilter<"AiUsageLog"> | string | null
+    sessionId?: UuidNullableWithAggregatesFilter<"AiUsageLog"> | string | null
+    module?: StringWithAggregatesFilter<"AiUsageLog"> | string
+    feature?: StringWithAggregatesFilter<"AiUsageLog"> | string
+    provider?: StringWithAggregatesFilter<"AiUsageLog"> | string
+    model?: StringWithAggregatesFilter<"AiUsageLog"> | string
+    promptTokens?: IntWithAggregatesFilter<"AiUsageLog"> | number
+    completionTokens?: IntWithAggregatesFilter<"AiUsageLog"> | number
+    totalTokens?: IntWithAggregatesFilter<"AiUsageLog"> | number
+    estimatedCostUsd?: DecimalWithAggregatesFilter<"AiUsageLog"> | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: IntNullableWithAggregatesFilter<"AiUsageLog"> | number | null
+    status?: StringWithAggregatesFilter<"AiUsageLog"> | string
+    errorCode?: StringNullableWithAggregatesFilter<"AiUsageLog"> | string | null
+    requestId?: UuidNullableWithAggregatesFilter<"AiUsageLog"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"AiUsageLog">
+    occurredAt?: DateTimeWithAggregatesFilter<"AiUsageLog"> | Date | string
   }
 
   export type CoreTenantCreateInput = {
@@ -33456,6 +36741,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -33472,6 +36758,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateInput = {
@@ -33481,6 +36770,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -33497,6 +36787,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUpdateInput = {
@@ -33506,6 +36799,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33522,6 +36816,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateInput = {
@@ -33531,6 +36828,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33547,6 +36845,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantCreateManyInput = {
@@ -33556,6 +36857,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -33571,6 +36873,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33586,6 +36889,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36254,18 +39558,22 @@ export namespace Prisma {
 
   export type SysTranslationCreateInput = {
     id?: string
-    tenantId: string
     entityType: string
     entityId: string
     field: string
     locale: string
     value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: string | null
     updatedBy?: string | null
     deletedAt?: Date | string | null
     isActive?: boolean
+    tenant: CoreTenantCreateNestedOneWithoutTranslationsInput
   }
 
   export type SysTranslationUncheckedCreateInput = {
@@ -36276,6 +39584,10 @@ export namespace Prisma {
     field: string
     locale: string
     value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: string | null
@@ -36286,18 +39598,22 @@ export namespace Prisma {
 
   export type SysTranslationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tenantId?: StringFieldUpdateOperationsInput | string
     entityType?: StringFieldUpdateOperationsInput | string
     entityId?: StringFieldUpdateOperationsInput | string
     field?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: NullableStringFieldUpdateOperationsInput | string | null
     updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    tenant?: CoreTenantUpdateOneRequiredWithoutTranslationsNestedInput
   }
 
   export type SysTranslationUncheckedUpdateInput = {
@@ -36308,6 +39624,10 @@ export namespace Prisma {
     field?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36324,6 +39644,10 @@ export namespace Prisma {
     field: string
     locale: string
     value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: string | null
@@ -36334,12 +39658,15 @@ export namespace Prisma {
 
   export type SysTranslationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tenantId?: StringFieldUpdateOperationsInput | string
     entityType?: StringFieldUpdateOperationsInput | string
     entityId?: StringFieldUpdateOperationsInput | string
     field?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36356,12 +39683,294 @@ export namespace Prisma {
     field?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: NullableStringFieldUpdateOperationsInput | string | null
     updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysUiTranslationCreateInput = {
+    id?: string
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    tenant?: CoreTenantCreateNestedOneWithoutUiTranslationsInput
+  }
+
+  export type SysUiTranslationUncheckedCreateInput = {
+    id?: string
+    tenantId?: string | null
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysUiTranslationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    tenant?: CoreTenantUpdateOneWithoutUiTranslationsNestedInput
+  }
+
+  export type SysUiTranslationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysUiTranslationCreateManyInput = {
+    id?: string
+    tenantId?: string | null
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysUiTranslationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysUiTranslationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AiUsageLogCreateInput = {
+    id?: string
+    userId?: string | null
+    sessionId?: string | null
+    module: string
+    feature: string
+    provider?: string
+    model: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+    estimatedCostUsd?: Decimal | DecimalJsLike | number | string
+    requestDurationMs?: number | null
+    status?: string
+    errorCode?: string | null
+    requestId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: Date | string
+    tenant: CoreTenantCreateNestedOneWithoutAiUsageLogsInput
+  }
+
+  export type AiUsageLogUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    userId?: string | null
+    sessionId?: string | null
+    module: string
+    feature: string
+    provider?: string
+    model: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+    estimatedCostUsd?: Decimal | DecimalJsLike | number | string
+    requestDurationMs?: number | null
+    status?: string
+    errorCode?: string | null
+    requestId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: Date | string
+  }
+
+  export type AiUsageLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: CoreTenantUpdateOneRequiredWithoutAiUsageLogsNestedInput
+  }
+
+  export type AiUsageLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiUsageLogCreateManyInput = {
+    id?: string
+    tenantId: string
+    userId?: string | null
+    sessionId?: string | null
+    module: string
+    feature: string
+    provider?: string
+    model: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+    estimatedCostUsd?: Decimal | DecimalJsLike | number | string
+    requestDurationMs?: number | null
+    status?: string
+    errorCode?: string | null
+    requestId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: Date | string
+  }
+
+  export type AiUsageLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiUsageLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -36400,6 +40009,17 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
   export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -36500,6 +40120,24 @@ export namespace Prisma {
     none?: SysApiKeyWhereInput
   }
 
+  export type SysTranslationListRelationFilter = {
+    every?: SysTranslationWhereInput
+    some?: SysTranslationWhereInput
+    none?: SysTranslationWhereInput
+  }
+
+  export type SysUiTranslationListRelationFilter = {
+    every?: SysUiTranslationWhereInput
+    some?: SysUiTranslationWhereInput
+    none?: SysUiTranslationWhereInput
+  }
+
+  export type AiUsageLogListRelationFilter = {
+    every?: AiUsageLogWhereInput
+    some?: AiUsageLogWhereInput
+    none?: AiUsageLogWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -36541,6 +40179,18 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type SysTranslationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SysUiTranslationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AiUsageLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type CoreTenantCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -36548,12 +40198,17 @@ export namespace Prisma {
     plan?: SortOrder
     status?: SortOrder
     trialEndsAt?: SortOrder
+    aiMonthlyTokenQuota?: SortOrder
     settings?: SortOrder
     metadata?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
     isActive?: SortOrder
+  }
+
+  export type CoreTenantAvgOrderByAggregateInput = {
+    aiMonthlyTokenQuota?: SortOrder
   }
 
   export type CoreTenantMaxOrderByAggregateInput = {
@@ -36563,6 +40218,7 @@ export namespace Prisma {
     plan?: SortOrder
     status?: SortOrder
     trialEndsAt?: SortOrder
+    aiMonthlyTokenQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -36576,10 +40232,15 @@ export namespace Prisma {
     plan?: SortOrder
     status?: SortOrder
     trialEndsAt?: SortOrder
+    aiMonthlyTokenQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
     isActive?: SortOrder
+  }
+
+  export type CoreTenantSumOrderByAggregateInput = {
+    aiMonthlyTokenQuota?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -36627,6 +40288,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -38095,6 +41772,10 @@ export namespace Prisma {
     field?: SortOrder
     locale?: SortOrder
     value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrder
+    approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdBy?: SortOrder
@@ -38111,6 +41792,10 @@ export namespace Prisma {
     field?: SortOrder
     locale?: SortOrder
     value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrder
+    approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdBy?: SortOrder
@@ -38127,12 +41812,189 @@ export namespace Prisma {
     field?: SortOrder
     locale?: SortOrder
     value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrder
+    approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdBy?: SortOrder
     updatedBy?: SortOrder
     deletedAt?: SortOrder
     isActive?: SortOrder
+  }
+
+  export type CoreTenantNullableScalarRelationFilter = {
+    is?: CoreTenantWhereInput | null
+    isNot?: CoreTenantWhereInput | null
+  }
+
+  export type SysUiTranslationTenantIdNamespaceKeyLocaleCompoundUniqueInput = {
+    tenantId: string
+    namespace: string
+    key: string
+    locale: string
+  }
+
+  export type SysUiTranslationCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    namespace?: SortOrder
+    key?: SortOrder
+    locale?: SortOrder
+    value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrder
+    approvedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    deletedAt?: SortOrder
+    isActive?: SortOrder
+  }
+
+  export type SysUiTranslationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    namespace?: SortOrder
+    key?: SortOrder
+    locale?: SortOrder
+    value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrder
+    approvedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    deletedAt?: SortOrder
+    isActive?: SortOrder
+  }
+
+  export type SysUiTranslationMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    namespace?: SortOrder
+    key?: SortOrder
+    locale?: SortOrder
+    value?: SortOrder
+    source?: SortOrder
+    isApproved?: SortOrder
+    approvedBy?: SortOrder
+    approvedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    deletedAt?: SortOrder
+    isActive?: SortOrder
+  }
+
+  export type DecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type AiUsageLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    sessionId?: SortOrder
+    module?: SortOrder
+    feature?: SortOrder
+    provider?: SortOrder
+    model?: SortOrder
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrder
+    status?: SortOrder
+    errorCode?: SortOrder
+    requestId?: SortOrder
+    metadata?: SortOrder
+    occurredAt?: SortOrder
+  }
+
+  export type AiUsageLogAvgOrderByAggregateInput = {
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrder
+  }
+
+  export type AiUsageLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    sessionId?: SortOrder
+    module?: SortOrder
+    feature?: SortOrder
+    provider?: SortOrder
+    model?: SortOrder
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrder
+    status?: SortOrder
+    errorCode?: SortOrder
+    requestId?: SortOrder
+    occurredAt?: SortOrder
+  }
+
+  export type AiUsageLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    sessionId?: SortOrder
+    module?: SortOrder
+    feature?: SortOrder
+    provider?: SortOrder
+    model?: SortOrder
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrder
+    status?: SortOrder
+    errorCode?: SortOrder
+    requestId?: SortOrder
+    occurredAt?: SortOrder
+  }
+
+  export type AiUsageLogSumOrderByAggregateInput = {
+    promptTokens?: SortOrder
+    completionTokens?: SortOrder
+    totalTokens?: SortOrder
+    estimatedCostUsd?: SortOrder
+    requestDurationMs?: SortOrder
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type CoreCompanyCreateNestedManyWithoutTenantInput = {
@@ -38204,6 +42066,27 @@ export namespace Prisma {
     connect?: SysApiKeyWhereUniqueInput | SysApiKeyWhereUniqueInput[]
   }
 
+  export type SysTranslationCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SysTranslationCreateWithoutTenantInput, SysTranslationUncheckedCreateWithoutTenantInput> | SysTranslationCreateWithoutTenantInput[] | SysTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysTranslationCreateOrConnectWithoutTenantInput | SysTranslationCreateOrConnectWithoutTenantInput[]
+    createMany?: SysTranslationCreateManyTenantInputEnvelope
+    connect?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+  }
+
+  export type SysUiTranslationCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SysUiTranslationCreateWithoutTenantInput, SysUiTranslationUncheckedCreateWithoutTenantInput> | SysUiTranslationCreateWithoutTenantInput[] | SysUiTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysUiTranslationCreateOrConnectWithoutTenantInput | SysUiTranslationCreateOrConnectWithoutTenantInput[]
+    createMany?: SysUiTranslationCreateManyTenantInputEnvelope
+    connect?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+  }
+
+  export type AiUsageLogCreateNestedManyWithoutTenantInput = {
+    create?: XOR<AiUsageLogCreateWithoutTenantInput, AiUsageLogUncheckedCreateWithoutTenantInput> | AiUsageLogCreateWithoutTenantInput[] | AiUsageLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: AiUsageLogCreateOrConnectWithoutTenantInput | AiUsageLogCreateOrConnectWithoutTenantInput[]
+    createMany?: AiUsageLogCreateManyTenantInputEnvelope
+    connect?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+  }
+
   export type CoreCompanyUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<CoreCompanyCreateWithoutTenantInput, CoreCompanyUncheckedCreateWithoutTenantInput> | CoreCompanyCreateWithoutTenantInput[] | CoreCompanyUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: CoreCompanyCreateOrConnectWithoutTenantInput | CoreCompanyCreateOrConnectWithoutTenantInput[]
@@ -38273,12 +42156,41 @@ export namespace Prisma {
     connect?: SysApiKeyWhereUniqueInput | SysApiKeyWhereUniqueInput[]
   }
 
+  export type SysTranslationUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SysTranslationCreateWithoutTenantInput, SysTranslationUncheckedCreateWithoutTenantInput> | SysTranslationCreateWithoutTenantInput[] | SysTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysTranslationCreateOrConnectWithoutTenantInput | SysTranslationCreateOrConnectWithoutTenantInput[]
+    createMany?: SysTranslationCreateManyTenantInputEnvelope
+    connect?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+  }
+
+  export type SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SysUiTranslationCreateWithoutTenantInput, SysUiTranslationUncheckedCreateWithoutTenantInput> | SysUiTranslationCreateWithoutTenantInput[] | SysUiTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysUiTranslationCreateOrConnectWithoutTenantInput | SysUiTranslationCreateOrConnectWithoutTenantInput[]
+    createMany?: SysUiTranslationCreateManyTenantInputEnvelope
+    connect?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+  }
+
+  export type AiUsageLogUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<AiUsageLogCreateWithoutTenantInput, AiUsageLogUncheckedCreateWithoutTenantInput> | AiUsageLogCreateWithoutTenantInput[] | AiUsageLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: AiUsageLogCreateOrConnectWithoutTenantInput | AiUsageLogCreateOrConnectWithoutTenantInput[]
+    createMany?: AiUsageLogCreateManyTenantInputEnvelope
+    connect?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -38425,6 +42337,48 @@ export namespace Prisma {
     deleteMany?: SysApiKeyScalarWhereInput | SysApiKeyScalarWhereInput[]
   }
 
+  export type SysTranslationUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SysTranslationCreateWithoutTenantInput, SysTranslationUncheckedCreateWithoutTenantInput> | SysTranslationCreateWithoutTenantInput[] | SysTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysTranslationCreateOrConnectWithoutTenantInput | SysTranslationCreateOrConnectWithoutTenantInput[]
+    upsert?: SysTranslationUpsertWithWhereUniqueWithoutTenantInput | SysTranslationUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SysTranslationCreateManyTenantInputEnvelope
+    set?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    disconnect?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    delete?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    connect?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    update?: SysTranslationUpdateWithWhereUniqueWithoutTenantInput | SysTranslationUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SysTranslationUpdateManyWithWhereWithoutTenantInput | SysTranslationUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SysTranslationScalarWhereInput | SysTranslationScalarWhereInput[]
+  }
+
+  export type SysUiTranslationUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SysUiTranslationCreateWithoutTenantInput, SysUiTranslationUncheckedCreateWithoutTenantInput> | SysUiTranslationCreateWithoutTenantInput[] | SysUiTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysUiTranslationCreateOrConnectWithoutTenantInput | SysUiTranslationCreateOrConnectWithoutTenantInput[]
+    upsert?: SysUiTranslationUpsertWithWhereUniqueWithoutTenantInput | SysUiTranslationUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SysUiTranslationCreateManyTenantInputEnvelope
+    set?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    disconnect?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    delete?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    connect?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    update?: SysUiTranslationUpdateWithWhereUniqueWithoutTenantInput | SysUiTranslationUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SysUiTranslationUpdateManyWithWhereWithoutTenantInput | SysUiTranslationUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SysUiTranslationScalarWhereInput | SysUiTranslationScalarWhereInput[]
+  }
+
+  export type AiUsageLogUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<AiUsageLogCreateWithoutTenantInput, AiUsageLogUncheckedCreateWithoutTenantInput> | AiUsageLogCreateWithoutTenantInput[] | AiUsageLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: AiUsageLogCreateOrConnectWithoutTenantInput | AiUsageLogCreateOrConnectWithoutTenantInput[]
+    upsert?: AiUsageLogUpsertWithWhereUniqueWithoutTenantInput | AiUsageLogUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: AiUsageLogCreateManyTenantInputEnvelope
+    set?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    disconnect?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    delete?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    connect?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    update?: AiUsageLogUpdateWithWhereUniqueWithoutTenantInput | AiUsageLogUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: AiUsageLogUpdateManyWithWhereWithoutTenantInput | AiUsageLogUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: AiUsageLogScalarWhereInput | AiUsageLogScalarWhereInput[]
+  }
+
   export type CoreCompanyUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<CoreCompanyCreateWithoutTenantInput, CoreCompanyUncheckedCreateWithoutTenantInput> | CoreCompanyCreateWithoutTenantInput[] | CoreCompanyUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: CoreCompanyCreateOrConnectWithoutTenantInput | CoreCompanyCreateOrConnectWithoutTenantInput[]
@@ -38559,6 +42513,48 @@ export namespace Prisma {
     update?: SysApiKeyUpdateWithWhereUniqueWithoutTenantInput | SysApiKeyUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: SysApiKeyUpdateManyWithWhereWithoutTenantInput | SysApiKeyUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: SysApiKeyScalarWhereInput | SysApiKeyScalarWhereInput[]
+  }
+
+  export type SysTranslationUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SysTranslationCreateWithoutTenantInput, SysTranslationUncheckedCreateWithoutTenantInput> | SysTranslationCreateWithoutTenantInput[] | SysTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysTranslationCreateOrConnectWithoutTenantInput | SysTranslationCreateOrConnectWithoutTenantInput[]
+    upsert?: SysTranslationUpsertWithWhereUniqueWithoutTenantInput | SysTranslationUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SysTranslationCreateManyTenantInputEnvelope
+    set?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    disconnect?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    delete?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    connect?: SysTranslationWhereUniqueInput | SysTranslationWhereUniqueInput[]
+    update?: SysTranslationUpdateWithWhereUniqueWithoutTenantInput | SysTranslationUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SysTranslationUpdateManyWithWhereWithoutTenantInput | SysTranslationUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SysTranslationScalarWhereInput | SysTranslationScalarWhereInput[]
+  }
+
+  export type SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SysUiTranslationCreateWithoutTenantInput, SysUiTranslationUncheckedCreateWithoutTenantInput> | SysUiTranslationCreateWithoutTenantInput[] | SysUiTranslationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SysUiTranslationCreateOrConnectWithoutTenantInput | SysUiTranslationCreateOrConnectWithoutTenantInput[]
+    upsert?: SysUiTranslationUpsertWithWhereUniqueWithoutTenantInput | SysUiTranslationUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SysUiTranslationCreateManyTenantInputEnvelope
+    set?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    disconnect?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    delete?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    connect?: SysUiTranslationWhereUniqueInput | SysUiTranslationWhereUniqueInput[]
+    update?: SysUiTranslationUpdateWithWhereUniqueWithoutTenantInput | SysUiTranslationUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SysUiTranslationUpdateManyWithWhereWithoutTenantInput | SysUiTranslationUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SysUiTranslationScalarWhereInput | SysUiTranslationScalarWhereInput[]
+  }
+
+  export type AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<AiUsageLogCreateWithoutTenantInput, AiUsageLogUncheckedCreateWithoutTenantInput> | AiUsageLogCreateWithoutTenantInput[] | AiUsageLogUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: AiUsageLogCreateOrConnectWithoutTenantInput | AiUsageLogCreateOrConnectWithoutTenantInput[]
+    upsert?: AiUsageLogUpsertWithWhereUniqueWithoutTenantInput | AiUsageLogUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: AiUsageLogCreateManyTenantInputEnvelope
+    set?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    disconnect?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    delete?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    connect?: AiUsageLogWhereUniqueInput | AiUsageLogWhereUniqueInput[]
+    update?: AiUsageLogUpdateWithWhereUniqueWithoutTenantInput | AiUsageLogUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: AiUsageLogUpdateManyWithWhereWithoutTenantInput | AiUsageLogUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: AiUsageLogScalarWhereInput | AiUsageLogScalarWhereInput[]
   }
 
   export type CoreTenantCreateNestedOneWithoutCompaniesInput = {
@@ -39779,6 +43775,58 @@ export namespace Prisma {
     update?: XOR<XOR<CoreTenantUpdateToOneWithWhereWithoutApiKeysInput, CoreTenantUpdateWithoutApiKeysInput>, CoreTenantUncheckedUpdateWithoutApiKeysInput>
   }
 
+  export type CoreTenantCreateNestedOneWithoutTranslationsInput = {
+    create?: XOR<CoreTenantCreateWithoutTranslationsInput, CoreTenantUncheckedCreateWithoutTranslationsInput>
+    connectOrCreate?: CoreTenantCreateOrConnectWithoutTranslationsInput
+    connect?: CoreTenantWhereUniqueInput
+  }
+
+  export type CoreTenantUpdateOneRequiredWithoutTranslationsNestedInput = {
+    create?: XOR<CoreTenantCreateWithoutTranslationsInput, CoreTenantUncheckedCreateWithoutTranslationsInput>
+    connectOrCreate?: CoreTenantCreateOrConnectWithoutTranslationsInput
+    upsert?: CoreTenantUpsertWithoutTranslationsInput
+    connect?: CoreTenantWhereUniqueInput
+    update?: XOR<XOR<CoreTenantUpdateToOneWithWhereWithoutTranslationsInput, CoreTenantUpdateWithoutTranslationsInput>, CoreTenantUncheckedUpdateWithoutTranslationsInput>
+  }
+
+  export type CoreTenantCreateNestedOneWithoutUiTranslationsInput = {
+    create?: XOR<CoreTenantCreateWithoutUiTranslationsInput, CoreTenantUncheckedCreateWithoutUiTranslationsInput>
+    connectOrCreate?: CoreTenantCreateOrConnectWithoutUiTranslationsInput
+    connect?: CoreTenantWhereUniqueInput
+  }
+
+  export type CoreTenantUpdateOneWithoutUiTranslationsNestedInput = {
+    create?: XOR<CoreTenantCreateWithoutUiTranslationsInput, CoreTenantUncheckedCreateWithoutUiTranslationsInput>
+    connectOrCreate?: CoreTenantCreateOrConnectWithoutUiTranslationsInput
+    upsert?: CoreTenantUpsertWithoutUiTranslationsInput
+    disconnect?: CoreTenantWhereInput | boolean
+    delete?: CoreTenantWhereInput | boolean
+    connect?: CoreTenantWhereUniqueInput
+    update?: XOR<XOR<CoreTenantUpdateToOneWithWhereWithoutUiTranslationsInput, CoreTenantUpdateWithoutUiTranslationsInput>, CoreTenantUncheckedUpdateWithoutUiTranslationsInput>
+  }
+
+  export type CoreTenantCreateNestedOneWithoutAiUsageLogsInput = {
+    create?: XOR<CoreTenantCreateWithoutAiUsageLogsInput, CoreTenantUncheckedCreateWithoutAiUsageLogsInput>
+    connectOrCreate?: CoreTenantCreateOrConnectWithoutAiUsageLogsInput
+    connect?: CoreTenantWhereUniqueInput
+  }
+
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type CoreTenantUpdateOneRequiredWithoutAiUsageLogsNestedInput = {
+    create?: XOR<CoreTenantCreateWithoutAiUsageLogsInput, CoreTenantUncheckedCreateWithoutAiUsageLogsInput>
+    connectOrCreate?: CoreTenantCreateOrConnectWithoutAiUsageLogsInput
+    upsert?: CoreTenantUpsertWithoutAiUsageLogsInput
+    connect?: CoreTenantWhereUniqueInput
+    update?: XOR<XOR<CoreTenantUpdateToOneWithWhereWithoutAiUsageLogsInput, CoreTenantUpdateWithoutAiUsageLogsInput>, CoreTenantUncheckedUpdateWithoutAiUsageLogsInput>
+  }
+
   export type NestedUuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -39813,6 +43861,17 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -39887,7 +43946,7 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -39895,7 +43954,23 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -40047,6 +44122,33 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type CoreCompanyCreateWithoutTenantInput = {
@@ -40550,6 +44652,150 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SysTranslationCreateWithoutTenantInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    field: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysTranslationUncheckedCreateWithoutTenantInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    field: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysTranslationCreateOrConnectWithoutTenantInput = {
+    where: SysTranslationWhereUniqueInput
+    create: XOR<SysTranslationCreateWithoutTenantInput, SysTranslationUncheckedCreateWithoutTenantInput>
+  }
+
+  export type SysTranslationCreateManyTenantInputEnvelope = {
+    data: SysTranslationCreateManyTenantInput | SysTranslationCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SysUiTranslationCreateWithoutTenantInput = {
+    id?: string
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysUiTranslationUncheckedCreateWithoutTenantInput = {
+    id?: string
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysUiTranslationCreateOrConnectWithoutTenantInput = {
+    where: SysUiTranslationWhereUniqueInput
+    create: XOR<SysUiTranslationCreateWithoutTenantInput, SysUiTranslationUncheckedCreateWithoutTenantInput>
+  }
+
+  export type SysUiTranslationCreateManyTenantInputEnvelope = {
+    data: SysUiTranslationCreateManyTenantInput | SysUiTranslationCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AiUsageLogCreateWithoutTenantInput = {
+    id?: string
+    userId?: string | null
+    sessionId?: string | null
+    module: string
+    feature: string
+    provider?: string
+    model: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+    estimatedCostUsd?: Decimal | DecimalJsLike | number | string
+    requestDurationMs?: number | null
+    status?: string
+    errorCode?: string | null
+    requestId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: Date | string
+  }
+
+  export type AiUsageLogUncheckedCreateWithoutTenantInput = {
+    id?: string
+    userId?: string | null
+    sessionId?: string | null
+    module: string
+    feature: string
+    provider?: string
+    model: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+    estimatedCostUsd?: Decimal | DecimalJsLike | number | string
+    requestDurationMs?: number | null
+    status?: string
+    errorCode?: string | null
+    requestId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: Date | string
+  }
+
+  export type AiUsageLogCreateOrConnectWithoutTenantInput = {
+    where: AiUsageLogWhereUniqueInput
+    create: XOR<AiUsageLogCreateWithoutTenantInput, AiUsageLogUncheckedCreateWithoutTenantInput>
+  }
+
+  export type AiUsageLogCreateManyTenantInputEnvelope = {
+    data: AiUsageLogCreateManyTenantInput | AiUsageLogCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CoreCompanyUpsertWithWhereUniqueWithoutTenantInput = {
     where: CoreCompanyWhereUniqueInput
     update: XOR<CoreCompanyUpdateWithoutTenantInput, CoreCompanyUncheckedUpdateWithoutTenantInput>
@@ -40956,6 +45202,123 @@ export namespace Prisma {
     isActive?: BoolFilter<"SysApiKey"> | boolean
   }
 
+  export type SysTranslationUpsertWithWhereUniqueWithoutTenantInput = {
+    where: SysTranslationWhereUniqueInput
+    update: XOR<SysTranslationUpdateWithoutTenantInput, SysTranslationUncheckedUpdateWithoutTenantInput>
+    create: XOR<SysTranslationCreateWithoutTenantInput, SysTranslationUncheckedCreateWithoutTenantInput>
+  }
+
+  export type SysTranslationUpdateWithWhereUniqueWithoutTenantInput = {
+    where: SysTranslationWhereUniqueInput
+    data: XOR<SysTranslationUpdateWithoutTenantInput, SysTranslationUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type SysTranslationUpdateManyWithWhereWithoutTenantInput = {
+    where: SysTranslationScalarWhereInput
+    data: XOR<SysTranslationUpdateManyMutationInput, SysTranslationUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type SysTranslationScalarWhereInput = {
+    AND?: SysTranslationScalarWhereInput | SysTranslationScalarWhereInput[]
+    OR?: SysTranslationScalarWhereInput[]
+    NOT?: SysTranslationScalarWhereInput | SysTranslationScalarWhereInput[]
+    id?: UuidFilter<"SysTranslation"> | string
+    tenantId?: UuidFilter<"SysTranslation"> | string
+    entityType?: StringFilter<"SysTranslation"> | string
+    entityId?: UuidFilter<"SysTranslation"> | string
+    field?: StringFilter<"SysTranslation"> | string
+    locale?: StringFilter<"SysTranslation"> | string
+    value?: StringFilter<"SysTranslation"> | string
+    source?: StringFilter<"SysTranslation"> | string
+    isApproved?: BoolFilter<"SysTranslation"> | boolean
+    approvedBy?: UuidNullableFilter<"SysTranslation"> | string | null
+    approvedAt?: DateTimeNullableFilter<"SysTranslation"> | Date | string | null
+    createdAt?: DateTimeFilter<"SysTranslation"> | Date | string
+    updatedAt?: DateTimeFilter<"SysTranslation"> | Date | string
+    createdBy?: UuidNullableFilter<"SysTranslation"> | string | null
+    updatedBy?: UuidNullableFilter<"SysTranslation"> | string | null
+    deletedAt?: DateTimeNullableFilter<"SysTranslation"> | Date | string | null
+    isActive?: BoolFilter<"SysTranslation"> | boolean
+  }
+
+  export type SysUiTranslationUpsertWithWhereUniqueWithoutTenantInput = {
+    where: SysUiTranslationWhereUniqueInput
+    update: XOR<SysUiTranslationUpdateWithoutTenantInput, SysUiTranslationUncheckedUpdateWithoutTenantInput>
+    create: XOR<SysUiTranslationCreateWithoutTenantInput, SysUiTranslationUncheckedCreateWithoutTenantInput>
+  }
+
+  export type SysUiTranslationUpdateWithWhereUniqueWithoutTenantInput = {
+    where: SysUiTranslationWhereUniqueInput
+    data: XOR<SysUiTranslationUpdateWithoutTenantInput, SysUiTranslationUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type SysUiTranslationUpdateManyWithWhereWithoutTenantInput = {
+    where: SysUiTranslationScalarWhereInput
+    data: XOR<SysUiTranslationUpdateManyMutationInput, SysUiTranslationUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type SysUiTranslationScalarWhereInput = {
+    AND?: SysUiTranslationScalarWhereInput | SysUiTranslationScalarWhereInput[]
+    OR?: SysUiTranslationScalarWhereInput[]
+    NOT?: SysUiTranslationScalarWhereInput | SysUiTranslationScalarWhereInput[]
+    id?: UuidFilter<"SysUiTranslation"> | string
+    tenantId?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    namespace?: StringFilter<"SysUiTranslation"> | string
+    key?: StringFilter<"SysUiTranslation"> | string
+    locale?: StringFilter<"SysUiTranslation"> | string
+    value?: StringFilter<"SysUiTranslation"> | string
+    source?: StringFilter<"SysUiTranslation"> | string
+    isApproved?: BoolFilter<"SysUiTranslation"> | boolean
+    approvedBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    approvedAt?: DateTimeNullableFilter<"SysUiTranslation"> | Date | string | null
+    createdAt?: DateTimeFilter<"SysUiTranslation"> | Date | string
+    updatedAt?: DateTimeFilter<"SysUiTranslation"> | Date | string
+    createdBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    updatedBy?: UuidNullableFilter<"SysUiTranslation"> | string | null
+    deletedAt?: DateTimeNullableFilter<"SysUiTranslation"> | Date | string | null
+    isActive?: BoolFilter<"SysUiTranslation"> | boolean
+  }
+
+  export type AiUsageLogUpsertWithWhereUniqueWithoutTenantInput = {
+    where: AiUsageLogWhereUniqueInput
+    update: XOR<AiUsageLogUpdateWithoutTenantInput, AiUsageLogUncheckedUpdateWithoutTenantInput>
+    create: XOR<AiUsageLogCreateWithoutTenantInput, AiUsageLogUncheckedCreateWithoutTenantInput>
+  }
+
+  export type AiUsageLogUpdateWithWhereUniqueWithoutTenantInput = {
+    where: AiUsageLogWhereUniqueInput
+    data: XOR<AiUsageLogUpdateWithoutTenantInput, AiUsageLogUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type AiUsageLogUpdateManyWithWhereWithoutTenantInput = {
+    where: AiUsageLogScalarWhereInput
+    data: XOR<AiUsageLogUpdateManyMutationInput, AiUsageLogUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type AiUsageLogScalarWhereInput = {
+    AND?: AiUsageLogScalarWhereInput | AiUsageLogScalarWhereInput[]
+    OR?: AiUsageLogScalarWhereInput[]
+    NOT?: AiUsageLogScalarWhereInput | AiUsageLogScalarWhereInput[]
+    id?: UuidFilter<"AiUsageLog"> | string
+    tenantId?: UuidFilter<"AiUsageLog"> | string
+    userId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    sessionId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    module?: StringFilter<"AiUsageLog"> | string
+    feature?: StringFilter<"AiUsageLog"> | string
+    provider?: StringFilter<"AiUsageLog"> | string
+    model?: StringFilter<"AiUsageLog"> | string
+    promptTokens?: IntFilter<"AiUsageLog"> | number
+    completionTokens?: IntFilter<"AiUsageLog"> | number
+    totalTokens?: IntFilter<"AiUsageLog"> | number
+    estimatedCostUsd?: DecimalFilter<"AiUsageLog"> | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: IntNullableFilter<"AiUsageLog"> | number | null
+    status?: StringFilter<"AiUsageLog"> | string
+    errorCode?: StringNullableFilter<"AiUsageLog"> | string | null
+    requestId?: UuidNullableFilter<"AiUsageLog"> | string | null
+    metadata?: JsonNullableFilter<"AiUsageLog">
+    occurredAt?: DateTimeFilter<"AiUsageLog"> | Date | string
+  }
+
   export type CoreTenantCreateWithoutCompaniesInput = {
     id?: string
     name: string
@@ -40963,6 +45326,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -40978,6 +45342,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutCompaniesInput = {
@@ -40987,6 +45354,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -41002,6 +45370,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutCompaniesInput = {
@@ -41175,6 +45546,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41190,6 +45562,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutCompaniesInput = {
@@ -41199,6 +45574,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41214,6 +45590,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreBranchUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -42264,6 +46643,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -42279,6 +46659,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutUsersInput = {
@@ -42288,6 +46671,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -42303,6 +46687,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutUsersInput = {
@@ -42595,6 +46982,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42610,6 +46998,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutUsersInput = {
@@ -42619,6 +47010,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42634,6 +47026,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreUserProfileUpsertWithoutUserInput = {
@@ -43516,6 +47911,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -43531,6 +47927,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutRolesInput = {
@@ -43540,6 +47939,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -43555,6 +47955,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutRolesInput = {
@@ -43656,6 +48059,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43671,6 +48075,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutRolesInput = {
@@ -43680,6 +48087,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43695,6 +48103,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreRolePermissionUpsertWithWhereUniqueWithoutRoleInput = {
@@ -44599,6 +49010,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -44614,6 +49026,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutAuditLogsInput = {
@@ -44623,6 +49038,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -44638,6 +49054,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutAuditLogsInput = {
@@ -44663,6 +49082,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44678,6 +49098,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutAuditLogsInput = {
@@ -44687,6 +49110,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44702,6 +49126,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantCreateWithoutNotificationsInput = {
@@ -44711,6 +49138,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -44726,6 +49154,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutNotificationsInput = {
@@ -44735,6 +49166,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -44750,6 +49182,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutNotificationsInput = {
@@ -44844,6 +49279,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44859,6 +49295,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutNotificationsInput = {
@@ -44868,6 +49307,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44883,6 +49323,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreUserUpsertWithoutNotificationsInput = {
@@ -44967,6 +49410,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -44982,6 +49426,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutSettings_kvInput = {
@@ -44991,6 +49438,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45006,6 +49454,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutSettings_kvInput = {
@@ -45031,6 +49482,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45046,6 +49498,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutSettings_kvInput = {
@@ -45055,6 +49510,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45070,6 +49526,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantCreateWithoutBrandingInput = {
@@ -45079,6 +49538,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45094,6 +49554,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutBrandingInput = {
@@ -45103,6 +49566,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45118,6 +49582,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutBrandingInput = {
@@ -45143,6 +49610,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45158,6 +49626,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutBrandingInput = {
@@ -45167,6 +49638,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45182,6 +49654,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantCreateWithoutJobsInput = {
@@ -45191,6 +49666,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45206,6 +49682,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogCreateNestedManyWithoutTenantInput
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutJobsInput = {
@@ -45215,6 +49694,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45230,6 +49710,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUncheckedCreateNestedManyWithoutTenantInput
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutJobsInput = {
@@ -45255,6 +49738,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45270,6 +49754,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUpdateManyWithoutTenantNestedInput
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutJobsInput = {
@@ -45279,6 +49766,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45294,6 +49782,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUncheckedUpdateManyWithoutTenantNestedInput
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantCreateWithoutFeatureFlagsInput = {
@@ -45303,6 +49794,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45318,6 +49810,9 @@ export namespace Prisma {
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutFeatureFlagsInput = {
@@ -45327,6 +49822,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45342,6 +49838,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutFeatureFlagsInput = {
@@ -45367,6 +49866,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45382,6 +49882,9 @@ export namespace Prisma {
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutFeatureFlagsInput = {
@@ -45391,6 +49894,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45406,6 +49910,9 @@ export namespace Prisma {
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantCreateWithoutApiKeysInput = {
@@ -45415,6 +49922,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45430,6 +49938,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogCreateNestedManyWithoutTenantInput
     notifications?: SysNotificationCreateNestedManyWithoutTenantInput
     jobs?: SysJobCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantUncheckedCreateWithoutApiKeysInput = {
@@ -45439,6 +49950,7 @@ export namespace Prisma {
     plan?: string
     status?: string
     trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -45454,6 +49966,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUncheckedCreateNestedManyWithoutTenantInput
     notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
     jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type CoreTenantCreateOrConnectWithoutApiKeysInput = {
@@ -45479,6 +49994,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45494,6 +50010,9 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUpdateManyWithoutTenantNestedInput
     notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreTenantUncheckedUpdateWithoutApiKeysInput = {
@@ -45503,6 +50022,7 @@ export namespace Prisma {
     plan?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
     settings?: JsonNullValueInput | InputJsonValue
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45518,6 +50038,393 @@ export namespace Prisma {
     auditLogs?: SysAuditLogUncheckedUpdateManyWithoutTenantNestedInput
     notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
     jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CoreTenantCreateWithoutTranslationsInput = {
+    id?: string
+    name: string
+    slug: string
+    plan?: string
+    status?: string
+    trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    companies?: CoreCompanyCreateNestedManyWithoutTenantInput
+    users?: CoreUserCreateNestedManyWithoutTenantInput
+    roles?: CoreRoleCreateNestedManyWithoutTenantInput
+    settings_kv?: SysSettingCreateNestedManyWithoutTenantInput
+    branding?: SysBrandingCreateNestedOneWithoutTenantInput
+    featureFlags?: SysFeatureFlagCreateNestedManyWithoutTenantInput
+    auditLogs?: SysAuditLogCreateNestedManyWithoutTenantInput
+    notifications?: SysNotificationCreateNestedManyWithoutTenantInput
+    jobs?: SysJobCreateNestedManyWithoutTenantInput
+    apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
+  }
+
+  export type CoreTenantUncheckedCreateWithoutTranslationsInput = {
+    id?: string
+    name: string
+    slug: string
+    plan?: string
+    status?: string
+    trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    companies?: CoreCompanyUncheckedCreateNestedManyWithoutTenantInput
+    users?: CoreUserUncheckedCreateNestedManyWithoutTenantInput
+    roles?: CoreRoleUncheckedCreateNestedManyWithoutTenantInput
+    settings_kv?: SysSettingUncheckedCreateNestedManyWithoutTenantInput
+    branding?: SysBrandingUncheckedCreateNestedOneWithoutTenantInput
+    featureFlags?: SysFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: SysAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
+    jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type CoreTenantCreateOrConnectWithoutTranslationsInput = {
+    where: CoreTenantWhereUniqueInput
+    create: XOR<CoreTenantCreateWithoutTranslationsInput, CoreTenantUncheckedCreateWithoutTranslationsInput>
+  }
+
+  export type CoreTenantUpsertWithoutTranslationsInput = {
+    update: XOR<CoreTenantUpdateWithoutTranslationsInput, CoreTenantUncheckedUpdateWithoutTranslationsInput>
+    create: XOR<CoreTenantCreateWithoutTranslationsInput, CoreTenantUncheckedCreateWithoutTranslationsInput>
+    where?: CoreTenantWhereInput
+  }
+
+  export type CoreTenantUpdateToOneWithWhereWithoutTranslationsInput = {
+    where?: CoreTenantWhereInput
+    data: XOR<CoreTenantUpdateWithoutTranslationsInput, CoreTenantUncheckedUpdateWithoutTranslationsInput>
+  }
+
+  export type CoreTenantUpdateWithoutTranslationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    companies?: CoreCompanyUpdateManyWithoutTenantNestedInput
+    users?: CoreUserUpdateManyWithoutTenantNestedInput
+    roles?: CoreRoleUpdateManyWithoutTenantNestedInput
+    settings_kv?: SysSettingUpdateManyWithoutTenantNestedInput
+    branding?: SysBrandingUpdateOneWithoutTenantNestedInput
+    featureFlags?: SysFeatureFlagUpdateManyWithoutTenantNestedInput
+    auditLogs?: SysAuditLogUpdateManyWithoutTenantNestedInput
+    notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
+    jobs?: SysJobUpdateManyWithoutTenantNestedInput
+    apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CoreTenantUncheckedUpdateWithoutTranslationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    companies?: CoreCompanyUncheckedUpdateManyWithoutTenantNestedInput
+    users?: CoreUserUncheckedUpdateManyWithoutTenantNestedInput
+    roles?: CoreRoleUncheckedUpdateManyWithoutTenantNestedInput
+    settings_kv?: SysSettingUncheckedUpdateManyWithoutTenantNestedInput
+    branding?: SysBrandingUncheckedUpdateOneWithoutTenantNestedInput
+    featureFlags?: SysFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: SysAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
+    jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CoreTenantCreateWithoutUiTranslationsInput = {
+    id?: string
+    name: string
+    slug: string
+    plan?: string
+    status?: string
+    trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    companies?: CoreCompanyCreateNestedManyWithoutTenantInput
+    users?: CoreUserCreateNestedManyWithoutTenantInput
+    roles?: CoreRoleCreateNestedManyWithoutTenantInput
+    settings_kv?: SysSettingCreateNestedManyWithoutTenantInput
+    branding?: SysBrandingCreateNestedOneWithoutTenantInput
+    featureFlags?: SysFeatureFlagCreateNestedManyWithoutTenantInput
+    auditLogs?: SysAuditLogCreateNestedManyWithoutTenantInput
+    notifications?: SysNotificationCreateNestedManyWithoutTenantInput
+    jobs?: SysJobCreateNestedManyWithoutTenantInput
+    apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogCreateNestedManyWithoutTenantInput
+  }
+
+  export type CoreTenantUncheckedCreateWithoutUiTranslationsInput = {
+    id?: string
+    name: string
+    slug: string
+    plan?: string
+    status?: string
+    trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    companies?: CoreCompanyUncheckedCreateNestedManyWithoutTenantInput
+    users?: CoreUserUncheckedCreateNestedManyWithoutTenantInput
+    roles?: CoreRoleUncheckedCreateNestedManyWithoutTenantInput
+    settings_kv?: SysSettingUncheckedCreateNestedManyWithoutTenantInput
+    branding?: SysBrandingUncheckedCreateNestedOneWithoutTenantInput
+    featureFlags?: SysFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: SysAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
+    jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    aiUsageLogs?: AiUsageLogUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type CoreTenantCreateOrConnectWithoutUiTranslationsInput = {
+    where: CoreTenantWhereUniqueInput
+    create: XOR<CoreTenantCreateWithoutUiTranslationsInput, CoreTenantUncheckedCreateWithoutUiTranslationsInput>
+  }
+
+  export type CoreTenantUpsertWithoutUiTranslationsInput = {
+    update: XOR<CoreTenantUpdateWithoutUiTranslationsInput, CoreTenantUncheckedUpdateWithoutUiTranslationsInput>
+    create: XOR<CoreTenantCreateWithoutUiTranslationsInput, CoreTenantUncheckedCreateWithoutUiTranslationsInput>
+    where?: CoreTenantWhereInput
+  }
+
+  export type CoreTenantUpdateToOneWithWhereWithoutUiTranslationsInput = {
+    where?: CoreTenantWhereInput
+    data: XOR<CoreTenantUpdateWithoutUiTranslationsInput, CoreTenantUncheckedUpdateWithoutUiTranslationsInput>
+  }
+
+  export type CoreTenantUpdateWithoutUiTranslationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    companies?: CoreCompanyUpdateManyWithoutTenantNestedInput
+    users?: CoreUserUpdateManyWithoutTenantNestedInput
+    roles?: CoreRoleUpdateManyWithoutTenantNestedInput
+    settings_kv?: SysSettingUpdateManyWithoutTenantNestedInput
+    branding?: SysBrandingUpdateOneWithoutTenantNestedInput
+    featureFlags?: SysFeatureFlagUpdateManyWithoutTenantNestedInput
+    auditLogs?: SysAuditLogUpdateManyWithoutTenantNestedInput
+    notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
+    jobs?: SysJobUpdateManyWithoutTenantNestedInput
+    apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CoreTenantUncheckedUpdateWithoutUiTranslationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    companies?: CoreCompanyUncheckedUpdateManyWithoutTenantNestedInput
+    users?: CoreUserUncheckedUpdateManyWithoutTenantNestedInput
+    roles?: CoreRoleUncheckedUpdateManyWithoutTenantNestedInput
+    settings_kv?: SysSettingUncheckedUpdateManyWithoutTenantNestedInput
+    branding?: SysBrandingUncheckedUpdateOneWithoutTenantNestedInput
+    featureFlags?: SysFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: SysAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
+    jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    aiUsageLogs?: AiUsageLogUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CoreTenantCreateWithoutAiUsageLogsInput = {
+    id?: string
+    name: string
+    slug: string
+    plan?: string
+    status?: string
+    trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    companies?: CoreCompanyCreateNestedManyWithoutTenantInput
+    users?: CoreUserCreateNestedManyWithoutTenantInput
+    roles?: CoreRoleCreateNestedManyWithoutTenantInput
+    settings_kv?: SysSettingCreateNestedManyWithoutTenantInput
+    branding?: SysBrandingCreateNestedOneWithoutTenantInput
+    featureFlags?: SysFeatureFlagCreateNestedManyWithoutTenantInput
+    auditLogs?: SysAuditLogCreateNestedManyWithoutTenantInput
+    notifications?: SysNotificationCreateNestedManyWithoutTenantInput
+    jobs?: SysJobCreateNestedManyWithoutTenantInput
+    apiKeys?: SysApiKeyCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationCreateNestedManyWithoutTenantInput
+  }
+
+  export type CoreTenantUncheckedCreateWithoutAiUsageLogsInput = {
+    id?: string
+    name: string
+    slug: string
+    plan?: string
+    status?: string
+    trialEndsAt?: Date | string | null
+    aiMonthlyTokenQuota?: number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    isActive?: boolean
+    companies?: CoreCompanyUncheckedCreateNestedManyWithoutTenantInput
+    users?: CoreUserUncheckedCreateNestedManyWithoutTenantInput
+    roles?: CoreRoleUncheckedCreateNestedManyWithoutTenantInput
+    settings_kv?: SysSettingUncheckedCreateNestedManyWithoutTenantInput
+    branding?: SysBrandingUncheckedCreateNestedOneWithoutTenantInput
+    featureFlags?: SysFeatureFlagUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: SysAuditLogUncheckedCreateNestedManyWithoutTenantInput
+    notifications?: SysNotificationUncheckedCreateNestedManyWithoutTenantInput
+    jobs?: SysJobUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: SysApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    translations?: SysTranslationUncheckedCreateNestedManyWithoutTenantInput
+    uiTranslations?: SysUiTranslationUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type CoreTenantCreateOrConnectWithoutAiUsageLogsInput = {
+    where: CoreTenantWhereUniqueInput
+    create: XOR<CoreTenantCreateWithoutAiUsageLogsInput, CoreTenantUncheckedCreateWithoutAiUsageLogsInput>
+  }
+
+  export type CoreTenantUpsertWithoutAiUsageLogsInput = {
+    update: XOR<CoreTenantUpdateWithoutAiUsageLogsInput, CoreTenantUncheckedUpdateWithoutAiUsageLogsInput>
+    create: XOR<CoreTenantCreateWithoutAiUsageLogsInput, CoreTenantUncheckedCreateWithoutAiUsageLogsInput>
+    where?: CoreTenantWhereInput
+  }
+
+  export type CoreTenantUpdateToOneWithWhereWithoutAiUsageLogsInput = {
+    where?: CoreTenantWhereInput
+    data: XOR<CoreTenantUpdateWithoutAiUsageLogsInput, CoreTenantUncheckedUpdateWithoutAiUsageLogsInput>
+  }
+
+  export type CoreTenantUpdateWithoutAiUsageLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    companies?: CoreCompanyUpdateManyWithoutTenantNestedInput
+    users?: CoreUserUpdateManyWithoutTenantNestedInput
+    roles?: CoreRoleUpdateManyWithoutTenantNestedInput
+    settings_kv?: SysSettingUpdateManyWithoutTenantNestedInput
+    branding?: SysBrandingUpdateOneWithoutTenantNestedInput
+    featureFlags?: SysFeatureFlagUpdateManyWithoutTenantNestedInput
+    auditLogs?: SysAuditLogUpdateManyWithoutTenantNestedInput
+    notifications?: SysNotificationUpdateManyWithoutTenantNestedInput
+    jobs?: SysJobUpdateManyWithoutTenantNestedInput
+    apiKeys?: SysApiKeyUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CoreTenantUncheckedUpdateWithoutAiUsageLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aiMonthlyTokenQuota?: NullableIntFieldUpdateOperationsInput | number | null
+    settings?: JsonNullValueInput | InputJsonValue
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    companies?: CoreCompanyUncheckedUpdateManyWithoutTenantNestedInput
+    users?: CoreUserUncheckedUpdateManyWithoutTenantNestedInput
+    roles?: CoreRoleUncheckedUpdateManyWithoutTenantNestedInput
+    settings_kv?: SysSettingUncheckedUpdateManyWithoutTenantNestedInput
+    branding?: SysBrandingUncheckedUpdateOneWithoutTenantNestedInput
+    featureFlags?: SysFeatureFlagUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: SysAuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    notifications?: SysNotificationUncheckedUpdateManyWithoutTenantNestedInput
+    jobs?: SysJobUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: SysApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    translations?: SysTranslationUncheckedUpdateManyWithoutTenantNestedInput
+    uiTranslations?: SysUiTranslationUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CoreCompanyCreateManyTenantInput = {
@@ -45687,6 +50594,63 @@ export namespace Prisma {
     updatedBy?: string | null
     deletedAt?: Date | string | null
     isActive?: boolean
+  }
+
+  export type SysTranslationCreateManyTenantInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    field: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type SysUiTranslationCreateManyTenantInput = {
+    id?: string
+    namespace: string
+    key: string
+    locale: string
+    value: string
+    source?: string
+    isApproved?: boolean
+    approvedBy?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    isActive?: boolean
+  }
+
+  export type AiUsageLogCreateManyTenantInput = {
+    id?: string
+    userId?: string | null
+    sessionId?: string | null
+    module: string
+    feature: string
+    provider?: string
+    model: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+    estimatedCostUsd?: Decimal | DecimalJsLike | number | string
+    requestDurationMs?: number | null
+    status?: string
+    errorCode?: string | null
+    requestId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: Date | string
   }
 
   export type CoreCompanyUpdateWithoutTenantInput = {
@@ -46216,6 +51180,177 @@ export namespace Prisma {
     updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysTranslationUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    field?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysTranslationUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    field?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysTranslationUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    field?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysUiTranslationUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysUiTranslationUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SysUiTranslationUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    namespace?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    locale?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AiUsageLogUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiUsageLogUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiUsageLogUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    module?: StringFieldUpdateOperationsInput | string
+    feature?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    promptTokens?: IntFieldUpdateOperationsInput | number
+    completionTokens?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    estimatedCostUsd?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    requestDurationMs?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    requestId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CoreBranchCreateManyCompanyInput = {

@@ -6,6 +6,8 @@ import { roleRoutes } from './roles.routes.js'
 import { settingsRoutes } from './settings.routes.js'
 import { auditRoutes } from './audit.routes.js'
 import { notificationRoutes } from './notifications.routes.js'
+import { translationRoutes } from './translations.routes.js'
+import { aiUsageRoutes } from './ai-usage.routes.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -18,6 +20,8 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(settingsRoutes, { prefix: '/settings' })
       await v1.register(auditRoutes, { prefix: '/audit-logs' })
       await v1.register(notificationRoutes, { prefix: '/notifications' })
+      await v1.register(translationRoutes, { prefix: '/translations' })
+      await v1.register(aiUsageRoutes, { prefix: '/ai-usage' })
     },
     { prefix: '/v1' },
   )

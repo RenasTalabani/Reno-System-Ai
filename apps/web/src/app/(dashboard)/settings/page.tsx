@@ -50,6 +50,7 @@ export default function SettingsPage() {
           return (
             <button
               key={t.id}
+              type="button"
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition ${
                 tab === t.id
@@ -169,17 +170,20 @@ function FeatureFlagsTab({ qc }: { qc: any }) {
               <div key={flag.id} className="flex items-center justify-between px-4 py-3">
                 <div>
                   <p className="text-sm font-medium text-foreground">{flag.feature}</p>
-                  <p className="text-xs text-muted-foreground">{flag.rolloutPercentage < 100 ? `${flag.rolloutPercentage}% rollout` : 'Full rollout'}</p>
+                  <p className="text-xs text-muted-foreground">{flag.rolloutPct < 100 ? `${flag.rolloutPct}% rollout` : 'Full rollout'}</p>
                 </div>
                 <button
-                  onClick={() => toggleMutation.mutate({ module: flag.module, feature: flag.feature, enabled: !flag.isEnabled })}
+                  type="button"
+                  aria-label={`${flag.enabled ? 'Disable' : 'Enable'} ${flag.module} ${flag.feature}`}
+                  aria-pressed={!!flag.enabled}
+                  onClick={() => toggleMutation.mutate({ module: flag.module, feature: flag.feature, enabled: !flag.enabled })}
                   disabled={toggleMutation.isPending}
                   className={cn(
                     'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
-                    flag.isEnabled ? 'bg-primary' : 'bg-muted'
+                    flag.enabled ? 'bg-primary' : 'bg-muted'
                   )}
                 >
-                  <span className={cn('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', flag.isEnabled ? 'translate-x-4' : 'translate-x-1')} />
+                  <span className={cn('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', flag.enabled ? 'translate-x-4' : 'translate-x-1')} />
                 </button>
               </div>
             ))}

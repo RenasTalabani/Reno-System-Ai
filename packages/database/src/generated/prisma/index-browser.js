@@ -128,6 +128,7 @@ exports.Prisma.CoreTenantScalarFieldEnum = {
   plan: 'plan',
   status: 'status',
   trialEndsAt: 'trialEndsAt',
+  aiMonthlyTokenQuota: 'aiMonthlyTokenQuota',
   settings: 'settings',
   metadata: 'metadata',
   createdAt: 'createdAt',
@@ -517,12 +518,56 @@ exports.Prisma.SysTranslationScalarFieldEnum = {
   field: 'field',
   locale: 'locale',
   value: 'value',
+  source: 'source',
+  isApproved: 'isApproved',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedAt: 'deletedAt',
   isActive: 'isActive'
+};
+
+exports.Prisma.SysUiTranslationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  namespace: 'namespace',
+  key: 'key',
+  locale: 'locale',
+  value: 'value',
+  source: 'source',
+  isApproved: 'isApproved',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiUsageLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  module: 'module',
+  feature: 'feature',
+  provider: 'provider',
+  model: 'model',
+  promptTokens: 'promptTokens',
+  completionTokens: 'completionTokens',
+  totalTokens: 'totalTokens',
+  estimatedCostUsd: 'estimatedCostUsd',
+  requestDurationMs: 'requestDurationMs',
+  status: 'status',
+  errorCode: 'errorCode',
+  requestId: 'requestId',
+  metadata: 'metadata',
+  occurredAt: 'occurredAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -578,7 +623,9 @@ exports.Prisma.ModelName = {
   SysJob: 'SysJob',
   SysFeatureFlag: 'SysFeatureFlag',
   SysApiKey: 'SysApiKey',
-  SysTranslation: 'SysTranslation'
+  SysTranslation: 'SysTranslation',
+  SysUiTranslation: 'SysUiTranslation',
+  AiUsageLog: 'AiUsageLog'
 };
 
 /**

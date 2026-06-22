@@ -280,7 +280,82 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // 10. Create sample team
+  // 10. Set default AI monthly token quota (1M tokens for demo tenant)
+  // -------------------------------------------------------------------------
+  await prisma.coreTenant.update({
+    where: { id: tenant.id },
+    data: { aiMonthlyTokenQuota: 1_000_000 },
+  })
+
+  // -------------------------------------------------------------------------
+  // 11. Seed system UI translations (English baseline)
+  // -------------------------------------------------------------------------
+  const uiTranslations = [
+    // Core navigation
+    { namespace: 'core.nav', key: 'dashboard', locale: 'en', value: 'Dashboard' },
+    { namespace: 'core.nav', key: 'users', locale: 'en', value: 'Users' },
+    { namespace: 'core.nav', key: 'organization', locale: 'en', value: 'Organization' },
+    { namespace: 'core.nav', key: 'roles', locale: 'en', value: 'Roles & Permissions' },
+    { namespace: 'core.nav', key: 'settings', locale: 'en', value: 'Settings' },
+    { namespace: 'core.nav', key: 'audit_logs', locale: 'en', value: 'Audit Logs' },
+    { namespace: 'core.nav', key: 'notifications', locale: 'en', value: 'Notifications' },
+    // Common actions
+    { namespace: 'core.actions', key: 'save', locale: 'en', value: 'Save' },
+    { namespace: 'core.actions', key: 'cancel', locale: 'en', value: 'Cancel' },
+    { namespace: 'core.actions', key: 'delete', locale: 'en', value: 'Delete' },
+    { namespace: 'core.actions', key: 'edit', locale: 'en', value: 'Edit' },
+    { namespace: 'core.actions', key: 'create', locale: 'en', value: 'Create' },
+    { namespace: 'core.actions', key: 'search', locale: 'en', value: 'Search' },
+    { namespace: 'core.actions', key: 'export', locale: 'en', value: 'Export' },
+    { namespace: 'core.actions', key: 'import', locale: 'en', value: 'Import' },
+    { namespace: 'core.actions', key: 'confirm', locale: 'en', value: 'Confirm' },
+    { namespace: 'core.actions', key: 'back', locale: 'en', value: 'Back' },
+    // Common labels
+    { namespace: 'core.labels', key: 'name', locale: 'en', value: 'Name' },
+    { namespace: 'core.labels', key: 'email', locale: 'en', value: 'Email' },
+    { namespace: 'core.labels', key: 'status', locale: 'en', value: 'Status' },
+    { namespace: 'core.labels', key: 'created_at', locale: 'en', value: 'Created' },
+    { namespace: 'core.labels', key: 'updated_at', locale: 'en', value: 'Last Updated' },
+    { namespace: 'core.labels', key: 'active', locale: 'en', value: 'Active' },
+    { namespace: 'core.labels', key: 'inactive', locale: 'en', value: 'Inactive' },
+    { namespace: 'core.labels', key: 'yes', locale: 'en', value: 'Yes' },
+    { namespace: 'core.labels', key: 'no', locale: 'en', value: 'No' },
+    // Auth
+    { namespace: 'core.auth', key: 'login', locale: 'en', value: 'Sign In' },
+    { namespace: 'core.auth', key: 'logout', locale: 'en', value: 'Sign Out' },
+    { namespace: 'core.auth', key: 'password', locale: 'en', value: 'Password' },
+    { namespace: 'core.auth', key: 'forgot_password', locale: 'en', value: 'Forgot Password?' },
+    { namespace: 'core.auth', key: 'mfa_title', locale: 'en', value: 'Two-Factor Authentication' },
+    { namespace: 'core.auth', key: 'mfa_prompt', locale: 'en', value: 'Enter your 6-digit code' },
+    // Errors
+    { namespace: 'core.errors', key: 'required', locale: 'en', value: 'This field is required' },
+    { namespace: 'core.errors', key: 'invalid_email', locale: 'en', value: 'Please enter a valid email address' },
+    { namespace: 'core.errors', key: 'unauthorized', locale: 'en', value: 'You are not authorized to perform this action' },
+    { namespace: 'core.errors', key: 'not_found', locale: 'en', value: 'Resource not found' },
+    { namespace: 'core.errors', key: 'server_error', locale: 'en', value: 'An unexpected error occurred. Please try again.' },
+    // Arabic baseline (placeholder — to be AI-translated in Phase 10)
+    { namespace: 'core.nav', key: 'dashboard', locale: 'ar', value: 'لوحة التحكم', source: 'manual' },
+    { namespace: 'core.nav', key: 'users', locale: 'ar', value: 'المستخدمون', source: 'manual' },
+    { namespace: 'core.nav', key: 'settings', locale: 'ar', value: 'الإعدادات', source: 'manual' },
+    { namespace: 'core.actions', key: 'save', locale: 'ar', value: 'حفظ', source: 'manual' },
+    { namespace: 'core.actions', key: 'cancel', locale: 'ar', value: 'إلغاء', source: 'manual' },
+    { namespace: 'core.auth', key: 'login', locale: 'ar', value: 'تسجيل الدخول', source: 'manual' },
+  ]
+
+  for (const t of uiTranslations) {
+    const exists = await prisma.sysUiTranslation.findFirst({
+      where: { tenantId: null, namespace: t.namespace, key: t.key, locale: t.locale },
+    })
+    if (!exists) {
+      await prisma.sysUiTranslation.create({
+        data: { tenantId: null, namespace: t.namespace, key: t.key, locale: t.locale, value: t.value, source: (t as any).source ?? 'system' },
+      })
+    }
+  }
+  console.log(`   → Seeded ${uiTranslations.length} UI translations (en + ar baseline)`)
+
+  // -------------------------------------------------------------------------
+  // 12. Create sample team
   // -------------------------------------------------------------------------
   const existingTeam = await prisma.coreTeam.findFirst({
     where: { tenantId: tenant.id, deletedAt: null },
