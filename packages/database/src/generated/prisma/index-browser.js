@@ -865,6 +865,257 @@ exports.Prisma.HrHolidayScalarFieldEnum = {
   isActive: 'isActive'
 };
 
+exports.Prisma.PmProjectScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  visibility: 'visibility',
+  ownerId: 'ownerId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  targetDate: 'targetDate',
+  actualEndDate: 'actualEndDate',
+  progress: 'progress',
+  color: 'color',
+  icon: 'icon',
+  tags: 'tags',
+  budget: 'budget',
+  currency: 'currency',
+  estimatedHours: 'estimatedHours',
+  actualHours: 'actualHours',
+  aiInsights: 'aiInsights',
+  predictedEndDate: 'predictedEndDate',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmProjectMemberScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId',
+  role: 'role',
+  joinedAt: 'joinedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmMilestoneScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  name: 'name',
+  description: 'description',
+  dueDate: 'dueDate',
+  status: 'status',
+  completedAt: 'completedAt',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmTaskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  milestoneId: 'milestoneId',
+  parentId: 'parentId',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  taskType: 'taskType',
+  assigneeId: 'assigneeId',
+  reporterId: 'reporterId',
+  startDate: 'startDate',
+  dueDate: 'dueDate',
+  completedAt: 'completedAt',
+  estimatedHours: 'estimatedHours',
+  actualHours: 'actualHours',
+  storyPoints: 'storyPoints',
+  position: 'position',
+  labels: 'labels',
+  aiSuggestions: 'aiSuggestions',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmTaskDependencyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  dependsOnId: 'dependsOnId',
+  dependencyType: 'dependencyType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmTaskCommentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  parentId: 'parentId',
+  authorId: 'authorId',
+  content: 'content',
+  isEdited: 'isEdited',
+  editedAt: 'editedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmTaskAttachmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  uploadedBy: 'uploadedBy',
+  fileName: 'fileName',
+  fileUrl: 'fileUrl',
+  fileMimeType: 'fileMimeType',
+  fileSizeBytes: 'fileSizeBytes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmTimeLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  taskId: 'taskId',
+  userId: 'userId',
+  description: 'description',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  durationMinutes: 'durationMinutes',
+  isBillable: 'isBillable',
+  hourlyRate: 'hourlyRate',
+  currency: 'currency',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmBoardScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  name: 'name',
+  description: 'description',
+  boardType: 'boardType',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmBoardColumnScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  boardId: 'boardId',
+  name: 'name',
+  color: 'color',
+  position: 'position',
+  wipLimit: 'wipLimit',
+  taskStatus: 'taskStatus',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmLabelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  name: 'name',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmResourceAllocationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId',
+  allocatedHours: 'allocatedHours',
+  allocationPct: 'allocationPct',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  burnoutRisk: 'burnoutRisk',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PmActivityLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  taskId: 'taskId',
+  actorId: 'actorId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  changes: 'changes',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -933,7 +1184,20 @@ exports.Prisma.ModelName = {
   HrPayrollGrade: 'HrPayrollGrade',
   HrPayslip: 'HrPayslip',
   HrDocument: 'HrDocument',
-  HrHoliday: 'HrHoliday'
+  HrHoliday: 'HrHoliday',
+  PmProject: 'PmProject',
+  PmProjectMember: 'PmProjectMember',
+  PmMilestone: 'PmMilestone',
+  PmTask: 'PmTask',
+  PmTaskDependency: 'PmTaskDependency',
+  PmTaskComment: 'PmTaskComment',
+  PmTaskAttachment: 'PmTaskAttachment',
+  PmTimeLog: 'PmTimeLog',
+  PmBoard: 'PmBoard',
+  PmBoardColumn: 'PmBoardColumn',
+  PmLabel: 'PmLabel',
+  PmResourceAllocation: 'PmResourceAllocation',
+  PmActivityLog: 'PmActivityLog'
 };
 
 /**

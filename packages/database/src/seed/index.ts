@@ -63,6 +63,22 @@ async function main() {
     // HR — Settings (positions, shifts, leave types, holidays)
     { module: 'hr', resource: 'settings', action: 'read', scope: 'company' },
     { module: 'hr', resource: 'settings', action: 'manage', scope: 'company' },
+    // Project Management
+    { module: 'pm', resource: 'projects', action: 'read', scope: 'own' },
+    { module: 'pm', resource: 'projects', action: 'read', scope: 'all' },
+    { module: 'pm', resource: 'projects', action: 'create', scope: 'company' },
+    { module: 'pm', resource: 'projects', action: 'update', scope: 'own' },
+    { module: 'pm', resource: 'projects', action: 'delete', scope: 'own' },
+    { module: 'pm', resource: 'tasks', action: 'read', scope: 'own' },
+    { module: 'pm', resource: 'tasks', action: 'read', scope: 'all' },
+    { module: 'pm', resource: 'tasks', action: 'create', scope: 'company' },
+    { module: 'pm', resource: 'tasks', action: 'update', scope: 'own' },
+    { module: 'pm', resource: 'tasks', action: 'manage', scope: 'company' },
+    { module: 'pm', resource: 'time_logs', action: 'read', scope: 'own' },
+    { module: 'pm', resource: 'time_logs', action: 'create', scope: 'own' },
+    { module: 'pm', resource: 'time_logs', action: 'manage', scope: 'company' },
+    { module: 'pm', resource: 'resources', action: 'read', scope: 'company' },
+    { module: 'pm', resource: 'resources', action: 'manage', scope: 'company' },
     // CRM
     { module: 'crm', resource: 'leads', action: 'read', scope: 'all' },
     { module: 'crm', resource: 'leads', action: 'create', scope: 'company' },
@@ -282,7 +298,7 @@ async function main() {
   // -------------------------------------------------------------------------
   // 9. Enable all modules for demo tenant
   // -------------------------------------------------------------------------
-  const moduleList = ['core', 'hr', 'crm', 'projects', 'sales', 'inventory', 'procurement', 'finance', 'documents', 'communication', 'ai', 'bi']
+  const moduleList = ['core', 'hr', 'pm', 'crm', 'projects', 'sales', 'inventory', 'procurement', 'finance', 'documents', 'communication', 'ai', 'bi']
 
   for (const module of moduleList) {
     await prisma.sysFeatureFlag.upsert({

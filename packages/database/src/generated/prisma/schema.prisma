@@ -57,6 +57,9 @@ model CoreTenant {
   hrShifts        HrShift[]
   hrPayrollGrades HrPayrollGrade[]
   hrHolidays      HrHoliday[]
+  pmProjects      PmProject[]
+  pmBoards        PmBoard[]
+  pmLabels        PmLabel[]
 
   @@map("core_tenants")
 }
@@ -1096,4 +1099,365 @@ model HrHoliday {
   @@index([tenantId, date])
   @@index([tenantId, companyId])
   @@map("hr_holidays")
+}
+
+// =============================================================================
+// PROJECT MANAGEMENT MODULE — Phase 2
+// =============================================================================
+
+model PmProject {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  companyId        String    @map("company_id") @db.Uuid
+  name             String    @db.VarChar(255)
+  code             String    @db.VarChar(50)
+  description      String?   @db.Text
+  status           String    @default("planning") @db.VarChar(50)
+  priority         String    @default("medium") @db.VarChar(50)
+  visibility       String    @default("internal") @db.VarChar(50)
+  ownerId          String    @map("owner_id") @db.Uuid
+  startDate        DateTime? @map("start_date") @db.Date
+  endDate          DateTime? @map("end_date") @db.Date
+  targetDate       DateTime? @map("target_date") @db.Date
+  actualEndDate    DateTime? @map("actual_end_date") @db.Date
+  progress         Int       @default(0)
+  color            String    @default("#6366f1") @db.VarChar(20)
+  icon             String?   @db.VarChar(50)
+  tags             Json      @default("[]") @db.JsonB
+  budget           Decimal?  @db.Decimal(15, 2)
+  currency         String    @default("USD") @db.VarChar(10)
+  estimatedHours   Decimal?  @map("estimated_hours") @db.Decimal(10, 2)
+  actualHours      Decimal   @default(0) @map("actual_hours") @db.Decimal(10, 2)
+  aiInsights       Json?     @map("ai_insights") @db.JsonB
+  predictedEndDate DateTime? @map("predicted_end_date") @db.Date
+  metadata         Json      @default("{}") @db.JsonB
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  createdBy        String?   @map("created_by") @db.Uuid
+  updatedBy        String?   @map("updated_by") @db.Uuid
+  deletedAt        DateTime? @map("deleted_at")
+  isActive         Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant             @relation(fields: [tenantId], references: [id])
+  members     PmProjectMember[]
+  milestones  PmMilestone[]
+  tasks       PmTask[]
+  boards      PmBoard[]
+  labels      PmLabel[]
+  activities  PmActivityLog[]
+  allocations PmResourceAllocation[]
+
+  @@unique([tenantId, companyId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, ownerId])
+  @@map("pm_projects")
+}
+
+model PmProjectMember {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  projectId String    @map("project_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  role      String    @default("member") @db.VarChar(50)
+  joinedAt  DateTime  @default(now()) @map("joined_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  project PmProject @relation(fields: [projectId], references: [id])
+
+  @@unique([tenantId, projectId, userId])
+  @@index([tenantId, projectId])
+  @@index([tenantId, userId])
+  @@map("pm_project_members")
+}
+
+model PmMilestone {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  projectId   String    @map("project_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  dueDate     DateTime  @map("due_date") @db.Date
+  status      String    @default("open") @db.VarChar(50)
+  completedAt DateTime? @map("completed_at")
+  color       String    @default("#6366f1") @db.VarChar(20)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  project PmProject @relation(fields: [projectId], references: [id])
+  tasks   PmTask[]
+
+  @@index([tenantId, projectId])
+  @@index([tenantId, status])
+  @@map("pm_milestones")
+}
+
+model PmTask {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  projectId      String    @map("project_id") @db.Uuid
+  milestoneId    String?   @map("milestone_id") @db.Uuid
+  parentId       String?   @map("parent_id") @db.Uuid
+  title          String    @db.VarChar(500)
+  description    String?   @db.Text
+  status         String    @default("todo") @db.VarChar(50)
+  priority       String    @default("medium") @db.VarChar(50)
+  taskType       String    @default("task") @map("task_type") @db.VarChar(50)
+  assigneeId     String?   @map("assignee_id") @db.Uuid
+  reporterId     String?   @map("reporter_id") @db.Uuid
+  startDate      DateTime? @map("start_date") @db.Date
+  dueDate        DateTime? @map("due_date") @db.Date
+  completedAt    DateTime? @map("completed_at")
+  estimatedHours Decimal?  @map("estimated_hours") @db.Decimal(8, 2)
+  actualHours    Decimal   @default(0) @map("actual_hours") @db.Decimal(8, 2)
+  storyPoints    Int?      @map("story_points")
+  position       Int       @default(0)
+  labels         Json      @default("[]") @db.JsonB
+  aiSuggestions  Json?     @map("ai_suggestions") @db.JsonB
+  metadata       Json      @default("{}") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  project      PmProject          @relation(fields: [projectId], references: [id])
+  milestone    PmMilestone?       @relation(fields: [milestoneId], references: [id])
+  parent       PmTask?            @relation("TaskSubtasks", fields: [parentId], references: [id])
+  subtasks     PmTask[]           @relation("TaskSubtasks")
+  comments     PmTaskComment[]
+  attachments  PmTaskAttachment[]
+  timeLogs     PmTimeLog[]
+  dependsOn    PmTaskDependency[] @relation("TaskDependsOn")
+  dependedOnBy PmTaskDependency[] @relation("TaskDependedOnBy")
+  activities   PmActivityLog[]
+
+  @@index([tenantId, projectId])
+  @@index([tenantId, assigneeId])
+  @@index([tenantId, status])
+  @@index([tenantId, parentId])
+  @@index([tenantId, milestoneId])
+  @@map("pm_tasks")
+}
+
+model PmTaskDependency {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  taskId         String    @map("task_id") @db.Uuid
+  dependsOnId    String    @map("depends_on_id") @db.Uuid
+  dependencyType String    @default("finish_to_start") @map("dependency_type") @db.VarChar(50)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  task      PmTask @relation("TaskDependsOn", fields: [taskId], references: [id])
+  dependsOn PmTask @relation("TaskDependedOnBy", fields: [dependsOnId], references: [id])
+
+  @@unique([tenantId, taskId, dependsOnId])
+  @@index([tenantId, taskId])
+  @@map("pm_task_dependencies")
+}
+
+model PmTaskComment {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  taskId    String    @map("task_id") @db.Uuid
+  parentId  String?   @map("parent_id") @db.Uuid
+  authorId  String    @map("author_id") @db.Uuid
+  content   String    @db.Text
+  isEdited  Boolean   @default(false) @map("is_edited")
+  editedAt  DateTime? @map("edited_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  task    PmTask          @relation(fields: [taskId], references: [id])
+  parent  PmTaskComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies PmTaskComment[] @relation("CommentReplies")
+
+  @@index([tenantId, taskId])
+  @@map("pm_task_comments")
+}
+
+model PmTaskAttachment {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  taskId        String    @map("task_id") @db.Uuid
+  uploadedBy    String    @map("uploaded_by") @db.Uuid
+  fileName      String    @map("file_name") @db.VarChar(255)
+  fileUrl       String    @map("file_url") @db.VarChar(500)
+  fileMimeType  String?   @map("file_mime_type") @db.VarChar(100)
+  fileSizeBytes Int?      @map("file_size_bytes")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  task PmTask @relation(fields: [taskId], references: [id])
+
+  @@index([tenantId, taskId])
+  @@map("pm_task_attachments")
+}
+
+model PmTimeLog {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  projectId       String    @map("project_id") @db.Uuid
+  taskId          String?   @map("task_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  description     String?   @db.Text
+  startTime       DateTime  @map("start_time")
+  endTime         DateTime? @map("end_time")
+  durationMinutes Int?      @map("duration_minutes")
+  isBillable      Boolean   @default(false) @map("is_billable")
+  hourlyRate      Decimal?  @map("hourly_rate") @db.Decimal(10, 2)
+  currency        String    @default("USD") @db.VarChar(10)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  task PmTask? @relation(fields: [taskId], references: [id])
+
+  @@index([tenantId, projectId])
+  @@index([tenantId, taskId])
+  @@index([tenantId, userId])
+  @@map("pm_time_logs")
+}
+
+model PmBoard {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  projectId   String    @map("project_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  boardType   String    @default("kanban") @map("board_type") @db.VarChar(50)
+  isDefault   Boolean   @default(false) @map("is_default")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant  CoreTenant      @relation(fields: [tenantId], references: [id])
+  project PmProject       @relation(fields: [projectId], references: [id])
+  columns PmBoardColumn[]
+
+  @@index([tenantId, projectId])
+  @@map("pm_boards")
+}
+
+model PmBoardColumn {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  boardId    String    @map("board_id") @db.Uuid
+  name       String    @db.VarChar(100)
+  color      String    @default("#6366f1") @db.VarChar(20)
+  position   Int       @default(0)
+  wipLimit   Int?      @map("wip_limit")
+  taskStatus String?   @map("task_status") @db.VarChar(50)
+  isDefault  Boolean   @default(false) @map("is_default")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  board PmBoard @relation(fields: [boardId], references: [id])
+
+  @@index([tenantId, boardId])
+  @@map("pm_board_columns")
+}
+
+model PmLabel {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  projectId String?   @map("project_id") @db.Uuid
+  name      String    @db.VarChar(100)
+  color     String    @default("#6366f1") @db.VarChar(20)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id])
+  project PmProject? @relation(fields: [projectId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, projectId])
+  @@map("pm_labels")
+}
+
+model PmResourceAllocation {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  projectId      String    @map("project_id") @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  allocatedHours Decimal   @default(0) @map("allocated_hours") @db.Decimal(10, 2)
+  allocationPct  Int       @default(100) @map("allocation_pct")
+  startDate      DateTime  @map("start_date") @db.Date
+  endDate        DateTime  @map("end_date") @db.Date
+  burnoutRisk    Decimal?  @map("burnout_risk") @db.Decimal(3, 2)
+  notes          String?   @db.Text
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  project PmProject @relation(fields: [projectId], references: [id])
+
+  @@index([tenantId, projectId])
+  @@index([tenantId, userId])
+  @@map("pm_resource_allocations")
+}
+
+model PmActivityLog {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  projectId  String    @map("project_id") @db.Uuid
+  taskId     String?   @map("task_id") @db.Uuid
+  actorId    String    @map("actor_id") @db.Uuid
+  action     String    @db.VarChar(100)
+  entityType String    @map("entity_type") @db.VarChar(100)
+  entityId   String    @map("entity_id") @db.Uuid
+  changes    Json?     @db.JsonB
+  metadata   Json      @default("{}") @db.JsonB
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  project PmProject @relation(fields: [projectId], references: [id])
+  task    PmTask?   @relation(fields: [taskId], references: [id])
+
+  @@index([tenantId, projectId])
+  @@index([tenantId, taskId])
+  @@index([tenantId, actorId])
+  @@map("pm_activity_logs")
 }
