@@ -1,0 +1,596 @@
+// =============================================================================
+// Reno System — Prisma Schema
+// Phase 0: Core Foundation
+// =============================================================================
+// Naming conventions:
+//   Tables:  module_entity (e.g. core_users, hr_employees)
+//   Every table has the 8 mandatory columns (see BaseModel convention)
+//   All IDs are UUIDs, all timestamps are DateTime (TIMESTAMPTZ in Postgres)
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// CORE MODULE — Identity, Auth, Org Structure
+// =============================================================================
+
+model CoreTenant {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(100)
+  plan        String    @default("starter") @db.VarChar(50)
+  status      String    @default("trial") @db.VarChar(50)
+  trialEndsAt DateTime? @map("trial_ends_at")
+  settings    Json      @default("{}") @db.JsonB
+  metadata    Json      @default("{}") @db.JsonB
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  // Relations
+  companies     CoreCompany[]
+  users         CoreUser[]
+  roles         CoreRole[]
+  settings_kv   SysSetting[]
+  branding      SysBranding?
+  featureFlags  SysFeatureFlag[]
+  auditLogs     SysAuditLog[]
+  notifications SysNotification[]
+  jobs          SysJob[]
+  apiKeys       SysApiKey[]
+
+  @@map("core_tenants")
+}
+
+model CoreCompany {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  name            String    @db.VarChar(255)
+  legalName       String?   @map("legal_name") @db.VarChar(255)
+  logoUrl         String?   @map("logo_url") @db.VarChar(500)
+  registrationNo  String?   @map("registration_no") @db.VarChar(100)
+  taxId           String?   @map("tax_id") @db.VarChar(100)
+  currency        String    @default("USD") @db.VarChar(10)
+  timezone        String    @default("UTC") @db.VarChar(100)
+  dateFormat      String    @default("YYYY-MM-DD") @map("date_format") @db.VarChar(50)
+  fiscalYearStart Int       @default(1) @map("fiscal_year_start")
+  address         Json?     @db.JsonB
+  contact         Json?     @db.JsonB
+  settings        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant           @relation(fields: [tenantId], references: [id])
+  branches    CoreBranch[]
+  departments CoreDepartment[]
+  memberships CoreUserMembership[]
+
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("core_companies")
+}
+
+model CoreBranch {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  companyId  String    @map("company_id") @db.Uuid
+  name       String    @db.VarChar(255)
+  code       String?   @db.VarChar(50)
+  branchType String?   @map("branch_type") @db.VarChar(50)
+  address    Json?     @db.JsonB
+  contact    Json?     @db.JsonB
+  managerId  String?   @map("manager_id") @db.Uuid
+  settings   Json      @default("{}") @db.JsonB
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  company     CoreCompany          @relation(fields: [companyId], references: [id])
+  departments CoreDepartment[]
+  memberships CoreUserMembership[]
+
+  @@index([tenantId])
+  @@index([tenantId, companyId])
+  @@map("core_branches")
+}
+
+model CoreDepartment {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  companyId   String    @map("company_id") @db.Uuid
+  branchId    String?   @map("branch_id") @db.Uuid
+  parentId    String?   @map("parent_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  code        String?   @db.VarChar(50)
+  description String?   @db.Text
+  headId      String?   @map("head_id") @db.Uuid
+  settings    Json      @default("{}") @db.JsonB
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  company     CoreCompany          @relation(fields: [companyId], references: [id])
+  branch      CoreBranch?          @relation(fields: [branchId], references: [id])
+  parent      CoreDepartment?      @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children    CoreDepartment[]     @relation("DepartmentHierarchy")
+  teams       CoreTeam[]
+  memberships CoreUserMembership[]
+
+  @@index([tenantId])
+  @@index([tenantId, companyId])
+  @@index([parentId])
+  @@map("core_departments")
+}
+
+model CoreTeam {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  departmentId String?   @map("department_id") @db.Uuid
+  name         String    @db.VarChar(255)
+  description  String?   @db.Text
+  leadId       String?   @map("lead_id") @db.Uuid
+  settings     Json      @default("{}") @db.JsonB
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  department  CoreDepartment?      @relation(fields: [departmentId], references: [id])
+  memberships CoreUserMembership[]
+
+  @@index([tenantId])
+  @@index([tenantId, departmentId])
+  @@map("core_teams")
+}
+
+model CoreUser {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @map("tenant_id") @db.Uuid
+  email              String    @db.VarChar(255)
+  emailVerified      Boolean   @default(false) @map("email_verified")
+  phone              String?   @db.VarChar(50)
+  phoneVerified      Boolean   @default(false) @map("phone_verified")
+  passwordHash       String    @map("password_hash") @db.VarChar(255)
+  status             String    @default("active") @db.VarChar(50)
+  mfaEnabled         Boolean   @default(false) @map("mfa_enabled")
+  mfaSecret          String?   @map("mfa_secret") @db.VarChar(255)
+  mfaBackupCodes     String?   @map("mfa_backup_codes") @db.Text
+  lastLoginAt        DateTime? @map("last_login_at")
+  lastLoginIp        String?   @map("last_login_ip") @db.VarChar(50)
+  passwordChangedAt  DateTime? @map("password_changed_at")
+  mustChangePassword Boolean   @default(false) @map("must_change_password")
+  locale             String    @default("en") @db.VarChar(20)
+  timezone           String?   @db.VarChar(100)
+  metadata           Json      @default("{}") @db.JsonB
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  createdBy          String?   @map("created_by") @db.Uuid
+  updatedBy          String?   @map("updated_by") @db.Uuid
+  deletedAt          DateTime? @map("deleted_at")
+  isActive           Boolean   @default(true) @map("is_active")
+
+  tenant        CoreTenant                   @relation(fields: [tenantId], references: [id])
+  profile       CoreUserProfile?
+  memberships   CoreUserMembership[]
+  userRoles     CoreUserRole[]
+  permOverrides CoreUserPermissionOverride[]
+  sessions      CoreSession[]
+  notifications SysNotification[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("core_users")
+}
+
+model CoreUserProfile {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String    @unique @map("user_id") @db.Uuid
+  firstName   String    @map("first_name") @db.VarChar(100)
+  lastName    String    @map("last_name") @db.VarChar(100)
+  displayName String?   @map("display_name") @db.VarChar(200)
+  avatarUrl   String?   @map("avatar_url") @db.VarChar(500)
+  dateOfBirth DateTime? @map("date_of_birth") @db.Date
+  gender      String?   @db.VarChar(20)
+  nationality String?   @db.VarChar(100)
+  bio         String?   @db.Text
+  socialLinks Json      @default("{}") @map("social_links") @db.JsonB
+  preferences Json      @default("{}") @db.JsonB
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  user CoreUser @relation(fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@map("core_user_profiles")
+}
+
+model CoreUserMembership {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  companyId    String    @map("company_id") @db.Uuid
+  branchId     String?   @map("branch_id") @db.Uuid
+  departmentId String?   @map("department_id") @db.Uuid
+  teamId       String?   @map("team_id") @db.Uuid
+  jobTitle     String?   @map("job_title") @db.VarChar(200)
+  employeeId   String?   @map("employee_id") @db.VarChar(100)
+  isPrimary    Boolean   @default(true) @map("is_primary")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  user       CoreUser        @relation(fields: [userId], references: [id])
+  company    CoreCompany     @relation(fields: [companyId], references: [id])
+  branch     CoreBranch?     @relation(fields: [branchId], references: [id])
+  department CoreDepartment? @relation(fields: [departmentId], references: [id])
+  team       CoreTeam?       @relation(fields: [teamId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([tenantId, companyId])
+  @@map("core_user_memberships")
+}
+
+model CoreRole {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(100)
+  slug        String    @db.VarChar(100)
+  description String?   @db.Text
+  isSystem    Boolean   @default(false) @map("is_system")
+  color       String?   @db.VarChar(20)
+  scope       String    @default("company") @db.VarChar(50)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant          CoreTenant           @relation(fields: [tenantId], references: [id])
+  rolePermissions CoreRolePermission[]
+  userRoles       CoreUserRole[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("core_roles")
+}
+
+model CorePermission {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  module      String   @db.VarChar(100)
+  resource    String   @db.VarChar(100)
+  action      String   @db.VarChar(50)
+  scope       String   @default("all") @db.VarChar(50)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  rolePermissions CoreRolePermission[]
+  userOverrides   CoreUserPermissionOverride[]
+
+  @@unique([module, resource, action, scope])
+  @@map("core_permissions")
+}
+
+model CoreRolePermission {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  roleId       String    @map("role_id") @db.Uuid
+  permissionId String    @map("permission_id") @db.Uuid
+  granted      Boolean   @default(true)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  role       CoreRole       @relation(fields: [roleId], references: [id])
+  permission CorePermission @relation(fields: [permissionId], references: [id])
+
+  @@unique([tenantId, roleId, permissionId])
+  @@index([tenantId, roleId])
+  @@map("core_role_permissions")
+}
+
+model CoreUserRole {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  roleId    String    @map("role_id") @db.Uuid
+  companyId String?   @map("company_id") @db.Uuid
+  branchId  String?   @map("branch_id") @db.Uuid
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  user CoreUser @relation(fields: [userId], references: [id])
+  role CoreRole @relation(fields: [roleId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([tenantId, roleId])
+  @@map("core_user_roles")
+}
+
+model CoreUserPermissionOverride {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  permissionId String    @map("permission_id") @db.Uuid
+  granted      Boolean   @default(true)
+  reason       String?   @db.Text
+  expiresAt    DateTime? @map("expires_at")
+  grantedBy    String?   @map("granted_by") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  user       CoreUser       @relation(fields: [userId], references: [id])
+  permission CorePermission @relation(fields: [permissionId], references: [id])
+
+  @@index([tenantId, userId])
+  @@map("core_user_permission_overrides")
+}
+
+model CoreSession {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  refreshTokenHash String    @map("refresh_token_hash") @db.VarChar(255)
+  deviceName       String?   @map("device_name") @db.VarChar(255)
+  deviceType       String?   @map("device_type") @db.VarChar(50)
+  ipAddress        String?   @map("ip_address") @db.VarChar(50)
+  userAgent        String?   @map("user_agent") @db.Text
+  lastActiveAt     DateTime  @default(now()) @map("last_active_at")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+  isActive         Boolean   @default(true) @map("is_active")
+
+  user CoreUser @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([refreshTokenHash])
+  @@map("core_sessions")
+}
+
+// =============================================================================
+// SYSTEM MODULE — Cross-cutting concerns
+// =============================================================================
+
+model SysAuditLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  sessionId  String?  @map("session_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  module     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(100)
+  entityId   String?  @map("entity_id") @db.Uuid
+  oldValues  Json?    @map("old_values") @db.JsonB
+  newValues  Json?    @map("new_values") @db.JsonB
+  ipAddress  String?  @map("ip_address") @db.VarChar(50)
+  userAgent  String?  @map("user_agent") @db.Text
+  requestId  String?  @map("request_id") @db.Uuid
+  metadata   Json?    @db.JsonB
+  occurredAt DateTime @default(now()) @map("occurred_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, entityType, entityId])
+  @@index([tenantId, userId])
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, module])
+  @@map("sys_audit_logs")
+}
+
+model SysNotification {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  type      String    @db.VarChar(100)
+  title     String    @db.VarChar(255)
+  body      String?   @db.Text
+  data      Json?     @db.JsonB
+  channel   String    @default("in_app") @db.VarChar(50)
+  readAt    DateTime? @map("read_at")
+  sentAt    DateTime? @map("sent_at")
+  failedAt  DateTime? @map("failed_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+  user   CoreUser   @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([tenantId, userId, readAt])
+  @@map("sys_notifications")
+}
+
+model SysSetting {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  companyId   String?   @map("company_id") @db.Uuid
+  module      String    @db.VarChar(100)
+  key         String    @db.VarChar(255)
+  value       Json      @db.JsonB
+  dataType    String    @default("string") @map("data_type") @db.VarChar(50)
+  description String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, companyId, module, key])
+  @@index([tenantId, module])
+  @@map("sys_settings")
+}
+
+model SysBranding {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @unique @map("tenant_id") @db.Uuid
+  companyId      String?   @map("company_id") @db.Uuid
+  logoUrl        String?   @map("logo_url") @db.VarChar(500)
+  logoDarkUrl    String?   @map("logo_dark_url") @db.VarChar(500)
+  faviconUrl     String?   @map("favicon_url") @db.VarChar(500)
+  appName        String?   @map("app_name") @db.VarChar(255)
+  primaryColor   String?   @default("#6366f1") @map("primary_color") @db.VarChar(20)
+  secondaryColor String?   @default("#8b5cf6") @map("secondary_color") @db.VarChar(20)
+  accentColor    String?   @default("#ec4899") @map("accent_color") @db.VarChar(20)
+  fontFamily     String?   @default("Inter") @map("font_family") @db.VarChar(100)
+  theme          String?   @default("light") @db.VarChar(50)
+  customCss      String?   @map("custom_css") @db.Text
+  customDomain   String?   @map("custom_domain") @db.VarChar(255)
+  loginBg        String?   @map("login_bg") @db.VarChar(500)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@map("sys_branding")
+}
+
+model SysJob {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  queue       String    @db.VarChar(100)
+  type        String    @db.VarChar(100)
+  payload     Json      @default("{}") @db.JsonB
+  status      String    @default("pending") @db.VarChar(50)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3) @map("max_attempts")
+  scheduledAt DateTime  @default(now()) @map("scheduled_at")
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  failedAt    DateTime? @map("failed_at")
+  error       String?   @db.Text
+  result      Json?     @db.JsonB
+  triggeredBy String?   @map("triggered_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([tenantId, queue, status])
+  @@map("sys_jobs")
+}
+
+model SysFeatureFlag {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  module     String    @db.VarChar(100)
+  feature    String    @db.VarChar(100)
+  enabled    Boolean   @default(false)
+  rolloutPct Int       @default(100) @map("rollout_pct")
+  config     Json      @default("{}") @db.JsonB
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, module, feature])
+  @@index([tenantId])
+  @@map("sys_feature_flags")
+}
+
+model SysApiKey {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  name       String    @db.VarChar(255)
+  keyHash    String    @unique @map("key_hash") @db.VarChar(255)
+  keyPrefix  String    @map("key_prefix") @db.VarChar(20)
+  scopes     Json      @default("[]") @db.JsonB
+  lastUsedAt DateTime? @map("last_used_at")
+  expiresAt  DateTime? @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@map("sys_api_keys")
+}
+
+model SysTranslation {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  entityType String    @map("entity_type") @db.VarChar(100)
+  entityId   String    @map("entity_id") @db.Uuid
+  field      String    @db.VarChar(100)
+  locale     String    @db.VarChar(20)
+  value      String    @db.Text
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  @@unique([tenantId, entityType, entityId, field, locale])
+  @@index([tenantId, entityType, entityId])
+  @@index([tenantId, locale])
+  @@map("sys_translations")
+}

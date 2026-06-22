@@ -1,0 +1,26 @@
+export { prisma, createTenantClient, PrismaClient } from './client.js'
+export type { TenantPrismaClient } from './client.js'
+export type {
+  CoreTenant,
+  CoreCompany,
+  CoreBranch,
+  CoreDepartment,
+  CoreTeam,
+  CoreUser,
+  CoreUserProfile,
+  CoreUserMembership,
+  CoreRole,
+  CorePermission,
+  CoreRolePermission,
+  CoreUserRole,
+  CoreUserPermissionOverride,
+  CoreSession,
+  SysAuditLog,
+  SysNotification,
+  SysSetting,
+  SysBranding,
+  SysJob,
+  SysFeatureFlag,
+  SysApiKey,
+  SysTranslation,
+} from './generated/prisma/index.js'
