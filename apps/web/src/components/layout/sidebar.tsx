@@ -32,7 +32,7 @@ const navigation = [
     items: [
       { label: 'HR', href: '/hr', icon: UsersRound },
       { label: 'Projects', href: '/projects', icon: GitBranch },
-      { label: 'CRM', href: '/crm', icon: FolderOpen, disabled: true, badge: 'Phase 3' },
+      { label: 'CRM', href: '/crm', icon: FolderOpen },
       { label: 'Sales', href: '/sales', icon: Boxes, disabled: true, badge: 'Phase 4' },
       { label: 'Finance', href: '/finance', icon: BarChart3, disabled: true, badge: 'Phase 7' },
     ],
@@ -72,7 +72,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v2.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v3.0.0</span>
         </div>
       </div>
 

@@ -80,12 +80,23 @@ async function main() {
     { module: 'pm', resource: 'resources', action: 'read', scope: 'company' },
     { module: 'pm', resource: 'resources', action: 'manage', scope: 'company' },
     // CRM
-    { module: 'crm', resource: 'leads', action: 'read', scope: 'all' },
-    { module: 'crm', resource: 'leads', action: 'create', scope: 'company' },
-    { module: 'crm', resource: 'leads', action: 'update', scope: 'own' },
-    { module: 'crm', resource: 'leads', action: 'delete', scope: 'own' },
+    { module: 'crm', resource: 'contacts', action: 'read', scope: 'own' },
     { module: 'crm', resource: 'contacts', action: 'read', scope: 'all' },
+    { module: 'crm', resource: 'contacts', action: 'create', scope: 'company' },
+    { module: 'crm', resource: 'contacts', action: 'update', scope: 'own' },
     { module: 'crm', resource: 'contacts', action: 'manage', scope: 'company' },
+    { module: 'crm', resource: 'companies', action: 'read', scope: 'all' },
+    { module: 'crm', resource: 'companies', action: 'manage', scope: 'company' },
+    { module: 'crm', resource: 'opportunities', action: 'read', scope: 'own' },
+    { module: 'crm', resource: 'opportunities', action: 'read', scope: 'all' },
+    { module: 'crm', resource: 'opportunities', action: 'create', scope: 'company' },
+    { module: 'crm', resource: 'opportunities', action: 'update', scope: 'own' },
+    { module: 'crm', resource: 'opportunities', action: 'manage', scope: 'company' },
+    { module: 'crm', resource: 'activities', action: 'read', scope: 'own' },
+    { module: 'crm', resource: 'activities', action: 'manage', scope: 'company' },
+    { module: 'crm', resource: 'contracts', action: 'read', scope: 'company' },
+    { module: 'crm', resource: 'contracts', action: 'manage', scope: 'company' },
+    { module: 'crm', resource: 'pipeline', action: 'manage', scope: 'company' },
     // Finance
     { module: 'finance', resource: 'invoices', action: 'read', scope: 'company' },
     { module: 'finance', resource: 'invoices', action: 'create', scope: 'company' },
@@ -445,6 +456,52 @@ async function main() {
         leadId: adminUser.id,
       },
     })
+  }
+
+  // -------------------------------------------------------------------------
+  // 15. Seed CRM default pipeline
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding CRM default pipeline...')
+
+  const existingPipeline = await prisma.crmPipeline.findFirst({
+    where: { tenantId: tenant.id, deletedAt: null },
+  })
+
+  if (!existingPipeline) {
+    const pipeline = await prisma.crmPipeline.create({
+      data: {
+        tenantId: tenant.id,
+        name: 'Sales Pipeline',
+        description: 'Default sales pipeline',
+        isDefault: true,
+        currency: 'USD',
+        createdBy: adminUser.id,
+        updatedBy: adminUser.id,
+      },
+    })
+
+    const stageDefs = [
+      { name: 'New Lead', position: 0, probability: 10, color: '#94a3b8', isWon: false, isLost: false },
+      { name: 'Qualified', position: 1, probability: 25, color: '#6366f1', isWon: false, isLost: false },
+      { name: 'Proposal Sent', position: 2, probability: 50, color: '#f59e0b', isWon: false, isLost: false },
+      { name: 'Negotiation', position: 3, probability: 75, color: '#f97316', isWon: false, isLost: false },
+      { name: 'Won', position: 4, probability: 100, color: '#22c55e', isWon: true, isLost: false },
+      { name: 'Lost', position: 5, probability: 0, color: '#ef4444', isWon: false, isLost: true },
+    ]
+
+    for (const s of stageDefs) {
+      await prisma.crmPipelineStage.create({
+        data: {
+          tenantId: tenant.id,
+          pipelineId: pipeline.id,
+          ...s,
+          createdBy: adminUser.id,
+          updatedBy: adminUser.id,
+        },
+      })
+    }
+
+    console.log('   → Seeded 1 CRM pipeline with 6 stages')
   }
 
   console.log('')

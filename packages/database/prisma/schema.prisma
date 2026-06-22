@@ -60,6 +60,10 @@ model CoreTenant {
   pmProjects      PmProject[]
   pmBoards        PmBoard[]
   pmLabels        PmLabel[]
+  crmContacts     CrmContact[]
+  crmCompanies    CrmCompany[]
+  crmPipelines    CrmPipeline[]
+  crmContracts    CrmContract[]
 
   @@map("core_tenants")
 }
@@ -1460,4 +1464,407 @@ model PmActivityLog {
   @@index([tenantId, taskId])
   @@index([tenantId, actorId])
   @@map("pm_activity_logs")
+}
+
+// =============================================================================
+// CRM MODULE — Reno CRM (Phase 3)
+// =============================================================================
+
+// crm_pipelines — Sales pipeline definitions
+model CrmPipeline {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  isDefault   Boolean   @default(false) @map("is_default")
+  currency    String    @default("USD") @db.VarChar(10)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant        CoreTenant         @relation(fields: [tenantId], references: [id])
+  stages        CrmPipelineStage[]
+  opportunities CrmOpportunity[]
+
+  @@index([tenantId])
+  @@map("crm_pipelines")
+}
+
+// crm_pipeline_stages — Configurable stages within a pipeline
+model CrmPipelineStage {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  pipelineId   String    @map("pipeline_id") @db.Uuid
+  name         String    @db.VarChar(100)
+  position     Int       @default(0)
+  probability  Int       @default(0)
+  color        String    @default("#6366f1") @db.VarChar(20)
+  isWon        Boolean   @default(false) @map("is_won")
+  isLost       Boolean   @default(false) @map("is_lost")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  pipeline      CrmPipeline      @relation(fields: [pipelineId], references: [id])
+  opportunities CrmOpportunity[]
+
+  @@index([tenantId, pipelineId])
+  @@map("crm_pipeline_stages")
+}
+
+// crm_companies — Business/organization entities in CRM (separate from CoreCompany)
+model CrmCompany {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String    @map("tenant_id") @db.Uuid
+  ownerId              String?   @map("owner_id") @db.Uuid
+  name                 String    @db.VarChar(255)
+  domain               String?   @db.VarChar(255)
+  industry             String?   @db.VarChar(100)
+  companySize          String?   @map("company_size") @db.VarChar(50)
+  phone                String?   @db.VarChar(50)
+  email                String?   @db.VarChar(255)
+  website              String?   @db.VarChar(500)
+  linkedInUrl          String?   @map("linkedin_url") @db.VarChar(500)
+  address              Json?     @db.JsonB
+  country              String?   @db.VarChar(100)
+  city                 String?   @db.VarChar(100)
+  estimatedRevenue     Decimal?  @map("estimated_revenue") @db.Decimal(15, 2)
+  currency             String    @default("USD") @db.VarChar(10)
+  employeeCount        Int?      @map("employee_count")
+  status               String    @default("prospect") @db.VarChar(50)
+  healthScore          Int?      @map("health_score")
+  customerLifetimeValue Decimal? @map("customer_lifetime_value") @db.Decimal(15, 2)
+  churnRisk            Decimal?  @map("churn_risk") @db.Decimal(3, 2)
+  aiInsights           Json?     @map("ai_insights") @db.JsonB
+  segmentTags          Json      @default("[]") @map("segment_tags") @db.JsonB
+  notes                String?   @db.Text
+  metadata             Json      @default("{}") @db.JsonB
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  createdBy            String?   @map("created_by") @db.Uuid
+  updatedBy            String?   @map("updated_by") @db.Uuid
+  deletedAt            DateTime? @map("deleted_at")
+  isActive             Boolean   @default(true) @map("is_active")
+
+  tenant        CoreTenant       @relation(fields: [tenantId], references: [id])
+  contacts      CrmContact[]
+  opportunities CrmOpportunity[]
+  activities    CrmActivity[]
+  crmNotes      CrmNote[]
+  contracts     CrmContract[]
+  attachments   CrmAttachment[]
+
+  @@index([tenantId])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, status])
+  @@index([tenantId, domain])
+  @@map("crm_companies")
+}
+
+// crm_contacts — People (leads, prospects, customers, churned)
+model CrmContact {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String    @map("tenant_id") @db.Uuid
+  companyId            String?   @map("company_id") @db.Uuid
+  ownerId              String?   @map("owner_id") @db.Uuid
+  firstName            String    @map("first_name") @db.VarChar(100)
+  lastName             String    @map("last_name") @db.VarChar(100)
+  email                String?   @db.VarChar(255)
+  phone                String?   @db.VarChar(50)
+  mobile               String?   @db.VarChar(50)
+  jobTitle             String?   @map("job_title") @db.VarChar(255)
+  department           String?   @db.VarChar(100)
+  linkedInUrl          String?   @map("linkedin_url") @db.VarChar(500)
+  avatarUrl            String?   @map("avatar_url") @db.VarChar(500)
+  contactType          String    @default("lead") @map("contact_type") @db.VarChar(50)
+  source               String?   @db.VarChar(100)
+  status               String    @default("new") @db.VarChar(50)
+  // AI-ready fields
+  leadScore            Int?      @map("lead_score")
+  churnRisk            Decimal?  @map("churn_risk") @db.Decimal(3, 2)
+  customerLifetimeValue Decimal? @map("customer_lifetime_value") @db.Decimal(15, 2)
+  aiRecommendations    Json?     @map("ai_recommendations") @db.JsonB
+  aiInsights           Json?     @map("ai_insights") @db.JsonB
+  segmentTags          Json      @default("[]") @map("segment_tags") @db.JsonB
+  // Future integration fields
+  whatsappNumber       String?   @map("whatsapp_number") @db.VarChar(50)
+  preferredChannel     String?   @map("preferred_channel") @db.VarChar(50)
+  timezone             String?   @db.VarChar(100)
+  language             String?   @db.VarChar(20)
+  doNotContact         Boolean   @default(false) @map("do_not_contact")
+  doNotEmail           Boolean   @default(false) @map("do_not_email")
+  lastContactedAt      DateTime? @map("last_contacted_at")
+  nextFollowUpAt       DateTime? @map("next_follow_up_at")
+  convertedAt          DateTime? @map("converted_at")
+  tags                 Json      @default("[]") @db.JsonB
+  address              Json?     @db.JsonB
+  notes                String?   @db.Text
+  metadata             Json      @default("{}") @db.JsonB
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  createdBy            String?   @map("created_by") @db.Uuid
+  updatedBy            String?   @map("updated_by") @db.Uuid
+  deletedAt            DateTime? @map("deleted_at")
+  isActive             Boolean   @default(true) @map("is_active")
+
+  tenant        CoreTenant       @relation(fields: [tenantId], references: [id])
+  company       CrmCompany?      @relation(fields: [companyId], references: [id])
+  opportunities CrmOpportunity[]
+  activities    CrmActivity[]
+  crmNotes      CrmNote[]
+  emailLogs     CrmEmailLog[]
+  attachments   CrmAttachment[]
+
+  @@index([tenantId])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, contactType])
+  @@index([tenantId, status])
+  @@index([tenantId, email])
+  @@index([tenantId, leadScore])
+  @@map("crm_contacts")
+}
+
+// crm_opportunities — Sales deals / pipeline deals
+model CrmOpportunity {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  pipelineId        String    @map("pipeline_id") @db.Uuid
+  stageId           String    @map("stage_id") @db.Uuid
+  contactId         String?   @map("contact_id") @db.Uuid
+  companyId         String?   @map("company_id") @db.Uuid
+  ownerId           String?   @map("owner_id") @db.Uuid
+  name              String    @db.VarChar(255)
+  value             Decimal   @default(0) @db.Decimal(15, 2)
+  currency          String    @default("USD") @db.VarChar(10)
+  probability       Int       @default(0)
+  source            String?   @db.VarChar(100)
+  expectedCloseDate DateTime? @map("expected_close_date") @db.Date
+  actualCloseDate   DateTime? @map("actual_close_date") @db.Date
+  status            String    @default("open") @db.VarChar(50)
+  lostReason        String?   @map("lost_reason") @db.Text
+  description       String?   @db.Text
+  // AI-ready fields
+  aiScore           Decimal?  @map("ai_score") @db.Decimal(3, 2)
+  aiInsights        Json?     @map("ai_insights") @db.JsonB
+  tags              Json      @default("[]") @db.JsonB
+  metadata          Json      @default("{}") @db.JsonB
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         String?   @map("created_by") @db.Uuid
+  updatedBy         String?   @map("updated_by") @db.Uuid
+  deletedAt         DateTime? @map("deleted_at")
+  isActive          Boolean   @default(true) @map("is_active")
+
+  pipeline    CrmPipeline       @relation(fields: [pipelineId], references: [id])
+  stage       CrmPipelineStage  @relation(fields: [stageId], references: [id])
+  contact     CrmContact?       @relation(fields: [contactId], references: [id])
+  company     CrmCompany?       @relation(fields: [companyId], references: [id])
+  activities  CrmActivity[]
+  crmNotes    CrmNote[]
+  contracts   CrmContract[]
+  attachments CrmAttachment[]
+
+  @@index([tenantId])
+  @@index([tenantId, pipelineId])
+  @@index([tenantId, stageId])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, status])
+  @@map("crm_opportunities")
+}
+
+// crm_activities — Unified activity log (calls, meetings, emails, notes, tasks, whatsapp, sms)
+model CrmActivity {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  contactId       String?   @map("contact_id") @db.Uuid
+  companyId       String?   @map("company_id") @db.Uuid
+  opportunityId   String?   @map("opportunity_id") @db.Uuid
+  ownerId         String    @map("owner_id") @db.Uuid
+  activityType    String    @map("activity_type") @db.VarChar(50)
+  subject         String    @db.VarChar(500)
+  description     String?   @db.Text
+  outcome         String?   @db.Text
+  status          String    @default("scheduled") @db.VarChar(50)
+  direction       String?   @db.VarChar(20)
+  scheduledAt     DateTime? @map("scheduled_at")
+  completedAt     DateTime? @map("completed_at")
+  durationMinutes Int?      @map("duration_minutes")
+  location        String?   @db.VarChar(500)
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  contact     CrmContact?     @relation(fields: [contactId], references: [id])
+  company     CrmCompany?     @relation(fields: [companyId], references: [id])
+  opportunity CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, opportunityId])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, activityType])
+  @@index([tenantId, status])
+  @@map("crm_activities")
+}
+
+// crm_notes — Rich notes pinned to contacts, companies, or opportunities
+model CrmNote {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  contactId     String?   @map("contact_id") @db.Uuid
+  companyId     String?   @map("company_id") @db.Uuid
+  opportunityId String?   @map("opportunity_id") @db.Uuid
+  authorId      String    @map("author_id") @db.Uuid
+  content       String    @db.Text
+  isPinned      Boolean   @default(false) @map("is_pinned")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  contact     CrmContact?     @relation(fields: [contactId], references: [id])
+  company     CrmCompany?     @relation(fields: [companyId], references: [id])
+  opportunity CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, opportunityId])
+  @@map("crm_notes")
+}
+
+// crm_contracts — Contracts linked to opportunities or companies
+model CrmContract {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  companyId      String?   @map("company_id") @db.Uuid
+  contactId      String?   @map("contact_id") @db.Uuid
+  opportunityId  String?   @map("opportunity_id") @db.Uuid
+  ownerId        String?   @map("owner_id") @db.Uuid
+  title          String    @db.VarChar(255)
+  contractNumber String    @map("contract_number") @db.VarChar(100)
+  value          Decimal   @default(0) @db.Decimal(15, 2)
+  currency       String    @default("USD") @db.VarChar(10)
+  status         String    @default("draft") @db.VarChar(50)
+  startDate      DateTime? @map("start_date") @db.Date
+  endDate        DateTime? @map("end_date") @db.Date
+  signedAt       DateTime? @map("signed_at")
+  signedBy       String?   @map("signed_by") @db.VarChar(255)
+  documentUrl    String?   @map("document_url") @db.VarChar(500)
+  terms          String?   @db.Text
+  notes          String?   @db.Text
+  metadata       Json      @default("{}") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant      @relation(fields: [tenantId], references: [id])
+  company     CrmCompany?     @relation(fields: [companyId], references: [id])
+  opportunity CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+
+  @@unique([tenantId, contractNumber])
+  @@index([tenantId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, status])
+  @@map("crm_contracts")
+}
+
+// crm_email_logs — Email tracking for outbound communication
+model CrmEmailLog {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  contactId   String?   @map("contact_id") @db.Uuid
+  senderId    String    @map("sender_id") @db.Uuid
+  messageId   String?   @map("message_id") @db.VarChar(500)
+  subject     String    @db.VarChar(500)
+  body        String?   @db.Text
+  status      String    @default("sent") @db.VarChar(50)
+  sentAt      DateTime? @map("sent_at")
+  openedAt    DateTime? @map("opened_at")
+  clickedAt   DateTime? @map("clicked_at")
+  bouncedAt   DateTime? @map("bounced_at")
+  openCount   Int       @default(0) @map("open_count")
+  clickCount  Int       @default(0) @map("click_count")
+  metadata    Json      @default("{}") @db.JsonB
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  contact CrmContact? @relation(fields: [contactId], references: [id])
+
+  @@index([tenantId, contactId])
+  @@index([tenantId, senderId])
+  @@index([tenantId, status])
+  @@map("crm_email_logs")
+}
+
+// crm_attachments — Files attached to any CRM entity
+model CrmAttachment {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  entityType    String    @map("entity_type") @db.VarChar(50)
+  contactId     String?   @map("contact_id") @db.Uuid
+  companyId     String?   @map("company_id") @db.Uuid
+  opportunityId String?   @map("opportunity_id") @db.Uuid
+  uploadedBy    String    @map("uploaded_by") @db.Uuid
+  fileName      String    @map("file_name") @db.VarChar(255)
+  fileUrl       String    @map("file_url") @db.VarChar(500)
+  fileMimeType  String?   @map("file_mime_type") @db.VarChar(100)
+  fileSizeBytes Int?      @map("file_size_bytes")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  contact     CrmContact?     @relation(fields: [contactId], references: [id])
+  company     CrmCompany?     @relation(fields: [companyId], references: [id])
+  opportunity CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+
+  @@index([tenantId, entityType])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, opportunityId])
+  @@map("crm_attachments")
+}
+
+// crm_tags — Labels for contacts, companies, opportunities
+model CrmTag {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  name       String    @db.VarChar(100)
+  color      String    @default("#6366f1") @db.VarChar(20)
+  entityType String    @default("all") @map("entity_type") @db.VarChar(50)
+  usageCount Int       @default(0) @map("usage_count")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  updatedBy  String?   @map("updated_by") @db.Uuid
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@index([tenantId, entityType])
+  @@map("crm_tags")
 }
