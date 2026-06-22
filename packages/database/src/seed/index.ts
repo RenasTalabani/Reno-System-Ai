@@ -38,18 +38,31 @@ async function main() {
     { module: 'core', resource: 'branches', action: 'manage', scope: 'company' },
     { module: 'core', resource: 'departments', action: 'manage', scope: 'company' },
     { module: 'core', resource: 'teams', action: 'manage', scope: 'company' },
-    // HR
+    // HR — Employees
     { module: 'hr', resource: 'employees', action: 'read', scope: 'own' },
     { module: 'hr', resource: 'employees', action: 'read', scope: 'department' },
     { module: 'hr', resource: 'employees', action: 'read', scope: 'all' },
     { module: 'hr', resource: 'employees', action: 'create', scope: 'company' },
     { module: 'hr', resource: 'employees', action: 'update', scope: 'company' },
     { module: 'hr', resource: 'employees', action: 'delete', scope: 'company' },
-    { module: 'hr', resource: 'payroll', action: 'read', scope: 'own' },
-    { module: 'hr', resource: 'payroll', action: 'manage', scope: 'company' },
+    // HR — Attendance
+    { module: 'hr', resource: 'attendance', action: 'read', scope: 'own' },
+    { module: 'hr', resource: 'attendance', action: 'read', scope: 'all' },
+    { module: 'hr', resource: 'attendance', action: 'manage', scope: 'company' },
+    // HR — Leave
     { module: 'hr', resource: 'leave', action: 'read', scope: 'own' },
     { module: 'hr', resource: 'leave', action: 'request', scope: 'own' },
     { module: 'hr', resource: 'leave', action: 'approve', scope: 'company' },
+    { module: 'hr', resource: 'leave', action: 'manage', scope: 'company' },
+    // HR — Payroll
+    { module: 'hr', resource: 'payroll', action: 'read', scope: 'own' },
+    { module: 'hr', resource: 'payroll', action: 'manage', scope: 'company' },
+    // HR — Documents
+    { module: 'hr', resource: 'documents', action: 'read', scope: 'own' },
+    { module: 'hr', resource: 'documents', action: 'manage', scope: 'company' },
+    // HR — Settings (positions, shifts, leave types, holidays)
+    { module: 'hr', resource: 'settings', action: 'read', scope: 'company' },
+    { module: 'hr', resource: 'settings', action: 'manage', scope: 'company' },
     // CRM
     { module: 'crm', resource: 'leads', action: 'read', scope: 'all' },
     { module: 'crm', resource: 'leads', action: 'create', scope: 'company' },
@@ -355,7 +368,52 @@ async function main() {
   console.log(`   → Seeded ${uiTranslations.length} UI translations (en + ar baseline)`)
 
   // -------------------------------------------------------------------------
-  // 12. Create sample team
+  // 12. Seed HR default data
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding HR default data...')
+
+  // Default leave types
+  const leaveTypeDefs = [
+    { name: 'Annual Leave', code: 'ANNUAL', paidType: 'paid', maxDaysPerYear: 21, carryForwardDays: 5, requiresApproval: true, requiresDocument: false, minNoticeDays: 3, genderRestriction: 'all', color: '#22c55e' },
+    { name: 'Sick Leave', code: 'SICK', paidType: 'paid', maxDaysPerYear: 14, carryForwardDays: 0, requiresApproval: true, requiresDocument: true, minNoticeDays: 0, genderRestriction: 'all', color: '#ef4444' },
+    { name: 'Maternity Leave', code: 'MATERNITY', paidType: 'paid', maxDaysPerYear: 90, carryForwardDays: 0, requiresApproval: true, requiresDocument: true, minNoticeDays: 30, genderRestriction: 'female', color: '#ec4899' },
+    { name: 'Emergency Leave', code: 'EMERGENCY', paidType: 'paid', maxDaysPerYear: 3, carryForwardDays: 0, requiresApproval: false, requiresDocument: false, minNoticeDays: 0, genderRestriction: 'all', color: '#f97316' },
+    { name: 'Unpaid Leave', code: 'UNPAID', paidType: 'unpaid', maxDaysPerYear: 30, carryForwardDays: 0, requiresApproval: true, requiresDocument: false, minNoticeDays: 7, genderRestriction: 'all', color: '#64748b' },
+  ]
+
+  for (const lt of leaveTypeDefs) {
+    const existing = await prisma.hrLeaveType.findFirst({
+      where: { tenantId: tenant.id, code: lt.code, deletedAt: null },
+    })
+    if (!existing) {
+      await prisma.hrLeaveType.create({
+        data: { tenantId: tenant.id, companyId: company.id, ...lt },
+      })
+    }
+  }
+
+  // Default shifts
+  const shiftDefs = [
+    { name: 'Morning Shift', code: 'MORNING', startTime: '08:00', endTime: '16:00', breakDuration: 60, workDays: ['mon', 'tue', 'wed', 'thu', 'fri'], overnightShift: false, color: '#6366f1' },
+    { name: 'Evening Shift', code: 'EVENING', startTime: '16:00', endTime: '00:00', breakDuration: 60, workDays: ['mon', 'tue', 'wed', 'thu', 'fri'], overnightShift: false, color: '#8b5cf6' },
+    { name: 'Night Shift', code: 'NIGHT', startTime: '00:00', endTime: '08:00', breakDuration: 60, workDays: ['mon', 'tue', 'wed', 'thu', 'fri'], overnightShift: true, color: '#1e293b' },
+  ]
+
+  for (const s of shiftDefs) {
+    const existing = await prisma.hrShift.findFirst({
+      where: { tenantId: tenant.id, code: s.code, deletedAt: null },
+    })
+    if (!existing) {
+      await prisma.hrShift.create({
+        data: { tenantId: tenant.id, companyId: company.id, ...s },
+      })
+    }
+  }
+
+  console.log('   → Seeded 5 leave types and 3 default shifts')
+
+  // -------------------------------------------------------------------------
+  // 14. Create sample team
   // -------------------------------------------------------------------------
   const existingTeam = await prisma.coreTeam.findFirst({
     where: { tenantId: tenant.id, deletedAt: null },

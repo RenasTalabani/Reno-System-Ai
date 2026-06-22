@@ -30,7 +30,7 @@ const navigation = [
   {
     group: 'Business',
     items: [
-      { label: 'HR', href: '/hr', icon: UsersRound, disabled: true, badge: 'Phase 1' },
+      { label: 'HR', href: '/hr', icon: UsersRound },
       { label: 'CRM', href: '/crm', icon: FolderOpen, disabled: true, badge: 'Phase 3' },
       { label: 'Projects', href: '/projects', icon: GitBranch, disabled: true, badge: 'Phase 2' },
       { label: 'Sales', href: '/sales', icon: Boxes, disabled: true, badge: 'Phase 4' },
@@ -72,7 +72,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v0.1.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v1.0.0</span>
         </div>
       </div>
 

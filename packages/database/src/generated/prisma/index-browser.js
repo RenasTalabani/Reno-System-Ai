@@ -570,6 +570,301 @@ exports.Prisma.AiUsageLogScalarFieldEnum = {
   occurredAt: 'occurredAt'
 };
 
+exports.Prisma.HrEmployeeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  branchId: 'branchId',
+  departmentId: 'departmentId',
+  teamId: 'teamId',
+  userId: 'userId',
+  managerId: 'managerId',
+  employeeCode: 'employeeCode',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  middleName: 'middleName',
+  dateOfBirth: 'dateOfBirth',
+  gender: 'gender',
+  maritalStatus: 'maritalStatus',
+  nationality: 'nationality',
+  nationalId: 'nationalId',
+  passportNo: 'passportNo',
+  passportExpiry: 'passportExpiry',
+  personalEmail: 'personalEmail',
+  workEmail: 'workEmail',
+  phone: 'phone',
+  address: 'address',
+  emergencyContact: 'emergencyContact',
+  hireDate: 'hireDate',
+  probationEndDate: 'probationEndDate',
+  confirmationDate: 'confirmationDate',
+  terminationDate: 'terminationDate',
+  terminationReason: 'terminationReason',
+  employmentType: 'employmentType',
+  status: 'status',
+  avatarUrl: 'avatarUrl',
+  bio: 'bio',
+  skills: 'skills',
+  aiInsights: 'aiInsights',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrJobPositionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  departmentId: 'departmentId',
+  title: 'title',
+  code: 'code',
+  level: 'level',
+  grade: 'grade',
+  salaryGradeMin: 'salaryGradeMin',
+  salaryGradeMax: 'salaryGradeMax',
+  currency: 'currency',
+  responsibilities: 'responsibilities',
+  requirements: 'requirements',
+  headcount: 'headcount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrEmployeePositionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  positionId: 'positionId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isCurrent: 'isCurrent',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrShiftScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  name: 'name',
+  code: 'code',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  workingHours: 'workingHours',
+  breakMinutes: 'breakMinutes',
+  isFlexible: 'isFlexible',
+  workDays: 'workDays',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrEmployeeShiftScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  shiftId: 'shiftId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isCurrent: 'isCurrent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrAttendanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  date: 'date',
+  checkIn: 'checkIn',
+  checkOut: 'checkOut',
+  workingHours: 'workingHours',
+  status: 'status',
+  source: 'source',
+  notes: 'notes',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrLeaveTypeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  name: 'name',
+  code: 'code',
+  paidType: 'paidType',
+  maxDaysPerYear: 'maxDaysPerYear',
+  carryForwardDays: 'carryForwardDays',
+  requiresApproval: 'requiresApproval',
+  requiresDocument: 'requiresDocument',
+  minNoticeDays: 'minNoticeDays',
+  genderRestriction: 'genderRestriction',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrLeaveBalanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  year: 'year',
+  totalDays: 'totalDays',
+  usedDays: 'usedDays',
+  pendingDays: 'pendingDays',
+  carriedDays: 'carriedDays',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrLeaveRequestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  totalDays: 'totalDays',
+  isHalfDay: 'isHalfDay',
+  halfDayPeriod: 'halfDayPeriod',
+  reason: 'reason',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  rejectionReason: 'rejectionReason',
+  documentUrl: 'documentUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrPayrollGradeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  name: 'name',
+  code: 'code',
+  level: 'level',
+  minSalary: 'minSalary',
+  maxSalary: 'maxSalary',
+  currency: 'currency',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrPayslipScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  gradeId: 'gradeId',
+  month: 'month',
+  year: 'year',
+  currency: 'currency',
+  basicSalary: 'basicSalary',
+  grossSalary: 'grossSalary',
+  totalDeductions: 'totalDeductions',
+  netSalary: 'netSalary',
+  earnings: 'earnings',
+  deductions: 'deductions',
+  workingDays: 'workingDays',
+  presentDays: 'presentDays',
+  absentDays: 'absentDays',
+  leaveDays: 'leaveDays',
+  status: 'status',
+  processedBy: 'processedBy',
+  processedAt: 'processedAt',
+  paidAt: 'paidAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrDocumentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  type: 'type',
+  name: 'name',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  expiryDate: 'expiryDate',
+  isConfidential: 'isConfidential',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.HrHolidayScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyId: 'companyId',
+  name: 'name',
+  date: 'date',
+  type: 'type',
+  isRecurring: 'isRecurring',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -625,7 +920,20 @@ exports.Prisma.ModelName = {
   SysApiKey: 'SysApiKey',
   SysTranslation: 'SysTranslation',
   SysUiTranslation: 'SysUiTranslation',
-  AiUsageLog: 'AiUsageLog'
+  AiUsageLog: 'AiUsageLog',
+  HrEmployee: 'HrEmployee',
+  HrJobPosition: 'HrJobPosition',
+  HrEmployeePosition: 'HrEmployeePosition',
+  HrShift: 'HrShift',
+  HrEmployeeShift: 'HrEmployeeShift',
+  HrAttendance: 'HrAttendance',
+  HrLeaveType: 'HrLeaveType',
+  HrLeaveBalance: 'HrLeaveBalance',
+  HrLeaveRequest: 'HrLeaveRequest',
+  HrPayrollGrade: 'HrPayrollGrade',
+  HrPayslip: 'HrPayslip',
+  HrDocument: 'HrDocument',
+  HrHoliday: 'HrHoliday'
 };
 
 /**
