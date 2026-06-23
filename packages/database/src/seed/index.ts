@@ -971,6 +971,122 @@ async function main() {
 
   console.log('   → Seeded manufacturing work centers')
 
+  // -------------------------------------------------------------------------
+  // 21. Phase 9 — BI / Analytics seed
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding analytics permissions and dashboards...')
+
+  const biPermissions = [
+    { module: 'analytics', resource: 'dashboards', action: 'read', scope: 'company' },
+    { module: 'analytics', resource: 'dashboards', action: 'create', scope: 'company' },
+    { module: 'analytics', resource: 'dashboards', action: 'update', scope: 'company' },
+    { module: 'analytics', resource: 'dashboards', action: 'delete', scope: 'company' },
+    { module: 'analytics', resource: 'reports', action: 'read', scope: 'company' },
+    { module: 'analytics', resource: 'reports', action: 'create', scope: 'company' },
+    { module: 'analytics', resource: 'reports', action: 'update', scope: 'company' },
+    { module: 'analytics', resource: 'reports', action: 'delete', scope: 'company' },
+    { module: 'analytics', resource: 'reports', action: 'export', scope: 'company' },
+    { module: 'analytics', resource: 'kpis', action: 'read', scope: 'company' },
+    { module: 'analytics', resource: 'insights', action: 'read', scope: 'company' },
+    { module: 'analytics', resource: 'insights', action: 'manage', scope: 'company' },
+    { module: 'analytics', resource: 'health_score', action: 'read', scope: 'company' },
+    { module: 'analytics', resource: 'health_score', action: 'compute', scope: 'company' },
+    { module: 'analytics', resource: 'scheduled_reports', action: 'manage', scope: 'company' },
+  ]
+
+  for (const p of biPermissions) {
+    await prisma.corePermission.upsert({
+      where: { module_resource_action_scope: p },
+      create: p,
+      update: {},
+    })
+  }
+
+  // Seed executive dashboard
+  const execDashSlug = 'executive-overview'
+  const existingExecDash = await prisma.biDashboard.findFirst({ where: { tenantId: tenant.id, slug: execDashSlug } })
+  if (!existingExecDash) {
+    const execDash = await prisma.biDashboard.create({
+      data: {
+        tenantId: tenant.id,
+        name: 'Executive Overview',
+        slug: execDashSlug,
+        description: 'Cross-module executive dashboard with key business metrics',
+        type: 'executive',
+        isDefault: true,
+        isPublic: true,
+        createdBy: adminUser.id,
+        updatedBy: adminUser.id,
+      },
+    })
+
+    // Seed default widgets
+    const defaultWidgets = [
+      { title: 'Revenue MTD', type: 'kpi', module: 'finance', dataSource: 'finance.revenue', positionX: 0, positionY: 0, width: 3, height: 2 },
+      { title: 'Open Sales Orders', type: 'kpi', module: 'sales', dataSource: 'sales.open_orders', positionX: 3, positionY: 0, width: 3, height: 2 },
+      { title: 'Total Employees', type: 'kpi', module: 'hr', dataSource: 'hr.headcount', positionX: 6, positionY: 0, width: 3, height: 2 },
+      { title: 'Stock Value', type: 'kpi', module: 'inventory', dataSource: 'inventory.stock_value', positionX: 9, positionY: 0, width: 3, height: 2 },
+      { title: 'Company Health Score', type: 'gauge', module: 'analytics', dataSource: 'analytics.health_score', positionX: 0, positionY: 2, width: 4, height: 3 },
+      { title: 'Finance Performance', type: 'bar_chart', module: 'finance', dataSource: 'finance.monthly_trend', positionX: 4, positionY: 2, width: 8, height: 3 },
+    ]
+
+    for (const w of defaultWidgets) {
+      await prisma.biWidget.create({ data: { tenantId: tenant.id, dashboardId: execDash.id, ...w } })
+    }
+  }
+
+  // Seed department scorecard dashboard
+  const deptDashSlug = 'department-scorecards'
+  const existingDeptDash = await prisma.biDashboard.findFirst({ where: { tenantId: tenant.id, slug: deptDashSlug } })
+  if (!existingDeptDash) {
+    await prisma.biDashboard.create({
+      data: {
+        tenantId: tenant.id,
+        name: 'Department Scorecards',
+        slug: deptDashSlug,
+        description: 'Performance scorecards for each department',
+        type: 'department',
+        isDefault: false,
+        isPublic: true,
+        createdBy: adminUser.id,
+        updatedBy: adminUser.id,
+      },
+    })
+  }
+
+  // Seed sample reports
+  const sampleReports = [
+    {
+      name: 'Sales Orders Summary',
+      module: 'sales',
+      entity: 'orders',
+      columns: [{ field: 'number', label: 'Order #' }, { field: 'status', label: 'Status' }, { field: 'grandTotal', label: 'Total' }, { field: 'createdAt', label: 'Date' }],
+    },
+    {
+      name: 'Employee Roster',
+      module: 'hr',
+      entity: 'employees',
+      columns: [{ field: 'employeeNumber', label: 'Emp #' }, { field: 'firstName', label: 'First' }, { field: 'lastName', label: 'Last' }, { field: 'status', label: 'Status' }],
+    },
+    {
+      name: 'Inventory Stock Levels',
+      module: 'inventory',
+      entity: 'stock',
+      columns: [{ field: 'onHand', label: 'On Hand' }, { field: 'reserved', label: 'Reserved' }, { field: 'available', label: 'Available' }, { field: 'totalValue', label: 'Value' }],
+    },
+  ]
+
+  for (const r of sampleReports) {
+    const existing = await prisma.biReport.findFirst({ where: { tenantId: tenant.id, name: r.name } })
+    if (!existing) {
+      await prisma.biReport.create({
+        data: { tenantId: tenant.id, ...r, isPublic: true, createdBy: adminUser.id, updatedBy: adminUser.id },
+      })
+    }
+  }
+
+  console.log('   → Seeded analytics dashboards, widgets, and reports')
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')

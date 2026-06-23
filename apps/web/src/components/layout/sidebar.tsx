@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
-  Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory,
+  Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -38,6 +38,7 @@ const navigation = [
       { label: 'Inventory', href: '/inventory', icon: Package },
       { label: 'Procurement', href: '/procurement', icon: ShoppingCart },
       { label: 'Manufacturing', href: '/manufacturing', icon: Factory },
+      { label: 'Analytics', href: '/analytics', icon: PieChart },
     ],
   },
   {
@@ -75,7 +76,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v8.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v9.0.0</span>
         </div>
       </div>
 
@@ -129,6 +130,7 @@ export function Sidebar() {
             <p className="text-xs text-sidebar-foreground/50 truncate">{user?.email}</p>
           </div>
           <button
+            type="button"
             onClick={handleLogout}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-red-400 text-sidebar-foreground/50"
             title="Sign out"
