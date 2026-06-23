@@ -60,10 +60,19 @@ model CoreTenant {
   pmProjects      PmProject[]
   pmBoards        PmBoard[]
   pmLabels        PmLabel[]
-  crmContacts     CrmContact[]
-  crmCompanies    CrmCompany[]
-  crmPipelines    CrmPipeline[]
-  crmContracts    CrmContract[]
+  crmContacts       CrmContact[]
+  crmCompanies      CrmCompany[]
+  crmPipelines      CrmPipeline[]
+  crmContracts      CrmContract[]
+  salesCurrencies   SalesCurrency[]
+  salesTaxes        SalesTax[]
+  salesPriceLists   SalesPriceList[]
+  salesProducts     SalesProduct[]
+  salesQuotations   SalesQuotation[]
+  salesOrders       SalesOrder[]
+  salesInvoices     SalesInvoice[]
+  salesSubscriptions SalesSubscription[]
+  salesDiscounts    SalesDiscount[]
 
   @@map("core_tenants")
 }
@@ -1867,4 +1876,495 @@ model CrmTag {
   @@index([tenantId])
   @@index([tenantId, entityType])
   @@map("crm_tags")
+}
+
+// =============================================================================
+// SALES MODULE — Reno Sales (Phase 4)
+// =============================================================================
+
+// sales_currencies — Multi-currency support
+model SalesCurrency {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  code         String    @db.VarChar(10)
+  name         String    @db.VarChar(100)
+  symbol       String    @db.VarChar(10)
+  exchangeRate Decimal   @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  isBase       Boolean   @default(false) @map("is_base")
+  decimalPlaces Int      @default(2) @map("decimal_places")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("sales_currencies")
+}
+
+// sales_taxes — Tax rule definitions
+model SalesTax {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(100)
+  code        String    @db.VarChar(50)
+  rate        Decimal   @db.Decimal(8, 4)
+  taxType     String    @default("percentage") @map("tax_type") @db.VarChar(50)
+  scope       String    @default("all") @db.VarChar(50)
+  country     String?   @db.VarChar(100)
+  region      String?   @db.VarChar(100)
+  isCompound  Boolean   @default(false) @map("is_compound")
+  isDefault   Boolean   @default(false) @map("is_default")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant     @relation(fields: [tenantId], references: [id])
+  products SalesProduct[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("sales_taxes")
+}
+
+// sales_price_lists — Price lists per market/segment
+model SalesPriceList {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  currency    String    @default("USD") @db.VarChar(10)
+  discount    Decimal   @default(0) @db.Decimal(5, 2)
+  validFrom   DateTime? @map("valid_from") @db.Date
+  validTo     DateTime? @map("valid_to") @db.Date
+  isDefault   Boolean   @default(false) @map("is_default")
+  description String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant     @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@map("sales_price_lists")
+}
+
+// sales_products — Product/service catalog for sales
+model SalesProduct {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  taxId            String?   @map("tax_id") @db.Uuid
+  name             String    @db.VarChar(500)
+  sku              String?   @db.VarChar(100)
+  description      String?   @db.Text
+  productType      String    @default("product") @map("product_type") @db.VarChar(50)
+  unitPrice        Decimal   @default(0) @map("unit_price") @db.Decimal(15, 4)
+  currency         String    @default("USD") @db.VarChar(10)
+  unit             String    @default("unit") @db.VarChar(50)
+  billingInterval  String?   @map("billing_interval") @db.VarChar(50)
+  imageUrl         String?   @map("image_url") @db.VarChar(500)
+  category         String?   @db.VarChar(100)
+  tags             Json      @default("[]") @db.JsonB
+  aiPricingInsights Json?    @map("ai_pricing_insights") @db.JsonB
+  metadata         Json      @default("{}") @db.JsonB
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  createdBy        String?   @map("created_by") @db.Uuid
+  updatedBy        String?   @map("updated_by") @db.Uuid
+  deletedAt        DateTime? @map("deleted_at")
+  isActive         Boolean   @default(true) @map("is_active")
+
+  tenant           CoreTenant        @relation(fields: [tenantId], references: [id])
+  tax              SalesTax?         @relation(fields: [taxId], references: [id])
+  quotationItems   SalesQuotationItem[]
+  orderItems       SalesOrderItem[]
+  invoiceItems     SalesInvoiceItem[]
+  subscriptions    SalesSubscription[]
+
+  @@unique([tenantId, sku])
+  @@index([tenantId])
+  @@index([tenantId, productType])
+  @@index([tenantId, category])
+  @@map("sales_products")
+}
+
+// sales_discounts — Discount codes / promotions
+model SalesDiscount {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  name          String    @db.VarChar(255)
+  code          String    @db.VarChar(100)
+  discountType  String    @default("percentage") @map("discount_type") @db.VarChar(50)
+  value         Decimal   @db.Decimal(10, 2)
+  minOrderValue Decimal?  @map("min_order_value") @db.Decimal(15, 2)
+  maxUses       Int?      @map("max_uses")
+  usedCount     Int       @default(0) @map("used_count")
+  validFrom     DateTime? @map("valid_from") @db.Date
+  validTo       DateTime? @map("valid_to") @db.Date
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("sales_discounts")
+}
+
+// sales_quotations — Customer quotes / proposals
+model SalesQuotation {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @map("tenant_id") @db.Uuid
+  number             String    @db.VarChar(100)
+  contactId          String?   @map("contact_id") @db.Uuid
+  companyId          String?   @map("company_id") @db.Uuid
+  opportunityId      String?   @map("opportunity_id") @db.Uuid
+  ownerId            String?   @map("owner_id") @db.Uuid
+  status             String    @default("draft") @db.VarChar(50)
+  currency           String    @default("USD") @db.VarChar(10)
+  exchangeRate       Decimal   @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  subtotal           Decimal   @default(0) @db.Decimal(15, 2)
+  discountTotal      Decimal   @default(0) @map("discount_total") @db.Decimal(15, 2)
+  taxTotal           Decimal   @default(0) @map("tax_total") @db.Decimal(15, 2)
+  total              Decimal   @default(0) @db.Decimal(15, 2)
+  discountCode       String?   @map("discount_code") @db.VarChar(100)
+  validUntil         DateTime? @map("valid_until") @db.Date
+  notes              String?   @db.Text
+  terms              String?   @db.Text
+  billingAddress     Json?     @map("billing_address") @db.JsonB
+  sentAt             DateTime? @map("sent_at")
+  viewedAt           DateTime? @map("viewed_at")
+  acceptedAt         DateTime? @map("accepted_at")
+  rejectedAt         DateTime? @map("rejected_at")
+  rejectionReason    String?   @map("rejection_reason") @db.Text
+  convertedToOrderId String?   @map("converted_to_order_id") @db.Uuid
+  // AI-ready fields
+  aiInsights         Json?     @map("ai_insights") @db.JsonB
+  winProbability     Decimal?  @map("win_probability") @db.Decimal(3, 2)
+  metadata           Json      @default("{}") @db.JsonB
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  createdBy          String?   @map("created_by") @db.Uuid
+  updatedBy          String?   @map("updated_by") @db.Uuid
+  deletedAt          DateTime? @map("deleted_at")
+  isActive           Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant          @relation(fields: [tenantId], references: [id])
+  items  SalesQuotationItem[]
+  orders SalesOrder[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, ownerId])
+  @@map("sales_quotations")
+}
+
+// sales_quotation_items — Line items on quotation
+model SalesQuotationItem {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  quotationId  String    @map("quotation_id") @db.Uuid
+  productId    String?   @map("product_id") @db.Uuid
+  name         String    @db.VarChar(500)
+  description  String?   @db.Text
+  quantity     Decimal   @default(1) @db.Decimal(12, 4)
+  unitPrice    Decimal   @default(0) @map("unit_price") @db.Decimal(15, 4)
+  discount     Decimal   @default(0) @db.Decimal(5, 2)
+  taxRate      Decimal   @default(0) @map("tax_rate") @db.Decimal(8, 4)
+  subtotal     Decimal   @default(0) @db.Decimal(15, 2)
+  taxAmount    Decimal   @default(0) @map("tax_amount") @db.Decimal(15, 2)
+  total        Decimal   @default(0) @db.Decimal(15, 2)
+  sortOrder    Int       @default(0) @map("sort_order")
+  unit         String    @default("unit") @db.VarChar(50)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  quotation SalesQuotation @relation(fields: [quotationId], references: [id])
+  product   SalesProduct?  @relation(fields: [productId], references: [id])
+
+  @@index([tenantId, quotationId])
+  @@map("sales_quotation_items")
+}
+
+// sales_orders — Confirmed sales orders
+model SalesOrder {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  number         String    @db.VarChar(100)
+  quotationId    String?   @map("quotation_id") @db.Uuid
+  contactId      String?   @map("contact_id") @db.Uuid
+  companyId      String?   @map("company_id") @db.Uuid
+  ownerId        String?   @map("owner_id") @db.Uuid
+  status         String    @default("draft") @db.VarChar(50)
+  currency       String    @default("USD") @db.VarChar(10)
+  exchangeRate   Decimal   @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  subtotal       Decimal   @default(0) @db.Decimal(15, 2)
+  discountTotal  Decimal   @default(0) @map("discount_total") @db.Decimal(15, 2)
+  taxTotal       Decimal   @default(0) @map("tax_total") @db.Decimal(15, 2)
+  total          Decimal   @default(0) @db.Decimal(15, 2)
+  discountCode   String?   @map("discount_code") @db.VarChar(100)
+  billingAddress Json?     @map("billing_address") @db.JsonB
+  shippingAddress Json?    @map("shipping_address") @db.JsonB
+  notes          String?   @db.Text
+  terms          String?   @db.Text
+  confirmedAt    DateTime? @map("confirmed_at")
+  shippedAt      DateTime? @map("shipped_at")
+  deliveredAt    DateTime? @map("delivered_at")
+  cancelledAt    DateTime? @map("cancelled_at")
+  cancelReason   String?   @map("cancel_reason") @db.Text
+  // AI-ready: revenue forecasting
+  revenueForecast Decimal? @map("revenue_forecast") @db.Decimal(15, 2)
+  aiInsights     Json?     @map("ai_insights") @db.JsonB
+  metadata       Json      @default("{}") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  tenant     CoreTenant       @relation(fields: [tenantId], references: [id])
+  quotation  SalesQuotation?  @relation(fields: [quotationId], references: [id])
+  items      SalesOrderItem[]
+  invoices   SalesInvoice[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, ownerId])
+  @@map("sales_orders")
+}
+
+// sales_order_items — Line items on sales order
+model SalesOrderItem {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  orderId       String    @map("order_id") @db.Uuid
+  productId     String?   @map("product_id") @db.Uuid
+  name          String    @db.VarChar(500)
+  description   String?   @db.Text
+  quantity      Decimal   @default(1) @db.Decimal(12, 4)
+  unitPrice     Decimal   @default(0) @map("unit_price") @db.Decimal(15, 4)
+  discount      Decimal   @default(0) @db.Decimal(5, 2)
+  taxRate       Decimal   @default(0) @map("tax_rate") @db.Decimal(8, 4)
+  subtotal      Decimal   @default(0) @db.Decimal(15, 2)
+  taxAmount     Decimal   @default(0) @map("tax_amount") @db.Decimal(15, 2)
+  total         Decimal   @default(0) @db.Decimal(15, 2)
+  deliveredQty  Decimal   @default(0) @map("delivered_qty") @db.Decimal(12, 4)
+  cancelledQty  Decimal   @default(0) @map("cancelled_qty") @db.Decimal(12, 4)
+  sortOrder     Int       @default(0) @map("sort_order")
+  unit          String    @default("unit") @db.VarChar(50)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  order   SalesOrder    @relation(fields: [orderId], references: [id])
+  product SalesProduct? @relation(fields: [productId], references: [id])
+
+  @@index([tenantId, orderId])
+  @@map("sales_order_items")
+}
+
+// sales_invoices — Invoices (from order or standalone)
+model SalesInvoice {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  number         String    @db.VarChar(100)
+  orderId        String?   @map("order_id") @db.Uuid
+  contactId      String?   @map("contact_id") @db.Uuid
+  companyId      String?   @map("company_id") @db.Uuid
+  ownerId        String?   @map("owner_id") @db.Uuid
+  status         String    @default("draft") @db.VarChar(50)
+  currency       String    @default("USD") @db.VarChar(10)
+  exchangeRate   Decimal   @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  subtotal       Decimal   @default(0) @db.Decimal(15, 2)
+  discountTotal  Decimal   @default(0) @map("discount_total") @db.Decimal(15, 2)
+  taxTotal       Decimal   @default(0) @map("tax_total") @db.Decimal(15, 2)
+  total          Decimal   @default(0) @db.Decimal(15, 2)
+  amountPaid     Decimal   @default(0) @map("amount_paid") @db.Decimal(15, 2)
+  amountDue      Decimal   @default(0) @map("amount_due") @db.Decimal(15, 2)
+  dueDate        DateTime? @map("due_date") @db.Date
+  issuedAt       DateTime? @map("issued_at")
+  sentAt         DateTime? @map("sent_at")
+  paidAt         DateTime? @map("paid_at")
+  voidedAt       DateTime? @map("voided_at")
+  voidReason     String?   @map("void_reason") @db.Text
+  paymentTerms   String?   @map("payment_terms") @db.VarChar(100)
+  paymentReference String? @map("payment_reference") @db.VarChar(255)
+  billingAddress Json?     @map("billing_address") @db.JsonB
+  notes          String?   @db.Text
+  terms          String?   @db.Text
+  metadata       Json      @default("{}") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant         @relation(fields: [tenantId], references: [id])
+  order    SalesOrder?        @relation(fields: [orderId], references: [id])
+  items    SalesInvoiceItem[]
+  payments SalesPayment[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, dueDate])
+  @@map("sales_invoices")
+}
+
+// sales_invoice_items — Line items on invoice
+model SalesInvoiceItem {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  invoiceId   String    @map("invoice_id") @db.Uuid
+  productId   String?   @map("product_id") @db.Uuid
+  name        String    @db.VarChar(500)
+  description String?   @db.Text
+  quantity    Decimal   @default(1) @db.Decimal(12, 4)
+  unitPrice   Decimal   @default(0) @map("unit_price") @db.Decimal(15, 4)
+  discount    Decimal   @default(0) @db.Decimal(5, 2)
+  taxRate     Decimal   @default(0) @map("tax_rate") @db.Decimal(8, 4)
+  subtotal    Decimal   @default(0) @db.Decimal(15, 2)
+  taxAmount   Decimal   @default(0) @map("tax_amount") @db.Decimal(15, 2)
+  total       Decimal   @default(0) @db.Decimal(15, 2)
+  sortOrder   Int       @default(0) @map("sort_order")
+  unit        String    @default("unit") @db.VarChar(50)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  invoice SalesInvoice  @relation(fields: [invoiceId], references: [id])
+  product SalesProduct? @relation(fields: [productId], references: [id])
+
+  @@index([tenantId, invoiceId])
+  @@map("sales_invoice_items")
+}
+
+// sales_payment_methods — Reusable payment method configurations
+model SalesPaymentMethod {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(100)
+  methodType  String    @map("method_type") @db.VarChar(50)
+  config      Json      @default("{}") @db.JsonB
+  isDefault   Boolean   @default(false) @map("is_default")
+  sortOrder   Int       @default(0) @map("sort_order")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  payments SalesPayment[]
+
+  @@index([tenantId])
+  @@map("sales_payment_methods")
+}
+
+// sales_payments — Payment records against invoices
+model SalesPayment {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  invoiceId       String    @map("invoice_id") @db.Uuid
+  paymentMethodId String?   @map("payment_method_id") @db.Uuid
+  contactId       String?   @map("contact_id") @db.Uuid
+  companyId       String?   @map("company_id") @db.Uuid
+  amount          Decimal   @db.Decimal(15, 2)
+  currency        String    @default("USD") @db.VarChar(10)
+  exchangeRate    Decimal   @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  amountInBase    Decimal   @default(0) @map("amount_in_base") @db.Decimal(15, 2)
+  method          String    @db.VarChar(100)
+  status          String    @default("completed") @db.VarChar(50)
+  reference       String?   @db.VarChar(255)
+  gatewayId       String?   @map("gateway_id") @db.VarChar(500)
+  gatewayResponse Json?     @map("gateway_response") @db.JsonB
+  paidAt          DateTime  @default(now()) @map("paid_at")
+  notes           String?   @db.Text
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  invoice       SalesInvoice        @relation(fields: [invoiceId], references: [id])
+  paymentMethod SalesPaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, invoiceId])
+  @@index([tenantId, status])
+  @@index([tenantId, paidAt])
+  @@map("sales_payments")
+}
+
+// sales_subscriptions — Recurring billing / subscriptions
+model SalesSubscription {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  contactId       String?   @map("contact_id") @db.Uuid
+  companyId       String?   @map("company_id") @db.Uuid
+  productId       String?   @map("product_id") @db.Uuid
+  ownerId         String?   @map("owner_id") @db.Uuid
+  planName        String    @map("plan_name") @db.VarChar(255)
+  billingInterval String    @default("monthly") @map("billing_interval") @db.VarChar(50)
+  amount          Decimal   @db.Decimal(15, 2)
+  currency        String    @default("USD") @db.VarChar(10)
+  status          String    @default("active") @db.VarChar(50)
+  startDate       DateTime  @map("start_date") @db.Date
+  endDate         DateTime? @map("end_date") @db.Date
+  trialEndDate    DateTime? @map("trial_end_date") @db.Date
+  nextBillingDate DateTime? @map("next_billing_date") @db.Date
+  lastBillingDate DateTime? @map("last_billing_date") @db.Date
+  billingCount    Int       @default(0) @map("billing_count")
+  cancelledAt     DateTime? @map("cancelled_at")
+  cancelReason    String?   @map("cancel_reason") @db.Text
+  pausedAt        DateTime? @map("paused_at")
+  // AI-ready fields
+  aiChurnRisk     Decimal?  @map("ai_churn_risk") @db.Decimal(3, 2)
+  aiInsights      Json?     @map("ai_insights") @db.JsonB
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant  CoreTenant    @relation(fields: [tenantId], references: [id])
+  product SalesProduct? @relation(fields: [productId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, contactId])
+  @@index([tenantId, companyId])
+  @@index([tenantId, nextBillingDate])
+  @@map("sales_subscriptions")
 }

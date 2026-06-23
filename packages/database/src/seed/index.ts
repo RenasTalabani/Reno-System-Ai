@@ -97,6 +97,25 @@ async function main() {
     { module: 'crm', resource: 'contracts', action: 'read', scope: 'company' },
     { module: 'crm', resource: 'contracts', action: 'manage', scope: 'company' },
     { module: 'crm', resource: 'pipeline', action: 'manage', scope: 'company' },
+    // Sales
+    { module: 'sales', resource: 'products', action: 'read', scope: 'company' },
+    { module: 'sales', resource: 'products', action: 'manage', scope: 'company' },
+    { module: 'sales', resource: 'quotations', action: 'read', scope: 'own' },
+    { module: 'sales', resource: 'quotations', action: 'read', scope: 'all' },
+    { module: 'sales', resource: 'quotations', action: 'create', scope: 'company' },
+    { module: 'sales', resource: 'quotations', action: 'update', scope: 'own' },
+    { module: 'sales', resource: 'quotations', action: 'manage', scope: 'company' },
+    { module: 'sales', resource: 'orders', action: 'read', scope: 'own' },
+    { module: 'sales', resource: 'orders', action: 'read', scope: 'all' },
+    { module: 'sales', resource: 'orders', action: 'create', scope: 'company' },
+    { module: 'sales', resource: 'orders', action: 'manage', scope: 'company' },
+    { module: 'sales', resource: 'invoices', action: 'read', scope: 'company' },
+    { module: 'sales', resource: 'invoices', action: 'manage', scope: 'company' },
+    { module: 'sales', resource: 'payments', action: 'read', scope: 'company' },
+    { module: 'sales', resource: 'payments', action: 'manage', scope: 'company' },
+    { module: 'sales', resource: 'subscriptions', action: 'read', scope: 'company' },
+    { module: 'sales', resource: 'subscriptions', action: 'manage', scope: 'company' },
+    { module: 'sales', resource: 'settings', action: 'manage', scope: 'company' },
     // Finance
     { module: 'finance', resource: 'invoices', action: 'read', scope: 'company' },
     { module: 'finance', resource: 'invoices', action: 'create', scope: 'company' },
@@ -502,6 +521,69 @@ async function main() {
     }
 
     console.log('   → Seeded 1 CRM pipeline with 6 stages')
+  }
+
+  // -------------------------------------------------------------------------
+  // 16. Seed Sales default data
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Sales defaults...')
+
+  const existingCurrency = await prisma.salesCurrency.findFirst({ where: { tenantId: tenant.id, code: 'USD' } })
+  if (!existingCurrency) {
+    await prisma.salesCurrency.create({
+      data: {
+        tenantId: tenant.id, code: 'USD', name: 'US Dollar', symbol: '$',
+        exchangeRate: 1, isBase: true, decimalPlaces: 2,
+        createdBy: adminUser.id, updatedBy: adminUser.id,
+      },
+    })
+    console.log('   → Seeded base currency: USD')
+  }
+
+  const existingTax = await prisma.salesTax.findFirst({ where: { tenantId: tenant.id } })
+  if (!existingTax) {
+    await prisma.salesTax.create({
+      data: {
+        tenantId: tenant.id, name: 'No Tax', code: 'NOTAX',
+        rate: 0, taxType: 'percentage', isDefault: true, scope: 'global',
+        createdBy: adminUser.id, updatedBy: adminUser.id,
+      },
+    })
+    await prisma.salesTax.create({
+      data: {
+        tenantId: tenant.id, name: 'VAT 15%', code: 'VAT15',
+        rate: 15, taxType: 'percentage', isDefault: false, scope: 'global',
+        createdBy: adminUser.id, updatedBy: adminUser.id,
+      },
+    })
+    console.log('   → Seeded 2 default taxes')
+  }
+
+  const existingPriceList = await prisma.salesPriceList.findFirst({ where: { tenantId: tenant.id } })
+  if (!existingPriceList) {
+    await prisma.salesPriceList.create({
+      data: {
+        tenantId: tenant.id, name: 'Standard Price List', currency: 'USD',
+        discount: 0, isDefault: true,
+        createdBy: adminUser.id, updatedBy: adminUser.id,
+      },
+    })
+    console.log('   → Seeded default price list')
+  }
+
+  const existingPaymentMethod = await prisma.salesPaymentMethod.findFirst({ where: { tenantId: tenant.id } })
+  if (!existingPaymentMethod) {
+    const paymentMethods = [
+      { name: 'Bank Transfer', methodType: 'bank_transfer', isDefault: true, sortOrder: 0 },
+      { name: 'Cash', methodType: 'cash', isDefault: false, sortOrder: 1 },
+      { name: 'Credit Card', methodType: 'credit_card', isDefault: false, sortOrder: 2 },
+    ]
+    for (const m of paymentMethods) {
+      await prisma.salesPaymentMethod.create({
+        data: { tenantId: tenant.id, ...m, config: {}, createdBy: adminUser.id, updatedBy: adminUser.id },
+      })
+    }
+    console.log('   → Seeded 3 payment methods')
   }
 
   console.log('')
