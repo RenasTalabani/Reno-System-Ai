@@ -2071,6 +2071,336 @@ exports.Prisma.FinBudgetLineScalarFieldEnum = {
   isActive: 'isActive'
 };
 
+exports.Prisma.InvCategoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvUnitScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  symbol: 'symbol',
+  type: 'type',
+  isBase: 'isBase',
+  baseUnitId: 'baseUnitId',
+  conversionFactor: 'conversionFactor',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvProductScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  categoryId: 'categoryId',
+  unitId: 'unitId',
+  type: 'type',
+  barcode: 'barcode',
+  qrCode: 'qrCode',
+  imageUrl: 'imageUrl',
+  costPrice: 'costPrice',
+  salePrice: 'salePrice',
+  minStockLevel: 'minStockLevel',
+  maxStockLevel: 'maxStockLevel',
+  reorderQty: 'reorderQty',
+  leadTimeDays: 'leadTimeDays',
+  trackBatch: 'trackBatch',
+  trackSerial: 'trackSerial',
+  trackExpiry: 'trackExpiry',
+  valuationMethod: 'valuationMethod',
+  standardCost: 'standardCost',
+  aiDemandScore: 'aiDemandScore',
+  aiForecastedDemand: 'aiForecastedDemand',
+  aiShortageRisk: 'aiShortageRisk',
+  aiOverstockRisk: 'aiOverstockRisk',
+  aiReorderSuggestion: 'aiReorderSuggestion',
+  aiLastAnalyzedAt: 'aiLastAnalyzedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvWarehouseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  code: 'code',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  country: 'country',
+  isDefault: 'isDefault',
+  valuationAccountId: 'valuationAccountId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvWarehouseZoneScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  warehouseId: 'warehouseId',
+  code: 'code',
+  name: 'name',
+  type: 'type',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvBinScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  zoneId: 'zoneId',
+  code: 'code',
+  name: 'name',
+  barcode: 'barcode',
+  capacity: 'capacity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvLotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  productId: 'productId',
+  number: 'number',
+  expiryDate: 'expiryDate',
+  manufacturedDate: 'manufacturedDate',
+  supplierLot: 'supplierLot',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvSerialScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  productId: 'productId',
+  number: 'number',
+  status: 'status',
+  warehouseId: 'warehouseId',
+  binId: 'binId',
+  lotId: 'lotId',
+  purchasedAt: 'purchasedAt',
+  soldAt: 'soldAt',
+  expiryDate: 'expiryDate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvMovementScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  type: 'type',
+  productId: 'productId',
+  fromWarehouseId: 'fromWarehouseId',
+  toWarehouseId: 'toWarehouseId',
+  fromZoneId: 'fromZoneId',
+  toZoneId: 'toZoneId',
+  fromBinId: 'fromBinId',
+  toBinId: 'toBinId',
+  lotId: 'lotId',
+  serialId: 'serialId',
+  quantity: 'quantity',
+  unitCost: 'unitCost',
+  totalCost: 'totalCost',
+  currency: 'currency',
+  date: 'date',
+  reference: 'reference',
+  referenceType: 'referenceType',
+  referenceId: 'referenceId',
+  notes: 'notes',
+  aiFlag: 'aiFlag',
+  aiNotes: 'aiNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvStockBalanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  productId: 'productId',
+  warehouseId: 'warehouseId',
+  onHand: 'onHand',
+  reserved: 'reserved',
+  available: 'available',
+  avgCost: 'avgCost',
+  totalValue: 'totalValue',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InvReceiptScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  status: 'status',
+  warehouseId: 'warehouseId',
+  zoneId: 'zoneId',
+  supplierId: 'supplierId',
+  supplierName: 'supplierName',
+  reference: 'reference',
+  receiptDate: 'receiptDate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvReceiptLineScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  receiptId: 'receiptId',
+  productId: 'productId',
+  expectedQty: 'expectedQty',
+  receivedQty: 'receivedQty',
+  unitCost: 'unitCost',
+  totalCost: 'totalCost',
+  lotId: 'lotId',
+  expiryDate: 'expiryDate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InvTransferScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  status: 'status',
+  fromWarehouseId: 'fromWarehouseId',
+  toWarehouseId: 'toWarehouseId',
+  fromZoneId: 'fromZoneId',
+  toZoneId: 'toZoneId',
+  fromBinId: 'fromBinId',
+  toBinId: 'toBinId',
+  transferDate: 'transferDate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvTransferLineScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  transferId: 'transferId',
+  productId: 'productId',
+  quantity: 'quantity',
+  lotId: 'lotId',
+  serialId: 'serialId',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InvAdjustmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  status: 'status',
+  warehouseId: 'warehouseId',
+  type: 'type',
+  reason: 'reason',
+  adjustmentDate: 'adjustmentDate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.InvAdjustmentLineScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  adjustmentId: 'adjustmentId',
+  productId: 'productId',
+  zoneId: 'zoneId',
+  binId: 'binId',
+  lotId: 'lotId',
+  serialId: 'serialId',
+  systemQty: 'systemQty',
+  countedQty: 'countedQty',
+  difference: 'difference',
+  unitCost: 'unitCost',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InvReorderRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  productId: 'productId',
+  warehouseId: 'warehouseId',
+  minQty: 'minQty',
+  maxQty: 'maxQty',
+  reorderQty: 'reorderQty',
+  leadTimeDays: 'leadTimeDays',
+  isActive: 'isActive',
+  lastTriggeredAt: 'lastTriggeredAt',
+  aiSuggestedMinQty: 'aiSuggestedMinQty',
+  aiSuggestedReorderQty: 'aiSuggestedReorderQty',
+  aiConfidenceScore: 'aiConfidenceScore',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2191,7 +2521,24 @@ exports.Prisma.ModelName = {
   FinVendorBillLine: 'FinVendorBillLine',
   FinVendorPayment: 'FinVendorPayment',
   FinBudget: 'FinBudget',
-  FinBudgetLine: 'FinBudgetLine'
+  FinBudgetLine: 'FinBudgetLine',
+  InvCategory: 'InvCategory',
+  InvUnit: 'InvUnit',
+  InvProduct: 'InvProduct',
+  InvWarehouse: 'InvWarehouse',
+  InvWarehouseZone: 'InvWarehouseZone',
+  InvBin: 'InvBin',
+  InvLot: 'InvLot',
+  InvSerial: 'InvSerial',
+  InvMovement: 'InvMovement',
+  InvStockBalance: 'InvStockBalance',
+  InvReceipt: 'InvReceipt',
+  InvReceiptLine: 'InvReceiptLine',
+  InvTransfer: 'InvTransfer',
+  InvTransferLine: 'InvTransferLine',
+  InvAdjustment: 'InvAdjustment',
+  InvAdjustmentLine: 'InvAdjustmentLine',
+  InvReorderRule: 'InvReorderRule'
 };
 
 /**

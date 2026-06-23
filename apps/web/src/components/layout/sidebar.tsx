@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
-  Building, UsersRound, Boxes, Brain, BarChart3, Workflow,
+  Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -35,6 +35,7 @@ const navigation = [
       { label: 'CRM', href: '/crm', icon: FolderOpen },
       { label: 'Sales', href: '/sales', icon: Boxes },
       { label: 'Finance', href: '/finance', icon: BarChart3 },
+      { label: 'Inventory', href: '/inventory', icon: Package },
     ],
   },
   {
@@ -72,7 +73,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v5.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v6.0.0</span>
         </div>
       </div>
 

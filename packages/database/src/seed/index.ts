@@ -136,6 +136,26 @@ async function main() {
     { module: 'finance', resource: 'reports', action: 'read', scope: 'company' },
     { module: 'finance', resource: 'fiscal_years', action: 'manage', scope: 'company' },
     { module: 'finance', resource: 'cost_centers', action: 'manage', scope: 'company' },
+    // Inventory
+    { module: 'inventory', resource: 'products', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'products', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'categories', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'units', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'warehouses', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'warehouses', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'movements', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'stock', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'stock', action: 'adjust', scope: 'company' },
+    { module: 'inventory', resource: 'receipts', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'receipts', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'transfers', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'transfers', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'adjustments', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'adjustments', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'reorder_rules', action: 'read', scope: 'company' },
+    { module: 'inventory', resource: 'reorder_rules', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'lots', action: 'manage', scope: 'company' },
+    { module: 'inventory', resource: 'serials', action: 'manage', scope: 'company' },
   ]
 
   for (const perm of permissionDefs) {
@@ -729,6 +749,91 @@ async function main() {
       console.log('   → Seeded default bank account')
     }
   }
+
+  // -------------------------------------------------------------------------
+  // 18. Seed Inventory master data
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Inventory master data...')
+
+  // Categories
+  const catDefs = [
+    { code: 'ELEC', name: 'Electronics', description: 'Electronic components and devices' },
+    { code: 'OFFC', name: 'Office Supplies', description: 'Office consumables and stationery' },
+    { code: 'RAWM', name: 'Raw Materials', description: 'Raw materials for manufacturing' },
+    { code: 'FNGD', name: 'Finished Goods', description: 'Finished products ready for sale' },
+    { code: 'CONS', name: 'Consumables', description: 'Consumable goods and supplies' },
+  ]
+  for (const cat of catDefs) {
+    const existing = await prisma.invCategory.findFirst({ where: { tenantId: tenant.id, code: cat.code } })
+    if (!existing) {
+      await prisma.invCategory.create({ data: { tenantId: tenant.id, ...cat, createdBy: adminUser.id, updatedBy: adminUser.id } })
+    }
+  }
+
+  // Units of Measure
+  const unitDefs = [
+    { symbol: 'pcs', name: 'Piece', type: 'count', isBase: true },
+    { symbol: 'kg', name: 'Kilogram', type: 'weight', isBase: true },
+    { symbol: 'g', name: 'Gram', type: 'weight', isBase: false },
+    { symbol: 'L', name: 'Liter', type: 'volume', isBase: true },
+    { symbol: 'mL', name: 'Milliliter', type: 'volume', isBase: false },
+    { symbol: 'box', name: 'Box', type: 'count', isBase: false },
+    { symbol: 'm', name: 'Meter', type: 'length', isBase: true },
+  ]
+  for (const unit of unitDefs) {
+    const existing = await prisma.invUnit.findFirst({ where: { tenantId: tenant.id, symbol: unit.symbol } })
+    if (!existing) {
+      await prisma.invUnit.create({ data: { tenantId: tenant.id, ...unit, createdBy: adminUser.id, updatedBy: adminUser.id } })
+    }
+  }
+
+  // Default warehouse
+  const existingWarehouse = await prisma.invWarehouse.findFirst({ where: { tenantId: tenant.id } })
+  if (!existingWarehouse) {
+    const warehouse = await prisma.invWarehouse.create({
+      data: {
+        tenantId: tenant.id, code: 'WH-001', name: 'Main Warehouse',
+        address: '1 Warehouse Road', city: 'Erbil', country: 'Iraq',
+        isDefault: true, createdBy: adminUser.id, updatedBy: adminUser.id,
+      },
+    })
+    // Create default zones
+    const receiveZone = await prisma.invWarehouseZone.create({
+      data: { tenantId: tenant.id, warehouseId: warehouse.id, code: 'Z-RECV', name: 'Receiving', type: 'receiving', createdBy: adminUser.id, updatedBy: adminUser.id },
+    })
+    const storageZone = await prisma.invWarehouseZone.create({
+      data: { tenantId: tenant.id, warehouseId: warehouse.id, code: 'Z-STOR', name: 'Main Storage', type: 'storage', createdBy: adminUser.id, updatedBy: adminUser.id },
+    })
+    const shipZone = await prisma.invWarehouseZone.create({
+      data: { tenantId: tenant.id, warehouseId: warehouse.id, code: 'Z-SHIP', name: 'Shipping', type: 'shipping', createdBy: adminUser.id, updatedBy: adminUser.id },
+    })
+    // Create bins in storage zone
+    for (const code of ['A-01', 'A-02', 'A-03', 'B-01', 'B-02', 'B-03']) {
+      await prisma.invBin.create({
+        data: { tenantId: tenant.id, zoneId: storageZone.id, code, name: `Bin ${code}`, createdBy: adminUser.id, updatedBy: adminUser.id },
+      })
+    }
+    console.log('   → Seeded Main Warehouse with zones and bins')
+  }
+
+  // Sample products
+  const pcsUnit = await prisma.invUnit.findFirst({ where: { tenantId: tenant.id, symbol: 'pcs' } })
+  const kgUnit = await prisma.invUnit.findFirst({ where: { tenantId: tenant.id, symbol: 'kg' } })
+  const elecCat = await prisma.invCategory.findFirst({ where: { tenantId: tenant.id, code: 'ELEC' } })
+  const offcCat = await prisma.invCategory.findFirst({ where: { tenantId: tenant.id, code: 'OFFC' } })
+
+  const sampleProducts = [
+    { code: 'PROD-001', name: 'Laptop Computer', categoryId: elecCat?.id, unitId: pcsUnit?.id, type: 'storable', costPrice: 750, salePrice: 999, minStockLevel: 5, trackSerial: true },
+    { code: 'PROD-002', name: 'Wireless Mouse', categoryId: elecCat?.id, unitId: pcsUnit?.id, type: 'storable', costPrice: 15, salePrice: 25, minStockLevel: 20 },
+    { code: 'PROD-003', name: 'A4 Paper Ream', categoryId: offcCat?.id, unitId: pcsUnit?.id, type: 'storable', costPrice: 3.5, salePrice: 5.5, minStockLevel: 50 },
+  ]
+  for (const prod of sampleProducts) {
+    const existing = await prisma.invProduct.findFirst({ where: { tenantId: tenant.id, code: prod.code } })
+    if (!existing) {
+      await prisma.invProduct.create({ data: { tenantId: tenant.id, ...prod, createdBy: adminUser.id, updatedBy: adminUser.id } })
+    }
+  }
+  console.log('   → Seeded inventory categories, units, warehouse, and sample products')
 
   console.log('')
   console.log('✅ Seed complete!')
