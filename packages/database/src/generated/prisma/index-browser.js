@@ -3617,6 +3617,115 @@ exports.Prisma.KbArticleVersionScalarFieldEnum = {
   createdBy: 'createdBy'
 };
 
+exports.Prisma.PortalBrandingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  portalName: 'portalName',
+  logoUrl: 'logoUrl',
+  faviconUrl: 'faviconUrl',
+  primaryColor: 'primaryColor',
+  secondaryColor: 'secondaryColor',
+  accentColor: 'accentColor',
+  welcomeMessage: 'welcomeMessage',
+  footerText: 'footerText',
+  customDomain: 'customDomain',
+  isEnabled: 'isEnabled',
+  employeePortalEnabled: 'employeePortalEnabled',
+  customerPortalEnabled: 'customerPortalEnabled',
+  supplierPortalEnabled: 'supplierPortalEnabled',
+  partnerPortalEnabled: 'partnerPortalEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PortalUserScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  portalType: 'portalType',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy'
+};
+
+exports.Prisma.PortalPermissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  isSystem: 'isSystem',
+  portalType: 'portalType',
+  module: 'module',
+  canView: 'canView',
+  canCreate: 'canCreate',
+  canUpdate: 'canUpdate',
+  canDownload: 'canDownload',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PortalNotificationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  portalType: 'portalType',
+  title: 'title',
+  body: 'body',
+  type: 'type',
+  isRead: 'isRead',
+  data: 'data',
+  readAt: 'readAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PortalAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  portalType: 'portalType',
+  action: 'action',
+  module: 'module',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  occurredAt: 'occurredAt'
+};
+
+exports.Prisma.PortalTicketScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  submittedBy: 'submittedBy',
+  portalType: 'portalType',
+  subject: 'subject',
+  description: 'description',
+  category: 'category',
+  priority: 'priority',
+  status: 'status',
+  assignedTo: 'assignedTo',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.PortalTicketReplyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ticketId: 'ticketId',
+  userId: 'userId',
+  content: 'content',
+  isInternal: 'isInternal',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3816,7 +3925,14 @@ exports.Prisma.ModelName = {
   DocAuditLog: 'DocAuditLog',
   KbCategory: 'KbCategory',
   KbArticle: 'KbArticle',
-  KbArticleVersion: 'KbArticleVersion'
+  KbArticleVersion: 'KbArticleVersion',
+  PortalBranding: 'PortalBranding',
+  PortalUser: 'PortalUser',
+  PortalPermission: 'PortalPermission',
+  PortalNotification: 'PortalNotification',
+  PortalAuditLog: 'PortalAuditLog',
+  PortalTicket: 'PortalTicket',
+  PortalTicketReply: 'PortalTicketReply'
 };
 
 /**

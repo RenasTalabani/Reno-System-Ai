@@ -126,6 +126,11 @@ model CoreTenant {
   docAuditLogs             DocAuditLog[]
   kbCategories             KbCategory[]
   kbArticles               KbArticle[]
+  portalBranding           PortalBranding?
+  portalUsers              PortalUser[]
+  portalNotifications      PortalNotification[]
+  portalAuditLogs          PortalAuditLog[]
+  portalTickets            PortalTicket[]
 
   @@map("core_tenants")
 }
@@ -5188,4 +5193,161 @@ model KbArticleVersion {
   @@index([articleId])
   @@index([tenantId])
   @@map("kb_article_versions")
+}
+
+// ============================================================
+// Phase 13 — Portal / Customer & Employee Self-Service
+// ============================================================
+
+model PortalBranding {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId               String    @unique @map("tenant_id") @db.Uuid
+  portalName             String    @default("Company Portal") @map("portal_name") @db.VarChar(255)
+  logoUrl                String?   @map("logo_url") @db.VarChar(500)
+  faviconUrl             String?   @map("favicon_url") @db.VarChar(500)
+  primaryColor           String    @default("#6366f1") @map("primary_color") @db.VarChar(20)
+  secondaryColor         String    @default("#8b5cf6") @map("secondary_color") @db.VarChar(20)
+  accentColor            String    @default("#10b981") @map("accent_color") @db.VarChar(20)
+  welcomeMessage         String?   @map("welcome_message") @db.Text
+  footerText             String?   @map("footer_text") @db.Text
+  customDomain           String?   @map("custom_domain") @db.VarChar(255)
+  isEnabled              Boolean   @default(true) @map("is_enabled")
+  employeePortalEnabled  Boolean   @default(true) @map("employee_portal_enabled")
+  customerPortalEnabled  Boolean   @default(true) @map("customer_portal_enabled")
+  supplierPortalEnabled  Boolean   @default(true) @map("supplier_portal_enabled")
+  partnerPortalEnabled   Boolean   @default(false) @map("partner_portal_enabled")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@map("portal_branding")
+}
+
+model PortalUser {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  portalType  String    @map("portal_type") @db.VarChar(50)
+  entityType  String    @map("entity_type") @db.VarChar(50)
+  entityId    String    @map("entity_id") @db.Uuid
+  isActive    Boolean   @default(true) @map("is_active")
+  lastLoginAt DateTime? @map("last_login_at")
+  metadata    Json?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String    @map("created_by") @db.Uuid
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([tenantId, portalType])
+  @@index([entityId])
+  @@map("portal_users")
+}
+
+model PortalPermission {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?   @map("tenant_id") @db.Uuid
+  isSystem    Boolean   @default(false) @map("is_system")
+  portalType  String    @map("portal_type") @db.VarChar(50)
+  module      String    @db.VarChar(100)
+  canView     Boolean   @default(true) @map("can_view")
+  canCreate   Boolean   @default(false) @map("can_create")
+  canUpdate   Boolean   @default(false) @map("can_update")
+  canDownload Boolean   @default(false) @map("can_download")
+  isEnabled   Boolean   @default(true) @map("is_enabled")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([tenantId, portalType])
+  @@map("portal_permissions")
+}
+
+model PortalNotification {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  portalType  String    @map("portal_type") @db.VarChar(50)
+  title       String    @db.VarChar(255)
+  body        String    @db.Text
+  type        String    @default("info") @db.VarChar(50)
+  isRead      Boolean   @default(false) @map("is_read")
+  data        Json?
+  readAt      DateTime? @map("read_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([tenantId, userId, isRead])
+  @@map("portal_notifications")
+}
+
+model PortalAuditLog {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String?   @map("user_id") @db.Uuid
+  portalType  String    @map("portal_type") @db.VarChar(50)
+  action      String    @db.VarChar(100)
+  module      String    @db.VarChar(100)
+  entityType  String?   @map("entity_type") @db.VarChar(100)
+  entityId    String?   @map("entity_id") @db.Uuid
+  metadata    Json?
+  ipAddress   String?   @map("ip_address") @db.VarChar(45)
+  userAgent   String?   @map("user_agent") @db.Text
+  occurredAt  DateTime  @default(now()) @map("occurred_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, portalType])
+  @@index([tenantId, userId])
+  @@map("portal_audit_logs")
+}
+
+model PortalTicket {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  number      String    @db.VarChar(30)
+  submittedBy String    @map("submitted_by") @db.Uuid
+  portalType  String    @map("portal_type") @db.VarChar(50)
+  subject     String    @db.VarChar(500)
+  description String    @db.Text
+  category    String    @db.VarChar(100)
+  priority    String    @default("normal") @db.VarChar(50)
+  status      String    @default("open") @db.VarChar(50)
+  assignedTo  String?   @map("assigned_to") @db.Uuid
+  resolvedAt  DateTime? @map("resolved_at")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant  CoreTenant          @relation(fields: [tenantId], references: [id])
+  replies PortalTicketReply[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, portalType])
+  @@index([submittedBy])
+  @@map("portal_tickets")
+}
+
+model PortalTicketReply {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  ticketId   String    @map("ticket_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  content    String    @db.Text
+  isInternal Boolean   @default(false) @map("is_internal")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  ticket PortalTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([tenantId])
+  @@map("portal_ticket_replies")
 }

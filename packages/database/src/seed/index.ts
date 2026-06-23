@@ -1838,6 +1838,86 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
 
   console.log(`   → Seeded 14 doc/kb permissions, ${kbCategories.length} KB categories, ${sampleArticles.length} sample articles, ${docTemplates.length} document templates`)
 
+  // -------------------------------------------------------------------------
+  // 25. Portal — branding, permissions, sample portal user
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding portal branding + permissions...')
+
+  const existingPortalBranding = await prisma.portalBranding.findUnique({ where: { tenantId: demoTenant.id } })
+  if (!existingPortalBranding) {
+    await prisma.portalBranding.create({
+      data: {
+        tenantId: demoTenant.id,
+        portalName: `${tenantName} Portal`,
+        primaryColor: '#6366f1',
+        secondaryColor: '#8b5cf6',
+        accentColor: '#06b6d4',
+        welcomeMessage: `Welcome to the ${tenantName} self-service portal.`,
+        footerText: `© ${new Date().getFullYear()} ${tenantName}. All rights reserved.`,
+        isEnabled: true,
+        employeePortalEnabled: true,
+        customerPortalEnabled: true,
+        supplierPortalEnabled: true,
+        partnerPortalEnabled: false,
+        createdBy: adminUser.id,
+        updatedBy: adminUser.id,
+      },
+    })
+  }
+
+  const portalPermDefs = [
+    // Employee portal permissions
+    { module: 'portal', resource: 'employee_leave', action: 'read', scope: 'own' },
+    { module: 'portal', resource: 'employee_leave', action: 'create', scope: 'own' },
+    { module: 'portal', resource: 'employee_leave', action: 'delete', scope: 'own' },
+    { module: 'portal', resource: 'employee_payslips', action: 'read', scope: 'own' },
+    { module: 'portal', resource: 'employee_documents', action: 'read', scope: 'own' },
+    // Customer portal permissions
+    { module: 'portal', resource: 'customer_invoices', action: 'read', scope: 'own' },
+    { module: 'portal', resource: 'customer_orders', action: 'read', scope: 'own' },
+    // Supplier portal permissions
+    { module: 'portal', resource: 'supplier_orders', action: 'read', scope: 'own' },
+    { module: 'portal', resource: 'supplier_rfqs', action: 'read', scope: 'own' },
+    // Shared portal permissions
+    { module: 'portal', resource: 'tickets', action: 'read', scope: 'own' },
+    { module: 'portal', resource: 'tickets', action: 'create', scope: 'own' },
+    { module: 'portal', resource: 'notifications', action: 'read', scope: 'own' },
+    { module: 'portal', resource: 'notifications', action: 'update', scope: 'own' },
+    // Admin permissions
+    { module: 'portal', resource: 'branding', action: 'manage', scope: 'company' },
+    { module: 'portal', resource: 'users', action: 'manage', scope: 'company' },
+  ]
+
+  for (const perm of portalPermDefs) {
+    const existing = await prisma.sysPermission.findFirst({
+      where: { module: perm.module, resource: perm.resource, action: perm.action, scope: perm.scope },
+    })
+    if (!existing) {
+      await prisma.sysPermission.create({ data: perm })
+    }
+  }
+
+  // Sample portal user mapping: admin user → employee portal
+  const existingPortalUser = await prisma.portalUser.findUnique({
+    where: { tenantId_userId: { tenantId: demoTenant.id, userId: adminUser.id } },
+  })
+  if (!existingPortalUser) {
+    await prisma.portalUser.create({
+      data: {
+        tenantId: demoTenant.id,
+        userId: adminUser.id,
+        portalType: 'employee',
+        entityType: 'hr_employee',
+        entityId: adminUser.id,
+        isActive: true,
+        createdBy: adminUser.id,
+        updatedBy: adminUser.id,
+      },
+    })
+  }
+
+  console.log(`   → Seeded portal branding, ${portalPermDefs.length} portal permissions, 1 sample portal user mapping`)
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')
