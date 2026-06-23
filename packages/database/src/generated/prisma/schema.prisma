@@ -38,61 +38,75 @@ model CoreTenant {
   isActive            Boolean   @default(true) @map("is_active")
 
   // Relations
-  companies          CoreCompany[]
-  users              CoreUser[]
-  roles              CoreRole[]
-  settings_kv        SysSetting[]
-  branding           SysBranding?
-  featureFlags       SysFeatureFlag[]
-  auditLogs          SysAuditLog[]
-  notifications      SysNotification[]
-  jobs               SysJob[]
-  apiKeys            SysApiKey[]
-  translations       SysTranslation[]
-  uiTranslations     SysUiTranslation[]
-  aiUsageLogs        AiUsageLog[]
-  hrEmployees        HrEmployee[]
-  hrJobPositions     HrJobPosition[]
-  hrLeaveTypes       HrLeaveType[]
-  hrShifts           HrShift[]
-  hrPayrollGrades    HrPayrollGrade[]
-  hrHolidays         HrHoliday[]
-  pmProjects         PmProject[]
-  pmBoards           PmBoard[]
-  pmLabels           PmLabel[]
-  crmContacts        CrmContact[]
-  crmCompanies       CrmCompany[]
-  crmPipelines       CrmPipeline[]
-  crmContracts       CrmContract[]
-  salesCurrencies    SalesCurrency[]
-  salesTaxes         SalesTax[]
-  salesPriceLists    SalesPriceList[]
-  salesProducts      SalesProduct[]
-  salesQuotations    SalesQuotation[]
-  salesOrders        SalesOrder[]
-  salesInvoices      SalesInvoice[]
-  salesSubscriptions SalesSubscription[]
-  salesDiscounts     SalesDiscount[]
-  finFiscalYears     FinFiscalYear[]
-  finAccounts        FinAccount[]
-  finCostCenters     FinCostCenter[]
-  finJournalEntries  FinJournalEntry[]
-  finBankAccounts    FinBankAccount[]
-  finVendors         FinVendor[]
-  finVendorBills     FinVendorBill[]
-  finBudgets         FinBudget[]
-  invCategories      InvCategory[]
-  invUnits           InvUnit[]
-  invProducts        InvProduct[]
-  invWarehouses      InvWarehouse[]
-  invLots            InvLot[]
-  invSerials         InvSerial[]
-  invMovements       InvMovement[]
-  invStockBalances   InvStockBalance[]
-  invReceipts        InvReceipt[]
-  invTransfers       InvTransfer[]
-  invAdjustments     InvAdjustment[]
-  invReorderRules    InvReorderRule[]
+  companies                CoreCompany[]
+  users                    CoreUser[]
+  roles                    CoreRole[]
+  settings_kv              SysSetting[]
+  branding                 SysBranding?
+  featureFlags             SysFeatureFlag[]
+  auditLogs                SysAuditLog[]
+  notifications            SysNotification[]
+  jobs                     SysJob[]
+  apiKeys                  SysApiKey[]
+  translations             SysTranslation[]
+  uiTranslations           SysUiTranslation[]
+  aiUsageLogs              AiUsageLog[]
+  hrEmployees              HrEmployee[]
+  hrJobPositions           HrJobPosition[]
+  hrLeaveTypes             HrLeaveType[]
+  hrShifts                 HrShift[]
+  hrPayrollGrades          HrPayrollGrade[]
+  hrHolidays               HrHoliday[]
+  pmProjects               PmProject[]
+  pmBoards                 PmBoard[]
+  pmLabels                 PmLabel[]
+  crmContacts              CrmContact[]
+  crmCompanies             CrmCompany[]
+  crmPipelines             CrmPipeline[]
+  crmContracts             CrmContract[]
+  salesCurrencies          SalesCurrency[]
+  salesTaxes               SalesTax[]
+  salesPriceLists          SalesPriceList[]
+  salesProducts            SalesProduct[]
+  salesQuotations          SalesQuotation[]
+  salesOrders              SalesOrder[]
+  salesInvoices            SalesInvoice[]
+  salesSubscriptions       SalesSubscription[]
+  salesDiscounts           SalesDiscount[]
+  finFiscalYears           FinFiscalYear[]
+  finAccounts              FinAccount[]
+  finCostCenters           FinCostCenter[]
+  finJournalEntries        FinJournalEntry[]
+  finBankAccounts          FinBankAccount[]
+  finVendors               FinVendor[]
+  finVendorBills           FinVendorBill[]
+  finBudgets               FinBudget[]
+  invCategories            InvCategory[]
+  invUnits                 InvUnit[]
+  invProducts              InvProduct[]
+  invWarehouses            InvWarehouse[]
+  invLots                  InvLot[]
+  invSerials               InvSerial[]
+  invMovements             InvMovement[]
+  invStockBalances         InvStockBalance[]
+  invReceipts              InvReceipt[]
+  invTransfers             InvTransfer[]
+  invAdjustments           InvAdjustment[]
+  invReorderRules          InvReorderRule[]
+  procSupplierCategories   ProcSupplierCategory[]
+  procSuppliers            ProcSupplier[]
+  procSupplierPriceHistory ProcSupplierPriceHistory[]
+  procRequisitions         ProcRequisition[]
+  procRfqs                 ProcRfq[]
+  procSupplierQuotations   ProcSupplierQuotation[]
+  procOrders               ProcOrder[]
+  procVendorEvaluations    ProcVendorEvaluation[]
+  mfgBomTemplates          MfgBomTemplate[]
+  mfgWorkCenters           MfgWorkCenter[]
+  mfgRoutings              MfgRouting[]
+  mfgOrders                MfgOrder[]
+  mfgQualityChecks         MfgQualityCheck[]
+  mfgMrpRuns               MfgMrpRun[]
 
   @@map("core_tenants")
 }
@@ -3019,6 +3033,10 @@ model InvProduct {
   transferLines   InvTransferLine[]
   adjustmentLines InvAdjustmentLine[]
   reorderRules    InvReorderRule[]
+  bomFinished     MfgBomTemplate[]    @relation("BomFinishedProduct")
+  bomComponents   MfgBomLine[]        @relation("BomComponent")
+  moFinished      MfgOrder[]          @relation("MoFinishedProduct")
+  moComponents    MfgOrderComponent[] @relation("MoComponent")
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -3416,4 +3434,847 @@ model InvReorderRule {
   @@unique([tenantId, productId, warehouseId])
   @@index([tenantId])
   @@map("inv_reorder_rules")
+}
+
+// =============================================================================
+// PROCUREMENT MODULE — Phase 7
+// Flow: Requisition → RFQ → Supplier Quotations → Purchase Order → Approve → Receive
+// Every operation is traced for analytics and AI Procurement Director.
+// =============================================================================
+
+model ProcSupplierCategory {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  code        String?   @db.VarChar(50)
+  description String?   @db.Text
+  parentId    String?   @map("parent_id") @db.Uuid
+  sortOrder   Int       @default(0) @map("sort_order")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant    CoreTenant             @relation(fields: [tenantId], references: [id])
+  parent    ProcSupplierCategory?  @relation("SupplierCategoryTree", fields: [parentId], references: [id])
+  children  ProcSupplierCategory[] @relation("SupplierCategoryTree")
+  suppliers ProcSupplier[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("proc_supplier_categories")
+}
+
+model ProcSupplier {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  code                String    @db.VarChar(50)
+  name                String    @db.VarChar(255)
+  legalName           String?   @map("legal_name") @db.VarChar(255)
+  categoryId          String?   @map("category_id") @db.Uuid
+  finVendorId         String?   @map("fin_vendor_id") @db.Uuid
+  taxId               String?   @map("tax_id") @db.VarChar(100)
+  registrationNo      String?   @map("registration_no") @db.VarChar(100)
+  website             String?   @db.VarChar(500)
+  email               String?   @db.VarChar(255)
+  phone               String?   @db.VarChar(50)
+  address             String?   @db.Text
+  city                String?   @db.VarChar(100)
+  country             String?   @db.VarChar(100)
+  currency            String    @default("USD") @db.VarChar(10)
+  paymentTerms        Int?      @map("payment_terms")
+  leadTimeDays        Int?      @map("lead_time_days")
+  status              String    @default("active") @db.VarChar(20)
+  // active | inactive | blacklisted | pending_approval
+  qualityScore        Decimal?  @map("quality_score") @db.Decimal(5, 2)
+  deliveryScore       Decimal?  @map("delivery_score") @db.Decimal(5, 2)
+  pricingScore        Decimal?  @map("pricing_score") @db.Decimal(5, 2)
+  responsivenessScore Decimal?  @map("responsiveness_score") @db.Decimal(5, 2)
+  overallScore        Decimal?  @map("overall_score") @db.Decimal(5, 2)
+  // AI fields
+  aiRiskScore         Decimal?  @map("ai_risk_score") @db.Decimal(5, 4)
+  aiPerformanceScore  Decimal?  @map("ai_performance_score") @db.Decimal(5, 4)
+  aiRecommended       Boolean   @default(false) @map("ai_recommended")
+  aiInsights          String?   @map("ai_insights") @db.Text
+  aiLastAnalyzedAt    DateTime? @map("ai_last_analyzed_at")
+  notes               String?   @db.Text
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  createdBy           String?   @map("created_by") @db.Uuid
+  updatedBy           String?   @map("updated_by") @db.Uuid
+  deletedAt           DateTime? @map("deleted_at")
+  isActive            Boolean   @default(true) @map("is_active")
+
+  tenant       CoreTenant                 @relation(fields: [tenantId], references: [id])
+  category     ProcSupplierCategory?      @relation(fields: [categoryId], references: [id])
+  contacts     ProcSupplierContact[]
+  priceHistory ProcSupplierPriceHistory[]
+  rfqSuppliers ProcRfqSupplier[]
+  quotations   ProcSupplierQuotation[]
+  orders       ProcOrder[]
+  evaluations  ProcVendorEvaluation[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("proc_suppliers")
+}
+
+model ProcSupplierContact {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  supplierId String    @map("supplier_id") @db.Uuid
+  name       String    @db.VarChar(255)
+  title      String?   @db.VarChar(100)
+  email      String?   @db.VarChar(255)
+  phone      String?   @db.VarChar(50)
+  isPrimary  Boolean   @default(false) @map("is_primary")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  supplier ProcSupplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("proc_supplier_contacts")
+}
+
+// Tracks price history per supplier/product for AI price benchmarking
+model ProcSupplierPriceHistory {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  supplierId   String    @map("supplier_id") @db.Uuid
+  productId    String?   @map("product_id") @db.Uuid
+  productCode  String?   @map("product_code") @db.VarChar(100)
+  productName  String?   @map("product_name") @db.VarChar(255)
+  unitPrice    Decimal   @map("unit_price") @db.Decimal(18, 4)
+  currency     String    @default("USD") @db.VarChar(10)
+  minQty       Decimal?  @map("min_qty") @db.Decimal(18, 4)
+  leadTimeDays Int?      @map("lead_time_days")
+  validFrom    DateTime? @map("valid_from")
+  validTo      DateTime? @map("valid_to")
+  source       String?   @db.VarChar(30)
+  // quotation | order | manual
+  sourceId     String?   @map("source_id") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id])
+  supplier ProcSupplier @relation(fields: [supplierId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, supplierId, productId])
+  @@map("proc_supplier_price_history")
+}
+
+model ProcRequisition {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  number          String    @db.VarChar(20)
+  title           String    @db.VarChar(255)
+  status          String    @default("draft") @db.VarChar(20)
+  // draft | submitted | approved | rejected | ordered | cancelled
+  requestedById   String?   @map("requested_by_id") @db.Uuid
+  requestedByName String?   @map("requested_by_name") @db.VarChar(255)
+  departmentId    String?   @map("department_id") @db.Uuid
+  warehouseId     String?   @map("warehouse_id") @db.Uuid
+  requiredDate    DateTime? @map("required_date")
+  priority        String    @default("normal") @db.VarChar(20)
+  // low | normal | high | urgent
+  reason          String?   @db.Text
+  notes           String?   @db.Text
+  approvedById    String?   @map("approved_by_id") @db.Uuid
+  approvedAt      DateTime? @map("approved_at")
+  rejectedById    String?   @map("rejected_by_id") @db.Uuid
+  rejectedAt      DateTime? @map("rejected_at")
+  rejectionReason String?   @map("rejection_reason") @db.Text
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant            @relation(fields: [tenantId], references: [id])
+  lines  ProcRequisitionLine[]
+  rfqs   ProcRfq[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("proc_requisitions")
+}
+
+model ProcRequisitionLine {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  requisitionId  String   @map("requisition_id") @db.Uuid
+  productId      String?  @map("product_id") @db.Uuid
+  productCode    String?  @map("product_code") @db.VarChar(100)
+  description    String   @db.VarChar(500)
+  quantity       Decimal  @db.Decimal(18, 4)
+  unitId         String?  @map("unit_id") @db.Uuid
+  estimatedPrice Decimal? @map("estimated_price") @db.Decimal(18, 4)
+  currency       String   @default("USD") @db.VarChar(10)
+  accountId      String?  @map("account_id") @db.Uuid
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  requisition ProcRequisition @relation(fields: [requisitionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("proc_requisition_lines")
+}
+
+model ProcRfq {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  number        String    @db.VarChar(20)
+  title         String    @db.VarChar(255)
+  status        String    @default("draft") @db.VarChar(20)
+  // draft | sent | closed | cancelled
+  requisitionId String?   @map("requisition_id") @db.Uuid
+  requiredDate  DateTime? @map("required_date")
+  dueDate       DateTime? @map("due_date")
+  currency      String    @default("USD") @db.VarChar(10)
+  notes         String?   @db.Text
+  terms         String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant              @relation(fields: [tenantId], references: [id])
+  requisition ProcRequisition?        @relation(fields: [requisitionId], references: [id])
+  lines       ProcRfqLine[]
+  suppliers   ProcRfqSupplier[]
+  quotations  ProcSupplierQuotation[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("proc_rfqs")
+}
+
+model ProcRfqLine {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  rfqId       String   @map("rfq_id") @db.Uuid
+  productId   String?  @map("product_id") @db.Uuid
+  productCode String?  @map("product_code") @db.VarChar(100)
+  description String   @db.VarChar(500)
+  quantity    Decimal  @db.Decimal(18, 4)
+  unitId      String?  @map("unit_id") @db.Uuid
+  sortOrder   Int      @default(0) @map("sort_order")
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  rfq ProcRfq @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("proc_rfq_lines")
+}
+
+model ProcRfqSupplier {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  rfqId      String    @map("rfq_id") @db.Uuid
+  supplierId String    @map("supplier_id") @db.Uuid
+  sentAt     DateTime? @map("sent_at")
+  status     String    @default("pending") @db.VarChar(20)
+  // pending | sent | responded | declined | no_response
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  rfq      ProcRfq      @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  supplier ProcSupplier @relation(fields: [supplierId], references: [id])
+
+  @@unique([tenantId, rfqId, supplierId])
+  @@index([tenantId])
+  @@map("proc_rfq_suppliers")
+}
+
+model ProcSupplierQuotation {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  number          String    @db.VarChar(20)
+  rfqId           String?   @map("rfq_id") @db.Uuid
+  supplierId      String    @map("supplier_id") @db.Uuid
+  status          String    @default("received") @db.VarChar(20)
+  // received | evaluated | accepted | rejected | expired
+  validUntil      DateTime? @map("valid_until")
+  currency        String    @default("USD") @db.VarChar(10)
+  totalAmount     Decimal?  @map("total_amount") @db.Decimal(18, 2)
+  paymentTerms    Int?      @map("payment_terms")
+  leadTimeDays    Int?      @map("lead_time_days")
+  deliveryTerms   String?   @map("delivery_terms") @db.VarChar(100)
+  notes           String?   @db.Text
+  evaluationScore Decimal?  @map("evaluation_score") @db.Decimal(5, 2)
+  evaluationNotes String?   @map("evaluation_notes") @db.Text
+  isPreferred     Boolean   @default(false) @map("is_preferred")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant                  @relation(fields: [tenantId], references: [id])
+  rfq      ProcRfq?                    @relation(fields: [rfqId], references: [id])
+  supplier ProcSupplier                @relation(fields: [supplierId], references: [id])
+  lines    ProcSupplierQuotationLine[]
+  orders   ProcOrder[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("proc_supplier_quotations")
+}
+
+model ProcSupplierQuotationLine {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  quotationId  String   @map("quotation_id") @db.Uuid
+  productId    String?  @map("product_id") @db.Uuid
+  productCode  String?  @map("product_code") @db.VarChar(100)
+  description  String   @db.VarChar(500)
+  quantity     Decimal  @db.Decimal(18, 4)
+  unitId       String?  @map("unit_id") @db.Uuid
+  unitPrice    Decimal  @map("unit_price") @db.Decimal(18, 4)
+  totalPrice   Decimal? @map("total_price") @db.Decimal(18, 4)
+  currency     String   @default("USD") @db.VarChar(10)
+  leadTimeDays Int?     @map("lead_time_days")
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  quotation ProcSupplierQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("proc_supplier_quotation_lines")
+}
+
+model ProcOrder {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  number          String    @db.VarChar(20)
+  status          String    @default("draft") @db.VarChar(20)
+  // draft | pending_approval | approved | sent | partially_received | received | cancelled
+  supplierId      String    @map("supplier_id") @db.Uuid
+  quotationId     String?   @map("quotation_id") @db.Uuid
+  requisitionId   String?   @map("requisition_id") @db.Uuid
+  warehouseId     String?   @map("warehouse_id") @db.Uuid
+  currency        String    @default("USD") @db.VarChar(10)
+  subtotal        Decimal   @default(0) @db.Decimal(18, 2)
+  taxAmount       Decimal   @default(0) @map("tax_amount") @db.Decimal(18, 2)
+  discountAmount  Decimal   @default(0) @map("discount_amount") @db.Decimal(18, 2)
+  totalAmount     Decimal   @default(0) @map("total_amount") @db.Decimal(18, 2)
+  paymentTerms    Int?      @map("payment_terms")
+  expectedDate    DateTime? @map("expected_date")
+  shippingAddress String?   @map("shipping_address") @db.Text
+  notes           String?   @db.Text
+  terms           String?   @db.Text
+  internalNotes   String?   @map("internal_notes") @db.Text
+  sentAt          DateTime? @map("sent_at")
+  confirmedAt     DateTime? @map("confirmed_at")
+  receivedAt      DateTime? @map("received_at")
+  // Inventory integration: links to InvReceipt created on receiving
+  invReceiptId    String?   @map("inv_receipt_id") @db.Uuid
+  // Finance integration: links to FinVendorBill auto-created on full receive
+  finVendorBillId String?   @map("fin_vendor_bill_id") @db.Uuid
+  aiLeadTimeScore Decimal?  @map("ai_lead_time_score") @db.Decimal(5, 4)
+  aiPriceScore    Decimal?  @map("ai_price_score") @db.Decimal(5, 4)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant    CoreTenant             @relation(fields: [tenantId], references: [id])
+  supplier  ProcSupplier           @relation(fields: [supplierId], references: [id])
+  quotation ProcSupplierQuotation? @relation(fields: [quotationId], references: [id])
+  lines     ProcOrderLine[]
+  approvals ProcOrderApproval[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("proc_orders")
+}
+
+model ProcOrderLine {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  orderId      String   @map("order_id") @db.Uuid
+  productId    String?  @map("product_id") @db.Uuid
+  productCode  String?  @map("product_code") @db.VarChar(100)
+  description  String   @db.VarChar(500)
+  quantity     Decimal  @db.Decimal(18, 4)
+  receivedQty  Decimal  @default(0) @map("received_qty") @db.Decimal(18, 4)
+  unitId       String?  @map("unit_id") @db.Uuid
+  unitPrice    Decimal  @map("unit_price") @db.Decimal(18, 4)
+  totalPrice   Decimal? @map("total_price") @db.Decimal(18, 4)
+  currency     String   @default("USD") @db.VarChar(10)
+  taxRate      Decimal? @map("tax_rate") @db.Decimal(5, 2)
+  discountRate Decimal? @map("discount_rate") @db.Decimal(5, 2)
+  accountId    String?  @map("account_id") @db.Uuid
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  order ProcOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("proc_order_lines")
+}
+
+model ProcOrderApproval {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  orderId      String    @map("order_id") @db.Uuid
+  level        Int       @default(1)
+  approverId   String?   @map("approver_id") @db.Uuid
+  approverName String?   @map("approver_name") @db.VarChar(255)
+  status       String    @default("pending") @db.VarChar(20)
+  // pending | approved | rejected | skipped
+  comment      String?   @db.Text
+  actionAt     DateTime? @map("action_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  order ProcOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("proc_order_approvals")
+}
+
+model ProcVendorEvaluation {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  supplierId          String    @map("supplier_id") @db.Uuid
+  orderId             String?   @map("order_id") @db.Uuid
+  evaluationDate      DateTime  @default(now()) @map("evaluation_date")
+  evaluatedById       String?   @map("evaluated_by_id") @db.Uuid
+  qualityScore        Decimal?  @map("quality_score") @db.Decimal(5, 2)
+  deliveryScore       Decimal?  @map("delivery_score") @db.Decimal(5, 2)
+  pricingScore        Decimal?  @map("pricing_score") @db.Decimal(5, 2)
+  responsivenessScore Decimal?  @map("responsiveness_score") @db.Decimal(5, 2)
+  overallScore        Decimal?  @map("overall_score") @db.Decimal(5, 2)
+  notes               String?   @db.Text
+  orderedDate         DateTime? @map("ordered_date")
+  expectedDate        DateTime? @map("expected_date")
+  actualDate          DateTime? @map("actual_date")
+  daysLate            Int?      @map("days_late")
+  defectCount         Int?      @map("defect_count")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  createdBy           String?   @map("created_by") @db.Uuid
+  updatedBy           String?   @map("updated_by") @db.Uuid
+  deletedAt           DateTime? @map("deleted_at")
+  isActive            Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id])
+  supplier ProcSupplier @relation(fields: [supplierId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, supplierId])
+  @@map("proc_vendor_evaluations")
+}
+
+// =============================================================================
+// MANUFACTURING MODULE â€” Phase 8
+// =============================================================================
+
+model MfgBomTemplate {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  code              String    @db.VarChar(50)
+  name              String    @db.VarChar(255)
+  finishedProductId String    @map("finished_product_id") @db.Uuid
+  version           String    @default("1.0") @db.VarChar(20)
+  type              String    @default("production") @db.VarChar(30)
+  quantity          Decimal   @default(1) @db.Decimal(18, 4)
+  unitId            String?   @map("unit_id") @db.Uuid
+  isDefault         Boolean   @default(false) @map("is_default")
+  routingId         String?   @map("routing_id") @db.Uuid
+  notes             String?   @db.Text
+  aiYieldRate       Decimal?  @map("ai_yield_rate") @db.Decimal(5, 4)
+  aiCycleTime       Decimal?  @map("ai_cycle_time") @db.Decimal(10, 2)
+  aiCostEstimate    Decimal?  @map("ai_cost_estimate") @db.Decimal(18, 2)
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         String?   @map("created_by") @db.Uuid
+  updatedBy         String?   @map("updated_by") @db.Uuid
+  deletedAt         DateTime? @map("deleted_at")
+  isActive          Boolean   @default(true) @map("is_active")
+
+  tenant          CoreTenant   @relation(fields: [tenantId], references: [id])
+  finishedProduct InvProduct   @relation("BomFinishedProduct", fields: [finishedProductId], references: [id])
+  routing         MfgRouting?  @relation(fields: [routingId], references: [id])
+  lines           MfgBomLine[]
+  orders          MfgOrder[]
+
+  @@unique([tenantId, code, version])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("mfg_bom_templates")
+}
+
+model MfgBomLine {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  bomId        String   @map("bom_id") @db.Uuid
+  parentLineId String?  @map("parent_line_id") @db.Uuid
+  sequence     Int      @default(0)
+  componentId  String   @map("component_id") @db.Uuid
+  quantity     Decimal  @db.Decimal(18, 4)
+  scrapPercent Decimal  @default(0) @map("scrap_percent") @db.Decimal(5, 2)
+  unitId       String?  @map("unit_id") @db.Uuid
+  type         String   @default("component") @db.VarChar(20)
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  bom       MfgBomTemplate @relation(fields: [bomId], references: [id], onDelete: Cascade)
+  component InvProduct     @relation("BomComponent", fields: [componentId], references: [id])
+  parent    MfgBomLine?    @relation("BomLineParent", fields: [parentLineId], references: [id])
+  children  MfgBomLine[]   @relation("BomLineParent")
+
+  @@index([tenantId])
+  @@map("mfg_bom_lines")
+}
+
+model MfgWorkCenter {
+  id                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId                String    @map("tenant_id") @db.Uuid
+  code                    String    @db.VarChar(50)
+  name                    String    @db.VarChar(255)
+  type                    String    @default("machine") @db.VarChar(30)
+  capacity                Decimal   @default(1) @db.Decimal(10, 2)
+  capacityUnit            String    @default("hour") @map("capacity_unit") @db.VarChar(20)
+  costPerHour             Decimal?  @map("cost_per_hour") @db.Decimal(18, 4)
+  currency                String    @default("USD") @db.VarChar(10)
+  oeeTarget               Decimal?  @map("oee_target") @db.Decimal(5, 4)
+  oeeActual               Decimal?  @map("oee_actual") @db.Decimal(5, 4)
+  mtbfHours               Decimal?  @map("mtbf_hours") @db.Decimal(10, 2)
+  mttrHours               Decimal?  @map("mttr_hours") @db.Decimal(10, 2)
+  lastMaintenanceAt       DateTime? @map("last_maintenance_at")
+  nextMaintenanceAt       DateTime? @map("next_maintenance_at")
+  maintenanceIntervalDays Int?      @map("maintenance_interval_days")
+  digitalTwinId           String?   @map("digital_twin_id") @db.VarChar(255)
+  digitalTwinUrl          String?   @map("digital_twin_url") @db.VarChar(500)
+  mesDeviceId             String?   @map("mes_device_id") @db.VarChar(255)
+  mesProtocol             String?   @map("mes_protocol") @db.VarChar(50)
+  aiEfficiencyScore       Decimal?  @map("ai_efficiency_score") @db.Decimal(5, 4)
+  aiDowntimeRisk          Decimal?  @map("ai_downtime_risk") @db.Decimal(5, 4)
+  aiMaintenancePriority   String?   @map("ai_maintenance_priority") @db.VarChar(20)
+  aiInsights              String?   @map("ai_insights") @db.Text
+  simulationCapacity      Decimal?  @map("simulation_capacity") @db.Decimal(10, 2)
+  simulationSetupTime     Decimal?  @map("simulation_setup_time") @db.Decimal(10, 2)
+  notes                   String?   @db.Text
+  warehouseId             String?   @map("warehouse_id") @db.Uuid
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+  createdBy               String?   @map("created_by") @db.Uuid
+  updatedBy               String?   @map("updated_by") @db.Uuid
+  deletedAt               DateTime? @map("deleted_at")
+  isActive                Boolean   @default(true) @map("is_active")
+
+  tenant          CoreTenant            @relation(fields: [tenantId], references: [id])
+  routingOps      MfgRoutingOperation[]
+  orderOps        MfgOrderOperation[]
+  maintenanceLogs MfgMaintenanceLog[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("mfg_work_centers")
+}
+
+model MfgMaintenanceLog {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  workCenterId  String    @map("work_center_id") @db.Uuid
+  type          String    @default("preventive") @db.VarChar(30)
+  status        String    @default("scheduled") @db.VarChar(20)
+  scheduledAt   DateTime  @map("scheduled_at")
+  startedAt     DateTime? @map("started_at")
+  completedAt   DateTime? @map("completed_at")
+  downtimeHours Decimal?  @map("downtime_hours") @db.Decimal(10, 2)
+  technician    String?   @db.VarChar(255)
+  description   String?   @db.Text
+  rootCause     String?   @map("root_cause") @db.Text
+  resolution    String?   @db.Text
+  cost          Decimal?  @db.Decimal(18, 2)
+  currency      String    @default("USD") @db.VarChar(10)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  workCenter MfgWorkCenter @relation(fields: [workCenterId], references: [id])
+
+  @@index([tenantId])
+  @@map("mfg_maintenance_logs")
+}
+
+model MfgRouting {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  code      String    @db.VarChar(50)
+  name      String    @db.VarChar(255)
+  notes     String?   @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant     CoreTenant            @relation(fields: [tenantId], references: [id])
+  operations MfgRoutingOperation[]
+  boms       MfgBomTemplate[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("mfg_routings")
+}
+
+model MfgRoutingOperation {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  routingId     String   @map("routing_id") @db.Uuid
+  workCenterId  String   @map("work_center_id") @db.Uuid
+  sequence      Int      @default(0)
+  name          String   @db.VarChar(255)
+  durationHours Decimal  @map("duration_hours") @db.Decimal(10, 2)
+  setupHours    Decimal  @default(0) @map("setup_hours") @db.Decimal(10, 2)
+  description   String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  routing    MfgRouting    @relation(fields: [routingId], references: [id], onDelete: Cascade)
+  workCenter MfgWorkCenter @relation(fields: [workCenterId], references: [id])
+
+  @@index([tenantId])
+  @@map("mfg_routing_operations")
+}
+
+model MfgOrder {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @map("tenant_id") @db.Uuid
+  number             String    @db.VarChar(20)
+  status             String    @default("draft") @db.VarChar(20)
+  bomId              String?   @map("bom_id") @db.Uuid
+  finishedProductId  String    @map("finished_product_id") @db.Uuid
+  warehouseId        String?   @map("warehouse_id") @db.Uuid
+  plannedQty         Decimal   @map("planned_qty") @db.Decimal(18, 4)
+  producedQty        Decimal   @default(0) @map("produced_qty") @db.Decimal(18, 4)
+  scrapQty           Decimal   @default(0) @map("scrap_qty") @db.Decimal(18, 4)
+  unitId             String?   @map("unit_id") @db.Uuid
+  scheduledStart     DateTime? @map("scheduled_start")
+  scheduledEnd       DateTime? @map("scheduled_end")
+  actualStart        DateTime? @map("actual_start")
+  actualEnd          DateTime? @map("actual_end")
+  origin             String?   @db.VarChar(50)
+  originId           String?   @map("origin_id") @db.Uuid
+  notes              String?   @db.Text
+  componentMoveRef   String?   @map("component_move_ref") @db.VarChar(100)
+  finishedMoveRef    String?   @map("finished_move_ref") @db.VarChar(100)
+  aiProductionScore  Decimal?  @map("ai_production_score") @db.Decimal(5, 4)
+  aiYieldForecast    Decimal?  @map("ai_yield_forecast") @db.Decimal(18, 4)
+  aiBottleneckRisk   Decimal?  @map("ai_bottleneck_risk") @db.Decimal(5, 4)
+  aiLeadTimeForecast Decimal?  @map("ai_lead_time_forecast") @db.Decimal(10, 2)
+  aiInsights         String?   @map("ai_insights") @db.Text
+  simulationRunId    String?   @map("simulation_run_id") @db.VarChar(255)
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  createdBy          String?   @map("created_by") @db.Uuid
+  updatedBy          String?   @map("updated_by") @db.Uuid
+  deletedAt          DateTime? @map("deleted_at")
+  isActive           Boolean   @default(true) @map("is_active")
+
+  tenant          CoreTenant          @relation(fields: [tenantId], references: [id])
+  bom             MfgBomTemplate?     @relation(fields: [bomId], references: [id])
+  finishedProduct InvProduct          @relation("MoFinishedProduct", fields: [finishedProductId], references: [id])
+  components      MfgOrderComponent[]
+  operations      MfgOrderOperation[]
+  qualityChecks   MfgQualityCheck[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, deletedAt])
+  @@map("mfg_orders")
+}
+
+model MfgOrderComponent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  orderId     String   @map("order_id") @db.Uuid
+  componentId String   @map("component_id") @db.Uuid
+  plannedQty  Decimal  @map("planned_qty") @db.Decimal(18, 4)
+  consumedQty Decimal  @default(0) @map("consumed_qty") @db.Decimal(18, 4)
+  scrapQty    Decimal  @default(0) @map("scrap_qty") @db.Decimal(18, 4)
+  unitId      String?  @map("unit_id") @db.Uuid
+  warehouseId String?  @map("warehouse_id") @db.Uuid
+  lotId       String?  @map("lot_id") @db.Uuid
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  order     MfgOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  component InvProduct @relation("MoComponent", fields: [componentId], references: [id])
+
+  @@index([tenantId])
+  @@map("mfg_order_components")
+}
+
+model MfgOrderOperation {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  orderId      String    @map("order_id") @db.Uuid
+  workCenterId String?   @map("work_center_id") @db.Uuid
+  sequence     Int       @default(0)
+  name         String    @db.VarChar(255)
+  status       String    @default("pending") @db.VarChar(20)
+  plannedHours Decimal   @map("planned_hours") @db.Decimal(10, 2)
+  actualHours  Decimal?  @map("actual_hours") @db.Decimal(10, 2)
+  startedAt    DateTime? @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+  operatorId   String?   @map("operator_id") @db.Uuid
+  notes        String?   @db.Text
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  order      MfgOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  workCenter MfgWorkCenter? @relation(fields: [workCenterId], references: [id])
+
+  @@index([tenantId])
+  @@map("mfg_order_operations")
+}
+
+model MfgQualityCheck {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  number          String    @db.VarChar(20)
+  orderId         String?   @map("order_id") @db.Uuid
+  productId       String?   @map("product_id") @db.Uuid
+  type            String    @default("production") @db.VarChar(30)
+  status          String    @default("pending") @db.VarChar(20)
+  inspectedQty    Decimal?  @map("inspected_qty") @db.Decimal(18, 4)
+  passedQty       Decimal?  @map("passed_qty") @db.Decimal(18, 4)
+  failedQty       Decimal?  @map("failed_qty") @db.Decimal(18, 4)
+  inspectorId     String?   @map("inspector_id") @db.Uuid
+  inspectedAt     DateTime? @map("inspected_at")
+  notes           String?   @db.Text
+  aiQualityScore  Decimal?  @map("ai_quality_score") @db.Decimal(5, 4)
+  aiDefectPattern String?   @map("ai_defect_pattern") @db.Text
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant            @relation(fields: [tenantId], references: [id])
+  order  MfgOrder?             @relation(fields: [orderId], references: [id])
+  lines  MfgQualityCheckLine[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@map("mfg_quality_checks")
+}
+
+model MfgQualityCheckLine {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  checkId       String   @map("check_id") @db.Uuid
+  parameter     String   @db.VarChar(255)
+  specification String?  @db.VarChar(500)
+  minValue      Decimal? @map("min_value") @db.Decimal(18, 4)
+  maxValue      Decimal? @map("max_value") @db.Decimal(18, 4)
+  actualValue   Decimal? @map("actual_value") @db.Decimal(18, 4)
+  unit          String?  @db.VarChar(30)
+  result        String?  @db.VarChar(20)
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  check MfgQualityCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mfg_quality_check_lines")
+}
+
+model MfgMrpRun {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  number      String    @db.VarChar(20)
+  status      String    @default("running") @db.VarChar(20)
+  runAt       DateTime  @default(now()) @map("run_at")
+  completedAt DateTime? @map("completed_at")
+  horizonDays Int       @default(30) @map("horizon_days")
+  demandCount Int       @default(0) @map("demand_count")
+  moCreated   Int       @default(0) @map("mo_created")
+  reqCreated  Int       @default(0) @map("req_created")
+  notes       String?   @db.Text
+  createdBy   String?   @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  tenant          CoreTenant             @relation(fields: [tenantId], references: [id])
+  demands         MfgMrpDemand[]
+  recommendations MfgMrpRecommendation[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@map("mfg_mrp_runs")
+}
+
+model MfgMrpDemand {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  mrpRunId  String   @map("mrp_run_id") @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  demandQty Decimal  @map("demand_qty") @db.Decimal(18, 4)
+  dueDate   DateTime @map("due_date")
+  source    String   @db.VarChar(30)
+  sourceId  String?  @map("source_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  mrpRun MfgMrpRun @relation(fields: [mrpRunId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mfg_mrp_demands")
+}
+
+model MfgMrpRecommendation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  mrpRunId    String   @map("mrp_run_id") @db.Uuid
+  productId   String   @map("product_id") @db.Uuid
+  type        String   @db.VarChar(20)
+  qty         Decimal  @db.Decimal(18, 4)
+  dueDate     DateTime @map("due_date")
+  status      String   @default("pending") @db.VarChar(20)
+  convertedId String?  @map("converted_id") @db.Uuid
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  mrpRun MfgMrpRun @relation(fields: [mrpRunId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mfg_mrp_recommendations")
 }

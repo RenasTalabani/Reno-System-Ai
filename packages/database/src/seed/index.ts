@@ -175,6 +175,23 @@ async function main() {
     { module: 'procurement', resource: 'orders', action: 'manage', scope: 'company' },
     { module: 'procurement', resource: 'evaluations', action: 'read', scope: 'company' },
     { module: 'procurement', resource: 'evaluations', action: 'manage', scope: 'company' },
+    // Manufacturing
+    { module: 'manufacturing', resource: 'bom', action: 'read', scope: 'company' },
+    { module: 'manufacturing', resource: 'bom', action: 'manage', scope: 'company' },
+    { module: 'manufacturing', resource: 'work_centers', action: 'read', scope: 'company' },
+    { module: 'manufacturing', resource: 'work_centers', action: 'manage', scope: 'company' },
+    { module: 'manufacturing', resource: 'routings', action: 'manage', scope: 'company' },
+    { module: 'manufacturing', resource: 'orders', action: 'read', scope: 'company' },
+    { module: 'manufacturing', resource: 'orders', action: 'create', scope: 'company' },
+    { module: 'manufacturing', resource: 'orders', action: 'manage', scope: 'company' },
+    { module: 'manufacturing', resource: 'orders', action: 'produce', scope: 'company' },
+    { module: 'manufacturing', resource: 'quality', action: 'read', scope: 'company' },
+    { module: 'manufacturing', resource: 'quality', action: 'manage', scope: 'company' },
+    { module: 'manufacturing', resource: 'maintenance', action: 'read', scope: 'company' },
+    { module: 'manufacturing', resource: 'maintenance', action: 'manage', scope: 'company' },
+    { module: 'manufacturing', resource: 'mrp', action: 'read', scope: 'company' },
+    { module: 'manufacturing', resource: 'mrp', action: 'run', scope: 'company' },
+    { module: 'manufacturing', resource: 'mrp', action: 'manage', scope: 'company' },
   ]
 
   for (const perm of permissionDefs) {
@@ -914,6 +931,45 @@ async function main() {
   }
 
   console.log('   → Seeded procurement supplier categories and sample suppliers')
+
+  // -------------------------------------------------------------------------
+  // 20. Seed Manufacturing master data
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Manufacturing master data...')
+
+  const sampleWorkCenters = [
+    {
+      code: 'WC-001', name: 'Assembly Line A', type: 'line',
+      capacity: 8, capacityUnit: 'hour', costPerHour: 45,
+      oeeTarget: 0.85, mtbfHours: 720, mttrHours: 2,
+      maintenanceIntervalDays: 30,
+      aiMaintenancePriority: 'medium',
+    },
+    {
+      code: 'WC-002', name: 'CNC Machine 01', type: 'machine',
+      capacity: 1, capacityUnit: 'hour', costPerHour: 120,
+      oeeTarget: 0.80, mtbfHours: 480, mttrHours: 4,
+      maintenanceIntervalDays: 14,
+      aiMaintenancePriority: 'high',
+    },
+    {
+      code: 'WC-003', name: 'Quality Inspection', type: 'labor',
+      capacity: 4, capacityUnit: 'hour', costPerHour: 35,
+      oeeTarget: 0.90,
+      aiMaintenancePriority: 'low',
+    },
+  ]
+
+  for (const wc of sampleWorkCenters) {
+    const existing = await prisma.mfgWorkCenter.findFirst({ where: { tenantId: tenant.id, code: wc.code } })
+    if (!existing) {
+      await prisma.mfgWorkCenter.create({
+        data: { tenantId: tenant.id, ...wc, currency: 'USD', createdBy: adminUser.id, updatedBy: adminUser.id },
+      })
+    }
+  }
+
+  console.log('   → Seeded manufacturing work centers')
 
   console.log('')
   console.log('✅ Seed complete!')
