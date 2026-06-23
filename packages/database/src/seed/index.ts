@@ -1632,6 +1632,212 @@ async function main() {
 
   console.log(`   → Seeded 14 automation permissions and ${systemTemplates.length} system workflow templates`)
 
+  // ============================================================
+  // Section 24 — Documents / Knowledge Center
+  // ============================================================
+  console.log('📄 Section 24: Documents / Knowledge Center...')
+
+  const docPermissions = [
+    { name: 'docs:view', displayName: 'View Documents', module: 'documents', action: 'view', resource: 'docs' },
+    { name: 'docs:upload', displayName: 'Upload Files', module: 'documents', action: 'create', resource: 'docs' },
+    { name: 'docs:edit', displayName: 'Edit Documents', module: 'documents', action: 'update', resource: 'docs' },
+    { name: 'docs:delete', displayName: 'Delete Documents', module: 'documents', action: 'delete', resource: 'docs' },
+    { name: 'docs:download', displayName: 'Download Files', module: 'documents', action: 'read', resource: 'docs' },
+    { name: 'docs:approve', displayName: 'Approve Documents', module: 'documents', action: 'approve', resource: 'docs' },
+    { name: 'docs:folders:manage', displayName: 'Manage Folders', module: 'documents', action: 'manage', resource: 'doc_folders' },
+    { name: 'docs:templates:manage', displayName: 'Manage Templates', module: 'documents', action: 'manage', resource: 'doc_templates' },
+    { name: 'kb:view', displayName: 'View Knowledge Base', module: 'knowledge', action: 'view', resource: 'kb' },
+    { name: 'kb:write', displayName: 'Write Articles', module: 'knowledge', action: 'create', resource: 'kb' },
+    { name: 'kb:edit', displayName: 'Edit Articles', module: 'knowledge', action: 'update', resource: 'kb' },
+    { name: 'kb:delete', displayName: 'Delete Articles', module: 'knowledge', action: 'delete', resource: 'kb' },
+    { name: 'kb:publish', displayName: 'Publish Articles', module: 'knowledge', action: 'publish', resource: 'kb' },
+    { name: 'kb:categories:manage', displayName: 'Manage KB Categories', module: 'knowledge', action: 'manage', resource: 'kb_categories' },
+  ]
+
+  for (const perm of docPermissions) {
+    await prisma.corePermission.upsert({
+      where: { name: perm.name },
+      update: {},
+      create: { ...perm, description: perm.displayName },
+    })
+  }
+
+  // Default KB categories for the demo tenant
+  const kbCategories = [
+    { name: 'Company Policies', slug: 'company-policies', description: 'HR and compliance policies', icon: 'Shield', color: '#6366f1' },
+    { name: 'Getting Started', slug: 'getting-started', description: 'Onboarding and setup guides', icon: 'Rocket', color: '#10b981' },
+    { name: 'IT & Systems', slug: 'it-systems', description: 'Technical documentation', icon: 'Monitor', color: '#3b82f6' },
+    { name: 'Finance & Accounting', slug: 'finance-accounting', description: 'Financial processes and procedures', icon: 'BarChart3', color: '#f59e0b' },
+    { name: 'Sales Playbook', slug: 'sales-playbook', description: 'Sales processes and scripts', icon: 'TrendingUp', color: '#ec4899' },
+    { name: 'Operations', slug: 'operations', description: 'Operational guides and SOPs', icon: 'Settings', color: '#8b5cf6' },
+  ]
+
+  const createdCategories: Record<string, string> = {}
+  for (const cat of kbCategories) {
+    const existing = await prisma.kbCategory.findFirst({ where: { tenantId: tenant.id, slug: cat.slug } })
+    if (!existing) {
+      const created = await prisma.kbCategory.create({
+        data: { tenantId: tenant.id, ...cat, createdBy: adminUser.id },
+      })
+      createdCategories[cat.slug] = created.id
+    } else {
+      createdCategories[cat.slug] = existing.id
+    }
+  }
+
+  // Sample articles
+  const sampleArticles = [
+    {
+      categorySlug: 'getting-started',
+      title: 'Welcome to Reno System',
+      slug: 'welcome-to-reno-system',
+      content: `# Welcome to Reno System
+
+Reno System is your company's all-in-one Business Operating System.
+
+## What can you do with Reno?
+
+- **HR Management** — Manage employees, leave requests, payroll, and more
+- **CRM** — Track leads, contacts, and opportunities
+- **Sales** — Create quotations, sales orders, and invoices
+- **Finance** — Journal entries, budgets, and financial reporting
+- **Inventory** — Track stock levels, movements, and warehouses
+- **Procurement** — Manage suppliers and purchase orders
+- **Manufacturing** — Production orders and MRP planning
+- **Projects** — Task management and team collaboration
+- **Analytics** — Business intelligence and KPI dashboards
+- **Automation** — Workflow automation across all modules
+- **Reno Brain** — AI-powered business intelligence
+
+## Getting Started
+
+1. Complete your company profile in Settings
+2. Add your team members under Users
+3. Set up your organizational structure
+4. Configure the modules you need
+
+Need help? Contact your system administrator or consult this Knowledge Base.`,
+      excerpt: 'Your guide to getting started with Reno System.',
+      tags: ['onboarding', 'introduction', 'guide'],
+      status: 'published',
+      isPublic: true,
+      isPinned: true,
+    },
+    {
+      categorySlug: 'company-policies',
+      title: 'Leave Request Policy',
+      slug: 'leave-request-policy',
+      content: `# Leave Request Policy
+
+## Overview
+
+All employees must submit leave requests at least 3 business days in advance, except in cases of emergency.
+
+## Types of Leave
+
+- **Annual Leave** — 20 days per year for full-time employees
+- **Sick Leave** — Up to 10 days per year with medical certificate
+- **Maternity/Paternity Leave** — As per local labor law
+- **Emergency Leave** — Up to 3 days with manager approval
+
+## How to Request Leave
+
+1. Log in to Reno System
+2. Navigate to **HR > My Leave Requests**
+3. Click **New Request**
+4. Select leave type, dates, and add a note
+5. Submit — your manager will be notified automatically
+
+## Approval Process
+
+All leave requests are reviewed by your direct manager. Requests over 5 days require HR department approval.`,
+      excerpt: 'Official company policy for requesting and approving leave.',
+      tags: ['policy', 'hr', 'leave'],
+      status: 'published',
+      isPublic: false,
+      isPinned: false,
+    },
+    {
+      categorySlug: 'sales-playbook',
+      title: 'Sales Process Overview',
+      slug: 'sales-process-overview',
+      content: `# Sales Process Overview
+
+## Our Sales Pipeline
+
+1. **Lead Generation** — Capture leads from website, referrals, and events
+2. **Qualification** — Assess budget, authority, need, and timeline (BANT)
+3. **Discovery Call** — Understand the prospect's pain points
+4. **Demo / Proposal** — Present solution and create a quotation
+5. **Negotiation** — Handle objections and finalize terms
+6. **Close** — Convert to Sales Order and collect payment
+
+## Key Metrics
+
+- Lead-to-Opportunity conversion: target > 30%
+- Opportunity-to-Close rate: target > 25%
+- Average Sales Cycle: < 30 days for SMB, < 90 days for Enterprise
+
+## CRM Usage
+
+All customer interactions MUST be logged in Reno CRM. This includes calls, emails, meetings, and demos.`,
+      excerpt: 'Our standard sales process from lead generation to closing.',
+      tags: ['sales', 'crm', 'process'],
+      status: 'published',
+      isPublic: false,
+      isPinned: true,
+    },
+  ]
+
+  for (const art of sampleArticles) {
+    const catId = createdCategories[art.categorySlug]
+    const existing = await prisma.kbArticle.findFirst({ where: { tenantId: tenant.id, slug: art.slug } })
+    if (!existing) {
+      const { categorySlug, ...articleData } = art
+      const article = await prisma.kbArticle.create({
+        data: {
+          tenantId: tenant.id,
+          categoryId: catId ?? null,
+          ...articleData,
+          publishedAt: art.status === 'published' ? new Date() : null,
+          createdBy: adminUser.id,
+        },
+      })
+      await prisma.kbArticleVersion.create({
+        data: {
+          tenantId: tenant.id,
+          articleId: article.id,
+          version: 1,
+          title: art.title,
+          content: art.content,
+          comment: 'Initial version',
+          createdBy: adminUser.id,
+        },
+      })
+    }
+  }
+
+  // System document templates
+  const docTemplates = [
+    { name: 'Employment Contract', category: 'HR', description: 'Standard employment contract template', tags: ['hr', 'legal'], variables: { employeeName: 'string', startDate: 'date', salary: 'number', position: 'string' } },
+    { name: 'Non-Disclosure Agreement (NDA)', category: 'Legal', description: 'Standard NDA for vendors and partners', tags: ['legal', 'nda'], variables: { partyName: 'string', effectiveDate: 'date' } },
+    { name: 'Sales Quotation', category: 'Sales', description: 'Professional sales quotation template', tags: ['sales', 'quotation'], variables: { customerName: 'string', validUntil: 'date', discount: 'number' } },
+    { name: 'Purchase Order', category: 'Procurement', description: 'Standard purchase order template', tags: ['procurement', 'po'], variables: { supplierName: 'string', deliveryDate: 'date' } },
+    { name: 'Meeting Minutes', category: 'General', description: 'Template for recording meeting minutes', tags: ['meetings', 'admin'], variables: { meetingDate: 'date', attendees: 'array', agenda: 'array' } },
+    { name: 'Project Brief', category: 'Projects', description: 'Project brief and scope document', tags: ['projects', 'planning'], variables: { projectName: 'string', startDate: 'date', budget: 'number' } },
+  ]
+
+  for (const tpl of docTemplates) {
+    const existing = await prisma.docTemplate.findFirst({ where: { name: tpl.name, isSystem: true } })
+    if (!existing) {
+      await prisma.docTemplate.create({
+        data: { tenantId: null, isSystem: true, ...tpl },
+      })
+    }
+  }
+
+  console.log(`   → Seeded 14 doc/kb permissions, ${kbCategories.length} KB categories, ${sampleArticles.length} sample articles, ${docTemplates.length} document templates`)
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')

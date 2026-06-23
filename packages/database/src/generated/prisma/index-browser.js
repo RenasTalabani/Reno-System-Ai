@@ -3446,6 +3446,177 @@ exports.Prisma.AutoWebhookScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.DocFolderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  parentId: 'parentId',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  icon: 'icon',
+  path: 'path',
+  isPublic: 'isPublic',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.DocFileScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  folderId: 'folderId',
+  name: 'name',
+  description: 'description',
+  mimeType: 'mimeType',
+  extension: 'extension',
+  sizeBytes: 'sizeBytes',
+  storageKey: 'storageKey',
+  storageProvider: 'storageProvider',
+  ocrStatus: 'ocrStatus',
+  ocrText: 'ocrText',
+  ocrProcessedAt: 'ocrProcessedAt',
+  aiSummary: 'aiSummary',
+  aiTags: 'aiTags',
+  aiAnalyzedAt: 'aiAnalyzedAt',
+  tags: 'tags',
+  isTemplate: 'isTemplate',
+  isPublic: 'isPublic',
+  currentVersion: 'currentVersion',
+  checksum: 'checksum',
+  approvalStatus: 'approvalStatus',
+  approvedAt: 'approvedAt',
+  approvedBy: 'approvedBy',
+  downloadCount: 'downloadCount',
+  viewCount: 'viewCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.DocFileVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fileId: 'fileId',
+  version: 'version',
+  storageKey: 'storageKey',
+  sizeBytes: 'sizeBytes',
+  checksum: 'checksum',
+  comment: 'comment',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+};
+
+exports.Prisma.DocPermissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  folderId: 'folderId',
+  fileId: 'fileId',
+  userId: 'userId',
+  roleId: 'roleId',
+  canView: 'canView',
+  canEdit: 'canEdit',
+  canDelete: 'canDelete',
+  canShare: 'canShare',
+  canApprove: 'canApprove',
+  grantedBy: 'grantedBy',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DocTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  isSystem: 'isSystem',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  fileId: 'fileId',
+  variables: 'variables',
+  tags: 'tags',
+  usageCount: 'usageCount',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DocAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  fileId: 'fileId',
+  folderId: 'folderId',
+  action: 'action',
+  entityType: 'entityType',
+  entityName: 'entityName',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  occurredAt: 'occurredAt'
+};
+
+exports.Prisma.KbCategoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  parentId: 'parentId',
+  name: 'name',
+  description: 'description',
+  slug: 'slug',
+  icon: 'icon',
+  color: 'color',
+  sortOrder: 'sortOrder',
+  isPublic: 'isPublic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.KbArticleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  categoryId: 'categoryId',
+  title: 'title',
+  slug: 'slug',
+  content: 'content',
+  excerpt: 'excerpt',
+  tags: 'tags',
+  status: 'status',
+  isPublic: 'isPublic',
+  isPinned: 'isPinned',
+  aiSummary: 'aiSummary',
+  aiKeywords: 'aiKeywords',
+  viewCount: 'viewCount',
+  helpfulCount: 'helpfulCount',
+  currentVersion: 'currentVersion',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.KbArticleVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  articleId: 'articleId',
+  version: 'version',
+  title: 'title',
+  content: 'content',
+  comment: 'comment',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3636,7 +3807,16 @@ exports.Prisma.ModelName = {
   AutoExecutionStep: 'AutoExecutionStep',
   AutoApprovalGate: 'AutoApprovalGate',
   AutoTemplate: 'AutoTemplate',
-  AutoWebhook: 'AutoWebhook'
+  AutoWebhook: 'AutoWebhook',
+  DocFolder: 'DocFolder',
+  DocFile: 'DocFile',
+  DocFileVersion: 'DocFileVersion',
+  DocPermission: 'DocPermission',
+  DocTemplate: 'DocTemplate',
+  DocAuditLog: 'DocAuditLog',
+  KbCategory: 'KbCategory',
+  KbArticle: 'KbArticle',
+  KbArticleVersion: 'KbArticleVersion'
 };
 
 /**

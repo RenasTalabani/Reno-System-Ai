@@ -19,6 +19,8 @@ import { manufacturingRoutes } from './manufacturing/index.js'
 import { analyticsRoutes } from './analytics/index.js'
 import { brainRoutes } from './brain/index.js'
 import { automationRoutes } from './automation/index.js'
+import { docsRoutes } from './docs/index.js'
+import { kbRoutes } from './kb/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -44,6 +46,8 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(analyticsRoutes, { prefix: '/analytics' })
       await v1.register(brainRoutes, { prefix: '/brain' })
       await v1.register(automationRoutes, { prefix: '/automation' })
+      await v1.register(docsRoutes, { prefix: '/docs' })
+      await v1.register(kbRoutes, { prefix: '/kb' })
     },
     { prefix: '/v1' },
   )

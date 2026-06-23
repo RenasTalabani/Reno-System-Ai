@@ -121,6 +121,11 @@ model CoreTenant {
   autoWorkflows            AutoWorkflow[]
   autoExecutions           AutoExecution[]
   autoApprovalGates        AutoApprovalGate[]
+  docFolders               DocFolder[]
+  docFiles                 DocFile[]
+  docAuditLogs             DocAuditLog[]
+  kbCategories             KbCategory[]
+  kbArticles               KbArticle[]
 
   @@map("core_tenants")
 }
@@ -4919,4 +4924,265 @@ model AutoWebhook {
   @@index([tenantId])
   @@index([workflowId])
   @@map("auto_webhooks")
+}
+
+// ============================================================
+// Phase 12 — Documents / Knowledge Center
+// ============================================================
+
+model DocFolder {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String  @map("tenant_id") @db.Uuid
+  parentId    String? @map("parent_id") @db.Uuid
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+  color       String? @db.VarChar(50)
+  icon        String? @db.VarChar(100)
+  path        String? @db.Text
+  isPublic    Boolean @default(false) @map("is_public")
+  sortOrder   Int     @default(0) @map("sort_order")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String    @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant      @relation(fields: [tenantId], references: [id])
+  parent      DocFolder?      @relation("FolderTree", fields: [parentId], references: [id])
+  children    DocFolder[]     @relation("FolderTree")
+  files       DocFile[]
+  permissions DocPermission[]
+
+  @@index([tenantId])
+  @@index([tenantId, parentId])
+  @@map("doc_folders")
+}
+
+model DocFile {
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String  @map("tenant_id") @db.Uuid
+  folderId        String? @map("folder_id") @db.Uuid
+  name            String  @db.VarChar(255)
+  description     String? @db.Text
+  mimeType        String  @map("mime_type") @db.VarChar(200)
+  extension       String? @db.VarChar(20)
+  sizeBytes       BigInt  @default(0) @map("size_bytes")
+  storageKey      String  @map("storage_key") @db.VarChar(500)
+  storageProvider String  @default("minio") @map("storage_provider") @db.VarChar(50)
+
+  ocrStatus      String?   @default("pending") @map("ocr_status") @db.VarChar(50)
+  ocrText        String?   @map("ocr_text") @db.Text
+  ocrProcessedAt DateTime? @map("ocr_processed_at")
+
+  aiSummary    String?   @map("ai_summary") @db.Text
+  aiTags       String[]  @map("ai_tags")
+  aiAnalyzedAt DateTime? @map("ai_analyzed_at")
+
+  tags           String[]
+  isTemplate     Boolean  @default(false) @map("is_template")
+  isPublic       Boolean  @default(false) @map("is_public")
+  currentVersion Int      @default(1) @map("current_version")
+  checksum       String?  @db.VarChar(64)
+
+  approvalStatus String?   @map("approval_status") @db.VarChar(50)
+  approvedAt     DateTime? @map("approved_at")
+  approvedBy     String?   @map("approved_by") @db.Uuid
+
+  downloadCount Int @default(0) @map("download_count")
+  viewCount     Int @default(0) @map("view_count")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String    @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant       @relation(fields: [tenantId], references: [id])
+  folder      DocFolder?       @relation(fields: [folderId], references: [id])
+  versions    DocFileVersion[]
+  permissions DocPermission[]
+  auditLogs   DocAuditLog[]
+
+  @@index([tenantId])
+  @@index([tenantId, folderId])
+  @@index([tenantId, mimeType])
+  @@index([tenantId, isTemplate])
+  @@map("doc_files")
+}
+
+model DocFileVersion {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  fileId     String   @map("file_id") @db.Uuid
+  version    Int
+  storageKey String   @map("storage_key") @db.VarChar(500)
+  sizeBytes  BigInt   @default(0) @map("size_bytes")
+  checksum   String?  @db.VarChar(64)
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  createdBy  String   @map("created_by") @db.Uuid
+
+  file DocFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([fileId])
+  @@index([tenantId])
+  @@map("doc_file_versions")
+}
+
+model DocPermission {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  folderId   String?   @map("folder_id") @db.Uuid
+  fileId     String?   @map("file_id") @db.Uuid
+  userId     String?   @map("user_id") @db.Uuid
+  roleId     String?   @map("role_id") @db.Uuid
+  canView    Boolean   @default(true) @map("can_view")
+  canEdit    Boolean   @default(false) @map("can_edit")
+  canDelete  Boolean   @default(false) @map("can_delete")
+  canShare   Boolean   @default(false) @map("can_share")
+  canApprove Boolean   @default(false) @map("can_approve")
+  grantedBy  String    @map("granted_by") @db.Uuid
+  expiresAt  DateTime? @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  folder DocFolder? @relation(fields: [folderId], references: [id])
+  file   DocFile?   @relation(fields: [fileId], references: [id])
+
+  @@index([tenantId])
+  @@index([folderId])
+  @@index([fileId])
+  @@index([userId])
+  @@map("doc_permissions")
+}
+
+model DocTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?  @map("tenant_id") @db.Uuid
+  isSystem    Boolean  @default(false) @map("is_system")
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  category    String   @db.VarChar(100)
+  fileId      String?  @map("file_id") @db.Uuid
+  variables   Json?
+  tags        String[]
+  usageCount  Int      @default(0) @map("usage_count")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([category])
+  @@map("doc_templates")
+}
+
+model DocAuditLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  fileId     String?  @map("file_id") @db.Uuid
+  folderId   String?  @map("folder_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityName String   @map("entity_name") @db.VarChar(255)
+  metadata   Json?
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  occurredAt DateTime @default(now()) @map("occurred_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+  file   DocFile?   @relation(fields: [fileId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([fileId])
+  @@index([tenantId, action])
+  @@map("doc_audit_logs")
+}
+
+model KbCategory {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String  @map("tenant_id") @db.Uuid
+  parentId    String? @map("parent_id") @db.Uuid
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+  slug        String  @db.VarChar(255)
+  icon        String? @db.VarChar(100)
+  color       String? @db.VarChar(50)
+  sortOrder   Int     @default(0) @map("sort_order")
+  isPublic    Boolean @default(true) @map("is_public")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String    @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id])
+  parent   KbCategory?  @relation("KbCategoryTree", fields: [parentId], references: [id])
+  children KbCategory[] @relation("KbCategoryTree")
+  articles KbArticle[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([tenantId, parentId])
+  @@map("kb_categories")
+}
+
+model KbArticle {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  categoryId String?  @map("category_id") @db.Uuid
+  title      String   @db.VarChar(500)
+  slug       String   @db.VarChar(500)
+  content    String   @db.Text
+  excerpt    String?  @db.Text
+  tags       String[]
+  status     String   @default("draft") @db.VarChar(50)
+  isPublic   Boolean  @default(false) @map("is_public")
+  isPinned   Boolean  @default(false) @map("is_pinned")
+
+  aiSummary  String?  @map("ai_summary") @db.Text
+  aiKeywords String[] @map("ai_keywords")
+
+  viewCount      Int       @default(0) @map("view_count")
+  helpfulCount   Int       @default(0) @map("helpful_count")
+  currentVersion Int       @default(1) @map("current_version")
+  publishedAt    DateTime? @map("published_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String    @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant         @relation(fields: [tenantId], references: [id])
+  category KbCategory?        @relation(fields: [categoryId], references: [id])
+  versions KbArticleVersion[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([tenantId, categoryId])
+  @@index([tenantId, status])
+  @@map("kb_articles")
+}
+
+model KbArticleVersion {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  articleId String   @map("article_id") @db.Uuid
+  version   Int
+  title     String   @db.VarChar(500)
+  content   String   @db.Text
+  comment   String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by") @db.Uuid
+
+  article KbArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([articleId])
+  @@index([tenantId])
+  @@map("kb_article_versions")
 }

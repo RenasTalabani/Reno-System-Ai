@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
   Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
+  FileText, BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -39,6 +40,13 @@ const navigation = [
       { label: 'Procurement', href: '/procurement', icon: ShoppingCart },
       { label: 'Manufacturing', href: '/manufacturing', icon: Factory },
       { label: 'Analytics', href: '/analytics', icon: PieChart },
+    ],
+  },
+  {
+    group: 'Workspace',
+    items: [
+      { label: 'Documents', href: '/documents', icon: FileText },
+      { label: 'Knowledge Base', href: '/knowledge', icon: BookOpen },
     ],
   },
   {
@@ -76,7 +84,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v11.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v12.0.0</span>
         </div>
       </div>
 
