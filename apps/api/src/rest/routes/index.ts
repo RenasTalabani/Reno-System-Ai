@@ -14,6 +14,7 @@ import { crmRoutes } from './crm/index.js'
 import { salesRoutes } from './sales/index.js'
 import { financeRoutes } from './finance/index.js'
 import { inventoryRoutes } from './inventory/index.js'
+import { procurementRoutes } from './procurement/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -34,6 +35,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(salesRoutes, { prefix: '/sales' })
       await v1.register(financeRoutes, { prefix: '/finance' })
       await v1.register(inventoryRoutes, { prefix: '/inventory' })
+      await v1.register(procurementRoutes, { prefix: '/procurement' })
     },
     { prefix: '/v1' },
   )

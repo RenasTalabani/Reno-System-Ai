@@ -156,6 +156,25 @@ async function main() {
     { module: 'inventory', resource: 'reorder_rules', action: 'manage', scope: 'company' },
     { module: 'inventory', resource: 'lots', action: 'manage', scope: 'company' },
     { module: 'inventory', resource: 'serials', action: 'manage', scope: 'company' },
+    // Procurement
+    { module: 'procurement', resource: 'suppliers', action: 'read', scope: 'company' },
+    { module: 'procurement', resource: 'suppliers', action: 'manage', scope: 'company' },
+    { module: 'procurement', resource: 'supplier_categories', action: 'manage', scope: 'company' },
+    { module: 'procurement', resource: 'requisitions', action: 'read', scope: 'own' },
+    { module: 'procurement', resource: 'requisitions', action: 'read', scope: 'company' },
+    { module: 'procurement', resource: 'requisitions', action: 'create', scope: 'company' },
+    { module: 'procurement', resource: 'requisitions', action: 'approve', scope: 'company' },
+    { module: 'procurement', resource: 'rfqs', action: 'read', scope: 'company' },
+    { module: 'procurement', resource: 'rfqs', action: 'manage', scope: 'company' },
+    { module: 'procurement', resource: 'quotations', action: 'read', scope: 'company' },
+    { module: 'procurement', resource: 'quotations', action: 'manage', scope: 'company' },
+    { module: 'procurement', resource: 'orders', action: 'read', scope: 'company' },
+    { module: 'procurement', resource: 'orders', action: 'create', scope: 'company' },
+    { module: 'procurement', resource: 'orders', action: 'approve', scope: 'company' },
+    { module: 'procurement', resource: 'orders', action: 'receive', scope: 'company' },
+    { module: 'procurement', resource: 'orders', action: 'manage', scope: 'company' },
+    { module: 'procurement', resource: 'evaluations', action: 'read', scope: 'company' },
+    { module: 'procurement', resource: 'evaluations', action: 'manage', scope: 'company' },
   ]
 
   for (const perm of permissionDefs) {
@@ -834,6 +853,67 @@ async function main() {
     }
   }
   console.log('   → Seeded inventory categories, units, warehouse, and sample products')
+
+  // -------------------------------------------------------------------------
+  // 19. Seed Procurement master data
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Procurement master data...')
+
+  const supplierCategories = [
+    { name: 'Raw Materials', code: 'RAW', description: 'Suppliers providing raw production materials' },
+    { name: 'IT & Technology', code: 'IT', description: 'Hardware, software, and technology vendors' },
+    { name: 'Office Supplies', code: 'OFF', description: 'General office and stationery suppliers' },
+    { name: 'Logistics & Freight', code: 'LOG', description: 'Shipping, freight, and logistics providers' },
+    { name: 'Services', code: 'SVC', description: 'Professional and consulting services' },
+  ]
+
+  const createdCategories: Record<string, string> = {}
+  for (const cat of supplierCategories) {
+    const existing = await prisma.procSupplierCategory.findFirst({ where: { tenantId: tenant.id, code: cat.code } })
+    if (!existing) {
+      const created = await prisma.procSupplierCategory.create({
+        data: { tenantId: tenant.id, ...cat, createdBy: adminUser.id, updatedBy: adminUser.id },
+      })
+      createdCategories[cat.code] = created.id
+    } else {
+      createdCategories[cat.code] = existing.id
+    }
+  }
+
+  const sampleSuppliers = [
+    {
+      code: 'SUP-0001', name: 'Global Materials Co.', legalName: 'Global Materials Corporation Ltd.',
+      categoryId: createdCategories['RAW'],
+      taxId: 'TX-001-2024', email: 'procurement@globalmaterials.com', phone: '+1-555-100-0001',
+      city: 'Chicago', country: 'US', currency: 'USD', paymentTerms: 'Net 30',
+      leadTimeDays: 14, status: 'active',
+    },
+    {
+      code: 'SUP-0002', name: 'TechParts Inc.', legalName: 'TechParts Incorporated',
+      categoryId: createdCategories['IT'],
+      taxId: 'TX-002-2024', email: 'sales@techparts.com', phone: '+1-555-200-0002',
+      city: 'San Jose', country: 'US', currency: 'USD', paymentTerms: 'Net 45',
+      leadTimeDays: 7, status: 'active',
+    },
+    {
+      code: 'SUP-0003', name: 'OfficeWorld GmbH', legalName: 'OfficeWorld GmbH',
+      categoryId: createdCategories['OFF'],
+      taxId: 'DE-003-2024', email: 'orders@officeworld.de', phone: '+49-555-300-0003',
+      city: 'Berlin', country: 'DE', currency: 'EUR', paymentTerms: 'Net 30',
+      leadTimeDays: 5, status: 'active',
+    },
+  ]
+
+  for (const sup of sampleSuppliers) {
+    const existing = await prisma.procSupplier.findFirst({ where: { tenantId: tenant.id, code: sup.code } })
+    if (!existing) {
+      await prisma.procSupplier.create({
+        data: { tenantId: tenant.id, ...sup, createdBy: adminUser.id, updatedBy: adminUser.id },
+      })
+    }
+  }
+
+  console.log('   → Seeded procurement supplier categories and sample suppliers')
 
   console.log('')
   console.log('✅ Seed complete!')
