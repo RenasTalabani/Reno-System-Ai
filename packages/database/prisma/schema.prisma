@@ -73,6 +73,14 @@ model CoreTenant {
   salesInvoices     SalesInvoice[]
   salesSubscriptions SalesSubscription[]
   salesDiscounts    SalesDiscount[]
+  finFiscalYears    FinFiscalYear[]
+  finAccounts       FinAccount[]
+  finCostCenters    FinCostCenter[]
+  finJournalEntries FinJournalEntry[]
+  finBankAccounts   FinBankAccount[]
+  finVendors        FinVendor[]
+  finVendorBills    FinVendorBill[]
+  finBudgets        FinBudget[]
 
   @@map("core_tenants")
 }
@@ -2367,4 +2375,526 @@ model SalesSubscription {
   @@index([tenantId, companyId])
   @@index([tenantId, nextBillingDate])
   @@map("sales_subscriptions")
+}
+
+// =============================================================================
+// PHASE 5 — RENO FINANCE
+// Double-entry accounting · IFRS-ready · Immutable ledger · Multi-currency
+// =============================================================================
+
+// fin_fiscal_years — Company financial years
+model FinFiscalYear {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  code        String   @db.VarChar(20)
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  status      String   @default("draft") @map("status") @db.VarChar(20)
+  isDefault   Boolean  @default(false) @map("is_default")
+  lockedAt    DateTime? @map("locked_at")
+  lockedBy    String?  @map("locked_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdBy   String?  @map("created_by") @db.Uuid
+  updatedBy   String?  @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean  @default(true) @map("is_active")
+
+  tenant  CoreTenant  @relation(fields: [tenantId], references: [id])
+  periods FinPeriod[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("fin_fiscal_years")
+}
+
+// fin_periods — Accounting periods within a fiscal year
+model FinPeriod {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  fiscalYearId String   @map("fiscal_year_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  periodNumber Int      @map("period_number")
+  startDate    DateTime @map("start_date") @db.Date
+  endDate      DateTime @map("end_date") @db.Date
+  status       String   @default("open") @db.VarChar(20)
+  closedAt     DateTime? @map("closed_at")
+  closedBy     String?  @map("closed_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String?  @map("created_by") @db.Uuid
+  updatedBy    String?  @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean  @default(true) @map("is_active")
+
+  fiscalYear     FinFiscalYear    @relation(fields: [fiscalYearId], references: [id])
+  journalEntries FinJournalEntry[]
+  budgetLines    FinBudgetLine[]
+
+  @@unique([tenantId, fiscalYearId, periodNumber])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("fin_periods")
+}
+
+// fin_accounts — Chart of accounts (hierarchical, IFRS-ready)
+model FinAccount {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  code          String   @db.VarChar(20)
+  name          String   @db.VarChar(255)
+  fullName      String?  @map("full_name") @db.VarChar(500)
+  type          String   @db.VarChar(30)
+  // asset | liability | equity | revenue | expense
+  category      String   @db.VarChar(50)
+  // current_asset | non_current_asset | current_liability | non_current_liability
+  // equity | revenue | cost_of_goods_sold | operating_expense | other_income | other_expense | tax
+  normalBalance String   @default("debit") @map("normal_balance") @db.VarChar(10)
+  // debit | credit
+  parentId      String?  @map("parent_id") @db.Uuid
+  level         Int      @default(1)
+  isDetail      Boolean  @default(true) @map("is_detail")
+  // detail accounts can have journal entries; group accounts cannot
+  isBankAccount Boolean  @default(false) @map("is_bank_account")
+  isSystem      Boolean  @default(false) @map("is_system")
+  // system accounts seeded by default, cannot be deleted
+  currency      String?  @db.VarChar(10)
+  // if set, account is locked to this currency
+  description   String?  @db.Text
+  // AI-ready fields
+  aiInsights    Json?    @map("ai_insights") @db.JsonB
+  metadata      Json     @default("{}") @db.JsonB
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  createdBy     String?  @map("created_by") @db.Uuid
+  updatedBy     String?  @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean  @default(true) @map("is_active")
+
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id])
+  parent       FinAccount?      @relation("AccountTree", fields: [parentId], references: [id])
+  children     FinAccount[]     @relation("AccountTree")
+  journalLines FinJournalLine[]
+  bankAccount  FinBankAccount?
+  budgetLines  FinBudgetLine[]
+  vendorBillLines FinVendorBillLine[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@index([tenantId, parentId])
+  @@map("fin_accounts")
+}
+
+// fin_cost_centers — Cost center / department allocation
+model FinCostCenter {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  code        String   @db.VarChar(20)
+  name        String   @db.VarChar(255)
+  parentId    String?  @map("parent_id") @db.Uuid
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdBy   String?  @map("created_by") @db.Uuid
+  updatedBy   String?  @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean  @default(true) @map("is_active")
+
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id])
+  parent       FinCostCenter?   @relation("CostCenterTree", fields: [parentId], references: [id])
+  children     FinCostCenter[]  @relation("CostCenterTree")
+  journalLines FinJournalLine[]
+  budgetLines  FinBudgetLine[]
+  billLines    FinVendorBillLine[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("fin_cost_centers")
+}
+
+// fin_journal_entries — Double-entry journal headers
+// Immutable once posted: never update debit/credit amounts on posted entries
+model FinJournalEntry {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  number       String   @map("number") @db.VarChar(30)
+  type         String   @default("general") @db.VarChar(30)
+  // general | sales | purchase | payment | bank | adjustment | opening | closing | recurring
+  status       String   @default("draft") @db.VarChar(20)
+  // draft | posted | void
+  date         DateTime @db.Date
+  periodId     String?  @map("period_id") @db.Uuid
+  currency     String   @default("USD") @db.VarChar(10)
+  exchangeRate Decimal  @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  reference    String?  @db.VarChar(255)
+  description  String?  @db.Text
+  notes        String?  @db.Text
+  // Source document tracing
+  sourceType   String?  @map("source_type") @db.VarChar(50)
+  // sales_invoice | vendor_bill | vendor_payment | sales_payment | bank_transaction
+  sourceId     String?  @map("source_id") @db.Uuid
+  // Recurring journal support
+  isRecurring  Boolean  @default(false) @map("is_recurring")
+  recurringTemplateId String? @map("recurring_template_id") @db.Uuid
+  recurringInterval   String? @map("recurring_interval") @db.VarChar(20)
+  recurringEndDate    DateTime? @map("recurring_end_date") @db.Date
+  nextRecurringDate   DateTime? @map("next_recurring_date") @db.Date
+  // Approval workflow
+  submittedBy  String?  @map("submitted_by") @db.Uuid
+  submittedAt  DateTime? @map("submitted_at")
+  approvedBy   String?  @map("approved_by") @db.Uuid
+  approvedAt   DateTime? @map("approved_at")
+  rejectedBy   String?  @map("rejected_by") @db.Uuid
+  rejectedAt   DateTime? @map("rejected_at")
+  rejectionReason String? @map("rejection_reason") @db.Text
+  // Post / void
+  postedBy     String?  @map("posted_by") @db.Uuid
+  postedAt     DateTime? @map("posted_at")
+  voidedBy     String?  @map("voided_by") @db.Uuid
+  voidedAt     DateTime? @map("voided_at")
+  voidReason   String?  @map("void_reason") @db.Text
+  // AI-ready anomaly detection fields
+  aiAnomalyScore Decimal? @map("ai_anomaly_score") @db.Decimal(5, 4)
+  aiAnomalyFlags Json?    @map("ai_anomaly_flags") @db.JsonB
+  aiInsights     Json?    @map("ai_insights") @db.JsonB
+  metadata       Json     @default("{}") @db.JsonB
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String?  @map("created_by") @db.Uuid
+  updatedBy    String?  @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean  @default(true) @map("is_active")
+
+  tenant CoreTenant      @relation(fields: [tenantId], references: [id])
+  period FinPeriod?      @relation(fields: [periodId], references: [id])
+  lines  FinJournalLine[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, date])
+  @@index([tenantId, type])
+  @@index([tenantId, periodId])
+  @@index([tenantId, sourceType, sourceId])
+  @@map("fin_journal_entries")
+}
+
+// fin_journal_lines — Individual debit/credit lines (immutable once posted)
+model FinJournalLine {
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String  @map("tenant_id") @db.Uuid
+  journalId      String  @map("journal_id") @db.Uuid
+  accountId      String  @map("account_id") @db.Uuid
+  costCenterId   String? @map("cost_center_id") @db.Uuid
+  description    String? @db.VarChar(500)
+  debit          Decimal @default(0) @db.Decimal(18, 4)
+  credit         Decimal @default(0) @db.Decimal(18, 4)
+  currency       String  @default("USD") @db.VarChar(10)
+  exchangeRate   Decimal @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  debitBase      Decimal @default(0) @map("debit_base") @db.Decimal(18, 4)
+  creditBase     Decimal @default(0) @map("credit_base") @db.Decimal(18, 4)
+  // Tax reference
+  taxId          String? @map("tax_id") @db.Uuid
+  taxAmount      Decimal @default(0) @map("tax_amount") @db.Decimal(15, 4)
+  // Reconciliation flags (used in bank reconciliation)
+  reconciled     Boolean  @default(false)
+  reconciledAt   DateTime? @map("reconciled_at")
+  // Source tracing for sub-ledger entries
+  sourceType     String? @map("source_type") @db.VarChar(50)
+  sourceId       String? @map("source_id") @db.Uuid
+  sortOrder      Int     @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdBy      String? @map("created_by") @db.Uuid
+  updatedBy      String? @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean @default(true) @map("is_active")
+
+  journal    FinJournalEntry @relation(fields: [journalId], references: [id])
+  account    FinAccount      @relation(fields: [accountId], references: [id])
+  costCenter FinCostCenter?  @relation(fields: [costCenterId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, journalId])
+  @@index([tenantId, accountId])
+  @@index([tenantId, costCenterId])
+  @@index([tenantId, reconciled])
+  @@map("fin_journal_lines")
+}
+
+// fin_bank_accounts — Company bank accounts
+model FinBankAccount {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  accountId      String   @unique @map("account_id") @db.Uuid
+  // links to FinAccount (cash/bank account in CoA)
+  name           String   @db.VarChar(255)
+  bankName       String?  @map("bank_name") @db.VarChar(255)
+  accountNumber  String?  @map("account_number") @db.VarChar(100)
+  iban           String?  @db.VarChar(50)
+  swift          String?  @db.VarChar(20)
+  currency       String   @default("USD") @db.VarChar(10)
+  openingBalance Decimal  @default(0) @map("opening_balance") @db.Decimal(18, 4)
+  currentBalance Decimal  @default(0) @map("current_balance") @db.Decimal(18, 4)
+  lastSyncedAt   DateTime? @map("last_synced_at")
+  // Future: bank feed / open banking integration
+  gatewayType    String?  @map("gateway_type") @db.VarChar(50)
+  gatewayConfig  Json?    @map("gateway_config") @db.JsonB
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdBy      String?  @map("created_by") @db.Uuid
+  updatedBy      String?  @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean  @default(true) @map("is_active")
+
+  tenant       CoreTenant          @relation(fields: [tenantId], references: [id])
+  account      FinAccount          @relation(fields: [accountId], references: [id])
+  transactions FinBankTransaction[]
+
+  @@index([tenantId])
+  @@map("fin_bank_accounts")
+}
+
+// fin_bank_transactions — Imported bank statement lines
+model FinBankTransaction {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  bankAccountId   String   @map("bank_account_id") @db.Uuid
+  date            DateTime @db.Date
+  valueDate       DateTime? @map("value_date") @db.Date
+  description     String   @db.VarChar(500)
+  reference       String?  @db.VarChar(255)
+  amount          Decimal  @db.Decimal(18, 4)
+  runningBalance  Decimal  @default(0) @map("running_balance") @db.Decimal(18, 4)
+  currency        String   @default("USD") @db.VarChar(10)
+  // Reconciliation
+  isReconciled    Boolean  @default(false) @map("is_reconciled")
+  reconciledAt    DateTime? @map("reconciled_at")
+  journalLineId   String?  @map("journal_line_id") @db.Uuid
+  // AI auto-categorization
+  aiCategory      String?  @map("ai_category") @db.VarChar(100)
+  aiAccountId     String?  @map("ai_account_id") @db.Uuid
+  aiConfidence    Decimal? @map("ai_confidence") @db.Decimal(3, 2)
+  aiInsights      Json?    @map("ai_insights") @db.JsonB
+  metadata        Json     @default("{}") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  createdBy       String?  @map("created_by") @db.Uuid
+  updatedBy       String?  @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean  @default(true) @map("is_active")
+
+  bankAccount FinBankAccount @relation(fields: [bankAccountId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, bankAccountId])
+  @@index([tenantId, isReconciled])
+  @@index([tenantId, date])
+  @@map("fin_bank_transactions")
+}
+
+// fin_vendors — Supplier / vendor master (Accounts Payable)
+model FinVendor {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(255)
+  code         String?  @db.VarChar(30)
+  email        String?  @db.VarChar(255)
+  phone        String?  @db.VarChar(50)
+  address      Json?    @db.JsonB
+  taxId        String?  @map("tax_id") @db.VarChar(100)
+  currency     String   @default("USD") @db.VarChar(10)
+  paymentTerms Int?     @map("payment_terms")
+  // days — e.g., 30 means net 30
+  apAccountId  String?  @map("ap_account_id") @db.Uuid
+  // default AP control account for this vendor
+  notes        String?  @db.Text
+  // AI-ready fields
+  aiInsights   Json?    @map("ai_insights") @db.JsonB
+  metadata     Json     @default("{}") @db.JsonB
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String?  @map("created_by") @db.Uuid
+  updatedBy    String?  @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean  @default(true) @map("is_active")
+
+  tenant   CoreTenant      @relation(fields: [tenantId], references: [id])
+  bills    FinVendorBill[]
+  payments FinVendorPayment[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("fin_vendors")
+}
+
+// fin_vendor_bills — Accounts Payable bills from suppliers
+model FinVendorBill {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  vendorId     String   @map("vendor_id") @db.Uuid
+  number       String   @db.VarChar(30)
+  // auto: BILL-0001
+  reference    String?  @db.VarChar(255)
+  // vendor's own invoice number
+  status       String   @default("draft") @db.VarChar(20)
+  // draft | posted | partial | paid | void
+  date         DateTime @db.Date
+  dueDate      DateTime @map("due_date") @db.Date
+  periodId     String?  @map("period_id") @db.Uuid
+  currency     String   @default("USD") @db.VarChar(10)
+  exchangeRate Decimal  @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  subtotal     Decimal  @default(0) @db.Decimal(15, 2)
+  taxTotal     Decimal  @default(0) @map("tax_total") @db.Decimal(15, 2)
+  total        Decimal  @default(0) @db.Decimal(15, 2)
+  amountPaid   Decimal  @default(0) @map("amount_paid") @db.Decimal(15, 2)
+  amountDue    Decimal  @default(0) @map("amount_due") @db.Decimal(15, 2)
+  journalId    String?  @map("journal_id") @db.Uuid
+  // linked journal entry (posted when bill is approved)
+  notes        String?  @db.Text
+  // AI forecasting
+  aiPaymentRisk Decimal? @map("ai_payment_risk") @db.Decimal(3, 2)
+  metadata     Json     @default("{}") @db.JsonB
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String?  @map("created_by") @db.Uuid
+  updatedBy    String?  @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean  @default(true) @map("is_active")
+
+  tenant   CoreTenant        @relation(fields: [tenantId], references: [id])
+  vendor   FinVendor         @relation(fields: [vendorId], references: [id])
+  lines    FinVendorBillLine[]
+  payments FinVendorPayment[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, vendorId])
+  @@index([tenantId, dueDate])
+  @@map("fin_vendor_bills")
+}
+
+// fin_vendor_bill_lines — Line items on vendor bills
+model FinVendorBillLine {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String  @map("tenant_id") @db.Uuid
+  billId       String  @map("bill_id") @db.Uuid
+  accountId    String  @map("account_id") @db.Uuid
+  // expense account to debit
+  costCenterId String? @map("cost_center_id") @db.Uuid
+  description  String  @db.VarChar(500)
+  quantity     Decimal @default(1) @db.Decimal(12, 4)
+  unitPrice    Decimal @default(0) @map("unit_price") @db.Decimal(15, 4)
+  taxRate      Decimal @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount    Decimal @default(0) @map("tax_amount") @db.Decimal(15, 4)
+  subtotal     Decimal @default(0) @db.Decimal(15, 2)
+  total        Decimal @default(0) @db.Decimal(15, 2)
+  sortOrder    Int     @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String? @map("created_by") @db.Uuid
+  updatedBy    String? @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean @default(true) @map("is_active")
+
+  bill       FinVendorBill  @relation(fields: [billId], references: [id])
+  account    FinAccount     @relation(fields: [accountId], references: [id])
+  costCenter FinCostCenter? @relation(fields: [costCenterId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, billId])
+  @@map("fin_vendor_bill_lines")
+}
+
+// fin_vendor_payments — Payments made to vendors (AP)
+model FinVendorPayment {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  vendorId      String   @map("vendor_id") @db.Uuid
+  billId        String?  @map("bill_id") @db.Uuid
+  bankAccountId String?  @map("bank_account_id") @db.Uuid
+  number        String   @db.VarChar(30)
+  // auto: VPAY-0001
+  date          DateTime @db.Date
+  amount        Decimal  @db.Decimal(15, 2)
+  currency      String   @default("USD") @db.VarChar(10)
+  exchangeRate  Decimal  @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+  amountBase    Decimal  @default(0) @map("amount_base") @db.Decimal(15, 2)
+  method        String   @default("bank_transfer") @db.VarChar(50)
+  reference     String?  @db.VarChar(255)
+  journalId     String?  @map("journal_id") @db.Uuid
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  createdBy     String?  @map("created_by") @db.Uuid
+  updatedBy     String?  @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean  @default(true) @map("is_active")
+
+  vendor FinVendor      @relation(fields: [vendorId], references: [id])
+  bill   FinVendorBill? @relation(fields: [billId], references: [id])
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, vendorId])
+  @@index([tenantId, billId])
+  @@map("fin_vendor_payments")
+}
+
+// fin_budgets — Budget plans per fiscal year
+model FinBudget {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  fiscalYearId String   @map("fiscal_year_id") @db.Uuid
+  name         String   @db.VarChar(255)
+  status       String   @default("draft") @db.VarChar(20)
+  // draft | active | closed
+  description  String?  @db.Text
+  // AI-ready forecasting fields
+  aiForecasts  Json?    @map("ai_forecasts") @db.JsonB
+  metadata     Json     @default("{}") @db.JsonB
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String?  @map("created_by") @db.Uuid
+  updatedBy    String?  @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean  @default(true) @map("is_active")
+
+  tenant CoreTenant    @relation(fields: [tenantId], references: [id])
+  lines  FinBudgetLine[]
+
+  @@index([tenantId])
+  @@index([tenantId, fiscalYearId])
+  @@map("fin_budgets")
+}
+
+// fin_budget_lines — Per account per period budget amounts
+model FinBudgetLine {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String  @map("tenant_id") @db.Uuid
+  budgetId     String  @map("budget_id") @db.Uuid
+  accountId    String  @map("account_id") @db.Uuid
+  costCenterId String? @map("cost_center_id") @db.Uuid
+  periodId     String  @map("period_id") @db.Uuid
+  amount       Decimal @db.Decimal(15, 2)
+  notes        String? @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdBy    String? @map("created_by") @db.Uuid
+  updatedBy    String? @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean @default(true) @map("is_active")
+
+  budget     FinBudget      @relation(fields: [budgetId], references: [id])
+  account    FinAccount     @relation(fields: [accountId], references: [id])
+  costCenter FinCostCenter? @relation(fields: [costCenterId], references: [id])
+  period     FinPeriod      @relation(fields: [periodId], references: [id])
+
+  @@unique([tenantId, budgetId, accountId, periodId])
+  @@index([tenantId])
+  @@index([tenantId, budgetId])
+  @@map("fin_budget_lines")
 }

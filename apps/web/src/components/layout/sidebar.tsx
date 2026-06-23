@@ -34,7 +34,7 @@ const navigation = [
       { label: 'Projects', href: '/projects', icon: GitBranch },
       { label: 'CRM', href: '/crm', icon: FolderOpen },
       { label: 'Sales', href: '/sales', icon: Boxes },
-      { label: 'Finance', href: '/finance', icon: BarChart3, disabled: true, badge: 'Phase 7' },
+      { label: 'Finance', href: '/finance', icon: BarChart3 },
     ],
   },
   {
@@ -72,7 +72,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v4.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v5.0.0</span>
         </div>
       </div>
 

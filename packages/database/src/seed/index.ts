@@ -117,11 +117,25 @@ async function main() {
     { module: 'sales', resource: 'subscriptions', action: 'manage', scope: 'company' },
     { module: 'sales', resource: 'settings', action: 'manage', scope: 'company' },
     // Finance
-    { module: 'finance', resource: 'invoices', action: 'read', scope: 'company' },
-    { module: 'finance', resource: 'invoices', action: 'create', scope: 'company' },
-    { module: 'finance', resource: 'invoices', action: 'approve', scope: 'company' },
-    { module: 'finance', resource: 'reports', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'accounts', action: 'read', scope: 'company' },
     { module: 'finance', resource: 'accounts', action: 'manage', scope: 'company' },
+    { module: 'finance', resource: 'journals', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'journals', action: 'create', scope: 'company' },
+    { module: 'finance', resource: 'journals', action: 'post', scope: 'company' },
+    { module: 'finance', resource: 'journals', action: 'void', scope: 'company' },
+    { module: 'finance', resource: 'vendors', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'vendors', action: 'manage', scope: 'company' },
+    { module: 'finance', resource: 'vendor_bills', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'vendor_bills', action: 'create', scope: 'company' },
+    { module: 'finance', resource: 'vendor_bills', action: 'post', scope: 'company' },
+    { module: 'finance', resource: 'vendor_bills', action: 'manage', scope: 'company' },
+    { module: 'finance', resource: 'bank_accounts', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'bank_accounts', action: 'manage', scope: 'company' },
+    { module: 'finance', resource: 'budgets', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'budgets', action: 'manage', scope: 'company' },
+    { module: 'finance', resource: 'reports', action: 'read', scope: 'company' },
+    { module: 'finance', resource: 'fiscal_years', action: 'manage', scope: 'company' },
+    { module: 'finance', resource: 'cost_centers', action: 'manage', scope: 'company' },
   ]
 
   for (const perm of permissionDefs) {
@@ -584,6 +598,136 @@ async function main() {
       })
     }
     console.log('   → Seeded 3 payment methods')
+  }
+
+  // -------------------------------------------------------------------------
+  // 17. Seed Finance — Default Chart of Accounts (IFRS-ready)
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Finance chart of accounts...')
+
+  const existingAccounts = await prisma.finAccount.count({ where: { tenantId: tenant.id } })
+  if (!existingAccounts) {
+    // Root group accounts
+    const coa = [
+      // Assets (1xxx)
+      { code: '1000', name: 'Assets', type: 'asset', category: 'current_asset', normalBalance: 'debit', isDetail: false, isSystem: true, level: 1 },
+      { code: '1100', name: 'Current Assets', type: 'asset', category: 'current_asset', normalBalance: 'debit', isDetail: false, isSystem: true, level: 2, parentCode: '1000' },
+      { code: '1110', name: 'Cash and Cash Equivalents', type: 'asset', category: 'current_asset', normalBalance: 'debit', isDetail: true, isSystem: true, isBankAccount: true, level: 3, parentCode: '1100' },
+      { code: '1120', name: 'Accounts Receivable', type: 'asset', category: 'current_asset', normalBalance: 'debit', isDetail: true, isSystem: true, level: 3, parentCode: '1100' },
+      { code: '1130', name: 'Prepaid Expenses', type: 'asset', category: 'current_asset', normalBalance: 'debit', isDetail: true, isSystem: false, level: 3, parentCode: '1100' },
+      { code: '1140', name: 'Inventory', type: 'asset', category: 'current_asset', normalBalance: 'debit', isDetail: true, isSystem: false, level: 3, parentCode: '1100' },
+      { code: '1200', name: 'Non-Current Assets', type: 'asset', category: 'non_current_asset', normalBalance: 'debit', isDetail: false, isSystem: true, level: 2, parentCode: '1000' },
+      { code: '1210', name: 'Property, Plant & Equipment', type: 'asset', category: 'non_current_asset', normalBalance: 'debit', isDetail: true, isSystem: false, level: 3, parentCode: '1200' },
+      { code: '1220', name: 'Accumulated Depreciation', type: 'asset', category: 'non_current_asset', normalBalance: 'credit', isDetail: true, isSystem: false, level: 3, parentCode: '1200' },
+      { code: '1230', name: 'Intangible Assets', type: 'asset', category: 'non_current_asset', normalBalance: 'debit', isDetail: true, isSystem: false, level: 3, parentCode: '1200' },
+      // Liabilities (2xxx)
+      { code: '2000', name: 'Liabilities', type: 'liability', category: 'current_liability', normalBalance: 'credit', isDetail: false, isSystem: true, level: 1 },
+      { code: '2100', name: 'Current Liabilities', type: 'liability', category: 'current_liability', normalBalance: 'credit', isDetail: false, isSystem: true, level: 2, parentCode: '2000' },
+      { code: '2110', name: 'Accounts Payable', type: 'liability', category: 'current_liability', normalBalance: 'credit', isDetail: true, isSystem: true, level: 3, parentCode: '2100' },
+      { code: '2120', name: 'Accrued Expenses', type: 'liability', category: 'current_liability', normalBalance: 'credit', isDetail: true, isSystem: false, level: 3, parentCode: '2100' },
+      { code: '2130', name: 'Taxes Payable', type: 'liability', category: 'current_liability', normalBalance: 'credit', isDetail: true, isSystem: false, level: 3, parentCode: '2100' },
+      { code: '2140', name: 'Salaries Payable', type: 'liability', category: 'current_liability', normalBalance: 'credit', isDetail: true, isSystem: false, level: 3, parentCode: '2100' },
+      { code: '2200', name: 'Non-Current Liabilities', type: 'liability', category: 'non_current_liability', normalBalance: 'credit', isDetail: false, isSystem: false, level: 2, parentCode: '2000' },
+      { code: '2210', name: 'Long-Term Loans', type: 'liability', category: 'non_current_liability', normalBalance: 'credit', isDetail: true, isSystem: false, level: 3, parentCode: '2200' },
+      // Equity (3xxx)
+      { code: '3000', name: 'Equity', type: 'equity', category: 'equity', normalBalance: 'credit', isDetail: false, isSystem: true, level: 1 },
+      { code: '3100', name: 'Share Capital', type: 'equity', category: 'equity', normalBalance: 'credit', isDetail: true, isSystem: true, level: 2, parentCode: '3000' },
+      { code: '3200', name: 'Retained Earnings', type: 'equity', category: 'equity', normalBalance: 'credit', isDetail: true, isSystem: true, level: 2, parentCode: '3000' },
+      { code: '3300', name: 'Current Year Earnings', type: 'equity', category: 'equity', normalBalance: 'credit', isDetail: true, isSystem: true, level: 2, parentCode: '3000' },
+      // Revenue (4xxx)
+      { code: '4000', name: 'Revenue', type: 'revenue', category: 'revenue', normalBalance: 'credit', isDetail: false, isSystem: true, level: 1 },
+      { code: '4100', name: 'Sales Revenue', type: 'revenue', category: 'revenue', normalBalance: 'credit', isDetail: true, isSystem: true, level: 2, parentCode: '4000' },
+      { code: '4200', name: 'Service Revenue', type: 'revenue', category: 'revenue', normalBalance: 'credit', isDetail: true, isSystem: false, level: 2, parentCode: '4000' },
+      { code: '4300', name: 'Other Income', type: 'revenue', category: 'other_income', normalBalance: 'credit', isDetail: true, isSystem: false, level: 2, parentCode: '4000' },
+      // COGS (5xxx)
+      { code: '5000', name: 'Cost of Goods Sold', type: 'expense', category: 'cost_of_goods_sold', normalBalance: 'debit', isDetail: false, isSystem: true, level: 1 },
+      { code: '5100', name: 'Direct Materials', type: 'expense', category: 'cost_of_goods_sold', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '5000' },
+      { code: '5200', name: 'Direct Labor', type: 'expense', category: 'cost_of_goods_sold', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '5000' },
+      // Operating Expenses (6xxx)
+      { code: '6000', name: 'Operating Expenses', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: false, isSystem: true, level: 1 },
+      { code: '6100', name: 'Salaries & Wages', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: true, level: 2, parentCode: '6000' },
+      { code: '6200', name: 'Rent Expense', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '6000' },
+      { code: '6300', name: 'Utilities Expense', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '6000' },
+      { code: '6400', name: 'Marketing & Advertising', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '6000' },
+      { code: '6500', name: 'Depreciation Expense', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '6000' },
+      { code: '6600', name: 'General & Administrative', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '6000' },
+      { code: '6700', name: 'Tax Expense', type: 'expense', category: 'operating_expense', normalBalance: 'debit', isDetail: true, isSystem: false, level: 2, parentCode: '6000' },
+    ]
+
+    // First pass: create root accounts
+    const accountMap = new Map<string, string>()
+    for (const acc of coa.filter(a => !a.parentCode)) {
+      const created = await prisma.finAccount.create({
+        data: {
+          tenantId: tenant.id, code: acc.code, name: acc.name, type: acc.type,
+          category: acc.category, normalBalance: acc.normalBalance,
+          isDetail: acc.isDetail, isSystem: acc.isSystem,
+          isBankAccount: (acc as any).isBankAccount ?? false,
+          level: acc.level, createdBy: adminUser.id, updatedBy: adminUser.id,
+        },
+      })
+      accountMap.set(acc.code, created.id)
+    }
+    // Second pass: child accounts
+    for (const acc of coa.filter(a => a.parentCode)) {
+      const created = await prisma.finAccount.create({
+        data: {
+          tenantId: tenant.id, code: acc.code, name: acc.name, type: acc.type,
+          category: acc.category, normalBalance: acc.normalBalance,
+          isDetail: acc.isDetail, isSystem: acc.isSystem,
+          isBankAccount: (acc as any).isBankAccount ?? false,
+          level: acc.level, parentId: accountMap.get(acc.parentCode!),
+          createdBy: adminUser.id, updatedBy: adminUser.id,
+        },
+      })
+      accountMap.set(acc.code, created.id)
+    }
+    console.log(`   → Seeded ${coa.length} chart of accounts`)
+  }
+
+  // Seed default fiscal year (current year)
+  const existingFiscalYear = await prisma.finFiscalYear.findFirst({ where: { tenantId: tenant.id } })
+  if (!existingFiscalYear) {
+    const year = new Date().getFullYear()
+    const fy = await prisma.finFiscalYear.create({
+      data: {
+        tenantId: tenant.id, name: `FY ${year}`, code: `FY${year}`,
+        startDate: new Date(`${year}-01-01`), endDate: new Date(`${year}-12-31`),
+        status: 'active', isDefault: true,
+        createdBy: adminUser.id, updatedBy: adminUser.id,
+      },
+    })
+    for (let i = 0; i < 12; i++) {
+      const pStart = new Date(year, i, 1)
+      const pEnd = new Date(year, i + 1, 0)
+      await prisma.finPeriod.create({
+        data: {
+          tenantId: tenant.id, fiscalYearId: fy.id,
+          name: pStart.toLocaleString('en', { month: 'long', year: 'numeric' }),
+          periodNumber: i + 1, startDate: pStart, endDate: pEnd,
+          status: i <= new Date().getMonth() ? 'open' : 'open',
+          createdBy: adminUser.id, updatedBy: adminUser.id,
+        },
+      })
+    }
+    console.log(`   → Seeded fiscal year FY${year} with 12 periods`)
+  }
+
+  // Seed default bank account linked to 1110 Cash
+  const existingBankAcc = await prisma.finBankAccount.findFirst({ where: { tenantId: tenant.id } })
+  if (!existingBankAcc) {
+    const cashAccount = await prisma.finAccount.findFirst({ where: { tenantId: tenant.id, code: '1110' } })
+    if (cashAccount) {
+      await prisma.finBankAccount.create({
+        data: {
+          tenantId: tenant.id, accountId: cashAccount.id,
+          name: 'Main Operating Account', bankName: 'Demo Bank',
+          currency: 'USD', openingBalance: 0, currentBalance: 0,
+          createdBy: adminUser.id, updatedBy: adminUser.id,
+        },
+      })
+      console.log('   → Seeded default bank account')
+    }
   }
 
   console.log('')
