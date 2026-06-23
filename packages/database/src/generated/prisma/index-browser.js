@@ -3325,6 +3325,127 @@ exports.Prisma.BrainPermissionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AutoWorkflowScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  slug: 'slug',
+  category: 'category',
+  tags: 'tags',
+  triggerType: 'triggerType',
+  triggerConfig: 'triggerConfig',
+  steps: 'steps',
+  isEnabled: 'isEnabled',
+  requiresApproval: 'requiresApproval',
+  maxRetries: 'maxRetries',
+  retryDelayMs: 'retryDelayMs',
+  timeoutMs: 'timeoutMs',
+  brainGenerated: 'brainGenerated',
+  totalRuns: 'totalRuns',
+  successRuns: 'successRuns',
+  failedRuns: 'failedRuns',
+  lastRunAt: 'lastRunAt',
+  lastRunStatus: 'lastRunStatus',
+  nextRunAt: 'nextRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AutoExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  status: 'status',
+  triggeredBy: 'triggeredBy',
+  triggerType: 'triggerType',
+  triggerData: 'triggerData',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  errorMessage: 'errorMessage',
+  errorStep: 'errorStep',
+  retryCount: 'retryCount',
+  context: 'context',
+  output: 'output',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AutoExecutionStepScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  executionId: 'executionId',
+  stepIndex: 'stepIndex',
+  stepId: 'stepId',
+  stepName: 'stepName',
+  stepType: 'stepType',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  errorMessage: 'errorMessage',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AutoApprovalGateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  executionId: 'executionId',
+  stepId: 'stepId',
+  title: 'title',
+  description: 'description',
+  riskLevel: 'riskLevel',
+  status: 'status',
+  requestedAt: 'requestedAt',
+  requestedBy: 'requestedBy',
+  expiresAt: 'expiresAt',
+  decidedAt: 'decidedAt',
+  decidedBy: 'decidedBy',
+  decisionNote: 'decisionNote',
+  payload: 'payload',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AutoTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  isSystem: 'isSystem',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  tags: 'tags',
+  icon: 'icon',
+  useCase: 'useCase',
+  triggerType: 'triggerType',
+  definition: 'definition',
+  usageCount: 'usageCount',
+  isPublic: 'isPublic',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AutoWebhookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  name: 'name',
+  token: 'token',
+  isActive: 'isActive',
+  lastCalledAt: 'lastCalledAt',
+  callCount: 'callCount',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3509,7 +3630,13 @@ exports.Prisma.ModelName = {
   BrainPromptTemplate: 'BrainPromptTemplate',
   BrainAction: 'BrainAction',
   BrainAuditLog: 'BrainAuditLog',
-  BrainPermission: 'BrainPermission'
+  BrainPermission: 'BrainPermission',
+  AutoWorkflow: 'AutoWorkflow',
+  AutoExecution: 'AutoExecution',
+  AutoExecutionStep: 'AutoExecutionStep',
+  AutoApprovalGate: 'AutoApprovalGate',
+  AutoTemplate: 'AutoTemplate',
+  AutoWebhook: 'AutoWebhook'
 };
 
 /**

@@ -1320,6 +1320,318 @@ async function main() {
 
   console.log('   → Seeded 9 Brain system agents and 4 prompt templates')
 
+  // -------------------------------------------------------------------------
+  // 23. Phase 11 — Automation / Workflow Engine seed
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Automation permissions and templates...')
+
+  const autoPermissions = [
+    { module: 'automation', resource: 'workflows', action: 'read', scope: 'company' },
+    { module: 'automation', resource: 'workflows', action: 'create', scope: 'company' },
+    { module: 'automation', resource: 'workflows', action: 'update', scope: 'company' },
+    { module: 'automation', resource: 'workflows', action: 'delete', scope: 'company' },
+    { module: 'automation', resource: 'workflows', action: 'run', scope: 'company' },
+    { module: 'automation', resource: 'executions', action: 'read', scope: 'company' },
+    { module: 'automation', resource: 'executions', action: 'cancel', scope: 'company' },
+    { module: 'automation', resource: 'approvals', action: 'read', scope: 'company' },
+    { module: 'automation', resource: 'approvals', action: 'decide', scope: 'company' },
+    { module: 'automation', resource: 'templates', action: 'read', scope: 'company' },
+    { module: 'automation', resource: 'templates', action: 'install', scope: 'company' },
+    { module: 'automation', resource: 'webhooks', action: 'manage', scope: 'company' },
+    { module: 'automation', resource: 'events', action: 'read', scope: 'company' },
+    { module: 'automation', resource: 'events', action: 'fire', scope: 'company' },
+  ]
+
+  for (const p of autoPermissions) {
+    await prisma.corePermission.upsert({
+      where: { module_resource_action_scope: p },
+      create: p,
+      update: {},
+    })
+  }
+
+  // System workflow templates
+  const systemTemplates = [
+    {
+      name: 'Welcome New Employee',
+      description: 'Automatically notify HR team and create onboarding tasks when a new employee is added',
+      category: 'hr',
+      tags: ['hr', 'onboarding', 'notification'],
+      icon: 'UsersRound',
+      useCase: 'Use this template to automate the employee onboarding notification flow. Fires when a new employee record is created.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'hr.employee.hired' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Send HR Team Notification',
+            type: 'notification',
+            config: {
+              title: 'New Employee Hired',
+              message: 'A new employee has joined: {{triggerData.name}}. Please complete onboarding.',
+              level: 'info',
+              recipient: 'all',
+            },
+            onSuccess: 'step_2',
+            onFailure: 'end',
+          },
+          {
+            id: 'step_2',
+            name: 'Log Onboarding Start',
+            type: 'log',
+            config: { message: 'Onboarding initiated for {{triggerData.name}} on {{triggerData.hireDate}}' },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'Low Stock Alert & Reorder',
+      description: 'Notify procurement when inventory falls below minimum level and request purchase order approval',
+      category: 'inventory',
+      tags: ['inventory', 'procurement', 'alert', 'approval'],
+      icon: 'Package',
+      useCase: 'Automatically alert the procurement team when stock levels drop below threshold and route to approval.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'inventory.stock.low' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Notify Procurement Team',
+            type: 'notification',
+            config: {
+              title: 'Low Stock Alert',
+              message: 'Product {{triggerData.productName}} is below minimum stock level ({{triggerData.currentStock}} remaining)',
+              level: 'warning',
+              recipient: 'all',
+            },
+            onSuccess: 'step_2',
+            onFailure: 'end',
+          },
+          {
+            id: 'step_2',
+            name: 'Request PO Approval',
+            type: 'approval',
+            config: {
+              title: 'Create Purchase Order',
+              description: 'Stock for {{triggerData.productName}} is critically low. Approve to create a reorder.',
+              riskLevel: 'medium',
+              expiresInHours: 24,
+            },
+            onApproved: 'step_3',
+            onRejected: 'end',
+          },
+          {
+            id: 'step_3',
+            name: 'Log PO Request',
+            type: 'log',
+            config: { message: 'Purchase order approved for {{triggerData.productName}}. Procurement team to proceed.' },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'New Lead Auto-Assign Notification',
+      description: 'Notify the sales team when a new CRM lead is created',
+      category: 'crm',
+      tags: ['crm', 'sales', 'leads', 'notification'],
+      icon: 'TrendingUp',
+      useCase: 'Fires when a new lead arrives in the CRM, notifies all sales team members immediately.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'crm.lead.created' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Notify Sales Team',
+            type: 'notification',
+            config: {
+              title: 'New Lead: {{triggerData.name}}',
+              message: 'A new lead has been created from {{triggerData.source}}. Assign and follow up.',
+              level: 'info',
+              recipient: 'all',
+            },
+            onSuccess: 'end',
+            onFailure: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'Overdue Invoice Escalation',
+      description: 'Alert finance team when a customer invoice becomes overdue',
+      category: 'finance',
+      tags: ['finance', 'invoices', 'collections', 'alert'],
+      icon: 'BarChart3',
+      useCase: 'Automatically escalates overdue customer invoices to the finance team for follow-up action.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'sales.invoice.overdue' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Alert Finance Team',
+            type: 'notification',
+            config: {
+              title: 'Invoice Overdue',
+              message: 'Invoice {{triggerData.number}} for {{triggerData.customerName}} ({{triggerData.total}}) is overdue.',
+              level: 'warning',
+              recipient: 'all',
+            },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'High-Value PO Approval Gate',
+      description: 'Route large purchase orders through an approval gate before processing',
+      category: 'procurement',
+      tags: ['procurement', 'approval', 'finance', 'governance'],
+      icon: 'ShoppingCart',
+      useCase: 'Any purchase order above a threshold requires manager approval before being confirmed.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'procurement.order.created' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Check Order Amount',
+            type: 'condition',
+            config: {
+              logic: 'all',
+              conditions: [{ field: 'triggerData.totalAmount', operator: 'gt', value: 5000 }],
+            },
+            onTrue: 'step_2',
+            onFalse: 'end',
+          },
+          {
+            id: 'step_2',
+            name: 'Manager Approval Required',
+            type: 'approval',
+            config: {
+              title: 'High-Value Purchase Order Approval',
+              description: 'Purchase order {{triggerData.number}} for {{triggerData.totalAmount}} requires management approval.',
+              riskLevel: 'high',
+              expiresInHours: 48,
+            },
+            onApproved: 'step_3',
+            onRejected: 'end',
+          },
+          {
+            id: 'step_3',
+            name: 'Notify Approval',
+            type: 'notification',
+            config: {
+              title: 'PO Approved',
+              message: 'Purchase order {{triggerData.number}} has been approved.',
+              level: 'success',
+              recipient: 'triggeredBy',
+            },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'Manufacturing Order Complete Alert',
+      description: 'Notify warehouse when a manufacturing order completes',
+      category: 'manufacturing',
+      tags: ['manufacturing', 'inventory', 'warehouse', 'notification'],
+      icon: 'Factory',
+      useCase: 'Automatically alerts the warehouse team when production finishes so they can receive finished goods.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'manufacturing.order.completed' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Notify Warehouse',
+            type: 'notification',
+            config: {
+              title: 'Production Complete',
+              message: 'Manufacturing order {{triggerData.number}} has completed. Receive {{triggerData.quantity}} units of {{triggerData.productName}} in warehouse.',
+              level: 'info',
+              recipient: 'all',
+            },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'Daily Business Summary',
+      description: 'Send a daily summary notification with key business metrics at 9am',
+      category: 'cross-module',
+      tags: ['scheduled', 'daily', 'summary', 'analytics'],
+      icon: 'Activity',
+      useCase: 'Runs every morning at 9am to remind the team to review daily metrics in Reno Analytics.',
+      triggerType: 'scheduled',
+      definition: {
+        triggerConfig: { intervalMs: 86400000, nextRunAt: null },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Send Daily Reminder',
+            type: 'notification',
+            config: {
+              title: 'Daily Business Review',
+              message: 'Good morning! Review today\'s KPIs in Analytics. Check pending approvals and open orders.',
+              level: 'info',
+              recipient: 'all',
+            },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+    {
+      name: 'Won Opportunity Celebration',
+      description: 'Notify the whole team when a deal is marked as Won in CRM',
+      category: 'sales',
+      tags: ['crm', 'sales', 'celebration', 'won'],
+      icon: 'TrendingUp',
+      useCase: 'Boosts team morale by automatically broadcasting when a new deal is won.',
+      triggerType: 'event',
+      definition: {
+        triggerConfig: { eventType: 'crm.opportunity.won' },
+        steps: [
+          {
+            id: 'step_1',
+            name: 'Announce Win',
+            type: 'notification',
+            config: {
+              title: 'Deal Won!',
+              message: 'Opportunity "{{triggerData.name}}" worth {{triggerData.value}} has been won! Great work team.',
+              level: 'success',
+              recipient: 'all',
+            },
+            onSuccess: 'end',
+          },
+        ],
+      },
+    },
+  ]
+
+  for (const tpl of systemTemplates) {
+    const existing = await prisma.autoTemplate.findFirst({ where: { name: tpl.name, isSystem: true } })
+    if (!existing) {
+      await prisma.autoTemplate.create({
+        data: {
+          tenantId: null,
+          isSystem: true,
+          isPublic: true,
+          ...tpl,
+        },
+      })
+    }
+  }
+
+  console.log(`   → Seeded 14 automation permissions and ${systemTemplates.length} system workflow templates`)
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')
