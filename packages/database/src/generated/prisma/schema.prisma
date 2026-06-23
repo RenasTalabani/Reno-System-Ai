@@ -107,6 +107,17 @@ model CoreTenant {
   mfgOrders                MfgOrder[]
   mfgQualityChecks         MfgQualityCheck[]
   mfgMrpRuns               MfgMrpRun[]
+  biDashboards             BiDashboard[]
+  biReports                BiReport[]
+  biScheduledReports       BiScheduledReport[]
+  biHealthScores           BiCompanyHealthScore[]
+  biKpiSnapshots           BiKpiSnapshot[]
+  biAiInsights             BiAiInsight[]
+  brainProviderConfigs     BrainProviderConfig[]
+  brainConversations       BrainConversation[]
+  brainMemories            BrainMemory[]
+  brainActions             BrainAction[]
+  brainAuditLogs           BrainAuditLog[]
 
   @@map("core_tenants")
 }
@@ -4277,4 +4288,451 @@ model MfgMrpRecommendation {
 
   @@index([tenantId])
   @@map("mfg_mrp_recommendations")
+}
+
+// ============================================
+// PHASE 9 â€” RENO BI / ANALYTICS
+// ============================================
+
+model BiDashboard {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(200)
+  slug        String    @db.VarChar(100)
+  description String?   @db.Text
+  type        String    @default("custom") @db.VarChar(30)
+  module      String?   @db.VarChar(50)
+  isDefault   Boolean   @default(false) @map("is_default")
+  isPublic    Boolean   @default(false) @map("is_public")
+  layout      Json?
+  filters     Json?
+  refreshRate Int?      @map("refresh_rate")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  tenant      CoreTenant              @relation(fields: [tenantId], references: [id])
+  widgets     BiWidget[]
+  permissions BiDashboardPermission[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("bi_dashboards")
+}
+
+model BiWidget {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  dashboardId String   @map("dashboard_id") @db.Uuid
+  title       String   @db.VarChar(200)
+  type        String   @db.VarChar(30)
+  module      String?  @db.VarChar(50)
+  dataSource  String?  @map("data_source") @db.VarChar(100)
+  config      Json?
+  positionX   Int      @default(0) @map("position_x")
+  positionY   Int      @default(0) @map("position_y")
+  width       Int      @default(4)
+  height      Int      @default(3)
+  refreshRate Int?     @map("refresh_rate")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  dashboard BiDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, dashboardId])
+  @@map("bi_widgets")
+}
+
+model BiReport {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(200)
+  description String?   @db.Text
+  module      String    @db.VarChar(50)
+  entity      String    @db.VarChar(50)
+  columns     Json
+  filters     Json?
+  groupBy     Json?     @map("group_by")
+  sortBy      Json?     @map("sort_by")
+  chartType   String?   @map("chart_type") @db.VarChar(30)
+  chartConfig Json?     @map("chart_config")
+  isPublic    Boolean   @default(false) @map("is_public")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  tenant           CoreTenant          @relation(fields: [tenantId], references: [id])
+  scheduledReports BiScheduledReport[]
+  exports          BiReportExport[]
+
+  @@index([tenantId])
+  @@map("bi_reports")
+}
+
+model BiScheduledReport {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  reportId   String    @map("report_id") @db.Uuid
+  name       String    @db.VarChar(200)
+  cronExpr   String    @map("cron_expr") @db.VarChar(100)
+  format     String    @default("pdf") @db.VarChar(20)
+  recipients Json
+  subject    String?   @db.VarChar(300)
+  message    String?   @db.Text
+  isActive   Boolean   @default(true) @map("is_active")
+  lastRunAt  DateTime? @map("last_run_at")
+  nextRunAt  DateTime? @map("next_run_at")
+  createdBy  String?   @map("created_by") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  tenant  CoreTenant       @relation(fields: [tenantId], references: [id])
+  report  BiReport         @relation(fields: [reportId], references: [id])
+  exports BiReportExport[]
+
+  @@index([tenantId])
+  @@map("bi_scheduled_reports")
+}
+
+model BiReportExport {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  reportId      String    @map("report_id") @db.Uuid
+  scheduledId   String?   @map("scheduled_id") @db.Uuid
+  format        String    @db.VarChar(20)
+  status        String    @default("pending") @db.VarChar(20)
+  rowCount      Int?      @map("row_count")
+  fileSizeBytes Int?      @map("file_size_bytes")
+  fileUrl       String?   @map("file_url") @db.VarChar(500)
+  errorMessage  String?   @map("error_message") @db.Text
+  requestedBy   String?   @map("requested_by") @db.Uuid
+  completedAt   DateTime? @map("completed_at")
+  expiresAt     DateTime? @map("expires_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  report    BiReport           @relation(fields: [reportId], references: [id])
+  scheduled BiScheduledReport? @relation(fields: [scheduledId], references: [id])
+
+  @@index([tenantId])
+  @@map("bi_report_exports")
+}
+
+model BiCompanyHealthScore {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  snapshotDate      DateTime @map("snapshot_date") @db.Date
+  overallScore      Decimal  @map("overall_score") @db.Decimal(5, 2)
+  financialScore    Decimal? @map("financial_score") @db.Decimal(5, 2)
+  salesScore        Decimal? @map("sales_score") @db.Decimal(5, 2)
+  operationsScore   Decimal? @map("operations_score") @db.Decimal(5, 2)
+  hrScore           Decimal? @map("hr_score") @db.Decimal(5, 2)
+  inventoryScore    Decimal? @map("inventory_score") @db.Decimal(5, 2)
+  revenue           Decimal? @db.Decimal(18, 2)
+  expenses          Decimal? @db.Decimal(18, 2)
+  grossMargin       Decimal? @map("gross_margin") @db.Decimal(8, 4)
+  headcount         Int?
+  openOrders        Int?     @map("open_orders")
+  inventoryValue    Decimal? @map("inventory_value") @db.Decimal(18, 2)
+  aiTrend           String?  @map("ai_trend") @db.VarChar(20)
+  aiRiskLevel       String?  @map("ai_risk_level") @db.VarChar(20)
+  aiInsights        String?  @map("ai_insights") @db.Text
+  aiRecommendations Json?    @map("ai_recommendations")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, snapshotDate])
+  @@index([tenantId])
+  @@map("bi_company_health_scores")
+}
+
+model BiKpiSnapshot {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  module        String   @db.VarChar(50)
+  kpiKey        String   @map("kpi_key") @db.VarChar(100)
+  period        String   @db.VarChar(20)
+  periodDate    DateTime @map("period_date") @db.Date
+  value         Decimal  @db.Decimal(18, 4)
+  prevValue     Decimal? @map("prev_value") @db.Decimal(18, 4)
+  changePercent Decimal? @map("change_percent") @db.Decimal(8, 4)
+  meta          Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, module, kpiKey, period, periodDate])
+  @@index([tenantId, module])
+  @@map("bi_kpi_snapshots")
+}
+
+model BiAiInsight {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  type        String    @db.VarChar(30)
+  module      String?   @db.VarChar(50)
+  severity    String    @default("info") @db.VarChar(20)
+  title       String    @db.VarChar(300)
+  description String    @db.Text
+  metric      String?   @db.VarChar(100)
+  metricValue Decimal?  @map("metric_value") @db.Decimal(18, 4)
+  confidence  Decimal?  @db.Decimal(5, 4)
+  actionable  Boolean   @default(false)
+  action      String?   @db.Text
+  validUntil  DateTime? @map("valid_until")
+  isRead      Boolean   @default(false) @map("is_read")
+  isDismissed Boolean   @default(false) @map("is_dismissed")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@map("bi_ai_insights")
+}
+
+model BiDashboardPermission {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  dashboardId String   @map("dashboard_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  canView     Boolean  @default(true) @map("can_view")
+  canEdit     Boolean  @default(false) @map("can_edit")
+  canShare    Boolean  @default(false) @map("can_share")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  dashboard BiDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@unique([dashboardId, userId])
+  @@index([tenantId])
+  @@map("bi_dashboard_permissions")
+}
+
+// ============================================
+// PHASE 10 â€” RENO BRAIN / AI CORE
+// ============================================
+
+model BrainAgent {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String?  @map("tenant_id") @db.Uuid
+  slug             String   @db.VarChar(100)
+  name             String   @db.VarChar(200)
+  title            String   @db.VarChar(200)
+  description      String?  @db.Text
+  systemPrompt     String?  @map("system_prompt") @db.Text
+  persona          String?  @db.Text
+  modules          Json?
+  capabilities     Json?
+  model            String   @default("claude-sonnet-4-6") @db.VarChar(100)
+  provider         String   @default("anthropic") @db.VarChar(50)
+  maxTokens        Int      @default(4096) @map("max_tokens")
+  temperature      Decimal  @default(0.7) @db.Decimal(3, 2)
+  isSystem         Boolean  @default(false) @map("is_system")
+  isActive         Boolean  @default(true) @map("is_active")
+  iconName         String?  @map("icon_name") @db.VarChar(50)
+  color            String?  @db.VarChar(30)
+  requiresApproval Boolean  @default(false) @map("requires_approval")
+  createdBy        String?  @map("created_by") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  conversations BrainConversation[]
+  templates     BrainPromptTemplate[]
+  permissions   BrainPermission[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("brain_agents")
+}
+
+model BrainProviderConfig {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  provider  String   @db.VarChar(50)
+  name      String   @db.VarChar(100)
+  apiKey    String?  @map("api_key") @db.VarChar(500)
+  baseUrl   String?  @map("base_url") @db.VarChar(500)
+  model     String   @db.VarChar(100)
+  isDefault Boolean  @default(false) @map("is_default")
+  isActive  Boolean  @default(true) @map("is_active")
+  config    Json?
+  createdBy String?  @map("created_by") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@map("brain_provider_configs")
+}
+
+model BrainConversation {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  agentId         String    @map("agent_id") @db.Uuid
+  title           String?   @db.VarChar(300)
+  status          String    @default("active") @db.VarChar(20)
+  contextSnapshot Json?     @map("context_snapshot")
+  totalTokens     Int       @default(0) @map("total_tokens")
+  messageCount    Int       @default(0) @map("message_count")
+  lastMessageAt   DateTime? @map("last_message_at")
+  metadata        Json?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tenant   CoreTenant     @relation(fields: [tenantId], references: [id])
+  agent    BrainAgent     @relation(fields: [agentId], references: [id])
+  messages BrainMessage[]
+  memories BrainMemory[]
+  actions  BrainAction[]
+
+  @@index([tenantId, userId])
+  @@map("brain_conversations")
+}
+
+model BrainMessage {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  conversationId   String   @map("conversation_id") @db.Uuid
+  role             String   @db.VarChar(20)
+  content          String   @db.Text
+  promptTokens     Int      @default(0) @map("prompt_tokens")
+  completionTokens Int      @default(0) @map("completion_tokens")
+  totalTokens      Int      @default(0) @map("total_tokens")
+  model            String?  @db.VarChar(100)
+  provider         String?  @db.VarChar(50)
+  latencyMs        Int?     @map("latency_ms")
+  hasActions       Boolean  @default(false) @map("has_actions")
+  metadata         Json?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  conversation BrainConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  actions      BrainAction[]
+
+  @@index([tenantId, conversationId])
+  @@map("brain_messages")
+}
+
+model BrainMemory {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  userId         String?   @map("user_id") @db.Uuid
+  conversationId String?   @map("conversation_id") @db.Uuid
+  type           String    @db.VarChar(30)
+  scope          String    @default("session") @db.VarChar(20)
+  key            String    @db.VarChar(200)
+  value          String    @db.Text
+  confidence     Decimal?  @db.Decimal(5, 4)
+  source         String?   @db.VarChar(50)
+  expiresAt      DateTime? @map("expires_at")
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  tenant       CoreTenant         @relation(fields: [tenantId], references: [id])
+  conversation BrainConversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+  @@index([tenantId, scope, key])
+  @@map("brain_memories")
+}
+
+model BrainPromptTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?  @map("tenant_id") @db.Uuid
+  agentId     String?  @map("agent_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  slug        String   @db.VarChar(100)
+  description String?  @db.Text
+  template    String   @db.Text
+  variables   Json?
+  category    String?  @db.VarChar(50)
+  isSystem    Boolean  @default(false) @map("is_system")
+  isActive    Boolean  @default(true) @map("is_active")
+  usageCount  Int      @default(0) @map("usage_count")
+  createdBy   String?  @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  agent BrainAgent? @relation(fields: [agentId], references: [id])
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("brain_prompt_templates")
+}
+
+model BrainAction {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  messageId      String?   @map("message_id") @db.Uuid
+  type           String    @db.VarChar(100)
+  module         String    @db.VarChar(50)
+  title          String    @db.VarChar(300)
+  description    String    @db.Text
+  payload        Json
+  riskLevel      String    @default("low") @map("risk_level") @db.VarChar(20)
+  status         String    @default("pending") @db.VarChar(30)
+  reviewedBy     String?   @map("reviewed_by") @db.Uuid
+  reviewedAt     DateTime? @map("reviewed_at")
+  reviewNote     String?   @map("review_note") @db.Text
+  executedAt     DateTime? @map("executed_at")
+  result         Json?
+  expiresAt      DateTime? @map("expires_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  tenant       CoreTenant        @relation(fields: [tenantId], references: [id])
+  conversation BrainConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  message      BrainMessage?     @relation(fields: [messageId], references: [id])
+
+  @@index([tenantId, status])
+  @@map("brain_actions")
+}
+
+model BrainAuditLog {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  conversationId String?  @map("conversation_id") @db.Uuid
+  agentId        String?  @map("agent_id") @db.Uuid
+  action         String   @db.VarChar(100)
+  module         String?  @db.VarChar(50)
+  entityType     String?  @map("entity_type") @db.VarChar(100)
+  entityId       String?  @map("entity_id") @db.Uuid
+  description    String?  @db.Text
+  ipAddress      String?  @map("ip_address") @db.VarChar(45)
+  metadata       Json?
+  occurredAt     DateTime @default(now()) @map("occurred_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, agentId])
+  @@map("brain_audit_logs")
+}
+
+model BrainPermission {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String?  @map("tenant_id") @db.Uuid
+  agentId    String   @map("agent_id") @db.Uuid
+  module     String   @db.VarChar(50)
+  canRead    Boolean  @default(true) @map("can_read")
+  canSuggest Boolean  @default(true) @map("can_suggest")
+  canAct     Boolean  @default(false) @map("can_act")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  agent BrainAgent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, module])
+  @@index([agentId])
+  @@map("brain_permissions")
 }

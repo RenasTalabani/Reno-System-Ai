@@ -3002,6 +3002,329 @@ exports.Prisma.MfgMrpRecommendationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BiDashboardScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  type: 'type',
+  module: 'module',
+  isDefault: 'isDefault',
+  isPublic: 'isPublic',
+  layout: 'layout',
+  filters: 'filters',
+  refreshRate: 'refreshRate',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BiWidgetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dashboardId: 'dashboardId',
+  title: 'title',
+  type: 'type',
+  module: 'module',
+  dataSource: 'dataSource',
+  config: 'config',
+  positionX: 'positionX',
+  positionY: 'positionY',
+  width: 'width',
+  height: 'height',
+  refreshRate: 'refreshRate',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BiReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  module: 'module',
+  entity: 'entity',
+  columns: 'columns',
+  filters: 'filters',
+  groupBy: 'groupBy',
+  sortBy: 'sortBy',
+  chartType: 'chartType',
+  chartConfig: 'chartConfig',
+  isPublic: 'isPublic',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BiScheduledReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  name: 'name',
+  cronExpr: 'cronExpr',
+  format: 'format',
+  recipients: 'recipients',
+  subject: 'subject',
+  message: 'message',
+  isActive: 'isActive',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BiReportExportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  scheduledId: 'scheduledId',
+  format: 'format',
+  status: 'status',
+  rowCount: 'rowCount',
+  fileSizeBytes: 'fileSizeBytes',
+  fileUrl: 'fileUrl',
+  errorMessage: 'errorMessage',
+  requestedBy: 'requestedBy',
+  completedAt: 'completedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BiCompanyHealthScoreScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  snapshotDate: 'snapshotDate',
+  overallScore: 'overallScore',
+  financialScore: 'financialScore',
+  salesScore: 'salesScore',
+  operationsScore: 'operationsScore',
+  hrScore: 'hrScore',
+  inventoryScore: 'inventoryScore',
+  revenue: 'revenue',
+  expenses: 'expenses',
+  grossMargin: 'grossMargin',
+  headcount: 'headcount',
+  openOrders: 'openOrders',
+  inventoryValue: 'inventoryValue',
+  aiTrend: 'aiTrend',
+  aiRiskLevel: 'aiRiskLevel',
+  aiInsights: 'aiInsights',
+  aiRecommendations: 'aiRecommendations',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BiKpiSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  module: 'module',
+  kpiKey: 'kpiKey',
+  period: 'period',
+  periodDate: 'periodDate',
+  value: 'value',
+  prevValue: 'prevValue',
+  changePercent: 'changePercent',
+  meta: 'meta',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BiAiInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  module: 'module',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  metric: 'metric',
+  metricValue: 'metricValue',
+  confidence: 'confidence',
+  actionable: 'actionable',
+  action: 'action',
+  validUntil: 'validUntil',
+  isRead: 'isRead',
+  isDismissed: 'isDismissed',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BiDashboardPermissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dashboardId: 'dashboardId',
+  userId: 'userId',
+  canView: 'canView',
+  canEdit: 'canEdit',
+  canShare: 'canShare',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BrainAgentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  slug: 'slug',
+  name: 'name',
+  title: 'title',
+  description: 'description',
+  systemPrompt: 'systemPrompt',
+  persona: 'persona',
+  modules: 'modules',
+  capabilities: 'capabilities',
+  model: 'model',
+  provider: 'provider',
+  maxTokens: 'maxTokens',
+  temperature: 'temperature',
+  isSystem: 'isSystem',
+  isActive: 'isActive',
+  iconName: 'iconName',
+  color: 'color',
+  requiresApproval: 'requiresApproval',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrainProviderConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  provider: 'provider',
+  name: 'name',
+  apiKey: 'apiKey',
+  baseUrl: 'baseUrl',
+  model: 'model',
+  isDefault: 'isDefault',
+  isActive: 'isActive',
+  config: 'config',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrainConversationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  agentId: 'agentId',
+  title: 'title',
+  status: 'status',
+  contextSnapshot: 'contextSnapshot',
+  totalTokens: 'totalTokens',
+  messageCount: 'messageCount',
+  lastMessageAt: 'lastMessageAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrainMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  conversationId: 'conversationId',
+  role: 'role',
+  content: 'content',
+  promptTokens: 'promptTokens',
+  completionTokens: 'completionTokens',
+  totalTokens: 'totalTokens',
+  model: 'model',
+  provider: 'provider',
+  latencyMs: 'latencyMs',
+  hasActions: 'hasActions',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BrainMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  conversationId: 'conversationId',
+  type: 'type',
+  scope: 'scope',
+  key: 'key',
+  value: 'value',
+  confidence: 'confidence',
+  source: 'source',
+  expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrainPromptTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  template: 'template',
+  variables: 'variables',
+  category: 'category',
+  isSystem: 'isSystem',
+  isActive: 'isActive',
+  usageCount: 'usageCount',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrainActionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  conversationId: 'conversationId',
+  messageId: 'messageId',
+  type: 'type',
+  module: 'module',
+  title: 'title',
+  description: 'description',
+  payload: 'payload',
+  riskLevel: 'riskLevel',
+  status: 'status',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  executedAt: 'executedAt',
+  result: 'result',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrainAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  conversationId: 'conversationId',
+  agentId: 'agentId',
+  action: 'action',
+  module: 'module',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  description: 'description',
+  ipAddress: 'ipAddress',
+  metadata: 'metadata',
+  occurredAt: 'occurredAt'
+};
+
+exports.Prisma.BrainPermissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  module: 'module',
+  canRead: 'canRead',
+  canSuggest: 'canSuggest',
+  canAct: 'canAct',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3168,7 +3491,25 @@ exports.Prisma.ModelName = {
   MfgQualityCheckLine: 'MfgQualityCheckLine',
   MfgMrpRun: 'MfgMrpRun',
   MfgMrpDemand: 'MfgMrpDemand',
-  MfgMrpRecommendation: 'MfgMrpRecommendation'
+  MfgMrpRecommendation: 'MfgMrpRecommendation',
+  BiDashboard: 'BiDashboard',
+  BiWidget: 'BiWidget',
+  BiReport: 'BiReport',
+  BiScheduledReport: 'BiScheduledReport',
+  BiReportExport: 'BiReportExport',
+  BiCompanyHealthScore: 'BiCompanyHealthScore',
+  BiKpiSnapshot: 'BiKpiSnapshot',
+  BiAiInsight: 'BiAiInsight',
+  BiDashboardPermission: 'BiDashboardPermission',
+  BrainAgent: 'BrainAgent',
+  BrainProviderConfig: 'BrainProviderConfig',
+  BrainConversation: 'BrainConversation',
+  BrainMessage: 'BrainMessage',
+  BrainMemory: 'BrainMemory',
+  BrainPromptTemplate: 'BrainPromptTemplate',
+  BrainAction: 'BrainAction',
+  BrainAuditLog: 'BrainAuditLog',
+  BrainPermission: 'BrainPermission'
 };
 
 /**

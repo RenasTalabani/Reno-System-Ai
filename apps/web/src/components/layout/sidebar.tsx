@@ -44,8 +44,8 @@ const navigation = [
   {
     group: 'Intelligence',
     items: [
-      { label: 'Reno Brain', href: '/brain', icon: Brain, disabled: true, badge: 'Phase 10' },
-      { label: 'Automation', href: '/automation', icon: Workflow, disabled: true, badge: 'Phase 10' },
+      { label: 'Reno Brain', href: '/brain', icon: Brain },
+      { label: 'Automation', href: '/automation', icon: Workflow, disabled: true, badge: 'Phase 11' },
     ],
   },
   {
@@ -76,7 +76,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v9.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v10.0.0</span>
         </div>
       </div>
 

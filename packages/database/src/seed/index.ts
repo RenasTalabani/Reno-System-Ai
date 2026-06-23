@@ -1087,6 +1087,239 @@ async function main() {
 
   console.log('   → Seeded analytics dashboards, widgets, and reports')
 
+  // -------------------------------------------------------------------------
+  // 22. Phase 10 — Reno Brain / AI Core seed
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding Brain AI agents and permissions...')
+
+  const brainPermissions = [
+    { module: 'brain', resource: 'chat', action: 'read', scope: 'own' },
+    { module: 'brain', resource: 'chat', action: 'create', scope: 'own' },
+    { module: 'brain', resource: 'agents', action: 'read', scope: 'company' },
+    { module: 'brain', resource: 'agents', action: 'manage', scope: 'company' },
+    { module: 'brain', resource: 'memory', action: 'read', scope: 'company' },
+    { module: 'brain', resource: 'memory', action: 'manage', scope: 'company' },
+    { module: 'brain', resource: 'actions', action: 'read', scope: 'company' },
+    { module: 'brain', resource: 'actions', action: 'approve', scope: 'company' },
+    { module: 'brain', resource: 'providers', action: 'read', scope: 'company' },
+    { module: 'brain', resource: 'providers', action: 'manage', scope: 'company' },
+    { module: 'brain', resource: 'templates', action: 'read', scope: 'company' },
+    { module: 'brain', resource: 'templates', action: 'manage', scope: 'company' },
+    { module: 'brain', resource: 'audit', action: 'read', scope: 'company' },
+    { module: 'brain', resource: 'dashboard', action: 'read', scope: 'company' },
+  ]
+
+  for (const p of brainPermissions) {
+    await prisma.corePermission.upsert({
+      where: { module_resource_action_scope: p },
+      create: p,
+      update: {},
+    })
+  }
+
+  // Seed 9 system agents (tenantId: null, isSystem: true)
+  const systemAgentDefs = [
+    {
+      slug: 'reno-ceo',
+      name: 'Reno CEO',
+      title: 'Chief Executive Officer AI',
+      description: 'Full business overview with cross-module intelligence. Ask about revenue, headcount, operations, inventory, and company health in one conversation.',
+      iconName: 'Crown',
+      color: 'indigo',
+      modules: ['finance', 'sales', 'hr', 'inventory', 'procurement', 'manufacturing', 'projects', 'crm', 'analytics'],
+      systemPrompt: 'You are Reno CEO, the top-level AI advisor for this business. You have access to data from all business modules and can provide strategic insights, cross-departmental analysis, and executive-level recommendations. Always ground your answers in the live business data provided.',
+      maxTokens: 4096,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'medium',
+    },
+    {
+      slug: 'reno-coo',
+      name: 'Reno COO',
+      title: 'Chief Operating Officer AI',
+      description: 'Operational intelligence across manufacturing, inventory, procurement, and projects. Optimize workflows and identify bottlenecks.',
+      iconName: 'Workflow',
+      color: 'blue',
+      modules: ['manufacturing', 'inventory', 'procurement', 'projects'],
+      systemPrompt: 'You are Reno COO, the operations AI advisor. You specialize in manufacturing, inventory, procurement, and project management. Focus on operational efficiency, supply chain optimization, and production planning.',
+      maxTokens: 4096,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'medium',
+    },
+    {
+      slug: 'reno-hr-director',
+      name: 'Reno HR Director',
+      title: 'Human Resources AI',
+      description: 'HR analytics including headcount, attendance, leave, payroll insights, and workforce planning.',
+      iconName: 'UsersRound',
+      color: 'purple',
+      modules: ['hr'],
+      systemPrompt: 'You are Reno HR Director, the human resources AI advisor. You help with employee analytics, attendance patterns, leave management, payroll insights, and workforce planning. Always maintain employee privacy and confidentiality.',
+      maxTokens: 2048,
+      requiresApproval: true,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'high',
+    },
+    {
+      slug: 'reno-sales-director',
+      name: 'Reno Sales Director',
+      title: 'Sales & CRM AI',
+      description: 'Sales pipeline, revenue forecasting, customer insights, and CRM analytics.',
+      iconName: 'TrendingUp',
+      color: 'green',
+      modules: ['sales', 'crm'],
+      systemPrompt: 'You are Reno Sales Director, the sales and CRM AI advisor. Help with pipeline analysis, revenue forecasting, customer insights, and sales performance optimization.',
+      maxTokens: 2048,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'low',
+    },
+    {
+      slug: 'reno-accountant',
+      name: 'Reno Accountant',
+      title: 'Finance & Accounting AI',
+      description: 'Financial statements, cash flow, expense analysis, vendor bills, and accounting insights.',
+      iconName: 'BarChart3',
+      color: 'cyan',
+      modules: ['finance'],
+      systemPrompt: 'You are Reno Accountant, the finance AI advisor. You specialize in financial analysis, accounting, cash flow, expense tracking, and financial planning. Provide accurate, data-driven financial insights.',
+      maxTokens: 2048,
+      requiresApproval: true,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'high',
+    },
+    {
+      slug: 'reno-inventory-manager',
+      name: 'Reno Inventory Manager',
+      title: 'Inventory & Stock AI',
+      description: 'Stock levels, reorder alerts, warehouse efficiency, and product movement analysis.',
+      iconName: 'Package',
+      color: 'yellow',
+      modules: ['inventory'],
+      systemPrompt: 'You are Reno Inventory Manager, the inventory AI advisor. Help with stock level analysis, reorder recommendations, warehouse optimization, and product movement tracking.',
+      maxTokens: 2048,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'medium',
+    },
+    {
+      slug: 'reno-procurement-director',
+      name: 'Reno Procurement Director',
+      title: 'Procurement & Supply Chain AI',
+      description: 'Purchase orders, supplier performance, cost optimization, and supply chain risk analysis.',
+      iconName: 'ShoppingCart',
+      color: 'orange',
+      modules: ['procurement', 'inventory'],
+      systemPrompt: 'You are Reno Procurement Director, the supply chain AI advisor. Help with purchase order analysis, supplier evaluation, cost optimization, and supply chain risk management.',
+      maxTokens: 2048,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'medium',
+    },
+    {
+      slug: 'reno-production-director',
+      name: 'Reno Production Director',
+      title: 'Manufacturing & Production AI',
+      description: 'Manufacturing orders, work center utilization, quality control, and production efficiency.',
+      iconName: 'Factory',
+      color: 'red',
+      modules: ['manufacturing', 'inventory'],
+      systemPrompt: 'You are Reno Production Director, the manufacturing AI advisor. Help with production planning, work center utilization, quality control, and manufacturing efficiency optimization.',
+      maxTokens: 2048,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'medium',
+    },
+    {
+      slug: 'reno-analyst',
+      name: 'Reno Analyst',
+      title: 'Business Intelligence AI',
+      description: 'Deep analytics, KPI tracking, trend analysis, forecasting, and AI-generated business insights.',
+      iconName: 'Activity',
+      color: 'teal',
+      modules: ['analytics', 'finance', 'sales', 'hr', 'inventory', 'manufacturing'],
+      systemPrompt: 'You are Reno Analyst, the business intelligence AI. You specialize in deep data analysis, KPI computation, trend identification, forecasting, and generating actionable business insights from cross-module data.',
+      maxTokens: 8192,
+      requiresApproval: false,
+      canSuggestActions: true,
+      canExecuteActions: false,
+      riskLevel: 'low',
+    },
+  ]
+
+  for (const agent of systemAgentDefs) {
+    const existing = await prisma.brainAgent.findFirst({ where: { slug: agent.slug, isSystem: true } })
+    if (!existing) {
+      await prisma.brainAgent.create({
+        data: {
+          tenantId: null,
+          isSystem: true,
+          ...agent,
+        },
+      })
+    }
+  }
+
+  // Seed default prompt templates (system-level, no tenant)
+  const systemTemplates = [
+    {
+      slug: 'monthly-revenue-summary',
+      name: 'Monthly Revenue Summary',
+      description: 'Generate a concise summary of this month\'s revenue performance',
+      template: 'Provide a concise summary of revenue performance for {{month}} {{year}}. Include total revenue, comparison to last month, top products/customers, and key insights.',
+      variables: { month: 'string', year: 'string' },
+      category: 'finance',
+    },
+    {
+      slug: 'inventory-reorder-check',
+      name: 'Inventory Reorder Check',
+      description: 'Identify products that need reordering',
+      template: 'Review current inventory levels and identify products that are below minimum stock levels or at risk of stockout in the next {{days}} days. Suggest reorder quantities.',
+      variables: { days: 'number' },
+      category: 'inventory',
+    },
+    {
+      slug: 'hr-headcount-summary',
+      name: 'HR Headcount Summary',
+      description: 'Summarize current workforce by department',
+      template: 'Provide a headcount summary by department, including active employees, recent hires in the last {{months}} months, and any notable attendance or leave patterns.',
+      variables: { months: 'number' },
+      category: 'hr',
+    },
+    {
+      slug: 'sales-pipeline-review',
+      name: 'Sales Pipeline Review',
+      description: 'Analyze the current sales pipeline',
+      template: 'Analyze the current sales pipeline. Show open opportunities by stage, estimated value, conversion rates, and which deals are at risk. Focus on deals expected to close in {{days}} days.',
+      variables: { days: 'number' },
+      category: 'sales',
+    },
+  ]
+
+  for (const tpl of systemTemplates) {
+    const existing = await prisma.brainPromptTemplate.findFirst({ where: { slug: tpl.slug, isSystem: true } })
+    if (!existing) {
+      await prisma.brainPromptTemplate.create({
+        data: {
+          tenantId: null,
+          isSystem: true,
+          ...tpl,
+        },
+      })
+    }
+  }
+
+  console.log('   → Seeded 9 Brain system agents and 4 prompt templates')
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')
