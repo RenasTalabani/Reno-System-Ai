@@ -30,7 +30,7 @@ const companySchema = z.object({
   currency: z.string().default('USD'),
   timezone: z.string().default('UTC'),
 })
-type CompanyForm = z.infer<typeof companySchema>
+type CompanyForm = z.input<typeof companySchema>
 
 const deptSchema = z.object({ name: z.string().min(1, 'Required'), code: z.string().optional() })
 type DeptForm = z.infer<typeof deptSchema>

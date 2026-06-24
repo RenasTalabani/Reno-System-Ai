@@ -17,6 +17,7 @@ interface AuthUser {
 interface AuthState {
   user: AuthUser | null
   tenantSlug: string | null
+  token: string | null
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string, tenantSlug: string) => Promise<{ mfaRequired?: boolean; tempToken?: string }>
@@ -30,6 +31,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       tenantSlug: null,
+      token: null,
       isAuthenticated: false,
       isLoading: false,
 
@@ -46,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
 
           setAccessToken(data.accessToken)
           set({
+            token: data.accessToken,
             user: {
               id: data.user.id,
               email: data.user.email,
@@ -70,7 +73,7 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try { await api.post('/auth/logout') } catch {}
         clearAuth()
-        set({ user: null, isAuthenticated: false })
+        set({ user: null, token: null, isAuthenticated: false })
       },
 
       setUser: (user) => set({ user, isAuthenticated: true }),

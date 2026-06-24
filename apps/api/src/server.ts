@@ -54,7 +54,7 @@ async function bootstrap() {
   await app.register(cookie)
 
   // ─── Error Handler ──────────────────────────────────────────────────────────
-  app.setErrorHandler(errorHandler)
+  app.setErrorHandler(errorHandler as Parameters<typeof app.setErrorHandler>[0])
 
   // ─── GraphQL (Apollo Server) ─────────────────────────────────────────────────
   const schema = await buildSchema()
@@ -74,7 +74,7 @@ async function bootstrap() {
   await app.register(fastifyApollo(apolloServer), {
     path: '/graphql',
     context: createContext,
-  })
+  } as any)
 
   // ─── REST Routes ────────────────────────────────────────────────────────────
   await registerRoutes(app)

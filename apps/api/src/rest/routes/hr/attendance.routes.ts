@@ -113,7 +113,7 @@ export async function hrAttendanceRoutes(app: FastifyInstance) {
 
     const summary = records.reduce((acc: Record<string, Record<string, number>>, r) => {
       if (!acc[r.employeeId]) acc[r.employeeId] = {}
-      acc[r.employeeId][r.status] = r._count.status
+      acc[r.employeeId]![r.status] = r._count.status
       return acc
     }, {})
 

@@ -74,12 +74,11 @@ export async function hrPayrollRoutes(app: FastifyInstance) {
       data: {
         tenantId, employeeId: body.employeeId, gradeId: body.gradeId,
         month: body.month, year: body.year,
-        basicSalary: body.basicSalary, allowances: body.allowances ?? {},
-        deductions: body.deductions ?? {}, grossSalary: body.grossSalary,
+        basicSalary: body.basicSalary, earnings: body.earnings ?? body.allowances ?? [],
+        deductions: body.deductions ?? [], grossSalary: body.grossSalary,
+        totalDeductions: body.totalDeductions ?? 0,
         netSalary: body.netSalary, currency: body.currency ?? 'USD',
         workingDays: body.workingDays, presentDays: body.presentDays,
-        overtimeHours: body.overtimeHours ?? 0, overtimePay: body.overtimePay ?? 0,
-        taxAmount: body.taxAmount ?? 0, socialInsurance: body.socialInsurance ?? 0,
         notes: body.notes, status: 'draft', createdBy: userId,
       },
     })
@@ -123,7 +122,6 @@ export async function hrPayrollRoutes(app: FastifyInstance) {
       data: {
         status: 'paid',
         paidAt: paidAt ? new Date(paidAt) : new Date(),
-        paymentMethod, paymentReference,
         updatedBy: userId,
       },
     })
@@ -165,18 +163,17 @@ export async function hrPayrollRoutes(app: FastifyInstance) {
 
     const payslips = await prisma.hrPayslip.findMany({
       where: { tenantId, month, year, deletedAt: null },
-      select: { status: true, grossSalary: true, netSalary: true, taxAmount: true, socialInsurance: true },
+      select: { status: true, grossSalary: true, netSalary: true, totalDeductions: true },
     })
 
     const summary = payslips.reduce((acc: any, p) => {
       acc.totalGross = (acc.totalGross ?? 0) + Number(p.grossSalary)
       acc.totalNet = (acc.totalNet ?? 0) + Number(p.netSalary)
-      acc.totalTax = (acc.totalTax ?? 0) + Number(p.taxAmount)
-      acc.totalSocialInsurance = (acc.totalSocialInsurance ?? 0) + Number(p.socialInsurance)
+      acc.totalDeductions = (acc.totalDeductions ?? 0) + Number(p.totalDeductions)
       acc.byStatus = acc.byStatus ?? {}
       acc.byStatus[p.status] = (acc.byStatus[p.status] ?? 0) + 1
       return acc
-    }, { totalGross: 0, totalNet: 0, totalTax: 0, totalSocialInsurance: 0, count: payslips.length, byStatus: {} })
+    }, { totalGross: 0, totalNet: 0, totalDeductions: 0, count: payslips.length, byStatus: {} })
 
     return reply.send(buildSuccessResponse({ year, month, ...summary }))
   })

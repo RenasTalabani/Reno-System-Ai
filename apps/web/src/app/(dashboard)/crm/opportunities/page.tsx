@@ -253,7 +253,7 @@ export default function OpportunitiesPage() {
       </div>
 
       {/* Create Modal */}
-      <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Opportunity" size="lg">
+      <Modal open={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Opportunity" size="lg">
         <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
           <Input label="Deal Name" error={errors.name?.message as string} {...register('name', { required: 'Required' })} />
           <div className="grid grid-cols-2 gap-4">

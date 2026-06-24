@@ -12,7 +12,10 @@ import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
 import { useRouter } from 'next/navigation'
 
-const navigation = [
+interface NavItem { label: string; href: string; icon: any; disabled?: boolean; badge?: string | number }
+interface NavSection { group: string; items: NavItem[] }
+
+const navigation: NavSection[] = [
   {
     group: 'Core',
     items: [
@@ -59,7 +62,7 @@ const navigation = [
   {
     group: 'System',
     items: [
-      { label: 'Portal Admin', href: '/portal', icon: Globe },
+      { label: 'Portal Admin', href: '/portal-admin', icon: Globe },
       { label: 'Settings', href: '/settings', icon: Settings },
       { label: 'Audit Logs', href: '/audit-logs', icon: ClipboardList },
     ],

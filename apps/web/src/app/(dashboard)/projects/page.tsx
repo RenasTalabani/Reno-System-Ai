@@ -183,7 +183,7 @@ export default function ProjectsPage() {
       )}
 
       {/* Create Modal */}
-      <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Project" size="lg">
+      <Modal open={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Project" size="lg">
         <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
           <Input label="Project Name" error={errors.name?.message} {...register('name', { required: 'Required' })} />
           <div>

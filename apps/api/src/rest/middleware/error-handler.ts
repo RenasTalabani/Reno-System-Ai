@@ -1,9 +1,9 @@
-import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import { RenoError } from '@reno/core'
 import { logger } from '@reno/logger'
 
 export function errorHandler(
-  error: FastifyError | RenoError | Error,
+  error: Error,
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
@@ -39,7 +39,7 @@ export function errorHandler(
   }
 
   // Rate limit errors from @fastify/rate-limit
-  if (error.statusCode === 429) {
+  if ('statusCode' in error && error.statusCode === 429) {
     return reply.status(429).send({
       success: false,
       error: { code: 'RATE_LIMIT_EXCEEDED', message: 'Too many requests' },

@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
 import { prisma } from '@reno/database'
 import {
   signAccessToken,

@@ -17,7 +17,7 @@ export async function hrHolidayRoutes(app: FastifyInstance) {
 
     const where: any = { tenantId, deletedAt: null, date: { gte: yearStart, lte: yearEnd } }
     if (q.companyId) where.companyId = q.companyId
-    if (q.holidayType) where.holidayType = q.holidayType
+    if (q.type) where.type = q.type
 
     const holidays = await prisma.hrHoliday.findMany({
       where,
@@ -48,10 +48,10 @@ export async function hrHolidayRoutes(app: FastifyInstance) {
     const holiday = await prisma.hrHoliday.create({
       data: {
         tenantId, companyId: body.companyId, name: body.name,
-        date: new Date(body.date), endDate: body.endDate ? new Date(body.endDate) : undefined,
-        holidayType: body.holidayType ?? 'public', isPaid: body.isPaid ?? true,
-        isRecurring: body.isRecurring ?? false, year: new Date(body.date).getFullYear(),
-        description: body.description, country: body.country,
+        date: new Date(body.date),
+        type: body.type ?? body.holidayType ?? 'public',
+        isRecurring: body.isRecurring ?? false,
+        description: body.description,
         createdBy: userId,
       },
     })
@@ -72,12 +72,9 @@ export async function hrHolidayRoutes(app: FastifyInstance) {
       data: body.holidays.map((h: any) => ({
         tenantId, companyId: h.companyId ?? body.companyId,
         name: h.name, date: new Date(h.date),
-        endDate: h.endDate ? new Date(h.endDate) : undefined,
-        holidayType: h.holidayType ?? 'public',
-        isPaid: h.isPaid ?? true,
+        type: h.type ?? h.holidayType ?? 'public',
         isRecurring: h.isRecurring ?? false,
-        year: new Date(h.date).getFullYear(),
-        description: h.description, country: h.country,
+        description: h.description,
         createdBy: userId,
       })),
       skipDuplicates: true,

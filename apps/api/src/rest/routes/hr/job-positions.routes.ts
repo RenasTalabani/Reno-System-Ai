@@ -14,16 +14,13 @@ export async function hrJobPositionRoutes(app: FastifyInstance) {
     const where: any = { tenantId, deletedAt: null }
     if (q.search) where.title = { contains: q.search, mode: 'insensitive' }
     if (q.departmentId) where.departmentId = q.departmentId
-    if (q.gradeId) where.gradeId = q.gradeId
-    if (q.isOpen !== undefined) where.isOpen = q.isOpen === 'true'
+    if (q.grade) where.grade = q.grade
 
     const positions = await prisma.hrJobPosition.findMany({
       where,
       orderBy: { title: 'asc' },
       include: {
-        department: { select: { id: true, name: true } },
-        grade: { select: { id: true, name: true } },
-        _count: { select: { employeePositions: { where: { isCurrent: true, deletedAt: null } } } },
+        _count: { select: { placements: { where: { isCurrent: true, deletedAt: null } } } },
       },
     })
 
@@ -38,9 +35,7 @@ export async function hrJobPositionRoutes(app: FastifyInstance) {
     const position = await prisma.hrJobPosition.findFirst({
       where: { id, tenantId, deletedAt: null },
       include: {
-        department: true,
-        grade: true,
-        employeePositions: {
+        placements: {
           where: { isCurrent: true, deletedAt: null },
           include: { employee: { select: { id: true, firstName: true, lastName: true, avatarUrl: true, employeeCode: true } } },
         },
@@ -59,11 +54,15 @@ export async function hrJobPositionRoutes(app: FastifyInstance) {
     const position = await prisma.hrJobPosition.create({
       data: {
         tenantId, companyId: body.companyId, departmentId: body.departmentId,
-        gradeId: body.gradeId, title: body.title, code: body.code,
-        description: body.description, responsibilities: body.responsibilities,
-        requirements: body.requirements, minSalary: body.minSalary, maxSalary: body.maxSalary,
-        currency: body.currency ?? 'USD', isOpen: body.isOpen ?? true,
-        openingsCount: body.openingsCount ?? 1, createdBy: userId,
+        grade: body.grade ?? body.gradeId,
+        title: body.title, code: body.code,
+        responsibilities: body.responsibilities ?? [],
+        requirements: body.requirements ?? [],
+        salaryGradeMin: body.minSalary ?? body.salaryGradeMin,
+        salaryGradeMax: body.maxSalary ?? body.salaryGradeMax,
+        currency: body.currency ?? 'USD',
+        headcount: body.openingsCount ?? body.headcount ?? 1,
+        createdBy: userId,
       },
     })
 
@@ -124,7 +123,7 @@ export async function hrJobPositionRoutes(app: FastifyInstance) {
       data: {
         tenantId, employeeId: body.employeeId, positionId: id,
         startDate: new Date(body.startDate ?? new Date()),
-        isCurrent: true, appointmentType: body.appointmentType ?? 'permanent',
+        isCurrent: true,
         createdBy: userId,
       },
     })
@@ -156,9 +155,9 @@ export async function hrJobPositionRoutes(app: FastifyInstance) {
     const grade = await prisma.hrPayrollGrade.create({
       data: {
         tenantId, companyId: body.companyId, name: body.name, code: body.code,
-        level: body.level, basicSalaryMin: body.basicSalaryMin, basicSalaryMax: body.basicSalaryMax,
-        currency: body.currency ?? 'USD', allowances: body.allowances ?? {},
-        deductionRules: body.deductionRules ?? {}, createdBy: userId,
+        level: body.level, minSalary: body.minSalary ?? body.basicSalaryMin,
+        maxSalary: body.maxSalary ?? body.basicSalaryMax,
+        currency: body.currency ?? 'USD', createdBy: userId,
       },
     })
 

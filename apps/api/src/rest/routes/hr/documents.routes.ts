@@ -15,9 +15,9 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
 
     const where: any = { tenantId, deletedAt: null }
     if (q.employeeId) where.employeeId = q.employeeId
-    if (q.documentType) where.documentType = q.documentType
+    if (q.type) where.type = q.type
     if (q.isConfidential !== undefined) where.isConfidential = q.isConfidential === 'true'
-    if (q.isVerified !== undefined) where.isVerified = q.isVerified === 'true'
+    if (q.status) where.status = q.status
     if (q.expiring) {
       const in30Days = new Date()
       in30Days.setDate(in30Days.getDate() + 30)
@@ -25,8 +25,8 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     }
 
     const [total, documents] = await Promise.all([
-      prisma.hrEmployeeDocument.count({ where }),
-      prisma.hrEmployeeDocument.findMany({
+      prisma.hrDocument.count({ where }),
+      prisma.hrDocument.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
@@ -47,7 +47,7 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     const { tenantId } = request as any
     const { id } = request.params as any
 
-    const document = await prisma.hrEmployeeDocument.findFirst({
+    const document = await prisma.hrDocument.findFirst({
       where: { id, tenantId, deletedAt: null },
       include: {
         employee: { select: { id: true, firstName: true, lastName: true, employeeCode: true } },
@@ -63,23 +63,30 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     const { tenantId, userId } = request as any
     const body = request.body as any
 
-    const document = await prisma.hrEmployeeDocument.create({
+    const document = await prisma.hrDocument.create({
       data: {
-        tenantId, employeeId: body.employeeId,
-        documentType: body.documentType, documentName: body.documentName,
-        documentNumber: body.documentNumber, fileUrl: body.fileUrl,
-        fileMimeType: body.fileMimeType, fileSizeBytes: body.fileSizeBytes,
-        issuedDate: body.issuedDate ? new Date(body.issuedDate) : undefined,
+        tenantId,
+        employeeId: body.employeeId,
+        type: body.type ?? body.documentType,
+        name: body.name ?? body.documentName,
+        fileUrl: body.fileUrl,
+        fileSize: body.fileSize ?? body.fileSizeBytes,
+        mimeType: body.mimeType ?? body.fileMimeType,
         expiryDate: body.expiryDate ? new Date(body.expiryDate) : undefined,
-        issuingAuthority: body.issuingAuthority,
         isConfidential: body.isConfidential ?? false,
+        status: body.status ?? 'valid',
         notes: body.notes,
         createdBy: userId,
       },
     })
 
     await prisma.sysAuditLog.create({
-      data: { tenantId, userId, action: 'UPLOAD_DOCUMENT', module: 'hr', entityType: 'hr_employee_documents', entityId: document.id, newValues: { employeeId: body.employeeId, documentType: body.documentType, documentName: body.documentName }, ipAddress: request.ip },
+      data: {
+        tenantId, userId, action: 'UPLOAD_DOCUMENT', module: 'hr',
+        entityType: 'hr_documents', entityId: document.id,
+        newValues: { employeeId: body.employeeId, type: document.type, name: document.name },
+        ipAddress: request.ip,
+      },
     })
 
     return reply.status(201).send(buildSuccessResponse(document))
@@ -91,15 +98,21 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     const { id } = request.params as any
     const body = request.body as any
 
-    const existing = await prisma.hrEmployeeDocument.findFirst({ where: { id, tenantId, deletedAt: null } })
+    const existing = await prisma.hrDocument.findFirst({ where: { id, tenantId, deletedAt: null } })
     if (!existing) throw new RenoError(ErrorCode.NOT_FOUND, 'Document not found', 404)
 
-    const updated = await prisma.hrEmployeeDocument.update({
+    const updated = await prisma.hrDocument.update({
       where: { id },
       data: {
-        ...body,
-        issuedDate: body.issuedDate ? new Date(body.issuedDate) : undefined,
+        type: body.type,
+        name: body.name,
+        fileUrl: body.fileUrl,
+        fileSize: body.fileSize,
+        mimeType: body.mimeType,
         expiryDate: body.expiryDate ? new Date(body.expiryDate) : undefined,
+        isConfidential: body.isConfidential,
+        status: body.status,
+        notes: body.notes,
         updatedBy: userId,
       },
     })
@@ -112,12 +125,12 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     const { tenantId, userId } = request as any
     const { id } = request.params as any
 
-    const document = await prisma.hrEmployeeDocument.findFirst({ where: { id, tenantId, deletedAt: null } })
+    const document = await prisma.hrDocument.findFirst({ where: { id, tenantId, deletedAt: null } })
     if (!document) throw new RenoError(ErrorCode.NOT_FOUND, 'Document not found', 404)
 
-    const updated = await prisma.hrEmployeeDocument.update({
+    const updated = await prisma.hrDocument.update({
       where: { id },
-      data: { isVerified: true, verifiedBy: userId, verifiedAt: new Date(), updatedBy: userId },
+      data: { status: 'verified', updatedBy: userId },
     })
 
     return reply.send(buildSuccessResponse(updated))
@@ -128,19 +141,22 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     const { tenantId, userId } = request as any
     const { id } = request.params as any
 
-    await prisma.hrEmployeeDocument.updateMany({
+    await prisma.hrDocument.updateMany({
       where: { id, tenantId },
       data: { deletedAt: new Date(), isActive: false, updatedBy: userId },
     })
 
     await prisma.sysAuditLog.create({
-      data: { tenantId, userId, action: 'DELETE_DOCUMENT', module: 'hr', entityType: 'hr_employee_documents', entityId: id, ipAddress: request.ip },
+      data: {
+        tenantId, userId, action: 'DELETE_DOCUMENT', module: 'hr',
+        entityType: 'hr_documents', entityId: id, ipAddress: request.ip,
+      },
     })
 
     return reply.send(buildSuccessResponse({ id }))
   })
 
-  // GET /hr/documents/expiring — documents expiring within N days
+  // GET /hr/documents/expiring/soon — documents expiring within N days
   app.get('/expiring/soon', async (request, reply) => {
     const { tenantId } = request as any
     const q = request.query as any
@@ -149,7 +165,7 @@ export async function hrDocumentRoutes(app: FastifyInstance) {
     const future = new Date()
     future.setDate(future.getDate() + days)
 
-    const documents = await prisma.hrEmployeeDocument.findMany({
+    const documents = await prisma.hrDocument.findMany({
       where: { tenantId, deletedAt: null, expiryDate: { lte: future, gte: new Date() } },
       orderBy: { expiryDate: 'asc' },
       include: {

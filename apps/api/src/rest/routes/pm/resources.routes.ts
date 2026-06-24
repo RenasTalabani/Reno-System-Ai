@@ -47,10 +47,11 @@ export async function pmResourceRoutes(app: FastifyInstance) {
     const byUser: Record<string, { totalPct: number; projects: any[]; burnoutRisk: number }> = {}
     for (const a of allocations) {
       if (!byUser[a.userId]) byUser[a.userId] = { totalPct: 0, projects: [], burnoutRisk: 0 }
-      byUser[a.userId].totalPct += a.allocationPct
-      byUser[a.userId].projects.push(a)
-      if (Number(a.burnoutRisk ?? 0) > byUser[a.userId].burnoutRisk) {
-        byUser[a.userId].burnoutRisk = Number(a.burnoutRisk ?? 0)
+      const entry = byUser[a.userId]!
+      entry.totalPct += Number(a.allocationPct)
+      entry.projects.push(a)
+      if (Number(a.burnoutRisk ?? 0) > entry.burnoutRisk) {
+        entry.burnoutRisk = Number(a.burnoutRisk ?? 0)
       }
     }
 

@@ -204,7 +204,7 @@ export default function CrmContactsPage() {
       )}
 
       {/* Create Modal */}
-      <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Contact" size="lg">
+      <Modal open={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Contact" size="lg">
         <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input label="First Name" error={errors.firstName?.message as string} {...register('firstName', { required: 'Required' })} />

@@ -28,7 +28,7 @@ export async function notificationRoutes(app: FastifyInstance) {
       }),
     ])
 
-    return reply.send(buildSuccessResponse(notifications, { total }))
+    return reply.send(buildSuccessResponse(notifications, { pagination: { total, page: 1, limit: 50, totalPages: Math.ceil(total / 50) } }))
   })
 
   // PATCH /notifications/:id/read

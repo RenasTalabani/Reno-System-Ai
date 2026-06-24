@@ -39,7 +39,8 @@ export interface ApiMeta {
 export interface PaginationMeta {
   total: number
   page: number
-  perPage: number
+  perPage?: number
+  limit?: number
   totalPages: number
   nextCursor?: string | null
   prevCursor?: string | null
@@ -67,6 +68,11 @@ export const ErrorCode = {
   RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
   RESOURCE_ALREADY_EXISTS: 'RESOURCE_ALREADY_EXISTS',
   RESOURCE_SOFT_DELETED: 'RESOURCE_SOFT_DELETED',
+  // Aliases used by route handlers
+  NOT_FOUND: 'RESOURCE_NOT_FOUND',
+  CONFLICT: 'RESOURCE_ALREADY_EXISTS',
+  FORBIDDEN: 'PERMISSION_DENIED',
+  BAD_REQUEST: 'VALIDATION_ERROR',
   // Business rules
   BUSINESS_RULE_VIOLATION: 'BUSINESS_RULE_VIOLATION',
   // System

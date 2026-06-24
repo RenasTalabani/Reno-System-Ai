@@ -87,7 +87,7 @@ export default function RolesPage() {
     const next = new Set(grantedIds)
     if (next.has(permId)) next.delete(permId)
     else next.add(permId)
-    updatePermsMutation.mutate({ roleId: selected.id, permIds: Array.from(next) })
+    updatePermsMutation.mutate({ roleId: selected.id, permIds: Array.from(next) as string[] })
   }
 
   return (

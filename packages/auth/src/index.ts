@@ -21,7 +21,7 @@ export function signAccessToken(payload: Omit<AccessTokenPayload, 'iat' | 'exp'>
   if (!secret) throw new Error('JWT_ACCESS_SECRET not configured')
 
   return jwt.sign(payload, secret, {
-    expiresIn: process.env['JWT_ACCESS_EXPIRES_IN'] ?? '15m',
+    expiresIn: (process.env['JWT_ACCESS_EXPIRES_IN'] ?? '15m') as unknown as number,
     algorithm: 'HS256',
   })
 }
@@ -45,7 +45,7 @@ export function signRefreshToken(sessionId: string): string {
   if (!secret) throw new Error('JWT_REFRESH_SECRET not configured')
 
   return jwt.sign({ sid: sessionId }, secret, {
-    expiresIn: process.env['JWT_REFRESH_EXPIRES_IN'] ?? '7d',
+    expiresIn: (process.env['JWT_REFRESH_EXPIRES_IN'] ?? '7d') as unknown as number,
     algorithm: 'HS256',
   })
 }

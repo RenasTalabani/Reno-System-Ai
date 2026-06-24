@@ -158,7 +158,7 @@ export default function CrmCompaniesPage() {
         </div>
       )}
 
-      <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Company" size="lg">
+      <Modal open={showCreate} onClose={() => { setShowCreate(false); reset() }} title="New Company" size="lg">
         <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
           <Input label="Company Name" error={errors.name?.message as string} {...register('name', { required: 'Required' })} />
           <div className="grid grid-cols-2 gap-4">

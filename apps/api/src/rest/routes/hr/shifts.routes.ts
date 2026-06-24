@@ -57,11 +57,10 @@ export async function hrShiftRoutes(app: FastifyInstance) {
       data: {
         tenantId, companyId: body.companyId, name: body.name, code: body.code,
         startTime: body.startTime, endTime: body.endTime,
-        breakDuration: body.breakDuration ?? 0,
-        workDays: body.workDays ?? ['mon', 'tue', 'wed', 'thu', 'fri'],
+        workingHours: body.workingHours ?? 8,
+        breakMinutes: body.breakMinutes ?? body.breakDuration ?? 0,
+        workDays: body.workDays ?? [1, 2, 3, 4, 5],
         isFlexible: body.isFlexible ?? false,
-        flexCoreStart: body.flexCoreStart, flexCoreEnd: body.flexCoreEnd,
-        overnightShift: body.overnightShift ?? false,
         color: body.color ?? '#6366f1',
         createdBy: userId,
       },
@@ -113,7 +112,7 @@ export async function hrShiftRoutes(app: FastifyInstance) {
     if (q.shiftId) where.shiftId = q.shiftId
     if (q.employeeId) where.employeeId = q.employeeId
 
-    const assignments = await prisma.hrShiftAssignment.findMany({
+    const assignments = await prisma.hrEmployeeShift.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       include: {
@@ -131,12 +130,12 @@ export async function hrShiftRoutes(app: FastifyInstance) {
     const body = request.body as any
 
     // End current shift assignment for this employee
-    await prisma.hrShiftAssignment.updateMany({
+    await prisma.hrEmployeeShift.updateMany({
       where: { tenantId, employeeId: body.employeeId, isCurrent: true, deletedAt: null },
       data: { isCurrent: false, endDate: new Date(), updatedBy: userId },
     })
 
-    const assignment = await prisma.hrShiftAssignment.create({
+    const assignment = await prisma.hrEmployeeShift.create({
       data: {
         tenantId, employeeId: body.employeeId, shiftId: body.shiftId,
         startDate: new Date(body.startDate ?? new Date()),
@@ -157,7 +156,7 @@ export async function hrShiftRoutes(app: FastifyInstance) {
     const { tenantId, userId } = request as any
     const { id } = request.params as any
 
-    await prisma.hrShiftAssignment.updateMany({
+    await prisma.hrEmployeeShift.updateMany({
       where: { id, tenantId },
       data: { isCurrent: false, endDate: new Date(), deletedAt: new Date(), updatedBy: userId },
     })

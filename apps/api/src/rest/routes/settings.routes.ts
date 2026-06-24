@@ -37,7 +37,7 @@ export async function settingsRoutes(app: FastifyInstance) {
         module: 'core',
         entityType: 'sys_settings',
         entityId: setting.id,
-        newValues: { module, key, value },
+        newValues: { module, key, value } as any,
         ipAddress: request.ip,
       },
     })
@@ -69,7 +69,7 @@ export async function settingsRoutes(app: FastifyInstance) {
         module: 'core',
         entityType: 'sys_branding',
         entityId: branding.id,
-        newValues: body,
+        newValues: body as any,
         ipAddress: request.ip,
       },
     })

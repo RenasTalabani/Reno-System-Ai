@@ -35,10 +35,10 @@ export async function hrDashboardRoutes(app: FastifyInstance) {
       prisma.hrEmployee.count({ where: { tenantId, deletedAt: null, hireDate: { gte: monthStart, lte: monthEnd } } }),
       prisma.hrEmployee.count({ where: { tenantId, deletedAt: null, terminationDate: { gte: monthStart, lte: monthEnd } } }),
       prisma.hrLeaveRequest.count({ where: { tenantId, deletedAt: null, status: 'pending' } }),
-      prisma.hrEmployeeDocument.count({ where: { tenantId, deletedAt: null, isVerified: false } }),
+      prisma.hrDocument.count({ where: { tenantId, deletedAt: null, status: { not: 'verified' } } }),
 
       // Expiring docs in 30 days
-      prisma.hrEmployeeDocument.count({
+      prisma.hrDocument.count({
         where: { tenantId, deletedAt: null, expiryDate: { lte: new Date(today.getTime() + 30 * 86400000), gte: today } },
       }),
 
@@ -64,7 +64,7 @@ export async function hrDashboardRoutes(app: FastifyInstance) {
       }),
     ])
 
-    const attendanceSummary = attendanceToday.reduce((acc: Record<string, number>, r) => {
+    const attendanceSummary = attendanceToday.reduce((acc: Record<string, number>, r: { status: string; _count: { status: number } }) => {
       acc[r.status] = r._count.status
       return acc
     }, {})

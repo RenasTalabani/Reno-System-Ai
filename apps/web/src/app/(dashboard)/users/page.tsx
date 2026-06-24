@@ -153,7 +153,7 @@ export default function UsersPage() {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {user.profile?.displayName ?? `${user.profile?.firstName ?? ''} ${user.profile?.lastName ?? ''}`.trim() || '—'}
+                          {(user.profile?.displayName ?? `${user.profile?.firstName ?? ''} ${user.profile?.lastName ?? ''}`.trim()) || '—'}
                         </p>
                         <p className="text-xs text-muted-foreground">{user.profile?.jobTitle ?? 'No title'}</p>
                       </div>

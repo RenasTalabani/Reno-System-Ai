@@ -278,7 +278,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Add Task Modal */}
-      <Modal isOpen={showAddTask} onClose={() => { setShowAddTask(false); reset() }} title="Add Task" size="md">
+      <Modal open={showAddTask} onClose={() => { setShowAddTask(false); reset() }} title="Add Task" size="md">
         <form onSubmit={handleSubmit(onAddTask)} className="space-y-4">
           <Input label="Task Title" error={errors.title?.message} {...register('title', { required: 'Required' })} />
           <div className="grid grid-cols-2 gap-4">

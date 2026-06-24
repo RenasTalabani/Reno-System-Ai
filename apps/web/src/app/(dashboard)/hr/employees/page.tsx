@@ -195,7 +195,7 @@ export default function EmployeesPage() {
       </div>
 
       {/* Create Modal */}
-      <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); reset() }} title="Add Employee" size="lg">
+      <Modal open={showCreate} onClose={() => { setShowCreate(false); reset() }} title="Add Employee" size="lg">
         <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input label="First Name" error={errors.firstName?.message} {...register('firstName', { required: 'Required' })} />

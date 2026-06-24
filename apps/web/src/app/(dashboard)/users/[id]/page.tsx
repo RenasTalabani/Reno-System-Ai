@@ -93,8 +93,8 @@ export default function UserDetailPage() {
 
   if (!data) return <div className="text-muted-foreground">User not found</div>
 
-  const displayName = data.profile?.displayName
-    ?? `${data.profile?.firstName ?? ''} ${data.profile?.lastName ?? ''}`.trim()
+  const displayName = (data.profile?.displayName
+    ?? `${data.profile?.firstName ?? ''} ${data.profile?.lastName ?? ''}`.trim())
     || data.email
 
   return (

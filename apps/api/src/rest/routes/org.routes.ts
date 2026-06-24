@@ -97,7 +97,7 @@ export async function orgRoutes(app: FastifyInstance) {
   app.post('/branches', async (request, reply) => {
     const body = CreateBranchSchema.parse(request.body)
     const branch = await prisma.coreBranch.create({
-      data: { tenantId: request.tenantId, ...body, createdBy: request.userId },
+      data: { tenantId: request.tenantId, ...(body as any), createdBy: request.userId },
     })
     return reply.status(201).send(buildSuccessResponse(branch))
   })
@@ -107,7 +107,7 @@ export async function orgRoutes(app: FastifyInstance) {
     const body = CreateBranchSchema.partial().parse(request.body)
     const updated = await prisma.coreBranch.update({
       where: { id },
-      data: { ...body, updatedBy: request.userId },
+      data: { ...(body as any), updatedBy: request.userId },
     })
     return reply.send(buildSuccessResponse(updated))
   })

@@ -413,7 +413,7 @@ export async function userRoutes(app: FastifyInstance) {
   })
 }
 
-function formatUser(user: Parameters<typeof formatUser>[0]) {
+function formatUser(user: Record<string, any>) {
   return {
     id: user.id,
     email: user.email,
