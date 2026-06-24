@@ -131,6 +131,12 @@ model CoreTenant {
   portalNotifications      PortalNotification[]
   portalAuditLogs          PortalAuditLog[]
   portalTickets            PortalTicket[]
+  sdCategories             SdCategory[]
+  sdSlaPolicies            SdSlaPolicy[]
+  sdEscalationRules        SdEscalationRule[]
+  sdAgents                 SdAgent[]
+  sdTickets                SdTicket[]
+  sdCsat                   SdCsat[]
 
   @@map("core_tenants")
 }
@@ -5347,4 +5353,227 @@ model PortalTicketReply {
   @@index([ticketId])
   @@index([tenantId])
   @@map("portal_ticket_replies")
+}
+
+// ============================================================
+// Phase 15 — Service Desk / Support Center
+// ============================================================
+
+model SdCategory {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  icon        String?   @db.VarChar(100)
+  color       String    @default("#6366f1") @db.VarChar(20)
+  parentId    String?   @map("parent_id") @db.Uuid
+  sortOrder   Int       @default(0) @map("sort_order")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id])
+  parent   SdCategory?  @relation("SdCategoryChildren", fields: [parentId], references: [id])
+  children SdCategory[] @relation("SdCategoryChildren")
+  tickets  SdTicket[]
+
+  @@index([tenantId])
+  @@index([tenantId, parentId])
+  @@map("sd_categories")
+}
+
+model SdSlaPolicy {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String    @map("tenant_id") @db.Uuid
+  name                 String    @db.VarChar(255)
+  description          String?   @db.Text
+  priority             String    @db.VarChar(50)
+  firstResponseMinutes Int       @map("first_response_minutes")
+  resolutionMinutes    Int       @map("resolution_minutes")
+  businessHoursOnly    Boolean   @default(true) @map("business_hours_only")
+  isDefault            Boolean   @default(false) @map("is_default")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  createdBy            String?   @map("created_by") @db.Uuid
+  updatedBy            String?   @map("updated_by") @db.Uuid
+  deletedAt            DateTime? @map("deleted_at")
+  isActive             Boolean   @default(true) @map("is_active")
+
+  tenant          CoreTenant         @relation(fields: [tenantId], references: [id])
+  tickets         SdTicket[]
+  escalationRules SdEscalationRule[]
+
+  @@index([tenantId])
+  @@map("sd_sla_policies")
+}
+
+model SdEscalationRule {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  slaPolicyId    String?   @map("sla_policy_id") @db.Uuid
+  name           String    @db.VarChar(255)
+  triggerType    String    @map("trigger_type") @db.VarChar(50)
+  triggerMinutes Int       @map("trigger_minutes")
+  priority       String    @db.VarChar(50)
+  action         String    @db.VarChar(100)
+  targetUserId   String?   @map("target_user_id") @db.Uuid
+  notifyEmails   Json      @default("[]") @map("notify_emails") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id])
+  slaPolicy SdSlaPolicy? @relation(fields: [slaPolicyId], references: [id])
+
+  @@index([tenantId])
+  @@map("sd_escalation_rules")
+}
+
+model SdAgent {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  displayName     String?   @map("display_name") @db.VarChar(255)
+  specializations Json      @default("[]") @db.JsonB
+  maxTickets      Int       @default(20) @map("max_tickets")
+  isAvailable     Boolean   @default(true) @map("is_available")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id])
+  tickets SdTicket[] @relation("SdTicketAgent")
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@map("sd_agents")
+}
+
+model SdTicket {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId String @map("tenant_id") @db.Uuid
+  number   String @db.VarChar(30)
+
+  source         String  @default("internal") @db.VarChar(50)
+  sourceRef      String? @map("source_ref") @db.VarChar(255)
+  portalTicketId String? @map("portal_ticket_id") @db.Uuid
+
+  subject     String @db.VarChar(500)
+  description String @db.Text
+
+  categoryId String? @map("category_id") @db.Uuid
+  priority   String  @default("medium") @db.VarChar(50)
+  status     String  @default("open") @db.VarChar(50)
+  type       String  @default("question") @db.VarChar(50)
+
+  requesterId   String  @map("requester_id") @db.Uuid
+  requesterType String  @default("user") @map("requester_type") @db.VarChar(50)
+  agentId       String? @map("agent_id") @db.Uuid
+  slaPolicyId   String? @map("sla_policy_id") @db.Uuid
+
+  firstResponseAt  DateTime? @map("first_response_at")
+  firstResponseDue DateTime? @map("first_response_due")
+  resolutionDue    DateTime? @map("resolution_due")
+  resolvedAt       DateTime? @map("resolved_at")
+  closedAt         DateTime? @map("closed_at")
+  slaBreached      Boolean   @default(false) @map("sla_breached")
+
+  aiCategory           String?   @map("ai_category") @db.VarChar(255)
+  aiPriority           String?   @map("ai_priority") @db.VarChar(50)
+  aiSentiment          String?   @map("ai_sentiment") @db.VarChar(50)
+  aiSummary            String?   @map("ai_summary") @db.Text
+  aiResponseSuggestion String?   @map("ai_response_suggestion") @db.Text
+  aiConfidence         Decimal?  @map("ai_confidence") @db.Decimal(5, 4)
+  aiClassifiedAt       DateTime? @map("ai_classified_at")
+
+  tags     Json  @default("[]") @db.JsonB
+  metadata Json? @db.JsonB
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant      CoreTenant           @relation(fields: [tenantId], references: [id])
+  category    SdCategory?          @relation(fields: [categoryId], references: [id])
+  agent       SdAgent?             @relation("SdTicketAgent", fields: [agentId], references: [id])
+  slaPolicy   SdSlaPolicy?         @relation(fields: [slaPolicyId], references: [id])
+  comments    SdTicketComment[]
+  attachments SdTicketAttachment[]
+  csat        SdCsat?
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, agentId])
+  @@index([tenantId, requesterId])
+  @@index([tenantId, priority])
+  @@index([tenantId, categoryId])
+  @@map("sd_tickets")
+}
+
+model SdTicketComment {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  ticketId      String    @map("ticket_id") @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  content       String    @db.Text
+  isInternal    Boolean   @default(false) @map("is_internal")
+  isAiSuggested Boolean   @default(false) @map("is_ai_suggested")
+  editedAt      DateTime? @map("edited_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  ticket      SdTicket             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  attachments SdTicketAttachment[]
+
+  @@index([ticketId])
+  @@index([tenantId])
+  @@map("sd_ticket_comments")
+}
+
+model SdTicketAttachment {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  ticketId   String   @map("ticket_id") @db.Uuid
+  commentId  String?  @map("comment_id") @db.Uuid
+  fileName   String   @map("file_name") @db.VarChar(500)
+  fileSize   Int      @map("file_size")
+  mimeType   String   @map("mime_type") @db.VarChar(200)
+  storageUrl String   @map("storage_url") @db.VarChar(1000)
+  uploadedBy String   @map("uploaded_by") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  ticket  SdTicket         @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  comment SdTicketComment? @relation(fields: [commentId], references: [id])
+
+  @@index([ticketId])
+  @@index([tenantId])
+  @@map("sd_ticket_attachments")
+}
+
+model SdCsat {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  ticketId    String   @unique @map("ticket_id") @db.Uuid
+  rating      Int
+  comment     String?  @db.Text
+  submittedBy String   @map("submitted_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+  ticket SdTicket   @relation(fields: [ticketId], references: [id])
+
+  @@index([tenantId])
+  @@map("sd_csat")
 }

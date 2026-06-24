@@ -22,6 +22,7 @@ import { automationRoutes } from './automation/index.js'
 import { docsRoutes } from './docs/index.js'
 import { kbRoutes } from './kb/index.js'
 import { portalRoutes } from './portal/index.js'
+import { helpdeskRoutes } from './helpdesk/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -50,6 +51,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(docsRoutes, { prefix: '/docs' })
       await v1.register(kbRoutes, { prefix: '/kb' })
       await v1.register(portalRoutes, { prefix: '/portal' })
+      await v1.register(helpdeskRoutes, { prefix: '/helpdesk' })
     },
     { prefix: '/v1' },
   )

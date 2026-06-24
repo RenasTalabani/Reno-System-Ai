@@ -3726,6 +3726,151 @@ exports.Prisma.PortalTicketReplyScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SdCategoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  color: 'color',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SdSlaPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  priority: 'priority',
+  firstResponseMinutes: 'firstResponseMinutes',
+  resolutionMinutes: 'resolutionMinutes',
+  businessHoursOnly: 'businessHoursOnly',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SdEscalationRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  slaPolicyId: 'slaPolicyId',
+  name: 'name',
+  triggerType: 'triggerType',
+  triggerMinutes: 'triggerMinutes',
+  priority: 'priority',
+  action: 'action',
+  targetUserId: 'targetUserId',
+  notifyEmails: 'notifyEmails',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SdAgentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  displayName: 'displayName',
+  specializations: 'specializations',
+  maxTickets: 'maxTickets',
+  isAvailable: 'isAvailable',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SdTicketScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  source: 'source',
+  sourceRef: 'sourceRef',
+  portalTicketId: 'portalTicketId',
+  subject: 'subject',
+  description: 'description',
+  categoryId: 'categoryId',
+  priority: 'priority',
+  status: 'status',
+  type: 'type',
+  requesterId: 'requesterId',
+  requesterType: 'requesterType',
+  agentId: 'agentId',
+  slaPolicyId: 'slaPolicyId',
+  firstResponseAt: 'firstResponseAt',
+  firstResponseDue: 'firstResponseDue',
+  resolutionDue: 'resolutionDue',
+  resolvedAt: 'resolvedAt',
+  closedAt: 'closedAt',
+  slaBreached: 'slaBreached',
+  aiCategory: 'aiCategory',
+  aiPriority: 'aiPriority',
+  aiSentiment: 'aiSentiment',
+  aiSummary: 'aiSummary',
+  aiResponseSuggestion: 'aiResponseSuggestion',
+  aiConfidence: 'aiConfidence',
+  aiClassifiedAt: 'aiClassifiedAt',
+  tags: 'tags',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SdTicketCommentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ticketId: 'ticketId',
+  userId: 'userId',
+  content: 'content',
+  isInternal: 'isInternal',
+  isAiSuggested: 'isAiSuggested',
+  editedAt: 'editedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.SdTicketAttachmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ticketId: 'ticketId',
+  commentId: 'commentId',
+  fileName: 'fileName',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  storageUrl: 'storageUrl',
+  uploadedBy: 'uploadedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SdCsatScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ticketId: 'ticketId',
+  rating: 'rating',
+  comment: 'comment',
+  submittedBy: 'submittedBy',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3932,7 +4077,15 @@ exports.Prisma.ModelName = {
   PortalNotification: 'PortalNotification',
   PortalAuditLog: 'PortalAuditLog',
   PortalTicket: 'PortalTicket',
-  PortalTicketReply: 'PortalTicketReply'
+  PortalTicketReply: 'PortalTicketReply',
+  SdCategory: 'SdCategory',
+  SdSlaPolicy: 'SdSlaPolicy',
+  SdEscalationRule: 'SdEscalationRule',
+  SdAgent: 'SdAgent',
+  SdTicket: 'SdTicket',
+  SdTicketComment: 'SdTicketComment',
+  SdTicketAttachment: 'SdTicketAttachment',
+  SdCsat: 'SdCsat'
 };
 
 /**

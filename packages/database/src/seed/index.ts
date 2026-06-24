@@ -1918,6 +1918,120 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
 
   console.log(`   → Seeded portal branding, ${portalPermDefs.length} portal permissions, 1 sample portal user mapping`)
 
+  // -------------------------------------------------------------------------
+  // 26. Service Desk seed data
+  // -------------------------------------------------------------------------
+  console.log('   → Seeding service desk...')
+
+  // SLA Policies
+  const slaDefs = [
+    { priority: 'critical', name: 'Critical SLA', firstResponseMinutes: 15, resolutionMinutes: 120, isDefault: true },
+    { priority: 'high',     name: 'High SLA',     firstResponseMinutes: 60, resolutionMinutes: 480, isDefault: true },
+    { priority: 'medium',   name: 'Standard SLA', firstResponseMinutes: 240, resolutionMinutes: 1440, isDefault: true },
+    { priority: 'low',      name: 'Low Priority SLA', firstResponseMinutes: 480, resolutionMinutes: 4320, isDefault: true },
+  ]
+
+  for (const sla of slaDefs) {
+    const existing = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: demoTenant.id, priority: sla.priority } })
+    if (!existing) {
+      await prisma.sdSlaPolicy.create({
+        data: { tenantId: demoTenant.id, ...sla, businessHoursOnly: true, createdBy: adminUser.id },
+      })
+    }
+  }
+
+  // Categories
+  const catDefs = [
+    { name: 'Technical Support', description: 'Hardware and software issues', icon: 'wrench', color: '#6366f1' },
+    { name: 'Account & Access', description: 'Login, permissions and account management', icon: 'user-cog', color: '#8b5cf6' },
+    { name: 'Billing & Finance', description: 'Invoices, payments and subscriptions', icon: 'credit-card', color: '#10b981' },
+    { name: 'HR & Payroll', description: 'Leave, payslips and HR inquiries', icon: 'users', color: '#f59e0b' },
+    { name: 'Product Inquiry', description: 'Questions about products and services', icon: 'help-circle', color: '#3b82f6' },
+    { name: 'Bug Report', description: 'Report application bugs or errors', icon: 'bug', color: '#ef4444' },
+    { name: 'Feature Request', description: 'Suggest new features or improvements', icon: 'lightbulb', color: '#ec4899' },
+    { name: 'General Inquiry', description: 'Other general questions', icon: 'message-square', color: '#6b7280' },
+  ]
+
+  for (let i = 0; i < catDefs.length; i++) {
+    const cat = catDefs[i]!
+    const existing = await prisma.sdCategory.findFirst({ where: { tenantId: demoTenant.id, name: cat.name } })
+    if (!existing) {
+      await prisma.sdCategory.create({
+        data: { tenantId: demoTenant.id, ...cat, sortOrder: i, createdBy: adminUser.id },
+      })
+    }
+  }
+
+  // Escalation rules
+  const criticalPolicy = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: demoTenant.id, priority: 'critical' } })
+  if (criticalPolicy) {
+    const existingRule = await prisma.sdEscalationRule.findFirst({ where: { tenantId: demoTenant.id, slaPolicyId: criticalPolicy.id } })
+    if (!existingRule) {
+      await prisma.sdEscalationRule.create({
+        data: {
+          tenantId: demoTenant.id, slaPolicyId: criticalPolicy.id,
+          name: 'Critical SLA Breach Alert',
+          triggerType: 'sla_breach', triggerMinutes: 120,
+          priority: 'critical', action: 'notify',
+          notifyEmails: [adminEmail], createdBy: adminUser.id,
+        },
+      })
+    }
+  }
+
+  // Register admin as support agent
+  const existingAgent = await prisma.sdAgent.findFirst({ where: { tenantId: demoTenant.id, userId: adminUser.id } })
+  if (!existingAgent) {
+    await prisma.sdAgent.create({
+      data: {
+        tenantId: demoTenant.id, userId: adminUser.id,
+        displayName: 'Admin Agent',
+        specializations: ['Technical Support', 'Account & Access'],
+        maxTickets: 30, isAvailable: true, createdBy: adminUser.id,
+      },
+    })
+  }
+
+  // Sample tickets
+  const techCat = await prisma.sdCategory.findFirst({ where: { tenantId: demoTenant.id, name: 'Technical Support' } })
+  const hrCat = await prisma.sdCategory.findFirst({ where: { tenantId: demoTenant.id, name: 'HR & Payroll' } })
+  const mediumPolicy = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: demoTenant.id, priority: 'medium' } })
+  const agentRecord = await prisma.sdAgent.findFirst({ where: { tenantId: demoTenant.id, userId: adminUser.id } })
+
+  const sampleTickets = [
+    { subject: 'Cannot login to the system', description: 'Getting error 401 when trying to login', priority: 'high', status: 'open', categoryId: techCat?.id },
+    { subject: 'Payslip for June not available', description: 'My payslip for June 2026 has not appeared yet', priority: 'medium', status: 'in_progress', categoryId: hrCat?.id },
+    { subject: 'VPN connection dropping frequently', description: 'VPN disconnects every 30 minutes', priority: 'medium', status: 'open', categoryId: techCat?.id },
+    { subject: 'Need access to Finance module', description: 'Requesting access to view financial reports', priority: 'low', status: 'resolved', categoryId: techCat?.id },
+    { subject: 'Annual leave balance incorrect', description: 'My leave balance shows 5 days but should be 12', priority: 'high', status: 'open', categoryId: hrCat?.id },
+  ]
+
+  for (const t of sampleTickets) {
+    const existing = await prisma.sdTicket.findFirst({ where: { tenantId: demoTenant.id, subject: t.subject } })
+    if (!existing) {
+      const ts = Date.now().toString(36).toUpperCase()
+      const rnd = Math.random().toString(36).substring(2, 5).toUpperCase()
+      await prisma.sdTicket.create({
+        data: {
+          tenantId: demoTenant.id,
+          number: `TKT-${ts}-${rnd}`,
+          source: 'internal',
+          subject: t.subject, description: t.description,
+          priority: t.priority, status: t.status, type: 'question',
+          categoryId: t.categoryId ?? undefined,
+          requesterId: adminUser.id, requesterType: 'user',
+          agentId: t.status !== 'open' ? agentRecord?.id : undefined,
+          slaPolicyId: mediumPolicy?.id,
+          firstResponseAt: t.status !== 'open' ? new Date() : undefined,
+          resolvedAt: t.status === 'resolved' ? new Date() : undefined,
+          createdBy: adminUser.id,
+        },
+      })
+    }
+  }
+
+  console.log(`   → Seeded ${slaDefs.length} SLA policies, ${catDefs.length} categories, 1 escalation rule, 1 agent, ${sampleTickets.length} sample tickets`)
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')

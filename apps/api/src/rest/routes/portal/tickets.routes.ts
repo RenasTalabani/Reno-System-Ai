@@ -1,6 +1,12 @@
 import type { FastifyInstance } from 'fastify'
 import { prisma } from '@reno/database'
 
+function sdTicketNumber() {
+  const ts = Date.now().toString(36).toUpperCase()
+  const rnd = Math.random().toString(36).substring(2, 5).toUpperCase()
+  return `TKT-${ts}-${rnd}`
+}
+
 export async function portalTicketRoutes(app: FastifyInstance) {
   // GET /portal/tickets — list my tickets
   app.get('/', async (req, reply) => {
@@ -25,7 +31,7 @@ export async function portalTicketRoutes(app: FastifyInstance) {
     return reply.send({ success: true, data: tickets, meta: { pagination: { total, page: Number(page), limit: Number(limit) } } })
   })
 
-  // POST /portal/tickets — submit a ticket
+  // POST /portal/tickets — submit a ticket (creates PortalTicket + SdTicket)
   app.post('/', async (req, reply) => {
     const { tenantId, userId } = req as any
     const { subject, description, category, priority, portalType } = req.body as any
@@ -36,33 +42,63 @@ export async function portalTicketRoutes(app: FastifyInstance) {
     const count = await prisma.portalTicket.count({ where: { tenantId } })
     const number = `TICK-${String(count + 1).padStart(5, '0')}`
 
-    const ticket = await prisma.portalTicket.create({
+    const portalTicket = await prisma.portalTicket.create({
       data: {
-        tenantId,
-        number,
-        submittedBy: userId,
+        tenantId, number, submittedBy: userId,
         portalType: portalType ?? 'employee',
-        subject,
-        description,
-        category,
+        subject, description, category,
         priority: priority ?? 'normal',
         status: 'open',
       },
     })
 
+    // Also create SdTicket for full helpdesk tracking
+    const sourceMap: Record<string, string> = {
+      employee: 'employee_portal',
+      customer: 'customer_portal',
+      supplier: 'supplier_portal',
+      partner: 'partner_portal',
+    }
+    const source = sourceMap[portalType ?? 'employee'] ?? 'portal'
+
+    const priorityMap: Record<string, string> = { urgent: 'critical', high: 'high', normal: 'medium', low: 'low' }
+
+    // Find SLA policy for this priority
+    const slaPolicy = await prisma.sdSlaPolicy.findFirst({
+      where: { tenantId, priority: priorityMap[priority ?? 'normal'] ?? 'medium', deletedAt: null, isActive: true },
+      orderBy: { isDefault: 'desc' },
+    })
+
+    const sdPriority = priorityMap[priority ?? 'normal'] ?? 'medium'
+    const now = new Date()
+    const firstResponseDue = slaPolicy ? new Date(now.getTime() + slaPolicy.firstResponseMinutes * 60000) : undefined
+    const resolutionDue = slaPolicy ? new Date(now.getTime() + slaPolicy.resolutionMinutes * 60000) : undefined
+
+    await prisma.sdTicket.create({
+      data: {
+        tenantId, number: sdTicketNumber(),
+        source, portalTicketId: portalTicket.id,
+        subject, description,
+        priority: sdPriority, status: 'open', type: 'question',
+        requesterId: userId, requesterType: 'portal_user',
+        slaPolicyId: slaPolicy?.id,
+        firstResponseDue, resolutionDue,
+        tags: [category], createdBy: userId,
+      },
+    })
+
     await prisma.portalNotification.create({
       data: {
-        tenantId,
-        userId,
+        tenantId, userId,
         portalType: portalType ?? 'employee',
         title: 'Ticket Submitted',
         body: `Your support ticket ${number} has been submitted. We'll respond soon.`,
         type: 'info',
-        data: { entityId: ticket.id, module: 'tickets' },
+        data: { entityId: portalTicket.id, module: 'tickets' },
       },
     })
 
-    return reply.code(201).send({ success: true, data: ticket })
+    return reply.code(201).send({ success: true, data: portalTicket })
   })
 
   // GET /portal/tickets/:id — ticket detail with replies
@@ -99,6 +135,22 @@ export async function portalTicketRoutes(app: FastifyInstance) {
       data: { tenantId, ticketId: id, userId, content, isInternal: false },
     })
 
+    // Also add comment to linked SdTicket if exists
+    const sdTicket = await prisma.sdTicket.findFirst({
+      where: { tenantId, portalTicketId: id, deletedAt: null },
+    })
+    if (sdTicket) {
+      await prisma.sdTicketComment.create({
+        data: { tenantId, ticketId: sdTicket.id, userId, content, isInternal: false },
+      })
+      if (!sdTicket.firstResponseAt) {
+        await prisma.sdTicket.update({
+          where: { id: sdTicket.id },
+          data: { firstResponseAt: new Date(), status: 'in_progress' },
+        })
+      }
+    }
+
     await prisma.portalTicket.update({
       where: { id },
       data: { status: 'in_progress', updatedAt: new Date() },
@@ -118,6 +170,12 @@ export async function portalTicketRoutes(app: FastifyInstance) {
     await prisma.portalTicket.update({
       where: { id },
       data: { status: 'closed', resolvedAt: new Date() },
+    })
+
+    // Also close linked SdTicket
+    await prisma.sdTicket.updateMany({
+      where: { tenantId, portalTicketId: id, deletedAt: null },
+      data: { status: 'closed', closedAt: new Date(), resolvedAt: new Date() },
     })
 
     return reply.send({ success: true, data: { closed: true } })
