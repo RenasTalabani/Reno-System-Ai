@@ -144,6 +144,10 @@ model CoreTenant {
   commPresences            CommPresence[]
   commMeetings             CommMeeting[]
   commAnnouncements        CommAnnouncement[]
+  mktTenantPlugins         MktTenantPlugin[]
+  mktTenantThemes          MktTenantTheme[]
+  mktAuditLogs             MktAuditLog[]
+  mktReviews               MktReview[]
 
   @@map("core_tenants")
 }
@@ -5942,4 +5946,334 @@ model CommAnnouncementRead {
   @@index([tenantId])
   @@index([announcementId])
   @@map("comm_announcement_reads")
+}
+
+// =============================================================================
+// MARKETPLACE MODULE — Phase 18: Plugin, Theme & App Ecosystem
+// =============================================================================
+
+model MktDeveloperAccount {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  tenantId        String?   @map("tenant_id") @db.Uuid
+  name            String    @db.VarChar(255)
+  email           String    @db.VarChar(255)
+  website         String?   @db.VarChar(500)
+  description     String?   @db.Text
+  avatarUrl       String?   @map("avatar_url") @db.VarChar(500)
+  status          String    @default("pending") @db.VarChar(50)
+  revenueSharePct Float     @default(70) @map("revenue_share_pct")
+  totalEarnings   Float     @default(0) @map("total_earnings")
+  payoutEmail     String?   @map("payout_email") @db.VarChar(255)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  plugins MktPlugin[]
+  themes  MktTheme[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("mkt_developer_accounts")
+}
+
+model MktPlugin {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  developerId      String    @map("developer_id") @db.Uuid
+  slug             String    @unique @db.VarChar(100)
+  name             String    @db.VarChar(255)
+  shortDescription String    @map("short_description") @db.VarChar(500)
+  description      String    @db.Text
+  category         String    @db.VarChar(100)
+  tags             String[]
+  iconUrl          String?   @map("icon_url") @db.VarChar(500)
+  screenshotUrls   String[]  @map("screenshot_urls")
+  pricingModel     String    @default("free") @map("pricing_model") @db.VarChar(50)
+  price            Float     @default(0)
+  currency         String    @default("USD") @db.VarChar(10)
+  trialDays        Int       @default(0) @map("trial_days")
+  status           String    @default("draft") @db.VarChar(50)
+  reviewNotes      String?   @map("review_notes") @db.Text
+  reviewedAt       DateTime? @map("reviewed_at")
+  reviewedBy       String?   @map("reviewed_by") @db.Uuid
+  currentVersion   String    @default("1.0.0") @map("current_version") @db.VarChar(50)
+  minCoreVersion   String    @default("1.0.0") @map("min_core_version") @db.VarChar(50)
+  maxCoreVersion   String?   @map("max_core_version") @db.VarChar(50)
+  requiredModules  String[]  @map("required_modules")
+  permissions      String[]
+  installCount     Int       @default(0) @map("install_count")
+  rating           Float     @default(0)
+  ratingCount      Int       @default(0) @map("rating_count")
+  isOfficial       Boolean   @default(false) @map("is_official")
+  isFeatured       Boolean   @default(false) @map("is_featured")
+  websiteUrl       String?   @map("website_url") @db.VarChar(500)
+  documentationUrl String?   @map("documentation_url") @db.VarChar(500)
+  supportEmail     String?   @map("support_email") @db.VarChar(255)
+  licenseType      String    @default("proprietary") @map("license_type") @db.VarChar(50)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+  isActive         Boolean   @default(true) @map("is_active")
+
+  developer MktDeveloperAccount @relation(fields: [developerId], references: [id])
+  versions  MktPluginVersion[]
+  installs  MktTenantPlugin[]
+  reviews   MktReview[]
+  auditLogs MktAuditLog[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([status])
+  @@index([isFeatured])
+  @@map("mkt_plugins")
+}
+
+model MktPluginVersion {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  pluginId       String    @map("plugin_id") @db.Uuid
+  version        String    @db.VarChar(50)
+  changelog      String    @db.Text
+  minCoreVersion String    @map("min_core_version") @db.VarChar(50)
+  maxCoreVersion String?   @map("max_core_version") @db.VarChar(50)
+  downloadUrl    String?   @map("download_url") @db.VarChar(500)
+  checksum       String?   @db.VarChar(255)
+  isStable       Boolean   @default(true) @map("is_stable")
+  publishedAt    DateTime? @map("published_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  plugin MktPlugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@unique([pluginId, version])
+  @@index([pluginId])
+  @@map("mkt_plugin_versions")
+}
+
+model MktTheme {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  developerId     String?   @map("developer_id") @db.Uuid
+  slug            String    @unique @db.VarChar(100)
+  name            String    @db.VarChar(255)
+  description     String    @db.Text
+  category        String    @default("general") @db.VarChar(100)
+  previewUrl      String?   @map("preview_url") @db.VarChar(500)
+  thumbnailUrl    String?   @map("thumbnail_url") @db.VarChar(500)
+  screenshotUrls  String[]  @map("screenshot_urls")
+  primaryColor    String    @map("primary_color") @db.VarChar(20)
+  secondaryColor  String    @map("secondary_color") @db.VarChar(20)
+  accentColor     String?   @map("accent_color") @db.VarChar(20)
+  fontFamily      String    @default("Inter") @map("font_family") @db.VarChar(100)
+  darkModeSupport Boolean   @default(true) @map("dark_mode_support")
+  pricingModel    String    @default("free") @map("pricing_model") @db.VarChar(50)
+  price           Float     @default(0)
+  currency        String    @default("USD") @db.VarChar(10)
+  status          String    @default("approved") @db.VarChar(50)
+  isOfficial      Boolean   @default(false) @map("is_official")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  installCount    Int       @default(0) @map("install_count")
+  rating          Float     @default(0)
+  ratingCount     Int       @default(0) @map("rating_count")
+  configSchema    Json?     @map("config_schema") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  developer    MktDeveloperAccount? @relation(fields: [developerId], references: [id])
+  tenantThemes MktTenantTheme[]
+  reviews      MktReview[]
+
+  @@index([category])
+  @@index([status])
+  @@map("mkt_themes")
+}
+
+model MktWorkflowTemplate {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String    @unique @db.VarChar(100)
+  name            String    @db.VarChar(255)
+  description     String    @db.Text
+  category        String    @db.VarChar(100)
+  tags            String[]
+  iconUrl         String?   @map("icon_url") @db.VarChar(500)
+  previewImageUrl String?   @map("preview_image_url") @db.VarChar(500)
+  triggerType     String    @map("trigger_type") @db.VarChar(100)
+  definition      Json      @db.JsonB
+  pricingModel    String    @default("free") @map("pricing_model") @db.VarChar(50)
+  price           Float     @default(0)
+  status          String    @default("approved") @db.VarChar(50)
+  isOfficial      Boolean   @default(true) @map("is_official")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  installCount    Int       @default(0) @map("install_count")
+  rating          Float     @default(0)
+  ratingCount     Int       @default(0) @map("rating_count")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  reviews MktReview[]
+
+  @@index([category])
+  @@index([status])
+  @@map("mkt_workflow_templates")
+}
+
+model MktAiAgentTemplate {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String    @unique @db.VarChar(100)
+  name            String    @db.VarChar(255)
+  description     String    @db.Text
+  category        String    @db.VarChar(100)
+  tags            String[]
+  iconUrl         String?   @map("icon_url") @db.VarChar(500)
+  systemPrompt    String    @map("system_prompt") @db.Text
+  capabilities    String[]
+  tools           String[]
+  modelPreference String    @default("claude-sonnet-4-6") @map("model_preference") @db.VarChar(100)
+  pricingModel    String    @default("free") @map("pricing_model") @db.VarChar(50)
+  price           Float     @default(0)
+  status          String    @default("approved") @db.VarChar(50)
+  isOfficial      Boolean   @default(true) @map("is_official")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  installCount    Int       @default(0) @map("install_count")
+  rating          Float     @default(0)
+  ratingCount     Int       @default(0) @map("rating_count")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  reviews MktReview[]
+
+  @@index([category])
+  @@index([status])
+  @@map("mkt_ai_agent_templates")
+}
+
+model MktIndustryPack {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug              String    @unique @db.VarChar(100)
+  name              String    @db.VarChar(255)
+  description       String    @db.Text
+  industry          String    @db.VarChar(100)
+  iconUrl           String?   @map("icon_url") @db.VarChar(500)
+  screenshotUrls    String[]  @map("screenshot_urls")
+  includedPlugins   String[]  @map("included_plugins")
+  includedThemes    String[]  @map("included_themes")
+  includedWorkflows String[]  @map("included_workflows")
+  pricingModel      String    @default("free") @map("pricing_model") @db.VarChar(50)
+  price             Float     @default(0)
+  currency          String    @default("USD") @db.VarChar(10)
+  status            String    @default("approved") @db.VarChar(50)
+  isOfficial        Boolean   @default(true) @map("is_official")
+  isFeatured        Boolean   @default(false) @map("is_featured")
+  installCount      Int       @default(0) @map("install_count")
+  rating            Float     @default(0)
+  ratingCount       Int       @default(0) @map("rating_count")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  deletedAt         DateTime? @map("deleted_at")
+  isActive          Boolean   @default(true) @map("is_active")
+
+  reviews MktReview[]
+
+  @@index([industry])
+  @@index([status])
+  @@map("mkt_industry_packs")
+}
+
+model MktReview {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String   @map("tenant_id") @db.Uuid
+  userId             String   @map("user_id") @db.Uuid
+  listingType        String   @map("listing_type") @db.VarChar(50)
+  pluginId           String?  @map("plugin_id") @db.Uuid
+  themeId            String?  @map("theme_id") @db.Uuid
+  workflowTemplateId String?  @map("workflow_template_id") @db.Uuid
+  aiAgentTemplateId  String?  @map("ai_agent_template_id") @db.Uuid
+  industryPackId     String?  @map("industry_pack_id") @db.Uuid
+  rating             Int
+  title              String?  @db.VarChar(255)
+  body               String?  @db.Text
+  isVerifiedPurchase Boolean  @default(false) @map("is_verified_purchase")
+  helpfulCount       Int      @default(0) @map("helpful_count")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  tenant           CoreTenant           @relation(fields: [tenantId], references: [id])
+  plugin           MktPlugin?           @relation(fields: [pluginId], references: [id])
+  theme            MktTheme?            @relation(fields: [themeId], references: [id])
+  workflowTemplate MktWorkflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
+  aiAgentTemplate  MktAiAgentTemplate?  @relation(fields: [aiAgentTemplateId], references: [id])
+  industryPack     MktIndustryPack?     @relation(fields: [industryPackId], references: [id])
+
+  @@unique([tenantId, userId, listingType, pluginId])
+  @@index([tenantId])
+  @@index([listingType])
+  @@map("mkt_reviews")
+}
+
+model MktTenantPlugin {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  pluginId            String    @map("plugin_id") @db.Uuid
+  installedVersion    String    @map("installed_version") @db.VarChar(50)
+  status              String    @default("active") @db.VarChar(50)
+  config              Json?     @db.JsonB
+  grantedPermissions  String[]  @map("granted_permissions")
+  installedBy         String    @map("installed_by") @db.Uuid
+  installedAt         DateTime  @default(now()) @map("installed_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  lastUpgradedAt      DateTime? @map("last_upgraded_at")
+  upgradedFromVersion String?   @map("upgraded_from_version") @db.VarChar(50)
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+  plugin MktPlugin  @relation(fields: [pluginId], references: [id])
+
+  @@unique([tenantId, pluginId])
+  @@index([tenantId])
+  @@index([status])
+  @@map("mkt_tenant_plugins")
+}
+
+model MktTenantTheme {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  themeId      String    @map("theme_id") @db.Uuid
+  isActive     Boolean   @default(false) @map("is_active")
+  customConfig Json?     @map("custom_config") @db.JsonB
+  installedBy  String    @map("installed_by") @db.Uuid
+  installedAt  DateTime  @default(now()) @map("installed_at")
+  activatedAt  DateTime? @map("activated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+  theme  MktTheme   @relation(fields: [themeId], references: [id])
+
+  @@unique([tenantId, themeId])
+  @@index([tenantId])
+  @@index([tenantId, isActive])
+  @@map("mkt_tenant_themes")
+}
+
+model MktAuditLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  action      String   @db.VarChar(100)
+  listingType String   @map("listing_type") @db.VarChar(50)
+  pluginId    String?  @map("plugin_id") @db.Uuid
+  listingName String   @map("listing_name") @db.VarChar(255)
+  fromVersion String?  @map("from_version") @db.VarChar(50)
+  toVersion   String?  @map("to_version") @db.VarChar(50)
+  metadata    Json?    @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+  plugin MktPlugin? @relation(fields: [pluginId], references: [id])
+
+  @@index([tenantId])
+  @@index([action])
+  @@index([listingType])
+  @@map("mkt_audit_logs")
 }

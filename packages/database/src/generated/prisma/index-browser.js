@@ -4096,6 +4096,245 @@ exports.Prisma.CommAnnouncementReadScalarFieldEnum = {
   readAt: 'readAt'
 };
 
+exports.Prisma.MktDeveloperAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tenantId: 'tenantId',
+  name: 'name',
+  email: 'email',
+  website: 'website',
+  description: 'description',
+  avatarUrl: 'avatarUrl',
+  status: 'status',
+  revenueSharePct: 'revenueSharePct',
+  totalEarnings: 'totalEarnings',
+  payoutEmail: 'payoutEmail',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.MktPluginScalarFieldEnum = {
+  id: 'id',
+  developerId: 'developerId',
+  slug: 'slug',
+  name: 'name',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  category: 'category',
+  tags: 'tags',
+  iconUrl: 'iconUrl',
+  screenshotUrls: 'screenshotUrls',
+  pricingModel: 'pricingModel',
+  price: 'price',
+  currency: 'currency',
+  trialDays: 'trialDays',
+  status: 'status',
+  reviewNotes: 'reviewNotes',
+  reviewedAt: 'reviewedAt',
+  reviewedBy: 'reviewedBy',
+  currentVersion: 'currentVersion',
+  minCoreVersion: 'minCoreVersion',
+  maxCoreVersion: 'maxCoreVersion',
+  requiredModules: 'requiredModules',
+  permissions: 'permissions',
+  installCount: 'installCount',
+  rating: 'rating',
+  ratingCount: 'ratingCount',
+  isOfficial: 'isOfficial',
+  isFeatured: 'isFeatured',
+  websiteUrl: 'websiteUrl',
+  documentationUrl: 'documentationUrl',
+  supportEmail: 'supportEmail',
+  licenseType: 'licenseType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.MktPluginVersionScalarFieldEnum = {
+  id: 'id',
+  pluginId: 'pluginId',
+  version: 'version',
+  changelog: 'changelog',
+  minCoreVersion: 'minCoreVersion',
+  maxCoreVersion: 'maxCoreVersion',
+  downloadUrl: 'downloadUrl',
+  checksum: 'checksum',
+  isStable: 'isStable',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MktThemeScalarFieldEnum = {
+  id: 'id',
+  developerId: 'developerId',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  previewUrl: 'previewUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  screenshotUrls: 'screenshotUrls',
+  primaryColor: 'primaryColor',
+  secondaryColor: 'secondaryColor',
+  accentColor: 'accentColor',
+  fontFamily: 'fontFamily',
+  darkModeSupport: 'darkModeSupport',
+  pricingModel: 'pricingModel',
+  price: 'price',
+  currency: 'currency',
+  status: 'status',
+  isOfficial: 'isOfficial',
+  isFeatured: 'isFeatured',
+  installCount: 'installCount',
+  rating: 'rating',
+  ratingCount: 'ratingCount',
+  configSchema: 'configSchema',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.MktWorkflowTemplateScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  tags: 'tags',
+  iconUrl: 'iconUrl',
+  previewImageUrl: 'previewImageUrl',
+  triggerType: 'triggerType',
+  definition: 'definition',
+  pricingModel: 'pricingModel',
+  price: 'price',
+  status: 'status',
+  isOfficial: 'isOfficial',
+  isFeatured: 'isFeatured',
+  installCount: 'installCount',
+  rating: 'rating',
+  ratingCount: 'ratingCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.MktAiAgentTemplateScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  tags: 'tags',
+  iconUrl: 'iconUrl',
+  systemPrompt: 'systemPrompt',
+  capabilities: 'capabilities',
+  tools: 'tools',
+  modelPreference: 'modelPreference',
+  pricingModel: 'pricingModel',
+  price: 'price',
+  status: 'status',
+  isOfficial: 'isOfficial',
+  isFeatured: 'isFeatured',
+  installCount: 'installCount',
+  rating: 'rating',
+  ratingCount: 'ratingCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.MktIndustryPackScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  industry: 'industry',
+  iconUrl: 'iconUrl',
+  screenshotUrls: 'screenshotUrls',
+  includedPlugins: 'includedPlugins',
+  includedThemes: 'includedThemes',
+  includedWorkflows: 'includedWorkflows',
+  pricingModel: 'pricingModel',
+  price: 'price',
+  currency: 'currency',
+  status: 'status',
+  isOfficial: 'isOfficial',
+  isFeatured: 'isFeatured',
+  installCount: 'installCount',
+  rating: 'rating',
+  ratingCount: 'ratingCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.MktReviewScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  listingType: 'listingType',
+  pluginId: 'pluginId',
+  themeId: 'themeId',
+  workflowTemplateId: 'workflowTemplateId',
+  aiAgentTemplateId: 'aiAgentTemplateId',
+  industryPackId: 'industryPackId',
+  rating: 'rating',
+  title: 'title',
+  body: 'body',
+  isVerifiedPurchase: 'isVerifiedPurchase',
+  helpfulCount: 'helpfulCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MktTenantPluginScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pluginId: 'pluginId',
+  installedVersion: 'installedVersion',
+  status: 'status',
+  config: 'config',
+  grantedPermissions: 'grantedPermissions',
+  installedBy: 'installedBy',
+  installedAt: 'installedAt',
+  updatedAt: 'updatedAt',
+  lastUpgradedAt: 'lastUpgradedAt',
+  upgradedFromVersion: 'upgradedFromVersion'
+};
+
+exports.Prisma.MktTenantThemeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  themeId: 'themeId',
+  isActive: 'isActive',
+  customConfig: 'customConfig',
+  installedBy: 'installedBy',
+  installedAt: 'installedAt',
+  activatedAt: 'activatedAt'
+};
+
+exports.Prisma.MktAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  action: 'action',
+  listingType: 'listingType',
+  pluginId: 'pluginId',
+  listingName: 'listingName',
+  fromVersion: 'fromVersion',
+  toVersion: 'toVersion',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4326,7 +4565,18 @@ exports.Prisma.ModelName = {
   CommMeeting: 'CommMeeting',
   CommMeetingParticipant: 'CommMeetingParticipant',
   CommAnnouncement: 'CommAnnouncement',
-  CommAnnouncementRead: 'CommAnnouncementRead'
+  CommAnnouncementRead: 'CommAnnouncementRead',
+  MktDeveloperAccount: 'MktDeveloperAccount',
+  MktPlugin: 'MktPlugin',
+  MktPluginVersion: 'MktPluginVersion',
+  MktTheme: 'MktTheme',
+  MktWorkflowTemplate: 'MktWorkflowTemplate',
+  MktAiAgentTemplate: 'MktAiAgentTemplate',
+  MktIndustryPack: 'MktIndustryPack',
+  MktReview: 'MktReview',
+  MktTenantPlugin: 'MktTenantPlugin',
+  MktTenantTheme: 'MktTenantTheme',
+  MktAuditLog: 'MktAuditLog'
 };
 
 /**
