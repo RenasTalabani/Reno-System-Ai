@@ -3871,6 +3871,231 @@ exports.Prisma.SdCsatScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CommTeamScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  avatarUrl: 'avatarUrl',
+  isPrivate: 'isPrivate',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.CommTeamMemberScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  teamId: 'teamId',
+  userId: 'userId',
+  role: 'role',
+  joinedAt: 'joinedAt'
+};
+
+exports.Prisma.CommChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  teamId: 'teamId',
+  name: 'name',
+  description: 'description',
+  topic: 'topic',
+  type: 'type',
+  isArchived: 'isArchived',
+  lastMessageAt: 'lastMessageAt',
+  messageCount: 'messageCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.CommChannelMemberScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  channelId: 'channelId',
+  userId: 'userId',
+  role: 'role',
+  lastReadAt: 'lastReadAt',
+  notificationsEnabled: 'notificationsEnabled',
+  joinedAt: 'joinedAt',
+  leftAt: 'leftAt'
+};
+
+exports.Prisma.CommMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  channelId: 'channelId',
+  dmConversationId: 'dmConversationId',
+  parentMessageId: 'parentMessageId',
+  userId: 'userId',
+  content: 'content',
+  type: 'type',
+  isEdited: 'isEdited',
+  editedAt: 'editedAt',
+  isPinned: 'isPinned',
+  pinnedAt: 'pinnedAt',
+  pinnedBy: 'pinnedBy',
+  replyCount: 'replyCount',
+  relatedEntityType: 'relatedEntityType',
+  relatedEntityId: 'relatedEntityId',
+  aiSummary: 'aiSummary',
+  aiActionItems: 'aiActionItems',
+  isAiGenerated: 'isAiGenerated',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.CommReactionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  messageId: 'messageId',
+  userId: 'userId',
+  emoji: 'emoji',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CommMentionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  messageId: 'messageId',
+  mentionedUserId: 'mentionedUserId',
+  mentionType: 'mentionType',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CommAttachmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  messageId: 'messageId',
+  name: 'name',
+  url: 'url',
+  mimeType: 'mimeType',
+  size: 'size',
+  isVoiceNote: 'isVoiceNote',
+  duration: 'duration',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CommDmConversationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  isGroup: 'isGroup',
+  lastMessageAt: 'lastMessageAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.CommDmParticipantScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  conversationId: 'conversationId',
+  userId: 'userId',
+  lastReadAt: 'lastReadAt',
+  isArchived: 'isArchived',
+  joinedAt: 'joinedAt'
+};
+
+exports.Prisma.CommPresenceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  status: 'status',
+  statusMessage: 'statusMessage',
+  lastSeenAt: 'lastSeenAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommReadReceiptScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  messageId: 'messageId',
+  userId: 'userId',
+  readAt: 'readAt'
+};
+
+exports.Prisma.CommMeetingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  agenda: 'agenda',
+  channelId: 'channelId',
+  organizerId: 'organizerId',
+  type: 'type',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  durationMinutes: 'durationMinutes',
+  maxParticipants: 'maxParticipants',
+  roomToken: 'roomToken',
+  roomUrl: 'roomUrl',
+  hasRecording: 'hasRecording',
+  recordingUrl: 'recordingUrl',
+  relatedEntityType: 'relatedEntityType',
+  relatedEntityId: 'relatedEntityId',
+  aiSummary: 'aiSummary',
+  aiActionItems: 'aiActionItems',
+  aiTranscript: 'aiTranscript',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.CommMeetingParticipantScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  meetingId: 'meetingId',
+  userId: 'userId',
+  role: 'role',
+  joinedAt: 'joinedAt',
+  leftAt: 'leftAt',
+  hasVideo: 'hasVideo',
+  hasAudio: 'hasAudio',
+  hasScreenShare: 'hasScreenShare'
+};
+
+exports.Prisma.CommAnnouncementScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  teamId: 'teamId',
+  title: 'title',
+  content: 'content',
+  authorId: 'authorId',
+  priority: 'priority',
+  isPinned: 'isPinned',
+  scheduledAt: 'scheduledAt',
+  publishedAt: 'publishedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.CommAnnouncementReadScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  announcementId: 'announcementId',
+  userId: 'userId',
+  readAt: 'readAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4085,7 +4310,23 @@ exports.Prisma.ModelName = {
   SdTicket: 'SdTicket',
   SdTicketComment: 'SdTicketComment',
   SdTicketAttachment: 'SdTicketAttachment',
-  SdCsat: 'SdCsat'
+  SdCsat: 'SdCsat',
+  CommTeam: 'CommTeam',
+  CommTeamMember: 'CommTeamMember',
+  CommChannel: 'CommChannel',
+  CommChannelMember: 'CommChannelMember',
+  CommMessage: 'CommMessage',
+  CommReaction: 'CommReaction',
+  CommMention: 'CommMention',
+  CommAttachment: 'CommAttachment',
+  CommDmConversation: 'CommDmConversation',
+  CommDmParticipant: 'CommDmParticipant',
+  CommPresence: 'CommPresence',
+  CommReadReceipt: 'CommReadReceipt',
+  CommMeeting: 'CommMeeting',
+  CommMeetingParticipant: 'CommMeetingParticipant',
+  CommAnnouncement: 'CommAnnouncement',
+  CommAnnouncementRead: 'CommAnnouncementRead'
 };
 
 /**

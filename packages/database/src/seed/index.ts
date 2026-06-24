@@ -2032,6 +2032,90 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
 
   console.log(`   → Seeded ${slaDefs.length} SLA policies, ${catDefs.length} categories, 1 escalation rule, 1 agent, ${sampleTickets.length} sample tickets`)
 
+  // ---------------------------------------------------------------------------
+  // Section 27 — Communication Suite
+  // ---------------------------------------------------------------------------
+  console.log('💬 Section 27: Communication Suite...')
+
+  const generalTeam = await prisma.commTeam.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000070' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000070',
+      tenantId: tenant.id, name: 'General', description: 'Company-wide team',
+      isPrivate: false, createdBy: adminUser.id,
+    },
+  })
+
+  await prisma.commTeamMember.upsert({
+    where: { teamId_userId: { teamId: generalTeam.id, userId: adminUser.id } },
+    update: {},
+    create: { tenantId: tenant.id, teamId: generalTeam.id, userId: adminUser.id, role: 'admin' },
+  })
+
+  const channelDefs = [
+    { id: '00000000-0000-0000-0000-000000000071', name: 'general', description: 'General discussion for everyone', type: 'public' },
+    { id: '00000000-0000-0000-0000-000000000072', name: 'announcements', description: 'Company-wide announcements', type: 'announcement' },
+    { id: '00000000-0000-0000-0000-000000000073', name: 'engineering', description: 'Engineering team discussion', type: 'public' },
+    { id: '00000000-0000-0000-0000-000000000074', name: 'random', description: 'Off-topic conversations', type: 'public' },
+  ]
+
+  for (const ch of channelDefs) {
+    const channel = await prisma.commChannel.upsert({
+      where: { id: ch.id },
+      update: {},
+      create: {
+        id: ch.id, tenantId: tenant.id, teamId: generalTeam.id,
+        name: ch.name, description: ch.description, type: ch.type,
+        createdBy: adminUser.id,
+      },
+    })
+
+    await prisma.commChannelMember.upsert({
+      where: { channelId_userId: { channelId: channel.id, userId: adminUser.id } },
+      update: {},
+      create: { tenantId: tenant.id, channelId: channel.id, userId: adminUser.id, role: 'admin' },
+    })
+
+    await prisma.commMessage.create({
+      data: {
+        tenantId: tenant.id, channelId: channel.id, userId: adminUser.id,
+        content: `Welcome to #${ch.name}! 👋`, type: 'system',
+      },
+    })
+
+    await prisma.commChannel.update({ where: { id: channel.id }, data: { lastMessageAt: new Date(), messageCount: 1 } })
+  }
+
+  await prisma.commPresence.upsert({
+    where: { tenantId_userId: { tenantId: tenant.id, userId: adminUser.id } },
+    update: {},
+    create: { tenantId: tenant.id, userId: adminUser.id, status: 'online', lastSeenAt: new Date() },
+  })
+
+  await prisma.commAnnouncement.create({
+    data: {
+      tenantId: tenant.id, title: 'Welcome to Reno Communication Suite',
+      content: 'The Communication & Collaboration module is now live. Use channels, direct messages, and meetings to collaborate with your team.',
+      authorId: adminUser.id, priority: 'important', isPinned: true,
+      publishedAt: new Date(), createdBy: adminUser.id,
+    },
+  })
+
+  await prisma.commMeeting.create({
+    data: {
+      tenantId: tenant.id, title: 'Team Kickoff Meeting',
+      description: 'Introductory meeting to discuss the new communication features.',
+      organizerId: adminUser.id, type: 'scheduled', status: 'scheduled',
+      scheduledAt: new Date(Date.now() + 86400000 * 2),
+      roomToken: 'demo-room-token-001',
+      agenda: [{ item: 'Introductions', duration: 10 }, { item: 'Feature Demo', duration: 20 }, { item: 'Q&A', duration: 10 }],
+      createdBy: adminUser.id,
+    },
+  })
+
+  console.log('   → Seeded 1 team, 4 channels, 1 presence record, 1 announcement, 1 meeting')
+
   console.log('')
   console.log('✅ Seed complete!')
   console.log('')

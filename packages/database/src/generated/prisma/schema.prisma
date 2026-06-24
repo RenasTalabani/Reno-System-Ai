@@ -137,6 +137,13 @@ model CoreTenant {
   sdAgents                 SdAgent[]
   sdTickets                SdTicket[]
   sdCsat                   SdCsat[]
+  commTeams                CommTeam[]
+  commChannels             CommChannel[]
+  commMessages             CommMessage[]
+  commDmConversations      CommDmConversation[]
+  commPresences            CommPresence[]
+  commMeetings             CommMeeting[]
+  commAnnouncements        CommAnnouncement[]
 
   @@map("core_tenants")
 }
@@ -5576,4 +5583,363 @@ model SdCsat {
 
   @@index([tenantId])
   @@map("sd_csat")
+}
+
+// =============================================================================
+// COMMUNICATION MODULE — Phase 16
+// =============================================================================
+
+model CommTeam {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  avatarUrl   String?   @map("avatar_url") @db.VarChar(500)
+  isPrivate   Boolean   @default(false) @map("is_private")
+  isArchived  Boolean   @default(false) @map("is_archived")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  updatedBy   String?   @map("updated_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant        CoreTenant         @relation(fields: [tenantId], references: [id])
+  members       CommTeamMember[]
+  channels      CommChannel[]
+  announcements CommAnnouncement[]
+
+  @@index([tenantId])
+  @@map("comm_teams")
+}
+
+model CommTeamMember {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId String   @map("tenant_id") @db.Uuid
+  teamId   String   @map("team_id") @db.Uuid
+  userId   String   @map("user_id") @db.Uuid
+  role     String   @default("member") @db.VarChar(50)
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  team CommTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([tenantId])
+  @@index([teamId])
+  @@index([userId])
+  @@map("comm_team_members")
+}
+
+model CommChannel {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  teamId        String?   @map("team_id") @db.Uuid
+  name          String    @db.VarChar(255)
+  description   String?   @db.Text
+  topic         String?   @db.VarChar(500)
+  type          String    @default("public") @db.VarChar(50)
+  isArchived    Boolean   @default(false) @map("is_archived")
+  lastMessageAt DateTime? @map("last_message_at")
+  messageCount  Int       @default(0) @map("message_count")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  updatedBy     String?   @map("updated_by") @db.Uuid
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  tenant   CoreTenant          @relation(fields: [tenantId], references: [id])
+  team     CommTeam?           @relation(fields: [teamId], references: [id])
+  members  CommChannelMember[]
+  messages CommMessage[]
+  meetings CommMeeting[]
+
+  @@index([tenantId])
+  @@index([tenantId, teamId])
+  @@map("comm_channels")
+}
+
+model CommChannelMember {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String    @map("tenant_id") @db.Uuid
+  channelId            String    @map("channel_id") @db.Uuid
+  userId               String    @map("user_id") @db.Uuid
+  role                 String    @default("member") @db.VarChar(50)
+  lastReadAt           DateTime? @map("last_read_at")
+  notificationsEnabled Boolean   @default(true) @map("notifications_enabled")
+  joinedAt             DateTime  @default(now()) @map("joined_at")
+  leftAt               DateTime? @map("left_at")
+
+  channel CommChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([tenantId])
+  @@index([channelId])
+  @@index([userId])
+  @@map("comm_channel_members")
+}
+
+model CommMessage {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  channelId         String?   @map("channel_id") @db.Uuid
+  dmConversationId  String?   @map("dm_conversation_id") @db.Uuid
+  parentMessageId   String?   @map("parent_message_id") @db.Uuid
+  userId            String    @map("user_id") @db.Uuid
+  content           String    @db.Text
+  type              String    @default("text") @db.VarChar(50)
+  isEdited          Boolean   @default(false) @map("is_edited")
+  editedAt          DateTime? @map("edited_at")
+  isPinned          Boolean   @default(false) @map("is_pinned")
+  pinnedAt          DateTime? @map("pinned_at")
+  pinnedBy          String?   @map("pinned_by") @db.Uuid
+  replyCount        Int       @default(0) @map("reply_count")
+  relatedEntityType String?   @map("related_entity_type") @db.VarChar(100)
+  relatedEntityId   String?   @map("related_entity_id") @db.Uuid
+  aiSummary         String?   @map("ai_summary") @db.Text
+  aiActionItems     Json?     @map("ai_action_items") @db.JsonB
+  isAiGenerated     Boolean   @default(false) @map("is_ai_generated")
+  metadata          Json?     @db.JsonB
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  deletedAt         DateTime? @map("deleted_at")
+
+  tenant         CoreTenant          @relation(fields: [tenantId], references: [id])
+  channel        CommChannel?        @relation(fields: [channelId], references: [id])
+  dmConversation CommDmConversation? @relation(fields: [dmConversationId], references: [id])
+  parentMessage  CommMessage?        @relation("CommMessageThread", fields: [parentMessageId], references: [id])
+  replies        CommMessage[]       @relation("CommMessageThread")
+  reactions      CommReaction[]
+  mentions       CommMention[]
+  attachments    CommAttachment[]
+  readReceipts   CommReadReceipt[]
+
+  @@index([tenantId])
+  @@index([channelId])
+  @@index([dmConversationId])
+  @@index([parentMessageId])
+  @@index([userId])
+  @@map("comm_messages")
+}
+
+model CommReaction {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  messageId String   @map("message_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  emoji     String   @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  message CommMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([tenantId])
+  @@index([messageId])
+  @@map("comm_reactions")
+}
+
+model CommMention {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  messageId       String   @map("message_id") @db.Uuid
+  mentionedUserId String   @map("mentioned_user_id") @db.Uuid
+  mentionType     String   @default("user") @map("mention_type") @db.VarChar(50)
+  isRead          Boolean  @default(false) @map("is_read")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  message CommMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([messageId])
+  @@index([mentionedUserId])
+  @@map("comm_mentions")
+}
+
+model CommAttachment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  messageId   String   @map("message_id") @db.Uuid
+  name        String   @db.VarChar(500)
+  url         String   @db.VarChar(1000)
+  mimeType    String   @map("mime_type") @db.VarChar(200)
+  size        Int
+  isVoiceNote Boolean  @default(false) @map("is_voice_note")
+  duration    Int?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  message CommMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([messageId])
+  @@map("comm_attachments")
+}
+
+model CommDmConversation {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  name          String?   @db.VarChar(255)
+  isGroup       Boolean   @default(false) @map("is_group")
+  lastMessageAt DateTime? @map("last_message_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  tenant       CoreTenant          @relation(fields: [tenantId], references: [id])
+  participants CommDmParticipant[]
+  messages     CommMessage[]
+
+  @@index([tenantId])
+  @@map("comm_dm_conversations")
+}
+
+model CommDmParticipant {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  lastReadAt     DateTime? @map("last_read_at")
+  isArchived     Boolean   @default(false) @map("is_archived")
+  joinedAt       DateTime  @default(now()) @map("joined_at")
+
+  conversation CommDmConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([tenantId])
+  @@index([conversationId])
+  @@index([userId])
+  @@map("comm_dm_participants")
+}
+
+model CommPresence {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  status        String   @default("offline") @db.VarChar(50)
+  statusMessage String?  @map("status_message") @db.VarChar(255)
+  lastSeenAt    DateTime @default(now()) @map("last_seen_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@map("comm_presences")
+}
+
+model CommReadReceipt {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  messageId String   @map("message_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  readAt    DateTime @default(now()) @map("read_at")
+
+  message CommMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([tenantId])
+  @@index([messageId])
+  @@map("comm_read_receipts")
+}
+
+model CommMeeting {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  title             String    @db.VarChar(500)
+  description       String?   @db.Text
+  agenda            Json?     @db.JsonB
+  channelId         String?   @map("channel_id") @db.Uuid
+  organizerId       String    @map("organizer_id") @db.Uuid
+  type              String    @default("instant") @db.VarChar(50)
+  status            String    @default("scheduled") @db.VarChar(50)
+  scheduledAt       DateTime? @map("scheduled_at")
+  startedAt         DateTime? @map("started_at")
+  endedAt           DateTime? @map("ended_at")
+  durationMinutes   Int?      @map("duration_minutes")
+  maxParticipants   Int?      @map("max_participants")
+  roomToken         String?   @map("room_token") @db.VarChar(500)
+  roomUrl           String?   @map("room_url") @db.VarChar(1000)
+  hasRecording      Boolean   @default(false) @map("has_recording")
+  recordingUrl      String?   @map("recording_url") @db.VarChar(1000)
+  relatedEntityType String?   @map("related_entity_type") @db.VarChar(100)
+  relatedEntityId   String?   @map("related_entity_id") @db.Uuid
+  aiSummary         String?   @map("ai_summary") @db.Text
+  aiActionItems     Json?     @map("ai_action_items") @db.JsonB
+  aiTranscript      String?   @map("ai_transcript") @db.Text
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         String?   @map("created_by") @db.Uuid
+  updatedBy         String?   @map("updated_by") @db.Uuid
+  deletedAt         DateTime? @map("deleted_at")
+  isActive          Boolean   @default(true) @map("is_active")
+
+  tenant       CoreTenant               @relation(fields: [tenantId], references: [id])
+  channel      CommChannel?             @relation(fields: [channelId], references: [id])
+  participants CommMeetingParticipant[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([organizerId])
+  @@map("comm_meetings")
+}
+
+model CommMeetingParticipant {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  meetingId      String    @map("meeting_id") @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  role           String    @default("participant") @db.VarChar(50)
+  joinedAt       DateTime? @map("joined_at")
+  leftAt         DateTime? @map("left_at")
+  hasVideo       Boolean   @default(false) @map("has_video")
+  hasAudio       Boolean   @default(false) @map("has_audio")
+  hasScreenShare Boolean   @default(false) @map("has_screen_share")
+
+  meeting CommMeeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userId])
+  @@index([tenantId])
+  @@index([meetingId])
+  @@map("comm_meeting_participants")
+}
+
+model CommAnnouncement {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  teamId      String?   @map("team_id") @db.Uuid
+  title       String    @db.VarChar(500)
+  content     String    @db.Text
+  authorId    String    @map("author_id") @db.Uuid
+  priority    String    @default("normal") @db.VarChar(50)
+  isPinned    Boolean   @default(false) @map("is_pinned")
+  scheduledAt DateTime? @map("scheduled_at")
+  publishedAt DateTime? @map("published_at")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant             @relation(fields: [tenantId], references: [id])
+  team   CommTeam?              @relation(fields: [teamId], references: [id])
+  reads  CommAnnouncementRead[]
+
+  @@index([tenantId])
+  @@index([tenantId, teamId])
+  @@map("comm_announcements")
+}
+
+model CommAnnouncementRead {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  announcementId String   @map("announcement_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  readAt         DateTime @default(now()) @map("read_at")
+
+  announcement CommAnnouncement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@index([tenantId])
+  @@index([announcementId])
+  @@map("comm_announcement_reads")
 }
