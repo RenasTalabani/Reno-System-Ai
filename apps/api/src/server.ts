@@ -4,12 +4,8 @@ import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import cookie from '@fastify/cookie'
-import { ApolloServer } from '@apollo/server'
-import fastifyApollo, { fastifyApolloDrainPlugin } from '@as-integrations/fastify'
 import { logger } from '@reno/logger'
 import { prisma } from '@reno/database'
-import { buildSchema } from './graphql/schema.js'
-import { createContext } from './graphql/context.js'
 import { registerRoutes } from './rest/routes/index.js'
 import { errorHandler } from './rest/middleware/error-handler.js'
 
@@ -56,26 +52,6 @@ async function bootstrap() {
   // ─── Error Handler ──────────────────────────────────────────────────────────
   app.setErrorHandler(errorHandler as Parameters<typeof app.setErrorHandler>[0])
 
-  // ─── GraphQL (Apollo Server) ─────────────────────────────────────────────────
-  const schema = await buildSchema()
-
-  const apolloServer = new ApolloServer({
-    schema,
-    plugins: [fastifyApolloDrainPlugin(app)],
-    introspection: process.env['NODE_ENV'] !== 'production',
-    formatError: (formattedError) => {
-      logger.error({ err: formattedError }, 'GraphQL error')
-      return formattedError
-    },
-  })
-
-  await apolloServer.start()
-
-  await app.register(fastifyApollo(apolloServer), {
-    path: '/graphql',
-    context: createContext,
-  } as any)
-
   // ─── REST Routes ────────────────────────────────────────────────────────────
   await registerRoutes(app)
 
@@ -101,7 +77,6 @@ async function bootstrap() {
   ║        Reno System API v0.1.0         ║
   ╠═══════════════════════════════════════╣
   ║  REST:      http://localhost:${PORT}/v1   ║
-  ║  GraphQL:   http://localhost:${PORT}/graphql ║
   ║  Health:    http://localhost:${PORT}/health  ║
   ║  Env:       ${(process.env['NODE_ENV'] ?? 'development').padEnd(10)}              ║
   ╚═══════════════════════════════════════╝

@@ -5,6 +5,7 @@ import {
   signAccessToken,
   signRefreshToken,
   verifyRefreshToken,
+  verifyAccessToken,
   verifyPassword,
   hashPassword,
   generateMfaSecret,
@@ -23,6 +24,11 @@ const LoginSchema = z.object({
   tenantSlug: z.string().min(1),
 })
 
+const MfaLoginSchema = z.object({
+  code: z.string().length(6),
+  tempToken: z.string().min(1),
+})
+
 const RefreshSchema = z.object({
   refreshToken: z.string(),
 })
@@ -36,10 +42,133 @@ const MfaVerifySchema = z.object({
   code: z.string().length(6),
 })
 
+// Default security policy values
+const DEFAULT_POLICY = {
+  maxFailedAttempts: 5,
+  lockoutDurationMins: 15,
+  passwordHistoryCount: 5,
+  sessionTimeoutMins: 480,
+  maxConcurrentSessions: 10,
+  mfaRequired: false,
+  ipAllowlistEnabled: false,
+}
+
+function ipInCidr(ip: string, cidr: string): boolean {
+  try {
+    // Strip IPv6 prefix from IPv4-mapped addresses
+    const cleanIp = ip.replace(/^::ffff:/, '')
+    const parts = cidr.split('/')
+    const network = parts[0]
+    const mask = parts[1] !== undefined ? parseInt(parts[1], 10) : 32
+
+    if (!network) return false
+    const ipParts = cleanIp.split('.')
+    const netParts = network.split('.')
+    if (ipParts.length !== 4 || netParts.length !== 4) return false
+
+    const ipNum = ipParts.reduce((acc, o) => (acc * 256 + parseInt(o, 10)) >>> 0, 0)
+    const netNum = netParts.reduce((acc, o) => (acc * 256 + parseInt(o, 10)) >>> 0, 0)
+    const maskNum = mask === 0 ? 0 : ((0xffffffff << (32 - mask)) >>> 0)
+
+    return (ipNum & maskNum) === (netNum & maskNum)
+  } catch {
+    return false
+  }
+}
+
+async function getSecurityPolicy(tenantId: string) {
+  const policy = await prisma.coreTenantSecurityPolicy.findUnique({
+    where: { tenantId },
+  })
+  return policy ?? { ...DEFAULT_POLICY, tenantId }
+}
+
+async function checkIpRules(ip: string, tenantId: string, allowlistEnabled: boolean): Promise<void> {
+  const rules = await prisma.secIpRule.findMany({
+    where: { tenantId, isActive: true, OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
+  })
+
+  const blockRules = rules.filter((r) => r.type === 'block')
+  const allowRules = rules.filter((r) => r.type === 'allow')
+
+  // Check blocklist first
+  for (const rule of blockRules) {
+    if (ipInCidr(ip, rule.cidr)) {
+      throw new RenoError(ErrorCode.FORBIDDEN, 'Access denied from your IP address', 403)
+    }
+  }
+
+  // Check allowlist if enabled
+  if (allowlistEnabled && allowRules.length > 0) {
+    const allowed = allowRules.some((rule) => ipInCidr(ip, rule.cidr))
+    if (!allowed) {
+      throw new RenoError(ErrorCode.FORBIDDEN, 'Access denied: IP not in allowlist', 403)
+    }
+  }
+}
+
+async function recordLoginAttempt(data: {
+  tenantId: string
+  userId?: string
+  email: string
+  ipAddress: string
+  userAgent?: string
+  success: boolean
+  failReason?: string
+}) {
+  await prisma.secLoginAttempt.create({
+    data: {
+      tenantId: data.tenantId,
+      userId: data.userId,
+      email: data.email,
+      ipAddress: data.ipAddress,
+      userAgent: data.userAgent?.slice(0, 500),
+      success: data.success,
+      failReason: data.failReason,
+    },
+  })
+}
+
+async function createSession(
+  tenantId: string,
+  userId: string,
+  roles: string[],
+  email: string,
+  ip: string,
+  userAgent?: string,
+) {
+  const session = await prisma.coreSession.create({
+    data: {
+      tenantId,
+      userId,
+      refreshTokenHash: crypto.randomUUID(),
+      deviceName: (userAgent ?? 'Unknown').slice(0, 255),
+      deviceType: 'web',
+      ipAddress: ip,
+      userAgent: userAgent,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  })
+
+  const accessToken = signAccessToken({ sub: userId, tid: tenantId, sid: session.id, roles, email })
+  const refreshToken = signRefreshToken(session.id)
+
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(refreshToken))
+  const tokenHash = Buffer.from(hashBuffer).toString('hex')
+
+  await prisma.coreSession.update({
+    where: { id: session.id },
+    data: { refreshTokenHash: tokenHash },
+  })
+
+  return { session, accessToken, refreshToken }
+}
+
 export async function authRoutes(app: FastifyInstance) {
   // POST /v1/auth/login
   app.post('/login', async (request, reply) => {
     const body = LoginSchema.parse(request.body)
+    const ip = request.ip ?? '0.0.0.0'
 
     // Resolve tenant
     const tenant = await prisma.coreTenant.findFirst({
@@ -50,15 +179,79 @@ export async function authRoutes(app: FastifyInstance) {
       throw new RenoError(ErrorCode.AUTH_INVALID_CREDENTIALS, 'Invalid credentials', 401)
     }
 
+    // Get security policy and check IP rules
+    const policy = await getSecurityPolicy(tenant.id)
+    await checkIpRules(ip, tenant.id, policy.ipAllowlistEnabled)
+
     // Find user
     const user = await prisma.coreUser.findFirst({
       where: { tenantId: tenant.id, email: body.email.toLowerCase(), deletedAt: null },
       include: { profile: true, userRoles: { include: { role: true } } },
     })
 
+    // Check account lockout
+    if (user?.lockedUntil && user.lockedUntil > new Date()) {
+      const minutesLeft = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000)
+      await recordLoginAttempt({
+        tenantId: tenant.id,
+        userId: user.id,
+        email: body.email,
+        ipAddress: ip,
+        userAgent: request.headers['user-agent'],
+        success: false,
+        failReason: 'account_locked',
+      })
+      throw new RenoError(
+        ErrorCode.AUTH_ACCOUNT_SUSPENDED,
+        `Account locked. Try again in ${minutesLeft} minute(s).`,
+        429,
+      )
+    }
+
     const isValid = user ? await verifyPassword(body.password, user.passwordHash) : false
 
     if (!user || !isValid) {
+      // Record failed attempt
+      if (user) {
+        const newFailedCount = user.failedLoginAttempts + 1
+        const shouldLock = newFailedCount >= policy.maxFailedAttempts
+        await prisma.coreUser.update({
+          where: { id: user.id },
+          data: {
+            failedLoginAttempts: newFailedCount,
+            lockedUntil: shouldLock
+              ? new Date(Date.now() + policy.lockoutDurationMins * 60 * 1000)
+              : undefined,
+          },
+        })
+
+        if (shouldLock) {
+          // Log a security event for account lockout
+          await prisma.secSecurityEvent.create({
+            data: {
+              tenantId: tenant.id,
+              userId: user.id,
+              eventType: 'account_locked',
+              severity: 'high',
+              title: 'Account Locked — Too Many Failed Login Attempts',
+              description: `Account locked after ${newFailedCount} failed attempts from IP ${ip}`,
+              ipAddress: ip,
+              metadata: { email: user.email, failedAttempts: newFailedCount },
+            },
+          })
+        }
+      }
+
+      await recordLoginAttempt({
+        tenantId: tenant.id,
+        userId: user?.id,
+        email: body.email,
+        ipAddress: ip,
+        userAgent: request.headers['user-agent'],
+        success: false,
+        failReason: user ? 'wrong_password' : 'user_not_found',
+      })
+
       eventBus.publish({
         type: EventTypes.AUTH_USER_LOGIN_FAILED,
         tenantId: tenant.id,
@@ -67,6 +260,7 @@ export async function authRoutes(app: FastifyInstance) {
         payload: { email: body.email },
         metadata: { sourceModule: 'auth', correlationId: crypto.randomUUID() },
       })
+
       throw new RenoError(ErrorCode.AUTH_INVALID_CREDENTIALS, 'Invalid email or password', 401)
     }
 
@@ -74,8 +268,26 @@ export async function authRoutes(app: FastifyInstance) {
       throw new RenoError(ErrorCode.AUTH_ACCOUNT_SUSPENDED, 'Your account has been suspended', 403)
     }
 
-    // MFA check
+    // Reset failed attempts on success
+    if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+      await prisma.coreUser.update({
+        where: { id: user.id },
+        data: { failedLoginAttempts: 0, lockedUntil: null },
+      })
+    }
+
+    // MFA check — return temp token if MFA is required
     if (user.mfaEnabled && user.mfaSecret) {
+      await recordLoginAttempt({
+        tenantId: tenant.id,
+        userId: user.id,
+        email: body.email,
+        ipAddress: ip,
+        userAgent: request.headers['user-agent'],
+        success: true,
+        failReason: 'mfa_required',
+      })
+
       return reply.send(buildSuccessResponse({
         mfaRequired: true,
         tempToken: signAccessToken({
@@ -91,48 +303,32 @@ export async function authRoutes(app: FastifyInstance) {
       }))
     }
 
-    // Create session
-    const session = await prisma.coreSession.create({
-      data: {
-        tenantId: tenant.id,
-        userId: user.id,
-        refreshTokenHash: crypto.randomUUID(), // placeholder — replaced below
-        deviceName: (request.headers['user-agent'] ?? 'Unknown').slice(0, 255),
-        deviceType: 'web',
-        ipAddress: request.ip,
-        userAgent: request.headers['user-agent'],
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    })
-
     const roles = user.userRoles.map((ur) => ur.role.slug)
-    const accessToken = signAccessToken({
-      sub: user.id,
-      tid: tenant.id,
-      sid: session.id,
+    const { session, accessToken, refreshToken } = await createSession(
+      tenant.id,
+      user.id,
       roles,
-      email: user.email,
-    })
-    const refreshToken = signRefreshToken(session.id)
-
-    // Update session with actual refresh token hash
-    const { subtle } = crypto
-    const encoder = new TextEncoder()
-    const hashBuffer = await subtle.digest('SHA-256', encoder.encode(refreshToken))
-    const tokenHash = Buffer.from(hashBuffer).toString('hex')
-
-    await prisma.coreSession.update({
-      where: { id: session.id },
-      data: { refreshTokenHash: tokenHash },
-    })
+      user.email,
+      ip,
+      request.headers['user-agent'],
+    )
 
     // Update last login
     await prisma.coreUser.update({
       where: { id: user.id },
-      data: { lastLoginAt: new Date(), lastLoginIp: request.ip },
+      data: { lastLoginAt: new Date(), lastLoginIp: ip },
     })
 
-    // Audit log
+    // Record success
+    await recordLoginAttempt({
+      tenantId: tenant.id,
+      userId: user.id,
+      email: body.email,
+      ipAddress: ip,
+      userAgent: request.headers['user-agent'],
+      success: true,
+    })
+
     await prisma.sysAuditLog.create({
       data: {
         tenantId: tenant.id,
@@ -142,7 +338,7 @@ export async function authRoutes(app: FastifyInstance) {
         module: 'auth',
         entityType: 'core_users',
         entityId: user.id,
-        ipAddress: request.ip,
+        ipAddress: ip,
         userAgent: request.headers['user-agent'],
       },
     })
@@ -156,7 +352,6 @@ export async function authRoutes(app: FastifyInstance) {
       metadata: { sourceModule: 'auth', correlationId: session.id },
     })
 
-    // Set refresh token as HTTP-only cookie
     reply.setCookie('reno_refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env['NODE_ENV'] === 'production',
@@ -179,6 +374,106 @@ export async function authRoutes(app: FastifyInstance) {
         roles,
         tenantId: tenant.id,
       },
+    }))
+  })
+
+  // POST /v1/auth/mfa/login — complete login after MFA challenge
+  app.post('/mfa/login', async (request, reply) => {
+    const body = MfaLoginSchema.parse(request.body)
+
+    let payload: { sub: string; tid: string; sid: string; roles: string[]; email: string }
+    try {
+      payload = verifyAccessToken(body.tempToken) as typeof payload
+    } catch {
+      throw new RenoError(ErrorCode.AUTH_TOKEN_INVALID, 'Invalid or expired temp token', 401)
+    }
+
+    if (payload.sid !== 'temp') {
+      throw new RenoError(ErrorCode.AUTH_TOKEN_INVALID, 'Invalid temp token', 401)
+    }
+
+    const user = await prisma.coreUser.findFirst({
+      where: { id: payload.sub, tenantId: payload.tid, deletedAt: null },
+      include: { userRoles: { include: { role: true } } },
+    })
+
+    if (!user?.mfaSecret) {
+      throw new RenoError(ErrorCode.RESOURCE_NOT_FOUND, 'User not found', 404)
+    }
+
+    const isValidCode = verifyMfaCode(user.mfaSecret, body.code)
+    if (!isValidCode) {
+      throw new RenoError(ErrorCode.AUTH_INVALID_CREDENTIALS, 'Invalid MFA code', 401)
+    }
+
+    const roles = user.userRoles.map((ur) => ur.role.slug)
+    const ip = request.ip ?? '0.0.0.0'
+    const { session, accessToken, refreshToken } = await createSession(
+      payload.tid,
+      user.id,
+      roles,
+      user.email,
+      ip,
+      request.headers['user-agent'],
+    )
+
+    await prisma.coreUser.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date(), lastLoginIp: ip, failedLoginAttempts: 0, lockedUntil: null },
+    })
+
+    await recordLoginAttempt({
+      tenantId: payload.tid,
+      userId: user.id,
+      email: user.email,
+      ipAddress: ip,
+      userAgent: request.headers['user-agent'],
+      success: true,
+    })
+
+    reply.setCookie('reno_refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env['NODE_ENV'] === 'production',
+      sameSite: 'strict',
+      path: '/v1/auth',
+      maxAge: 7 * 24 * 60 * 60,
+    })
+
+    return reply.send(buildSuccessResponse({
+      accessToken,
+      refreshToken,
+      expiresIn: 900,
+      mfaRequired: false,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: null,
+        lastName: null,
+        roles,
+        tenantId: payload.tid,
+      },
+    }))
+  })
+
+  // GET /v1/auth/me
+  app.get('/me', { preHandler: [requireAuth] }, async (request, reply) => {
+    const user = await prisma.coreUser.findFirst({
+      where: { id: request.userId, tenantId: request.tenantId, deletedAt: null },
+      include: { profile: true, userRoles: { include: { role: true } } },
+    })
+
+    if (!user) throw new RenoError(ErrorCode.RESOURCE_NOT_FOUND, 'User not found', 404)
+
+    return reply.send(buildSuccessResponse({
+      id: user.id,
+      email: user.email,
+      tenantId: user.tenantId,
+      firstName: user.profile?.firstName,
+      lastName: user.profile?.lastName,
+      displayName: user.profile?.displayName,
+      avatarUrl: user.profile?.avatarUrl,
+      roles: user.userRoles.map((ur) => ur.role.slug),
+      status: user.status,
     }))
   })
 
@@ -237,7 +532,6 @@ export async function authRoutes(app: FastifyInstance) {
     })
     const newRefreshToken = signRefreshToken(session.id)
 
-    // Rotate refresh token
     const encoder = new TextEncoder()
     const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(newRefreshToken))
     const tokenHash = Buffer.from(hashBuffer).toString('hex')
@@ -291,11 +585,7 @@ export async function authRoutes(app: FastifyInstance) {
     const { id } = request.params as { id: string }
 
     await prisma.coreSession.updateMany({
-      where: {
-        id,
-        tenantId: request.tenantId,
-        userId: request.userId,
-      },
+      where: { id, tenantId: request.tenantId, userId: request.userId },
       data: { revokedAt: new Date(), isActive: false },
     })
 
@@ -314,13 +604,9 @@ export async function authRoutes(app: FastifyInstance) {
     const qrCodeDataUrl = await generateMfaQrCode(otpauthUrl)
     const backupCodes = generateBackupCodes()
 
-    // Store secret temporarily (not activated until verified)
     await prisma.coreUser.update({
       where: { id: user.id },
-      data: {
-        mfaSecret: secret,
-        mfaBackupCodes: JSON.stringify(backupCodes),
-      },
+      data: { mfaSecret: secret, mfaBackupCodes: JSON.stringify(backupCodes) },
     })
 
     return reply.send(buildSuccessResponse({ secret, qrCodeDataUrl, backupCodes }))
@@ -378,7 +664,33 @@ export async function authRoutes(app: FastifyInstance) {
       throw new RenoError(ErrorCode.AUTH_INVALID_CREDENTIALS, 'Current password is incorrect', 401)
     }
 
+    // Check password history
+    const policy = await getSecurityPolicy(request.tenantId)
+    if (policy.passwordHistoryCount > 0) {
+      const history = await prisma.corePasswordHistory.findMany({
+        where: { userId: user.id, tenantId: request.tenantId },
+        orderBy: { createdAt: 'desc' },
+        take: policy.passwordHistoryCount,
+      })
+
+      for (const h of history) {
+        const reused = await verifyPassword(body.newPassword, h.passwordHash)
+        if (reused) {
+          throw new RenoError(
+            ErrorCode.BUSINESS_RULE_VIOLATION,
+            `Cannot reuse any of your last ${policy.passwordHistoryCount} passwords`,
+            400,
+          )
+        }
+      }
+    }
+
     const newHash = await hashPassword(body.newPassword)
+
+    // Store old password in history before updating
+    await prisma.corePasswordHistory.create({
+      data: { tenantId: request.tenantId, userId: user.id, passwordHash: user.passwordHash },
+    })
 
     await prisma.coreUser.update({
       where: { id: user.id },

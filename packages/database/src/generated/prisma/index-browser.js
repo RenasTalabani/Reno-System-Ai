@@ -230,6 +230,8 @@ exports.Prisma.CoreUserScalarFieldEnum = {
   lastLoginIp: 'lastLoginIp',
   passwordChangedAt: 'passwordChangedAt',
   mustChangePassword: 'mustChangePassword',
+  failedLoginAttempts: 'failedLoginAttempts',
+  lockedUntil: 'lockedUntil',
   locale: 'locale',
   timezone: 'timezone',
   metadata: 'metadata',
@@ -506,6 +508,82 @@ exports.Prisma.SysApiKeyScalarFieldEnum = {
   updatedAt: 'updatedAt',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.CoreTenantSecurityPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  passwordMinLength: 'passwordMinLength',
+  passwordRequireUpper: 'passwordRequireUpper',
+  passwordRequireLower: 'passwordRequireLower',
+  passwordRequireNumber: 'passwordRequireNumber',
+  passwordRequireSymbol: 'passwordRequireSymbol',
+  passwordExpiryDays: 'passwordExpiryDays',
+  passwordHistoryCount: 'passwordHistoryCount',
+  maxFailedAttempts: 'maxFailedAttempts',
+  lockoutDurationMins: 'lockoutDurationMins',
+  sessionTimeoutMins: 'sessionTimeoutMins',
+  maxConcurrentSessions: 'maxConcurrentSessions',
+  mfaRequired: 'mfaRequired',
+  mfaRequiredForAdmins: 'mfaRequiredForAdmins',
+  ipAllowlistEnabled: 'ipAllowlistEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CorePasswordHistoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  passwordHash: 'passwordHash',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SecLoginAttemptScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  email: 'email',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  success: 'success',
+  failReason: 'failReason',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SecSecurityEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  eventType: 'eventType',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  metadata: 'metadata',
+  resolved: 'resolved',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SecIpRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  cidr: 'cidr',
+  label: 'label',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
   deletedAt: 'deletedAt',
   isActive: 'isActive'
 };
@@ -4598,6 +4676,11 @@ exports.Prisma.ModelName = {
   SysJob: 'SysJob',
   SysFeatureFlag: 'SysFeatureFlag',
   SysApiKey: 'SysApiKey',
+  CoreTenantSecurityPolicy: 'CoreTenantSecurityPolicy',
+  CorePasswordHistory: 'CorePasswordHistory',
+  SecLoginAttempt: 'SecLoginAttempt',
+  SecSecurityEvent: 'SecSecurityEvent',
+  SecIpRule: 'SecIpRule',
   SysTranslation: 'SysTranslation',
   SysUiTranslation: 'SysUiTranslation',
   AiUsageLog: 'AiUsageLog',

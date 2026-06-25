@@ -26,6 +26,7 @@ import { helpdeskRoutes } from './helpdesk/index.js'
 import { commRoutes } from './comm/index.js'
 import { marketplaceRoutes } from './marketplace/index.js'
 import { aiExecRoutes } from './ai-exec/index.js'
+import { securityRoutes } from './security/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -58,6 +59,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(commRoutes, { prefix: '/comm' })
       await v1.register(marketplaceRoutes, { prefix: '/marketplace' })
       await v1.register(aiExecRoutes, { prefix: '/ai-exec' })
+      await v1.register(securityRoutes, { prefix: '/security' })
     },
     { prefix: '/v1' },
   )

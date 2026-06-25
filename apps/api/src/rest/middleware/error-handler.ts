@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
+import { ZodError } from 'zod'
 import { RenoError } from '@reno/core'
 import { logger } from '@reno/logger'
 
@@ -22,6 +23,18 @@ export function errorHandler(
         version: '1.0.0',
         requestId,
       },
+    })
+  }
+
+  if (error instanceof ZodError) {
+    return reply.status(400).send({
+      success: false,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Request validation failed',
+        details: error.issues,
+      },
+      meta: { timestamp: new Date().toISOString(), version: '1.0.0', requestId },
     })
   }
 
