@@ -4335,6 +4335,216 @@ exports.Prisma.MktAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AiDigitalTwinScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  healthScore: 'healthScore',
+  riskScore: 'riskScore',
+  growthScore: 'growthScore',
+  efficiencyScore: 'efficiencyScore',
+  overallScore: 'overallScore',
+  financials: 'financials',
+  salesMetrics: 'salesMetrics',
+  hrMetrics: 'hrMetrics',
+  operationsMetrics: 'operationsMetrics',
+  customerMetrics: 'customerMetrics',
+  inventoryMetrics: 'inventoryMetrics',
+  projectMetrics: 'projectMetrics',
+  communicationMetrics: 'communicationMetrics',
+  aiInsightsSummary: 'aiInsightsSummary',
+  topRisks: 'topRisks',
+  topOpportunities: 'topOpportunities',
+  computedAt: 'computedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiExecReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportType: 'reportType',
+  executiveRole: 'executiveRole',
+  title: 'title',
+  period: 'period',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  sections: 'sections',
+  aiSummary: 'aiSummary',
+  keyMetrics: 'keyMetrics',
+  highlights: 'highlights',
+  concerns: 'concerns',
+  nextActions: 'nextActions',
+  status: 'status',
+  generatedBy: 'generatedBy',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiExecRecommendationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  executiveRole: 'executiveRole',
+  category: 'category',
+  title: 'title',
+  description: 'description',
+  rationale: 'rationale',
+  confidenceScore: 'confidenceScore',
+  impactLevel: 'impactLevel',
+  effortLevel: 'effortLevel',
+  priority: 'priority',
+  status: 'status',
+  proposedActions: 'proposedActions',
+  relatedEntityType: 'relatedEntityType',
+  relatedEntityId: 'relatedEntityId',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  rejectedBy: 'rejectedBy',
+  rejectedAt: 'rejectedAt',
+  rejectionReason: 'rejectionReason',
+  implementedAt: 'implementedAt',
+  outcome: 'outcome',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiExecDecisionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  executiveRole: 'executiveRole',
+  title: 'title',
+  context: 'context',
+  decision: 'decision',
+  decisionDate: 'decisionDate',
+  outcome: 'outcome',
+  factors: 'factors',
+  alternatives: 'alternatives',
+  lessons: 'lessons',
+  confidenceAtTime: 'confidenceAtTime',
+  actualScore: 'actualScore',
+  decidedBy: 'decidedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiExecProposalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  executiveRole: 'executiveRole',
+  proposalType: 'proposalType',
+  title: 'title',
+  description: 'description',
+  rationale: 'rationale',
+  proposedPayload: 'proposedPayload',
+  priority: 'priority',
+  estimatedImpact: 'estimatedImpact',
+  status: 'status',
+  approvalNote: 'approvalNote',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  rejectedBy: 'rejectedBy',
+  rejectedAt: 'rejectedAt',
+  executedAt: 'executedAt',
+  executionResult: 'executionResult',
+  linkedEntityType: 'linkedEntityType',
+  linkedEntityId: 'linkedEntityId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiBizPredictionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  predictionType: 'predictionType',
+  executiveRole: 'executiveRole',
+  horizon: 'horizon',
+  prediction: 'prediction',
+  narrative: 'narrative',
+  confidence: 'confidence',
+  keyDrivers: 'keyDrivers',
+  riskFactors: 'riskFactors',
+  assumptions: 'assumptions',
+  actualOutcome: 'actualOutcome',
+  accuracy: 'accuracy',
+  computedAt: 'computedAt',
+  validUntil: 'validUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiScenarioScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  scenarioType: 'scenarioType',
+  baselineData: 'baselineData',
+  assumptions: 'assumptions',
+  projections: 'projections',
+  riskFactors: 'riskFactors',
+  narrative: 'narrative',
+  confidence: 'confidence',
+  status: 'status',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiKnowledgeNodeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  nodeType: 'nodeType',
+  label: 'label',
+  properties: 'properties',
+  importance: 'importance',
+  relatedEntityType: 'relatedEntityType',
+  relatedEntityId: 'relatedEntityId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiKnowledgeEdgeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fromNodeId: 'fromNodeId',
+  toNodeId: 'toNodeId',
+  relationship: 'relationship',
+  weight: 'weight',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiLessonLearnedScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  category: 'category',
+  title: 'title',
+  context: 'context',
+  outcome: 'outcome',
+  lesson: 'lesson',
+  tags: 'tags',
+  confidence: 'confidence',
+  relatedDecisions: 'relatedDecisions',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isActive: 'isActive'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4576,7 +4786,17 @@ exports.Prisma.ModelName = {
   MktReview: 'MktReview',
   MktTenantPlugin: 'MktTenantPlugin',
   MktTenantTheme: 'MktTenantTheme',
-  MktAuditLog: 'MktAuditLog'
+  MktAuditLog: 'MktAuditLog',
+  AiDigitalTwin: 'AiDigitalTwin',
+  AiExecReport: 'AiExecReport',
+  AiExecRecommendation: 'AiExecRecommendation',
+  AiExecDecision: 'AiExecDecision',
+  AiExecProposal: 'AiExecProposal',
+  AiBizPrediction: 'AiBizPrediction',
+  AiScenario: 'AiScenario',
+  AiKnowledgeNode: 'AiKnowledgeNode',
+  AiKnowledgeEdge: 'AiKnowledgeEdge',
+  AiLessonLearned: 'AiLessonLearned'
 };
 
 /**

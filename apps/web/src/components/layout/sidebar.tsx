@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
   Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
-  FileText, BookOpen, Globe, Headphones, MessageSquare, Store,
+  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -64,6 +64,7 @@ const navigation: NavSection[] = [
     group: 'Platform',
     items: [
       { label: 'Marketplace', href: '/marketplace', icon: Store },
+      { label: 'AI Executive', href: '/ai-executive', icon: Bot },
     ],
   },
   {
@@ -96,7 +97,7 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-sidebar-foreground font-bold text-sm">Reno System</span>
-          <span className="block text-xs text-sidebar-foreground/50">v18.0.0</span>
+          <span className="block text-xs text-sidebar-foreground/50">v19.0.0</span>
         </div>
       </div>
 

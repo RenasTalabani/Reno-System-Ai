@@ -148,6 +148,15 @@ model CoreTenant {
   mktTenantThemes          MktTenantTheme[]
   mktAuditLogs             MktAuditLog[]
   mktReviews               MktReview[]
+  aiDigitalTwins           AiDigitalTwin[]
+  aiExecReports            AiExecReport[]
+  aiExecRecommendations    AiExecRecommendation[]
+  aiExecDecisions          AiExecDecision[]
+  aiExecProposals          AiExecProposal[]
+  aiPredictions            AiBizPrediction[]
+  aiScenarios              AiScenario[]
+  aiKnowledgeNodes         AiKnowledgeNode[]
+  aiLessonsLearned         AiLessonLearned[]
 
   @@map("core_tenants")
 }
@@ -6279,4 +6288,279 @@ model MktAuditLog {
   @@index([action])
   @@index([listingType])
   @@map("mkt_audit_logs")
+}
+
+// =============================================================================
+// AI EXECUTIVE LAYER — Phase 19: Digital Twin / Autonomous Company Intelligence
+// =============================================================================
+
+model AiDigitalTwin {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  healthScore     Float     @default(0) @map("health_score")
+  riskScore       Float     @default(0) @map("risk_score")
+  growthScore     Float     @default(0) @map("growth_score")
+  efficiencyScore Float     @default(0) @map("efficiency_score")
+  overallScore    Float     @default(0) @map("overall_score")
+  financials      Json      @default("{}") @db.JsonB
+  salesMetrics    Json      @default("{}") @map("sales_metrics") @db.JsonB
+  hrMetrics       Json      @default("{}") @map("hr_metrics") @db.JsonB
+  operationsMetrics Json    @default("{}") @map("operations_metrics") @db.JsonB
+  customerMetrics Json      @default("{}") @map("customer_metrics") @db.JsonB
+  inventoryMetrics Json     @default("{}") @map("inventory_metrics") @db.JsonB
+  projectMetrics  Json      @default("{}") @map("project_metrics") @db.JsonB
+  communicationMetrics Json @default("{}") @map("communication_metrics") @db.JsonB
+  aiInsightsSummary String? @map("ai_insights_summary") @db.Text
+  topRisks        Json      @default("[]") @map("top_risks") @db.JsonB
+  topOpportunities Json     @default("[]") @map("top_opportunities") @db.JsonB
+  computedAt      DateTime  @default(now()) @map("computed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, computedAt])
+  @@map("ai_digital_twins")
+}
+
+model AiExecReport {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  reportType  String    @map("report_type") @db.VarChar(50)
+  executiveRole String  @map("executive_role") @db.VarChar(50)
+  title       String    @db.VarChar(255)
+  period      String    @db.VarChar(50)
+  periodStart DateTime? @map("period_start")
+  periodEnd   DateTime? @map("period_end")
+  sections    Json      @default("[]") @db.JsonB
+  aiSummary   String?   @map("ai_summary") @db.Text
+  keyMetrics  Json      @default("{}") @map("key_metrics") @db.JsonB
+  highlights  Json      @default("[]") @db.JsonB
+  concerns    Json      @default("[]") @db.JsonB
+  nextActions Json      @default("[]") @map("next_actions") @db.JsonB
+  status      String    @default("draft") @db.VarChar(30)
+  generatedBy String    @map("generated_by") @db.Uuid
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, reportType])
+  @@index([tenantId, status])
+  @@map("ai_exec_reports")
+}
+
+model AiExecRecommendation {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  executiveRole    String    @map("executive_role") @db.VarChar(50)
+  category         String    @db.VarChar(50)
+  title            String    @db.VarChar(255)
+  description      String    @db.Text
+  rationale        String    @db.Text
+  confidenceScore  Float     @default(0.8) @map("confidence_score")
+  impactLevel      String    @default("medium") @map("impact_level") @db.VarChar(20)
+  effortLevel      String    @default("medium") @map("effort_level") @db.VarChar(20)
+  priority         Int       @default(3)
+  status           String    @default("pending") @db.VarChar(30)
+  proposedActions  Json      @default("[]") @map("proposed_actions") @db.JsonB
+  relatedEntityType String?  @map("related_entity_type") @db.VarChar(50)
+  relatedEntityId  String?   @map("related_entity_id") @db.Uuid
+  approvedBy       String?   @map("approved_by") @db.Uuid
+  approvedAt       DateTime? @map("approved_at")
+  rejectedBy       String?   @map("rejected_by") @db.Uuid
+  rejectedAt       DateTime? @map("rejected_at")
+  rejectionReason  String?   @map("rejection_reason") @db.Text
+  implementedAt    DateTime? @map("implemented_at")
+  outcome          String?   @db.Text
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+  isActive         Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([tenantId, executiveRole])
+  @@index([tenantId, priority])
+  @@map("ai_exec_recommendations")
+}
+
+model AiExecDecision {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  executiveRole String   @map("executive_role") @db.VarChar(50)
+  title        String    @db.VarChar(255)
+  context      String    @db.Text
+  decision     String    @db.Text
+  decisionDate DateTime  @map("decision_date")
+  outcome      String?   @db.Text
+  factors      Json      @default("[]") @db.JsonB
+  alternatives Json      @default("[]") @db.JsonB
+  lessons      String?   @db.Text
+  confidenceAtTime Float @default(0.8) @map("confidence_at_time")
+  actualScore  Float?    @map("actual_score")
+  decidedBy    String    @map("decided_by") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, executiveRole])
+  @@index([tenantId, decisionDate])
+  @@map("ai_exec_decisions")
+}
+
+model AiExecProposal {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  executiveRole   String    @map("executive_role") @db.VarChar(50)
+  proposalType    String    @map("proposal_type") @db.VarChar(30)
+  title           String    @db.VarChar(255)
+  description     String    @db.Text
+  rationale       String    @db.Text
+  proposedPayload Json      @map("proposed_payload") @db.JsonB
+  priority        String    @default("medium") @db.VarChar(20)
+  estimatedImpact String?   @map("estimated_impact") @db.Text
+  status          String    @default("pending_approval") @db.VarChar(30)
+  approvalNote    String?   @map("approval_note") @db.Text
+  approvedBy      String?   @map("approved_by") @db.Uuid
+  approvedAt      DateTime? @map("approved_at")
+  rejectedBy      String?   @map("rejected_by") @db.Uuid
+  rejectedAt      DateTime? @map("rejected_at")
+  executedAt      DateTime? @map("executed_at")
+  executionResult Json?     @map("execution_result") @db.JsonB
+  linkedEntityType String?  @map("linked_entity_type") @db.VarChar(50)
+  linkedEntityId  String?   @map("linked_entity_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([tenantId, proposalType])
+  @@map("ai_exec_proposals")
+}
+
+model AiBizPrediction {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  predictionType String    @map("prediction_type") @db.VarChar(50)
+  executiveRole  String?   @map("executive_role") @db.VarChar(50)
+  horizon        String    @db.VarChar(20)
+  prediction     Json      @db.JsonB
+  narrative      String    @db.Text
+  confidence     Float     @default(0.7)
+  keyDrivers     Json      @default("[]") @map("key_drivers") @db.JsonB
+  riskFactors    Json      @default("[]") @map("risk_factors") @db.JsonB
+  assumptions    Json      @default("[]") @db.JsonB
+  actualOutcome  Json?     @map("actual_outcome") @db.JsonB
+  accuracy       Float?
+  computedAt     DateTime  @default(now()) @map("computed_at")
+  validUntil     DateTime? @map("valid_until")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, predictionType])
+  @@index([tenantId, computedAt])
+  @@map("ai_biz_predictions")
+}
+
+model AiScenario {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  name         String    @db.VarChar(255)
+  description  String    @db.Text
+  scenarioType String    @default("what_if") @map("scenario_type") @db.VarChar(30)
+  baselineData Json      @map("baseline_data") @db.JsonB
+  assumptions  Json      @default("[]") @db.JsonB
+  projections  Json      @default("{}") @db.JsonB
+  riskFactors  Json      @default("[]") @map("risk_factors") @db.JsonB
+  narrative    String?   @db.Text
+  confidence   Float     @default(0.7)
+  status       String    @default("draft") @db.VarChar(20)
+  createdBy    String    @map("created_by") @db.Uuid
+  updatedBy    String    @map("updated_by") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, scenarioType])
+  @@map("ai_scenarios")
+}
+
+model AiKnowledgeNode {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  nodeType          String    @map("node_type") @db.VarChar(50)
+  label             String    @db.VarChar(255)
+  properties        Json      @default("{}") @db.JsonB
+  importance        Float     @default(0.5)
+  relatedEntityType String?   @map("related_entity_type") @db.VarChar(50)
+  relatedEntityId   String?   @map("related_entity_id") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  deletedAt         DateTime? @map("deleted_at")
+  isActive          Boolean   @default(true) @map("is_active")
+
+  tenant       CoreTenant         @relation(fields: [tenantId], references: [id])
+  outgoingEdges AiKnowledgeEdge[] @relation("EdgeFrom")
+  incomingEdges AiKnowledgeEdge[] @relation("EdgeTo")
+
+  @@index([tenantId, nodeType])
+  @@map("ai_knowledge_nodes")
+}
+
+model AiKnowledgeEdge {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  fromNodeId   String   @map("from_node_id") @db.Uuid
+  toNodeId     String   @map("to_node_id") @db.Uuid
+  relationship String   @db.VarChar(100)
+  weight       Float    @default(1.0)
+  metadata     Json?    @db.JsonB
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  fromNode AiKnowledgeNode @relation("EdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode   AiKnowledgeNode @relation("EdgeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  @@unique([fromNodeId, toNodeId, relationship])
+  @@index([tenantId])
+  @@map("ai_knowledge_edges")
+}
+
+model AiLessonLearned {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  category         String    @db.VarChar(50)
+  title            String    @db.VarChar(255)
+  context          String    @db.Text
+  outcome          String    @db.Text
+  lesson           String    @db.Text
+  tags             String[]
+  confidence       Float     @default(0.8)
+  relatedDecisions Json      @default("[]") @map("related_decisions") @db.JsonB
+  createdBy        String    @map("created_by") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+  isActive         Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, category])
+  @@map("ai_lessons_learned")
 }
