@@ -1,0 +1,18 @@
+{
+  "name": "@reno/testing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@reno/core": "workspace:*",
+    "@reno/database": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^22.15.31",
+    "vitest": "^3.2.4"
+  }
+}

@@ -5,10 +5,15 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
+    "@types/node": "^22.15.31",
+    "@vitest/coverage-v8": "^4.1.9",
     "typescript": "^5.8.3",
-    "@types/node": "^22.15.31"
+    "vitest": "^4.1.9"
   }
 }
