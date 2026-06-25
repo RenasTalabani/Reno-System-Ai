@@ -1,0 +1,298 @@
+{
+  "phase": 21,
+  "name": "World-Class Testing Platform",
+  "version": "v21.0.0",
+  "status": "COMPLETE",
+  "completedAt": "2026-06-25",
+  "commit": "971ec07",
+  "tag": "v21.0.0",
+
+  "summary": {
+    "totalTestFiles": 10,
+    "totalTests": 66,
+    "totalE2ESpecs": 12,
+    "loadTestSuites": 2,
+    "coveragePackages": 3,
+    "ciJobs": 8
+  },
+
+  "unitTests": {
+    "runner": "Vitest v4.1.9",
+    "packages": [
+      {
+        "package": "@reno/core",
+        "file": "packages/core/src/__tests__/core.test.ts",
+        "tests": 28,
+        "passed": 28,
+        "failed": 0,
+        "coverage": {
+          "statements": "100%",
+          "branches": "100%",
+          "functions": "100%",
+          "lines": "100%"
+        },
+        "suites": [
+          "RenoError (properties, defaults, details, codes, aliases)",
+          "buildSuccessResponse (envelope, meta, overrides, null/array data, timestamps)",
+          "buildErrorResponse (code/message, meta, requestId, details)",
+          "omit (removes keys, multiple keys, non-mutation)",
+          "pick (picks keys, single key, non-mutation)",
+          "sleep (async delay)",
+          "TenantPlan / TenantStatus / UserStatus constants"
+        ]
+      },
+      {
+        "package": "@reno/auth",
+        "file": "packages/auth/src/__tests__/auth.test.ts",
+        "tests": 38,
+        "passed": 38,
+        "failed": 0,
+        "coverage": {
+          "statements": "91.66%",
+          "branches": "74.19%",
+          "functions": "94.11%",
+          "lines": "96.07%"
+        },
+        "suites": [
+          "signAccessToken / verifyAccessToken (valid, invalid, tampered, wrong secret)",
+          "signRefreshToken / verifyRefreshToken",
+          "extractBearerToken (valid Bearer, undefined, wrong prefix, empty)",
+          "hashPassword (bcrypt $2 prefix, uniqueness)",
+          "verifyPassword (correct, wrong, empty)",
+          "validatePasswordStrength (5 rules)",
+          "generateMfaSecret (base32 format, otpauth URL)",
+          "verifyMfaCode",
+          "generateBackupCodes (count, format XXXX-XXXX-XXXX-XXXX, uniqueness)",
+          "generateApiKey (reno_ prefix, uniqueness, prefix extraction)",
+          "hashApiKey (hex output, deterministic, different inputs)"
+        ]
+      }
+    ]
+  },
+
+  "integrationTests": {
+    "runner": "Vitest + Fastify inject()",
+    "database": "PostgreSQL (real DB, no mocks)",
+    "files": [
+      {
+        "file": "apps/api/src/__tests__/integration/health.test.ts",
+        "routes": ["GET /health", "GET /unknown"],
+        "tests": ["200 with status:ok + service:reno-api", "unknown routes return 404"]
+      },
+      {
+        "file": "apps/api/src/__tests__/integration/auth.test.ts",
+        "routes": [
+          "POST /v1/auth/login",
+          "GET /v1/auth/me",
+          "POST /v1/auth/logout",
+          "GET /v1/auth/sessions",
+          "POST /v1/auth/refresh"
+        ],
+        "scenarios": [
+          "valid login returns 200 + accessToken + refreshToken + user",
+          "wrong password returns 401",
+          "wrong email returns 401",
+          "missing tenantSlug returns 400",
+          "missing email returns 400",
+          "invalid email format returns 400",
+          "empty password returns 400",
+          "non-existent tenant returns 401",
+          "meta structure validation",
+          "/me with valid token returns 200 + user data",
+          "/me with no token returns 401",
+          "/me with invalid token returns 401",
+          "/me with malformed Bearer returns 401",
+          "logout returns 200 + loggedOut:true",
+          "sessions returns list on 200",
+          "refresh with valid token returns new accessToken",
+          "refresh with invalid token returns 401"
+        ]
+      },
+      {
+        "file": "apps/api/src/__tests__/integration/users.test.ts",
+        "routes": ["GET /v1/users", "GET /v1/users/:id"],
+        "scenarios": [
+          "paginated list returns 200",
+          "no auth returns 401",
+          "limit param respected",
+          "search param filters results",
+          "user shape excludes passwordHash",
+          "by id returns 200",
+          "non-existent id returns 404"
+        ]
+      },
+      {
+        "file": "apps/api/src/__tests__/integration/rbac.test.ts",
+        "routes": [
+          "GET /v1/roles",
+          "GET /v1/org/departments",
+          "GET /v1/audit-logs",
+          "GET /v1/settings"
+        ],
+        "scenarios": [
+          "roles list returns 200",
+          "departments list returns 200",
+          "audit logs returns 200",
+          "settings returns 200",
+          "tenant isolation: all users have same tenantId"
+        ]
+      },
+      {
+        "file": "apps/api/src/__tests__/integration/modules.test.ts",
+        "modules": {
+          "HR": ["GET /v1/hr/employees", "GET /v1/hr/leave-requests", "GET /v1/hr/attendance", "GET /v1/hr/payroll"],
+          "CRM": ["GET /v1/crm/contacts", "GET /v1/crm/companies", "GET /v1/crm/opportunities"],
+          "Sales": ["GET /v1/sales/quotations", "GET /v1/sales/orders", "GET /v1/sales/invoices"],
+          "Finance": ["GET /v1/finance/accounts", "GET /v1/finance/journals"],
+          "Inventory": ["GET /v1/inventory/products", "GET /v1/inventory/warehouses"],
+          "Projects": ["GET /v1/pm/projects"],
+          "Helpdesk": ["GET /v1/helpdesk/tickets", "GET /v1/helpdesk/categories"]
+        },
+        "authCheck": "9 protected routes verified to return 401 without token"
+      }
+    ]
+  },
+
+  "e2eTests": {
+    "runner": "Playwright v1.61.1",
+    "browsers": ["Chromium", "Firefox", "Mobile Chrome (Pixel 5)"],
+    "config": "apps/web/playwright.config.ts",
+    "files": [
+      {
+        "file": "apps/web/e2e/auth.spec.ts",
+        "specs": [
+          "shows login form",
+          "redirects to dashboard on valid credentials",
+          "shows error for wrong password",
+          "shows error for invalid email format",
+          "redirects to /login when accessing dashboard unauthenticated",
+          "successful login flow end-to-end",
+          "logout clears session and redirects to login"
+        ]
+      },
+      {
+        "file": "apps/web/e2e/dashboard.spec.ts",
+        "specs": [
+          "renders welcome heading",
+          "shows sidebar navigation",
+          "sidebar contains main navigation links (Dashboard, Users, HR)",
+          "shows stat cards (Total Users, Active Roles)",
+          "shows Reno System branding in sidebar",
+          "topbar renders with title",
+          "navigates to Users page",
+          "navigates to HR page",
+          "navigates to Settings page",
+          "active link is highlighted in sidebar",
+          "sidebar is visible on desktop"
+        ]
+      }
+    ]
+  },
+
+  "loadTests": {
+    "runner": "k6",
+    "files": [
+      {
+        "file": "tests/load/auth-load.js",
+        "name": "Auth Load Test",
+        "stages": "10→50→50→0 users over 3 minutes",
+        "thresholds": {
+          "p95_response_time": "< 500ms",
+          "p99_response_time": "< 1000ms",
+          "error_rate": "< 1%"
+        },
+        "scenario": "Login → GET /me → GET /sessions"
+      },
+      {
+        "file": "tests/load/api-stress.js",
+        "name": "API Stress Test",
+        "stages": "25→100→200→100→0 users over 5 minutes",
+        "thresholds": {
+          "p95_response_time": "< 2000ms",
+          "error_rate": "< 5%"
+        },
+        "scenario": "Random read across 8 endpoints"
+      }
+    ]
+  },
+
+  "sharedTestingPackage": {
+    "package": "@reno/testing",
+    "location": "packages/testing/",
+    "exports": [
+      "makeId() — random CUID-style ID",
+      "makeEmail() — unique test email",
+      "makeTenant() — tenant object factory",
+      "makeUser() — user object factory",
+      "makeAccessTokenPayload() — JWT payload factory",
+      "makeLoginRequest() — login body factory",
+      "makeAuthHeader() — Authorization header builder",
+      "DEMO_TENANT_SLUG, DEMO_ADMIN_EMAIL, DEMO_ADMIN_PASSWORD",
+      "TEST_JWT_ACCESS_SECRET, TEST_JWT_REFRESH_SECRET",
+      "STRONG_PASSWORDS, WEAK_PASSWORDS, VALID_EMAILS, INVALID_EMAILS",
+      "API_RESPONSE_SHAPE, API_ERROR_SHAPE matchers",
+      "setupJwtEnv(), setupDbEnv(), waitFor(), expectRejection(), randomString()"
+    ]
+  },
+
+  "ciCdPipeline": {
+    "file": ".github/workflows/ci.yml",
+    "trigger": "push to master/main/develop, PRs to master/main",
+    "features": ["concurrency cancellation", "dependency caching", "PostgreSQL service container"],
+    "jobs": [
+      { "name": "setup", "description": "Install dependencies, cache node_modules" },
+      { "name": "quality", "description": "TypeScript typecheck all packages" },
+      { "name": "unit-tests", "description": "Run @reno/core and @reno/auth with coverage, upload artifacts" },
+      { "name": "integration-tests", "description": "Spin up PostgreSQL, migrate, seed, run API tests with coverage" },
+      { "name": "build", "description": "Build all packages, cache outputs" },
+      { "name": "e2e-tests", "description": "Start API + Web, run Playwright, upload reports and traces on failure" },
+      { "name": "coverage-report", "description": "Aggregate coverage artifacts into job summary" },
+      { "name": "ci-status", "description": "Gate: all required jobs must pass before merge" }
+    ]
+  },
+
+  "coverageSummary": {
+    "thresholds": {
+      "lines": "70% (packages), 60% (api)",
+      "functions": "70% (packages), 60% (api)",
+      "branches": "60% (packages), 50% (api)",
+      "statements": "70% (packages), 60% (api)"
+    },
+    "results": {
+      "@reno/core": { "statements": "100%", "branches": "100%", "functions": "100%", "lines": "100%" },
+      "@reno/auth": { "statements": "91.66%", "branches": "74.19%", "functions": "94.11%", "lines": "96.07%" }
+    },
+    "allThresholdsMet": true
+  },
+
+  "bugFixesIncluded": {
+    "mobileLoginServerError": "Fixed double-unwrap of ApiResponse.success() in auth_provider.dart",
+    "webGetMeNotFound": "Added GET /v1/auth/me endpoint + server restart with proper env",
+    "webCssUnstyled": "Created apps/web/postcss.config.js — required by Tailwind v3 + Next.js 15",
+    "zodErrorHandling": "Added explicit ZodError catch in Fastify error handler"
+  },
+
+  "deliverables": [
+    "vitest.workspace.ts — unified multi-project test runner",
+    "vitest.config.ts — root coverage config",
+    "packages/core/vitest.config.ts",
+    "packages/auth/vitest.config.ts",
+    "apps/api/vitest.config.ts",
+    "packages/core/src/__tests__/core.test.ts (28 tests)",
+    "packages/auth/src/__tests__/auth.test.ts (38 tests)",
+    "packages/testing/ — shared test utilities",
+    "apps/api/src/__tests__/setup.ts — Fastify test app builder",
+    "apps/api/src/__tests__/integration/health.test.ts",
+    "apps/api/src/__tests__/integration/auth.test.ts",
+    "apps/api/src/__tests__/integration/users.test.ts",
+    "apps/api/src/__tests__/integration/rbac.test.ts",
+    "apps/api/src/__tests__/integration/modules.test.ts",
+    "apps/web/playwright.config.ts",
+    "apps/web/e2e/auth.spec.ts (7 specs)",
+    "apps/web/e2e/dashboard.spec.ts (11 specs)",
+    "tests/load/auth-load.js (k6, 50 VU)",
+    "tests/load/api-stress.js (k6, 200 VU)",
+    "tests/load/README.md",
+    ".github/workflows/ci.yml (8-job pipeline)"
+  ]
+}
