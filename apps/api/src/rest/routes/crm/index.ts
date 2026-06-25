@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { crmDashboardRoutes } from './dashboard.routes.js'
 import { crmContactRoutes } from './contacts.routes.js'
 import { crmCompanyRoutes } from './companies.routes.js'
@@ -10,6 +11,7 @@ import { crmContractRoutes } from './contracts.routes.js'
 import { crmTagRoutes } from './tags.routes.js'
 
 export async function crmRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
   await app.register(crmDashboardRoutes, { prefix: '/dashboard' })
   await app.register(crmContactRoutes, { prefix: '/contacts' })
   await app.register(crmCompanyRoutes, { prefix: '/companies' })

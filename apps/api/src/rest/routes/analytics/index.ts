@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { biOverviewRoutes } from './overview.routes.js'
 import { biDashboardRoutes } from './dashboard.routes.js'
 import { biKpiRoutes } from './kpi.routes.js'
@@ -8,6 +9,7 @@ import { biInsightRoutes } from './insights.routes.js'
 import { biHealthRoutes } from './health.routes.js'
 
 export async function analyticsRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
   await app.register(biOverviewRoutes, { prefix: '/overview' })
   await app.register(biDashboardRoutes, { prefix: '/dashboards' })
   await app.register(biKpiRoutes, { prefix: '/kpis' })

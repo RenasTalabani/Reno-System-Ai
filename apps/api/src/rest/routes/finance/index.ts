@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { finDashboardRoutes } from './dashboard.routes.js'
 import { finFiscalYearRoutes } from './fiscal-years.routes.js'
 import { finAccountRoutes } from './accounts.routes.js'
@@ -11,6 +12,7 @@ import { finBudgetRoutes } from './budgets.routes.js'
 import { finReportsRoutes } from './reports.routes.js'
 
 export async function financeRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
   await app.register(finDashboardRoutes, { prefix: '/dashboard' })
   await app.register(finFiscalYearRoutes, { prefix: '/fiscal-years' })
   await app.register(finAccountRoutes, { prefix: '/accounts' })

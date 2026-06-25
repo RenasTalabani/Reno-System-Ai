@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { salesDashboardRoutes } from './dashboard.routes.js'
 import { salesProductRoutes } from './products.routes.js'
 import { salesQuotationRoutes } from './quotations.routes.js'
@@ -12,6 +13,7 @@ import { salesPriceListRoutes } from './price-lists.routes.js'
 import { salesDiscountRoutes } from './discounts.routes.js'
 
 export async function salesRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
   await app.register(salesDashboardRoutes, { prefix: '/dashboard' })
   await app.register(salesProductRoutes, { prefix: '/products' })
   await app.register(salesQuotationRoutes, { prefix: '/quotations' })

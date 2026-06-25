@@ -32,8 +32,8 @@ describe('HR Module', () => {
     expect(JSON.parse(res.body).success).toBe(true)
   })
 
-  it('GET /v1/hr/leave-requests returns list', async () => {
-    const res = await getList('/v1/hr/leave-requests')
+  it('GET /v1/hr/leave/requests returns list', async () => {
+    const res = await getList('/v1/hr/leave/requests')
     expect(res.statusCode).toBe(200)
     expect(JSON.parse(res.body).success).toBe(true)
   })
@@ -44,8 +44,8 @@ describe('HR Module', () => {
     expect(JSON.parse(res.body).success).toBe(true)
   })
 
-  it('GET /v1/hr/payroll returns list', async () => {
-    const res = await getList('/v1/hr/payroll')
+  it('GET /v1/hr/payroll/payslips returns list', async () => {
+    const res = await getList('/v1/hr/payroll/payslips')
     expect(res.statusCode).toBe(200)
     expect(JSON.parse(res.body).success).toBe(true)
   })
@@ -104,8 +104,8 @@ describe('Finance Module', () => {
     expect(JSON.parse(res.body).success).toBe(true)
   })
 
-  it('GET /v1/finance/journals returns list', async () => {
-    const res = await getList('/v1/finance/journals')
+  it('GET /v1/finance/journal-entries returns list', async () => {
+    const res = await getList('/v1/finance/journal-entries')
     expect(res.statusCode).toBe(200)
     expect(JSON.parse(res.body).success).toBe(true)
   })

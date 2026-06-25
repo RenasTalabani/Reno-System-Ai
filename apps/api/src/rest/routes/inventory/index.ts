@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { invDashboardRoutes } from './dashboard.routes.js'
 import { invCategoryRoutes } from './categories.routes.js'
 import { invUnitRoutes } from './units.routes.js'
@@ -12,6 +13,7 @@ import { invAdjustmentRoutes } from './adjustments.routes.js'
 import { invReorderRuleRoutes } from './reorder-rules.routes.js'
 
 export async function inventoryRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
   await app.register(invDashboardRoutes, { prefix: '/dashboard' })
   await app.register(invCategoryRoutes, { prefix: '/categories' })
   await app.register(invUnitRoutes, { prefix: '/units' })
