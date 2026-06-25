@@ -1,0 +1,308 @@
+{
+  "phase": 24,
+  "name": "Observability & Monitoring Platform",
+  "status": "COMPLETE",
+  "version": "v24.0.0",
+  "commit": "8689280",
+  "completedAt": "2026-06-26T00:00:00.000Z",
+  "duration": "~8 hours (session continuation from Phase 23 approval)",
+
+  "summary": "Full-stack observability platform added to Reno System: Prometheus metrics, Grafana dashboards, OpenTelemetry distributed tracing, Reno Brain AI anomaly detection, per-tenant health scoring, background job monitoring, Web Vitals frontend reporting, Flutter crash reporting, and 8 automated alert rules. All data sources are live production Prisma queries — no mocks.",
+
+  "deliverables": {
+    "infrastructure": {
+      "prometheus": {
+        "version": "prom/prometheus:v2.51.0",
+        "port": 9090,
+        "scrapeInterval": "10s",
+        "alertRules": 8,
+        "status": "running"
+      },
+      "grafana": {
+        "version": "grafana/grafana:10.4.2",
+        "port": 3001,
+        "credentials": "admin/reno_grafana",
+        "dashboards": 2,
+        "status": "running"
+      }
+    },
+
+    "prometheusMetrics": {
+      "http": [
+        "reno_http_requests_total{method,route,status_code}",
+        "reno_http_errors_total{method,route}",
+        "reno_http_request_duration_seconds{method,route} (histogram, 11 buckets)"
+      ],
+      "database": [
+        "reno_db_query_duration_seconds{model,operation} (histogram, 10 buckets)",
+        "reno_db_slow_queries_total{model,operation}"
+      ],
+      "cache": [
+        "reno_cache_hits_total{key_prefix}",
+        "reno_cache_misses_total{key_prefix}",
+        "reno_cache_errors_total"
+      ],
+      "jobs": [
+        "reno_jobs_pending_total",
+        "reno_jobs_completed_total{queue,type}",
+        "reno_jobs_failed_total{queue,type}",
+        "reno_job_duration_seconds{queue,type}"
+      ],
+      "auth": [
+        "reno_active_sessions_total",
+        "reno_auth_failures_total{reason}"
+      ],
+      "tracing": [
+        "reno_trace_spans_total",
+        "reno_active_spans"
+      ],
+      "kpi": [
+        "reno_kpi_total_users",
+        "reno_kpi_total_employees",
+        "reno_kpi_total_contacts",
+        "reno_kpi_open_tickets"
+      ],
+      "process": [
+        "reno_process_heap_bytes",
+        "reno_process_heap_total_bytes",
+        "reno_process_rss_bytes",
+        "reno_api_uptime_seconds",
+        "reno_nodejs_* (default metrics: GC, event loop, CPU)"
+      ]
+    },
+
+    "alertRules": [
+      { "name": "RenoAPIDown", "severity": "critical", "condition": "up == 0 for 1m" },
+      { "name": "HighErrorRate", "severity": "warning", "condition": "5xx rate > 5% for 5m" },
+      { "name": "CriticalErrorRate", "severity": "critical", "condition": "5xx rate > 20% for 2m" },
+      { "name": "HighP95Latency", "severity": "warning", "condition": "p95 duration > 2s for 10m" },
+      { "name": "HighMemoryUsage", "severity": "warning", "condition": "heap used > 80% for 15m" },
+      { "name": "JobQueueBacklog", "severity": "warning", "condition": "pending jobs > 100 for 10m" },
+      { "name": "HighCacheMissRate", "severity": "warning", "condition": "miss rate > 50% for 10m" },
+      { "name": "SlowDatabaseQueries", "severity": "warning", "condition": "slow queries > 10 for 5m" }
+    ],
+
+    "grafanaDashboards": [
+      {
+        "name": "Reno System Overview",
+        "file": "infra/grafana/dashboards/reno-overview.json",
+        "panels": 17,
+        "rows": [
+          "Stats row: uptime, RPM, error rate, cache hit %, pending jobs, heap MB, active traces, slow queries",
+          "HTTP request rate by method",
+          "P95 / P99 latency heatmap",
+          "HTTP error rate",
+          "Heap memory usage",
+          "DB query duration P95",
+          "Cache hit vs miss rate",
+          "Background job queue depth",
+          "Active sessions"
+        ]
+      },
+      {
+        "name": "Reno Tenant KPIs",
+        "file": "infra/grafana/dashboards/reno-tenants.json",
+        "panels": 4,
+        "rows": [
+          "Tenant request rate",
+          "Active sessions per tenant",
+          "Business KPIs (users, employees, contacts, open tickets) over time"
+        ]
+      }
+    ],
+
+    "opentelemetry": {
+      "sdk": "@opentelemetry/sdk-node",
+      "instrumentations": ["FastifyInstrumentation", "PgInstrumentation"],
+      "exporters": {
+        "production": "OTLP proto (Jaeger/Tempo via OTEL_EXPORTER_OTLP_ENDPOINT)",
+        "development": "counting-only (no console spam)"
+      },
+      "propagators": ["W3C TraceContext", "Baggage"],
+      "samplingStrategy": "always-on"
+    },
+
+    "monitoringAPI": {
+      "basePrefix": "/v1/monitoring",
+      "endpoints": [
+        "GET /health/platform — overall health + memory + service statuses",
+        "GET /health/tenants — per-tenant health score 0-100 from real DB",
+        "GET /health/dependencies — live latency to Postgres + Redis",
+        "POST /health/kpi/refresh — force KPI collection",
+        "POST /health/web-vitals — receive Core Web Vitals from Next.js",
+        "POST /health/mobile-crash — receive Flutter crash reports",
+        "GET /alerts — list ObsAlert rules",
+        "POST /alerts — create alert rule",
+        "PATCH /alerts/:id — update alert rule",
+        "DELETE /alerts/:id — soft-delete alert rule",
+        "GET /alerts/incidents — list incidents",
+        "POST /alerts/incidents — create incident",
+        "PATCH /alerts/incidents/:id/resolve — resolve incident",
+        "GET /alerts/incidents/summary — counts by severity",
+        "GET /kpi — live business KPIs (all from real Prisma)",
+        "GET /kpi/history — snapshot history for trend charts",
+        "GET /kpi/prometheus — Prometheus metrics as JSON",
+        "GET /traces/config — OTel config info",
+        "GET /traces/summary — span count stats",
+        "GET /ai/analyze — full Reno Brain anomaly analysis on live telemetry",
+        "GET /ai/dashboard — AI monitoring summary",
+        "POST /ai/incidents/:id/analyze — AI root cause for specific incident"
+      ]
+    },
+
+    "renoBrainAIMonitoring": {
+      "model": "claude-haiku-4-5-20251001 (configurable via AI_MODEL env)",
+      "telemetrySources": [
+        "Prometheus registry (live prom-client metrics)",
+        "ObsIncident table (open incidents)",
+        "SysAuditLog (recent activity)",
+        "CoreUser / CoreSession (active users/sessions)",
+        "SecLoginAttempt (failed login counts)",
+        "SysJob (failed job counts)",
+        "SecSecurityEvent (recent security events)"
+      ],
+      "outputJSON": {
+        "overallRisk": "low|medium|high|critical",
+        "riskScore": "0-100",
+        "anomalies": "array with rootCause, evidence, recommendation, autoResolvable",
+        "recommendations": "actionable steps",
+        "recurringPatterns": "learned patterns",
+        "healthyAreas": "what is working well"
+      },
+      "autoIncidentCreation": "critical anomalies auto-create ObsIncident records",
+      "dataSource": "live_production — no mocks"
+    },
+
+    "prismaModels": [
+      "ObsAlert — alert rule definitions with condition JSON",
+      "ObsIncident — auto-created for critical anomalies, resolvable",
+      "ObsMetricSnapshot — 5m KPI snapshots for trend history",
+      "ObsServiceDependency — service topology map"
+    ],
+
+    "frontendObservability": {
+      "webVitals": {
+        "hook": "useReportWebVitals (Next.js built-in)",
+        "metrics": ["LCP", "FID", "CLS", "TTFB", "FCP", "INP"],
+        "delivery": "navigator.sendBeacon (non-blocking)",
+        "endpoint": "POST /v1/monitoring/health/web-vitals",
+        "file": "apps/web/src/components/web-vitals.tsx"
+      }
+    },
+
+    "mobileCrashReporting": {
+      "mechanism": "runZonedGuarded + FlutterError.onError",
+      "storage": "Hive box (offline buffer, max 50 reports)",
+      "delivery": "POST /v1/monitoring/health/mobile-crash via Dio",
+      "context": "captures: error, stackTrace, context, fatal flag, appVersion, device info, timestamp",
+      "file": "apps/mobile/lib/core/crash/crash_reporter.dart"
+    },
+
+    "tenantHealthScoring": {
+      "scale": "0-100",
+      "deductions": {
+        "failedLoginsLastHour_gt_20": -15,
+        "failedLoginsLastHour_gt_5": -5,
+        "openIncidents": "-10 per incident",
+        "failedJobsLast24h_gt_10": -10
+      },
+      "statuses": {
+        "healthy": "score >= 80",
+        "degraded": "score 50-79",
+        "critical": "score < 50"
+      }
+    }
+  },
+
+  "filesChanged": {
+    "new": [
+      "apps/api/src/observability/metrics.ts",
+      "apps/api/src/observability/tracing.ts",
+      "apps/api/src/observability/slow-query.ts",
+      "apps/api/src/observability/kpi-collector.ts",
+      "apps/api/src/rest/routes/monitoring/index.ts",
+      "apps/api/src/rest/routes/monitoring/health.routes.ts",
+      "apps/api/src/rest/routes/monitoring/alerts.routes.ts",
+      "apps/api/src/rest/routes/monitoring/kpi.routes.ts",
+      "apps/api/src/rest/routes/monitoring/tracing.routes.ts",
+      "apps/api/src/rest/routes/monitoring/ai-monitor.routes.ts",
+      "apps/mobile/lib/core/crash/crash_reporter.dart",
+      "apps/web/src/components/web-vitals.tsx",
+      "infra/prometheus/prometheus.yml",
+      "infra/prometheus/alert-rules.yml",
+      "infra/grafana/dashboards/reno-overview.json",
+      "infra/grafana/dashboards/reno-tenants.json",
+      "infra/grafana/provisioning/datasources/prometheus.yml",
+      "infra/grafana/provisioning/dashboards/default.yml",
+      "packages/database/prisma/migrations/20260625233026_phase24_observability_monitoring/migration.sql"
+    ],
+    "modified": [
+      "apps/api/src/server.ts (prom-client wired, tracing/kpi-collector/slow-query hooks)",
+      "apps/api/src/cache/index.ts (cache hit/miss/error counters)",
+      "apps/api/src/rest/routes/index.ts (monitoring routes registered)",
+      "apps/mobile/lib/main.dart (runZonedGuarded + FlutterError.onError)",
+      "apps/web/src/app/layout.tsx (WebVitals component added)",
+      "docker-compose.yml (prometheus + grafana services + volumes)",
+      "packages/database/prisma/schema.prisma (4 new models, CoreTenant relations)",
+      "packages/database/src/generated/prisma/* (regenerated Prisma client)",
+      "pnpm-workspace.yaml (protobufjs: true for OTel build)",
+      "pnpm-lock.yaml (OTel SDK + prom-client lockfile updates)"
+    ]
+  },
+
+  "typeScriptErrors": 0,
+  "typeScriptCheck": "PASSED — pnpm --filter @reno/api exec tsc --noEmit",
+
+  "technicalFixes": [
+    {
+      "issue": "OTel v2.x API breaking change",
+      "fix": "Replaced 'new Resource({})' with 'resourceFromAttributes({})' from @opentelemetry/resources v2.8.0"
+    },
+    {
+      "issue": "SysAuditLog uses occurredAt not createdAt",
+      "fix": "All audit log queries updated to use occurredAt field"
+    },
+    {
+      "issue": "AiUsageLog uses requestDurationMs not latencyMs, status not success",
+      "fix": "AI usage log creates corrected to match schema"
+    },
+    {
+      "issue": "helpTicket model name wrong",
+      "fix": "Changed to sdTicket (Helpdesk module uses SdTicket model)"
+    },
+    {
+      "issue": "SysAuditLog has entityType/entityId not resourceType/resourceId",
+      "fix": "Web Vitals and mobile crash audit entries corrected"
+    }
+  ],
+
+  "mandatoryCompliance": {
+    "realDataRequirement": "FULLY MET — all KPI gauges, health scores, AI telemetry, and incident detection query live Prisma production data. No mocks anywhere.",
+    "scope": "ALL 18 mandatory Phase 24 scope items delivered",
+    "scopeItems": [
+      "Distributed tracing (OpenTelemetry) — DONE",
+      "Structured logging with correlation IDs — DONE (x-correlation-id header propagation)",
+      "Grafana-ready metrics — DONE (prom-client registry at /metrics)",
+      "Prometheus production dashboards — DONE (2 auto-provisioned dashboards)",
+      "Live tenant health dashboard — DONE (/v1/monitoring/health/tenants)",
+      "Database slow-query monitoring — DONE (prisma.$use() interceptor, 500ms threshold)",
+      "Redis monitoring — DONE (cache hit/miss/error counters + health check)",
+      "Queue monitoring — DONE (job gauges, job completed/failed counters)",
+      "API latency heatmaps — DONE (http_request_duration histogram in Grafana)",
+      "Live memory and CPU monitoring — DONE (reno_nodejs_* default metrics + custom heap gauges)",
+      "Automatic alert rules — DONE (8 Prometheus alert rules)",
+      "Service dependency map — DONE (/v1/monitoring/health/dependencies)",
+      "Background job monitoring — DONE (job gauges wired in kpi-collector)",
+      "Mobile crash reporting integration — DONE (Flutter runZonedGuarded + CrashReporter)",
+      "Frontend performance monitoring — DONE (Next.js Web Vitals component)",
+      "Business KPI monitoring — DONE (real-time KPI collector + Grafana tenant dashboard)",
+      "AI monitoring dashboard — DONE (/v1/monitoring/ai/dashboard)",
+      "Self-healing recommendations from Reno Brain — DONE (/v1/monitoring/ai/analyze)"
+    ]
+  },
+
+  "nextPhase": {
+    "rule": "STOP — awaiting ChatGPT review before Phase 25 begins",
+    "status": "WAITING_FOR_REVIEW"
+  }
+}
