@@ -1,0 +1,84 @@
+{
+  "label": "optimized",
+  "timestamp": "2026-06-25T23:08:50.486Z",
+  "config": {
+    "baseUrl": "http://localhost:4000",
+    "concurrency": 20,
+    "iterationsPerEndpoint": 60
+  },
+  "results": {
+    "GET /health": {
+      "count": 60,
+      "min": 4,
+      "max": 33,
+      "mean": 12,
+      "p50": 6,
+      "p95": 25,
+      "p99": 33
+    },
+    "POST /v1/auth/login": {
+      "count": 30,
+      "min": 779,
+      "max": 3128,
+      "mean": 2222,
+      "p50": 2262,
+      "p95": 2940,
+      "p99": 3128,
+      "errors": 0
+    },
+    "GET /v1/auth/me": {
+      "count": 60,
+      "min": 8,
+      "max": 80,
+      "mean": 32,
+      "p50": 23,
+      "p95": 79,
+      "p99": 80
+    },
+    "GET /v1/users": {
+      "count": 60,
+      "min": 29,
+      "max": 70,
+      "mean": 47,
+      "p50": 42,
+      "p95": 60,
+      "p99": 70
+    },
+    "GET /v1/hr/employees": {
+      "count": 60,
+      "min": 7,
+      "max": 51,
+      "mean": 26,
+      "p50": 24,
+      "p95": 34,
+      "p99": 51
+    },
+    "GET /v1/crm/contacts": {
+      "count": 60,
+      "min": 11,
+      "max": 48,
+      "mean": 25,
+      "p50": 23,
+      "p95": 40,
+      "p99": 48
+    },
+    "GET /v1/security/dashboard": {
+      "count": 60,
+      "min": 11,
+      "max": 54,
+      "mean": 35,
+      "p50": 33,
+      "p95": 52,
+      "p99": 54
+    },
+    "GET /v1/audit-logs": {
+      "count": 60,
+      "min": 14,
+      "max": 48,
+      "mean": 30,
+      "p50": 29,
+      "p95": 37,
+      "p99": 48
+    }
+  }
+}

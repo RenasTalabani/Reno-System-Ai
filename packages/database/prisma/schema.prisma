@@ -14,8 +14,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // =============================================================================
@@ -323,6 +324,8 @@ model CoreUser {
   @@unique([tenantId, email])
   @@index([tenantId])
   @@index([tenantId, status])
+  @@index([tenantId, deletedAt])
+  @@index([tenantId, lockedUntil])
   @@map("core_users")
 }
 
@@ -512,6 +515,8 @@ model CoreSession {
 
   @@index([tenantId, userId])
   @@index([refreshTokenHash])
+  @@index([tenantId, userId, revokedAt, expiresAt])
+  @@index([isActive, expiresAt])
   @@map("core_sessions")
 }
 
@@ -982,6 +987,8 @@ model HrEmployee {
   @@index([tenantId, departmentId])
   @@index([tenantId, status])
   @@index([tenantId, managerId])
+  @@index([tenantId, deletedAt])
+  @@index([tenantId, deletedAt, createdAt])
   @@map("hr_employees")
 }
 
@@ -1850,6 +1857,8 @@ model CrmContact {
   @@index([tenantId, status])
   @@index([tenantId, email])
   @@index([tenantId, leadScore])
+  @@index([tenantId, deletedAt])
+  @@index([tenantId, deletedAt, createdAt])
   @@map("crm_contacts")
 }
 

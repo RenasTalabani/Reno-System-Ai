@@ -13,9 +13,13 @@ class ApiClient {
 
   ApiClient(this._storage) {
     _dio = Dio(BaseOptions(
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {'Content-Type': 'application/json'},
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 20),
+      // Request gzip-compressed responses for smaller payloads
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br',
+      },
     ));
 
     _dio.interceptors.add(_AuthInterceptor(_storage, _dio));
@@ -30,15 +34,24 @@ class ApiClient {
     _dio.options.baseUrl = baseUrl;
   }
 
+  // Deduplicates identical concurrent GET requests to the same URL+params.
+  final Map<String, Future<Response<dynamic>>> _inflightGets = {};
+
   Future<ApiResponse<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     T Function(dynamic)? fromJson,
   }) async {
+    final key = '$path?${queryParameters?.entries.map((e) => '${e.key}=${e.value}').join('&') ?? ''}';
     try {
-      final res = await _dio.get(path, queryParameters: queryParameters);
+      final future = _inflightGets.putIfAbsent(
+        key,
+        () => _dio.get(path, queryParameters: queryParameters).whenComplete(() => _inflightGets.remove(key)),
+      );
+      final res = await future;
       return ApiResponse.success(res.data, fromJson);
     } on DioException catch (e) {
+      _inflightGets.remove(key);
       return ApiResponse.error(_handleError(e));
     }
   }

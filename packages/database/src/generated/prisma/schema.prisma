@@ -14,8 +14,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // =============================================================================
@@ -157,6 +158,10 @@ model CoreTenant {
   aiScenarios              AiScenario[]
   aiKnowledgeNodes         AiKnowledgeNode[]
   aiLessonsLearned         AiLessonLearned[]
+  securityPolicy           CoreTenantSecurityPolicy?
+  secEvents                SecSecurityEvent[]
+  secIpRules               SecIpRule[]
+  secLoginAttempts         SecLoginAttempt[]
 
   @@map("core_tenants")
 }
@@ -280,42 +285,47 @@ model CoreTeam {
 }
 
 model CoreUser {
-  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId           String    @map("tenant_id") @db.Uuid
-  email              String    @db.VarChar(255)
-  emailVerified      Boolean   @default(false) @map("email_verified")
-  phone              String?   @db.VarChar(50)
-  phoneVerified      Boolean   @default(false) @map("phone_verified")
-  passwordHash       String    @map("password_hash") @db.VarChar(255)
-  status             String    @default("active") @db.VarChar(50)
-  mfaEnabled         Boolean   @default(false) @map("mfa_enabled")
-  mfaSecret          String?   @map("mfa_secret") @db.VarChar(255)
-  mfaBackupCodes     String?   @map("mfa_backup_codes") @db.Text
-  lastLoginAt        DateTime? @map("last_login_at")
-  lastLoginIp        String?   @map("last_login_ip") @db.VarChar(50)
-  passwordChangedAt  DateTime? @map("password_changed_at")
-  mustChangePassword Boolean   @default(false) @map("must_change_password")
-  locale             String    @default("en") @db.VarChar(20)
-  timezone           String?   @db.VarChar(100)
-  metadata           Json      @default("{}") @db.JsonB
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
-  createdBy          String?   @map("created_by") @db.Uuid
-  updatedBy          String?   @map("updated_by") @db.Uuid
-  deletedAt          DateTime? @map("deleted_at")
-  isActive           Boolean   @default(true) @map("is_active")
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  email               String    @db.VarChar(255)
+  emailVerified       Boolean   @default(false) @map("email_verified")
+  phone               String?   @db.VarChar(50)
+  phoneVerified       Boolean   @default(false) @map("phone_verified")
+  passwordHash        String    @map("password_hash") @db.VarChar(255)
+  status              String    @default("active") @db.VarChar(50)
+  mfaEnabled          Boolean   @default(false) @map("mfa_enabled")
+  mfaSecret           String?   @map("mfa_secret") @db.VarChar(255)
+  mfaBackupCodes      String?   @map("mfa_backup_codes") @db.Text
+  lastLoginAt         DateTime? @map("last_login_at")
+  lastLoginIp         String?   @map("last_login_ip") @db.VarChar(50)
+  passwordChangedAt   DateTime? @map("password_changed_at")
+  mustChangePassword  Boolean   @default(false) @map("must_change_password")
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+  locale              String    @default("en") @db.VarChar(20)
+  timezone            String?   @db.VarChar(100)
+  metadata            Json      @default("{}") @db.JsonB
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  createdBy           String?   @map("created_by") @db.Uuid
+  updatedBy           String?   @map("updated_by") @db.Uuid
+  deletedAt           DateTime? @map("deleted_at")
+  isActive            Boolean   @default(true) @map("is_active")
 
-  tenant        CoreTenant                   @relation(fields: [tenantId], references: [id])
-  profile       CoreUserProfile?
-  memberships   CoreUserMembership[]
-  userRoles     CoreUserRole[]
-  permOverrides CoreUserPermissionOverride[]
-  sessions      CoreSession[]
-  notifications SysNotification[]
+  tenant          CoreTenant                   @relation(fields: [tenantId], references: [id])
+  profile         CoreUserProfile?
+  memberships     CoreUserMembership[]
+  userRoles       CoreUserRole[]
+  permOverrides   CoreUserPermissionOverride[]
+  sessions        CoreSession[]
+  notifications   SysNotification[]
+  passwordHistory CorePasswordHistory[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
   @@index([tenantId, status])
+  @@index([tenantId, deletedAt])
+  @@index([tenantId, lockedUntil])
   @@map("core_users")
 }
 
@@ -505,6 +515,8 @@ model CoreSession {
 
   @@index([tenantId, userId])
   @@index([refreshTokenHash])
+  @@index([tenantId, userId, revokedAt, expiresAt])
+  @@index([isActive, expiresAt])
   @@map("core_sessions")
 }
 
@@ -689,6 +701,128 @@ model SysApiKey {
   @@map("sys_api_keys")
 }
 
+// =============================================================================
+// SECURITY MODULE — Phase 22
+// =============================================================================
+
+model CoreTenantSecurityPolicy {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId String @unique @map("tenant_id") @db.Uuid
+
+  // Password policy
+  passwordMinLength     Int     @default(12) @map("password_min_length")
+  passwordRequireUpper  Boolean @default(true) @map("password_require_upper")
+  passwordRequireLower  Boolean @default(true) @map("password_require_lower")
+  passwordRequireNumber Boolean @default(true) @map("password_require_number")
+  passwordRequireSymbol Boolean @default(true) @map("password_require_symbol")
+  passwordExpiryDays    Int     @default(0) @map("password_expiry_days")
+  passwordHistoryCount  Int     @default(5) @map("password_history_count")
+
+  // Login lockout policy
+  maxFailedAttempts   Int @default(5) @map("max_failed_attempts")
+  lockoutDurationMins Int @default(15) @map("lockout_duration_mins")
+
+  // Session policy
+  sessionTimeoutMins    Int @default(480) @map("session_timeout_mins")
+  maxConcurrentSessions Int @default(10) @map("max_concurrent_sessions")
+
+  // MFA policy
+  mfaRequired          Boolean @default(false) @map("mfa_required")
+  mfaRequiredForAdmins Boolean @default(false) @map("mfa_required_for_admins")
+
+  // IP policy
+  ipAllowlistEnabled Boolean @default(false) @map("ip_allowlist_enabled")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdBy String?  @map("created_by") @db.Uuid
+  updatedBy String?  @map("updated_by") @db.Uuid
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@map("core_tenant_security_policies")
+}
+
+model CorePasswordHistory {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user CoreUser @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([userId, createdAt])
+  @@map("core_password_history")
+}
+
+model SecLoginAttempt {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String?  @map("tenant_id") @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  email      String   @db.VarChar(255)
+  ipAddress  String?  @map("ip_address") @db.VarChar(50)
+  userAgent  String?  @map("user_agent") @db.Text
+  success    Boolean
+  failReason String?  @map("fail_reason") @db.VarChar(100)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant? @relation(fields: [tenantId], references: [id])
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@index([tenantId, createdAt])
+  @@index([userId, createdAt])
+  @@map("sec_login_attempts")
+}
+
+model SecSecurityEvent {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String?   @map("user_id") @db.Uuid
+  sessionId   String?   @map("session_id") @db.Uuid
+  eventType   String    @map("event_type") @db.VarChar(100)
+  severity    String    @db.VarChar(20)
+  title       String    @db.VarChar(255)
+  description String?   @db.Text
+  ipAddress   String?   @map("ip_address") @db.VarChar(50)
+  userAgent   String?   @map("user_agent") @db.Text
+  metadata    Json      @default("{}") @db.JsonB
+  resolved    Boolean   @default(false)
+  resolvedAt  DateTime? @map("resolved_at")
+  resolvedBy  String?   @map("resolved_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, severity])
+  @@index([tenantId, eventType])
+  @@index([tenantId, resolved])
+  @@map("sec_security_events")
+}
+
+model SecIpRule {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  type      String    @db.VarChar(20)
+  cidr      String    @db.VarChar(50)
+  label     String?   @db.VarChar(100)
+  reason    String?   @db.Text
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, type, isActive])
+  @@map("sec_ip_rules")
+}
+
 // sys_translations — User-generated content translations (entity-level)
 // e.g. product descriptions, HR document names, custom field values
 model SysTranslation {
@@ -853,6 +987,8 @@ model HrEmployee {
   @@index([tenantId, departmentId])
   @@index([tenantId, status])
   @@index([tenantId, managerId])
+  @@index([tenantId, deletedAt])
+  @@index([tenantId, deletedAt, createdAt])
   @@map("hr_employees")
 }
 
@@ -1721,6 +1857,8 @@ model CrmContact {
   @@index([tenantId, status])
   @@index([tenantId, email])
   @@index([tenantId, leadScore])
+  @@index([tenantId, deletedAt])
+  @@index([tenantId, deletedAt, createdAt])
   @@map("crm_contacts")
 }
 

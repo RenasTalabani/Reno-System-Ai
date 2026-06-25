@@ -16,6 +16,7 @@ import {
 import { RenoError, ErrorCode, buildSuccessResponse } from '@reno/core'
 import { eventBus, EventTypes } from '@reno/events'
 import { requireAuth } from '../middleware/auth.js'
+import { withCache, cacheSet, cacheDel, CacheKey, TTL } from '../../cache/index.js'
 import { logger } from '@reno/logger'
 
 const LoginSchema = z.object({
@@ -77,9 +78,11 @@ function ipInCidr(ip: string, cidr: string): boolean {
 }
 
 async function getSecurityPolicy(tenantId: string) {
-  const policy = await prisma.coreTenantSecurityPolicy.findUnique({
-    where: { tenantId },
-  })
+  const policy = await withCache(
+    CacheKey.securityPolicy(tenantId),
+    TTL.SECURITY_POLICY,
+    () => prisma.coreTenantSecurityPolicy.findUnique({ where: { tenantId } }),
+  )
   return policy ?? { ...DEFAULT_POLICY, tenantId }
 }
 
