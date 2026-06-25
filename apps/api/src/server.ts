@@ -4,6 +4,7 @@ import path from 'node:path'
 // Load root .env — try repo root (../../ from apps/api/) then local fallback
 loadEnv({ path: path.resolve(process.cwd(), '../../.env'), override: false })
 loadEnv({ path: path.resolve(process.cwd(), '.env'), override: false })
+
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
@@ -16,59 +17,39 @@ import { registerRoutes } from './rest/routes/index.js'
 import { errorHandler } from './rest/middleware/error-handler.js'
 import { disconnectCache } from './cache/index.js'
 import { startJobProcessor, stopJobProcessor } from './jobs/processor.js'
+import { startKpiCollector, stopKpiCollector } from './observability/kpi-collector.js'
+import { installSlowQueryMonitor } from './observability/slow-query.js'
+import { initTracing, shutdownTracing } from './observability/tracing.js'
+import {
+  registry,
+  httpRequestsTotal,
+  httpErrorsTotal,
+  httpRequestDuration,
+  normalizeRoute,
+} from './observability/metrics.js'
 
 const PORT = parseInt(process.env['PORT'] ?? '4000', 10)
 const HOST = process.env['HOST'] ?? '0.0.0.0'
 
-// ─── Performance: in-process metrics ─────────────────────────────────────────
+// Initialize distributed tracing before Fastify loads
+initTracing()
 
-interface RequestMetrics {
-  count: number
-  errors: number
-  totalMs: number
-  p95Buffer: number[]
-}
-
-const metrics = new Map<string, RequestMetrics>()
-const startTime = Date.now()
-
-function recordMetric(route: string, durationMs: number, isError: boolean) {
-  let m = metrics.get(route)
-  if (!m) {
-    m = { count: 0, errors: 0, totalMs: 0, p95Buffer: [] }
-    metrics.set(route, m)
-  }
-  m.count++
-  m.totalMs += durationMs
-  if (isError) m.errors++
-  // Keep last 1000 durations for percentile computation
-  m.p95Buffer.push(durationMs)
-  if (m.p95Buffer.length > 1000) m.p95Buffer.shift()
-}
-
-function computeP95(buffer: number[]): number {
-  if (buffer.length === 0) return 0
-  const sorted = [...buffer].sort((a, b) => a - b)
-  return sorted[Math.floor(sorted.length * 0.95)] ?? sorted[sorted.length - 1] ?? 0
-}
+// Install Prisma slow-query monitoring
+installSlowQueryMonitor()
 
 async function bootstrap() {
-  // ─── Fastify Instance ───────────────────────────────────────────────────────
   const app = Fastify({
-    logger: {
-      level: process.env['LOG_LEVEL'] ?? 'info',
-    },
+    logger: { level: process.env['LOG_LEVEL'] ?? 'info' },
     requestIdHeader: 'x-request-id',
     genReqId: () => crypto.randomUUID(),
-    // Performance: enable body limit and trust proxy for correct IP detection
-    bodyLimit: 5 * 1024 * 1024, // 5 MB
+    bodyLimit: 5 * 1024 * 1024,
     trustProxy: true,
   })
 
   // ─── Response Compression ───────────────────────────────────────────────────
   await app.register(compress, {
     global: true,
-    threshold: 1024, // Only compress responses > 1KB
+    threshold: 1024,
     encodings: ['br', 'gzip', 'deflate'],
   })
 
@@ -96,12 +77,26 @@ async function bootstrap() {
 
   await app.register(cookie)
 
-  // ─── Performance Instrumentation ────────────────────────────────────────────
+  // ─── Prometheus Instrumentation Hook ────────────────────────────────────────
   app.addHook('onResponse', async (request, reply) => {
-    const route = request.routeOptions?.url ?? request.url.split('?')[0] ?? 'unknown'
-    const ms = Math.round(reply.elapsedTime)
-    const isError = reply.statusCode >= 500
-    recordMetric(route, ms, isError)
+    const route = normalizeRoute(request.routeOptions?.url ?? request.url)
+    const method = request.method
+    const status = String(reply.statusCode)
+    const durationSec = reply.elapsedTime / 1000
+
+    httpRequestsTotal.inc({ method, route, status_code: status })
+    httpRequestDuration.observe({ method, route }, durationSec)
+
+    if (reply.statusCode >= 500) {
+      httpErrorsTotal.inc({ method, route })
+    }
+  })
+
+  // ─── Correlation ID propagation ─────────────────────────────────────────────
+  app.addHook('onRequest', async (request, reply) => {
+    const correlationId = request.headers['x-correlation-id'] ?? request.id
+    reply.header('x-correlation-id', correlationId)
+    reply.header('x-request-id', request.id)
   })
 
   // ─── Error Handler ──────────────────────────────────────────────────────────
@@ -117,7 +112,7 @@ async function bootstrap() {
     version: '0.1.0',
     timestamp: new Date().toISOString(),
     environment: process.env['NODE_ENV'] ?? 'development',
-    uptime: Math.round((Date.now() - startTime) / 1000),
+    uptime: Math.round(process.uptime()),
   }))
 
   app.get('/health/db', async () => {
@@ -125,77 +120,39 @@ async function bootstrap() {
     return { status: 'ok', database: 'connected' }
   })
 
-  // ─── Performance Metrics (Prometheus-compatible) ────────────────────────────
+  // ─── Prometheus Metrics Endpoint ────────────────────────────────────────────
   app.get('/metrics', async (_request, reply) => {
-    const lines: string[] = [
-      '# HELP reno_api_uptime_seconds API uptime in seconds',
-      '# TYPE reno_api_uptime_seconds gauge',
-      `reno_api_uptime_seconds ${Math.round((Date.now() - startTime) / 1000)}`,
-      '',
-      '# HELP reno_http_requests_total Total HTTP requests',
-      '# TYPE reno_http_requests_total counter',
-      '',
-      '# HELP reno_http_request_duration_ms HTTP request duration histogram (p95)',
-      '# TYPE reno_http_request_duration_ms gauge',
-      '',
-      '# HELP reno_http_error_rate HTTP error rate per route',
-      '# TYPE reno_http_error_rate gauge',
-    ]
-
-    for (const [route, m] of metrics) {
-      const label = `route="${route}"`
-      const avg = m.count > 0 ? Math.round(m.totalMs / m.count) : 0
-      const p95 = computeP95(m.p95Buffer)
-      const errRate = m.count > 0 ? (m.errors / m.count).toFixed(4) : '0'
-
-      lines.push(
-        `reno_http_requests_total{${label}} ${m.count}`,
-        `reno_http_request_duration_ms{${label},quantile="avg"} ${avg}`,
-        `reno_http_request_duration_ms{${label},quantile="0.95"} ${p95}`,
-        `reno_http_error_rate{${label}} ${errRate}`,
-      )
-    }
-
-    reply.header('Content-Type', 'text/plain; version=0.0.4')
-    return lines.join('\n')
+    reply.header('Content-Type', registry.contentType)
+    return registry.metrics()
   })
 
   // ─── Metrics as JSON ────────────────────────────────────────────────────────
-  app.get('/metrics/json', async () => {
-    const result: Record<string, unknown> = {
-      uptime: Math.round((Date.now() - startTime) / 1000),
-      startedAt: new Date(startTime).toISOString(),
-      routes: {} as Record<string, unknown>,
-    }
-
-    for (const [route, m] of metrics) {
-      ;(result['routes'] as Record<string, unknown>)[route] = {
-        requests: m.count,
-        errors: m.errors,
-        errorRate: m.count > 0 ? +(m.errors / m.count).toFixed(4) : 0,
-        avgMs: m.count > 0 ? Math.round(m.totalMs / m.count) : 0,
-        p95Ms: computeP95(m.p95Buffer),
-      }
-    }
-
-    return result
-  })
+  app.get('/metrics/json', async () => ({
+    uptime: Math.round(process.uptime()),
+    startedAt: new Date(Date.now() - process.uptime() * 1000).toISOString(),
+    metrics: await registry.getMetricsAsJSON(),
+  }))
 
   // ─── Background Jobs ────────────────────────────────────────────────────────
   startJobProcessor()
+
+  // ─── KPI Collector ──────────────────────────────────────────────────────────
+  startKpiCollector()
 
   // ─── Start ───────────────────────────────────────────────────────────────────
   await app.listen({ port: PORT, host: HOST })
 
   logger.info(`
-  ╔═══════════════════════════════════════╗
-  ║        Reno System API v0.1.0         ║
-  ╠═══════════════════════════════════════╣
-  ║  REST:      http://localhost:${PORT}/v1   ║
-  ║  Health:    http://localhost:${PORT}/health  ║
-  ║  Metrics:   http://localhost:${PORT}/metrics ║
-  ║  Env:       ${(process.env['NODE_ENV'] ?? 'development').padEnd(10)}              ║
-  ╚═══════════════════════════════════════╝
+  ╔═══════════════════════════════════════════╗
+  ║        Reno System API v0.1.0             ║
+  ╠═══════════════════════════════════════════╣
+  ║  REST:       http://localhost:${PORT}/v1      ║
+  ║  Health:     http://localhost:${PORT}/health  ║
+  ║  Metrics:    http://localhost:${PORT}/metrics ║
+  ║  Grafana:    http://localhost:3001         ║
+  ║  Prometheus: http://localhost:9090         ║
+  ║  Env:        ${(process.env['NODE_ENV'] ?? 'development').padEnd(12)}               ║
+  ╚═══════════════════════════════════════════╝
   `)
 }
 
@@ -203,9 +160,11 @@ async function bootstrap() {
 async function shutdown(signal: string) {
   logger.info(`${signal} received — shutting down gracefully`)
   stopJobProcessor()
+  stopKpiCollector()
   await Promise.all([
     prisma.$disconnect(),
     disconnectCache(),
+    shutdownTracing(),
   ])
   process.exit(0)
 }

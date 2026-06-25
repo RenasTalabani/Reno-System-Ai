@@ -4623,6 +4623,66 @@ exports.Prisma.AiLessonLearnedScalarFieldEnum = {
   isActive: 'isActive'
 };
 
+exports.Prisma.ObsAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  severity: 'severity',
+  category: 'category',
+  condition: 'condition',
+  isActive: 'isActive',
+  firedAt: 'firedAt',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  firedCount: 'firedCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ObsIncidentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  alertId: 'alertId',
+  title: 'title',
+  description: 'description',
+  severity: 'severity',
+  status: 'status',
+  category: 'category',
+  affectedArea: 'affectedArea',
+  metrics: 'metrics',
+  rootCause: 'rootCause',
+  aiAnalysis: 'aiAnalysis',
+  aiRecommendations: 'aiRecommendations',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  detectedAt: 'detectedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ObsMetricSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  snapshotAt: 'snapshotAt',
+  period: 'period',
+  metrics: 'metrics',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ObsServiceDependencyScalarFieldEnum = {
+  id: 'id',
+  fromService: 'fromService',
+  toService: 'toService',
+  depType: 'depType',
+  isHealthy: 'isHealthy',
+  latencyMs: 'latencyMs',
+  lastChecked: 'lastChecked',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4879,7 +4939,11 @@ exports.Prisma.ModelName = {
   AiScenario: 'AiScenario',
   AiKnowledgeNode: 'AiKnowledgeNode',
   AiKnowledgeEdge: 'AiKnowledgeEdge',
-  AiLessonLearned: 'AiLessonLearned'
+  AiLessonLearned: 'AiLessonLearned',
+  ObsAlert: 'ObsAlert',
+  ObsIncident: 'ObsIncident',
+  ObsMetricSnapshot: 'ObsMetricSnapshot',
+  ObsServiceDependency: 'ObsServiceDependency'
 };
 
 /**

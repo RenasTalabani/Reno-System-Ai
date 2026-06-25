@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { QueryProvider } from '@/lib/query-provider'
+import { WebVitals } from '@/components/web-vitals'
 import './globals.css'
 
 const inter = Inter({
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           <QueryProvider>
+            <WebVitals />
             {children}
             <Toaster
               position="top-right"

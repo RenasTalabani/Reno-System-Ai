@@ -1,0 +1,89 @@
+groups:
+  - name: reno_api_alerts
+    interval: 30s
+    rules:
+      # API down
+      - alert: RenoAPIDown
+        expr: up{job="reno_api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Reno API is down"
+          description: "The Reno API has been unreachable for more than 1 minute."
+
+      # High error rate
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(reno_http_errors_total[5m])) /
+          sum(rate(reno_http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API error rate (>5%)"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes."
+
+      # Critical error rate
+      - alert: CriticalErrorRate
+        expr: |
+          sum(rate(reno_http_errors_total[5m])) /
+          sum(rate(reno_http_requests_total[5m])) > 0.20
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical API error rate (>20%)"
+          description: "Error rate is {{ $value | humanizePercentage }} — immediate action required."
+
+      # Slow P95 latency
+      - alert: HighP95Latency
+        expr: reno_http_request_duration_seconds{quantile="0.95"} > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High P95 latency on {{ $labels.route }}"
+          description: "P95 latency is {{ $value }}s (threshold: 2s) for route {{ $labels.route }}."
+
+      # Memory pressure
+      - alert: HighMemoryUsage
+        expr: reno_process_heap_bytes / reno_process_heap_total_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High heap memory usage (>85%)"
+          description: "Heap usage is {{ $value | humanizePercentage }}."
+
+      # Job queue backlog
+      - alert: JobQueueBacklog
+        expr: reno_jobs_pending_total > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Job queue backlog growing"
+          description: "{{ $value }} pending jobs in the queue."
+
+      # Cache miss rate high
+      - alert: HighCacheMissRate
+        expr: |
+          rate(reno_cache_misses_total[5m]) /
+          (rate(reno_cache_hits_total[5m]) + rate(reno_cache_misses_total[5m])) > 0.50
+        for: 10m
+        labels:
+          severity: info
+        annotations:
+          summary: "Cache miss rate above 50%"
+          description: "Cache effectiveness is degraded."
+
+      # Slow DB queries
+      - alert: SlowDatabaseQueries
+        expr: reno_db_query_duration_seconds{quantile="0.95"} > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow database queries (P95 > 1s)"
+          description: "P95 query time is {{ $value }}s for {{ $labels.model }}.{{ $labels.operation }}."

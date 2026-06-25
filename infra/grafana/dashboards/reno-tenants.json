@@ -1,0 +1,32 @@
+{
+  "uid": "reno-tenants",
+  "title": "Reno System — Tenant Health",
+  "description": "Per-tenant health scores, active users, KPIs, error rates",
+  "tags": ["reno", "tenants", "health"],
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": { "from": "now-24h", "to": "now" },
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1, "type": "timeseries", "title": "Tenant Request Rate",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [{ "datasource": "Prometheus", "expr": "rate(reno_http_requests_total[5m])", "legendFormat": "requests/s" }]
+    },
+    {
+      "id": 2, "type": "timeseries", "title": "Active Sessions",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_active_sessions_total", "legendFormat": "active sessions" }]
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Business KPIs Over Time",
+      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
+      "targets": [
+        { "datasource": "Prometheus", "expr": "reno_kpi_total_users", "legendFormat": "total users" },
+        { "datasource": "Prometheus", "expr": "reno_kpi_total_employees", "legendFormat": "employees" },
+        { "datasource": "Prometheus", "expr": "reno_kpi_total_contacts", "legendFormat": "CRM contacts" },
+        { "datasource": "Prometheus", "expr": "reno_kpi_open_tickets", "legendFormat": "open tickets" }
+      ]
+    }
+  ]
+}

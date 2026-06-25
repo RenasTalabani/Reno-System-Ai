@@ -1,0 +1,128 @@
+{
+  "uid": "reno-overview",
+  "title": "Reno System — Overview",
+  "description": "Live platform health: API latency, error rates, cache, jobs, DB queries, memory",
+  "tags": ["reno", "overview", "production"],
+  "timezone": "browser",
+  "refresh": "10s",
+  "time": { "from": "now-1h", "to": "now" },
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "API Uptime",
+      "gridPos": { "x": 0, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_api_uptime_seconds", "legendFormat": "uptime" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "colorMode": "background" },
+      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "green" }] } } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "Request Rate (rpm)",
+      "gridPos": { "x": 3, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "sum(rate(reno_http_requests_total[1m])) * 60", "legendFormat": "rpm" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "unit": "reqpm", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "blue" }] } } }
+    },
+    {
+      "id": 3, "type": "stat", "title": "Error Rate",
+      "gridPos": { "x": 6, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "sum(rate(reno_http_errors_total[5m])) / sum(rate(reno_http_requests_total[5m])) * 100", "legendFormat": "error %" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "unit": "percent", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "green" }, { "value": 1, "color": "yellow" }, { "value": 5, "color": "red" }] } } }
+    },
+    {
+      "id": 4, "type": "stat", "title": "Cache Hit Rate",
+      "gridPos": { "x": 9, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "rate(reno_cache_hits_total[5m]) / (rate(reno_cache_hits_total[5m]) + rate(reno_cache_misses_total[5m])) * 100", "legendFormat": "hit %" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "unit": "percent", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "red" }, { "value": 60, "color": "yellow" }, { "value": 80, "color": "green" }] } } }
+    },
+    {
+      "id": 5, "type": "stat", "title": "Pending Jobs",
+      "gridPos": { "x": 12, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_jobs_pending_total", "legendFormat": "pending" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "green" }, { "value": 20, "color": "yellow" }, { "value": 100, "color": "red" }] } } }
+    },
+    {
+      "id": 6, "type": "stat", "title": "Heap Memory",
+      "gridPos": { "x": 15, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_process_heap_bytes / 1024 / 1024", "legendFormat": "heap MB" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "unit": "MiB", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "green" }, { "value": 500, "color": "yellow" }, { "value": 1000, "color": "red" }] } } }
+    },
+    {
+      "id": 7, "type": "stat", "title": "Active Traces",
+      "gridPos": { "x": 18, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_active_spans", "legendFormat": "spans" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "green" }] } } }
+    },
+    {
+      "id": 8, "type": "stat", "title": "Slow Queries (last 5m)",
+      "gridPos": { "x": 21, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "datasource": "Prometheus", "expr": "increase(reno_db_slow_queries_total[5m])", "legendFormat": "slow" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": null, "color": "green" }, { "value": 1, "color": "yellow" }, { "value": 10, "color": "red" }] } } }
+    },
+    {
+      "id": 10, "type": "timeseries", "title": "API Request Rate by Route",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [{ "datasource": "Prometheus", "expr": "rate(reno_http_requests_total[1m])", "legendFormat": "{{route}}" }],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 11, "type": "timeseries", "title": "P95 Latency by Route (ms)",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_http_request_duration_seconds{quantile=\"0.95\"} * 1000", "legendFormat": "{{route}} p95" }],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 12, "type": "timeseries", "title": "Cache Hits vs Misses",
+      "gridPos": { "x": 0, "y": 12, "w": 8, "h": 7 },
+      "targets": [
+        { "datasource": "Prometheus", "expr": "rate(reno_cache_hits_total[1m])", "legendFormat": "hits/s" },
+        { "datasource": "Prometheus", "expr": "rate(reno_cache_misses_total[1m])", "legendFormat": "misses/s" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 13, "type": "timeseries", "title": "Background Jobs",
+      "gridPos": { "x": 8, "y": 12, "w": 8, "h": 7 },
+      "targets": [
+        { "datasource": "Prometheus", "expr": "reno_jobs_pending_total", "legendFormat": "pending" },
+        { "datasource": "Prometheus", "expr": "rate(reno_jobs_completed_total[1m]) * 60", "legendFormat": "completed/min" },
+        { "datasource": "Prometheus", "expr": "rate(reno_jobs_failed_total[1m]) * 60", "legendFormat": "failed/min" }
+      ]
+    },
+    {
+      "id": 14, "type": "timeseries", "title": "DB Query Duration P95 (ms)",
+      "gridPos": { "x": 16, "y": 12, "w": 8, "h": 7 },
+      "targets": [{ "datasource": "Prometheus", "expr": "reno_db_query_duration_seconds{quantile=\"0.95\"} * 1000", "legendFormat": "{{model}}.{{operation}}" }],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 15, "type": "timeseries", "title": "Process Memory (MB)",
+      "gridPos": { "x": 0, "y": 19, "w": 8, "h": 7 },
+      "targets": [
+        { "datasource": "Prometheus", "expr": "reno_process_heap_bytes / 1048576", "legendFormat": "heap used" },
+        { "datasource": "Prometheus", "expr": "reno_process_heap_total_bytes / 1048576", "legendFormat": "heap total" },
+        { "datasource": "Prometheus", "expr": "reno_process_rss_bytes / 1048576", "legendFormat": "RSS" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "MiB" } }
+    },
+    {
+      "id": 16, "type": "timeseries", "title": "HTTP Error Rate (%)",
+      "gridPos": { "x": 8, "y": 19, "w": 8, "h": 7 },
+      "targets": [{ "datasource": "Prometheus", "expr": "rate(reno_http_errors_total[5m]) / rate(reno_http_requests_total[5m]) * 100", "legendFormat": "{{route}}" }],
+      "fieldConfig": { "defaults": { "unit": "percent" } }
+    },
+    {
+      "id": 17, "type": "timeseries", "title": "Distributed Trace Spans",
+      "gridPos": { "x": 16, "y": 19, "w": 8, "h": 7 },
+      "targets": [
+        { "datasource": "Prometheus", "expr": "rate(reno_trace_spans_total[1m])", "legendFormat": "spans/s" },
+        { "datasource": "Prometheus", "expr": "reno_active_spans", "legendFormat": "active" }
+      ]
+    }
+  ]
+}

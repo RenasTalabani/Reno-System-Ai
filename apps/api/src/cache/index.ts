@@ -7,6 +7,7 @@
 
 import Redis from 'ioredis'
 import { logger } from '@reno/logger'
+import { cacheHitsTotal, cacheMissesTotal, cacheErrorsTotal } from '../observability/metrics.js'
 
 const REDIS_URL = process.env['REDIS_URL'] ?? 'redis://localhost:6379'
 
@@ -58,12 +59,18 @@ export const CacheKey = {
 // ─── Core Helpers ─────────────────────────────────────────────────────────────
 
 export async function cacheGet<T>(key: string): Promise<T | null> {
+  const prefix = key.split(':')[1] ?? 'unknown'
   try {
     const val = await getClient().get(key)
-    if (!val) return null
+    if (!val) {
+      cacheMissesTotal.inc({ key_prefix: prefix })
+      return null
+    }
+    cacheHitsTotal.inc({ key_prefix: prefix })
     return JSON.parse(val) as T
   } catch {
-    return null // Cache miss on error — fall back to DB
+    cacheErrorsTotal.inc()
+    return null // fall back to DB
   }
 }
 

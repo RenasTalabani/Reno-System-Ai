@@ -162,6 +162,9 @@ model CoreTenant {
   secEvents                SecSecurityEvent[]
   secIpRules               SecIpRule[]
   secLoginAttempts         SecLoginAttempt[]
+  obsAlerts                ObsAlert[]
+  obsIncidents             ObsIncident[]
+  obsMetricSnapshots       ObsMetricSnapshot[]
 
   @@map("core_tenants")
 }
@@ -6701,4 +6704,91 @@ model AiLessonLearned {
 
   @@index([tenantId, category])
   @@map("ai_lessons_learned")
+}
+
+// =============================================================================
+// OBSERVABILITY MODULE — Phase 24
+// =============================================================================
+
+model ObsAlert {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?   @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(200)
+  description String?   @db.Text
+  severity    String    @default("warning") @db.VarChar(20)
+  category    String    @db.VarChar(100)
+  condition   Json      @db.JsonB
+  isActive    Boolean   @default(true) @map("is_active")
+  firedAt     DateTime? @map("fired_at")
+  resolvedAt  DateTime? @map("resolved_at")
+  resolvedBy  String?   @map("resolved_by") @db.Uuid
+  firedCount  Int       @default(0) @map("fired_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant    CoreTenant? @relation(fields: [tenantId], references: [id])
+  incidents ObsIncident[]
+
+  @@index([tenantId, severity])
+  @@index([tenantId, isActive, firedAt])
+  @@map("obs_alerts")
+}
+
+model ObsIncident {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String?   @map("tenant_id") @db.Uuid
+  alertId       String?   @map("alert_id") @db.Uuid
+  title         String    @db.VarChar(500)
+  description   String    @db.Text
+  severity      String    @default("warning") @db.VarChar(20)
+  status        String    @default("open") @db.VarChar(50)
+  category      String    @db.VarChar(100)
+  affectedArea  String?   @map("affected_area") @db.VarChar(200)
+  metrics       Json      @default("{}") @db.JsonB
+  rootCause     String?   @map("root_cause") @db.Text
+  aiAnalysis    String?   @map("ai_analysis") @db.Text
+  aiRecommendations Json? @map("ai_recommendations") @db.JsonB
+  resolvedAt    DateTime? @map("resolved_at")
+  resolvedBy    String?   @map("resolved_by") @db.Uuid
+  detectedAt    DateTime  @default(now()) @map("detected_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  tenant CoreTenant? @relation(fields: [tenantId], references: [id])
+  alert  ObsAlert?   @relation(fields: [alertId], references: [id])
+
+  @@index([tenantId, status, severity])
+  @@index([tenantId, detectedAt])
+  @@map("obs_incidents")
+}
+
+model ObsMetricSnapshot {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?  @map("tenant_id") @db.Uuid
+  snapshotAt  DateTime @default(now()) @map("snapshot_at")
+  period      String   @default("1m") @db.VarChar(10)
+  metrics     Json     @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant? @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, snapshotAt])
+  @@index([snapshotAt])
+  @@map("obs_metric_snapshots")
+}
+
+model ObsServiceDependency {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fromService String   @map("from_service") @db.VarChar(100)
+  toService   String   @map("to_service") @db.VarChar(100)
+  depType     String   @default("http") @map("dep_type") @db.VarChar(50)
+  isHealthy   Boolean  @default(true) @map("is_healthy")
+  latencyMs   Int?     @map("latency_ms")
+  lastChecked DateTime @default(now()) @map("last_checked")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([fromService, toService])
+  @@map("obs_service_dependencies")
 }

@@ -1,12 +1,31 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'app.dart';
 import 'core/notifications/push_service.dart';
+import 'core/crash/crash_reporter.dart';
 
-void main() async {
+const _apiBase = String.fromEnvironment(
+  'API_BASE',
+  defaultValue: 'http://localhost:4000',
+);
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Global Flutter error handler (UI thread errors)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    CrashReporter.reportError(
+      details.exception,
+      details.stack,
+      context: details.context?.toDescription() ?? 'flutter_framework',
+      fatal: false,
+    );
+  };
 
   // Lock orientation to portrait on phones
   await SystemChrome.setPreferredOrientations([
@@ -23,9 +42,29 @@ void main() async {
   // Init local notifications
   await PushService.init();
 
-  runApp(
-    const ProviderScope(
-      child: RenoApp(),
-    ),
+  // Init crash reporter
+  await CrashReporter.init(_apiBase);
+
+  // Wrap entire app in runZonedGuarded to catch async errors
+  runZonedGuarded(
+    () {
+      runApp(
+        const ProviderScope(
+          child: RenoApp(),
+        ),
+      );
+    },
+    (error, stack) {
+      CrashReporter.reportError(
+        error,
+        stack,
+        context: 'dart_zone',
+        fatal: true,
+      );
+      if (kDebugMode) {
+        // Re-throw in debug so the Flutter error overlay shows
+        throw error;
+      }
+    },
   );
 }
