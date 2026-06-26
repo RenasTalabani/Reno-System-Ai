@@ -1,0 +1,20 @@
+{
+  "name": "@reno/cli",
+  "version": "1.0.0",
+  "description": "Reno System CLI — manage deployments, migrations, and developer workflows",
+  "bin": {
+    "reno": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/cli.ts"
+  },
+  "keywords": ["reno", "cli"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "tsx": "^4.19.1"
+  }
+}

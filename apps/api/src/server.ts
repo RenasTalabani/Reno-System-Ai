@@ -11,6 +11,8 @@ import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import cookie from '@fastify/cookie'
 import compress from '@fastify/compress'
+import swagger from '@fastify/swagger'
+import swaggerUi from '@fastify/swagger-ui'
 import { logger } from '@reno/logger'
 import { prisma } from '@reno/database'
 import { registerRoutes } from './rest/routes/index.js'
@@ -45,6 +47,72 @@ async function bootstrap() {
     genReqId: () => crypto.randomUUID(),
     bodyLimit: 5 * 1024 * 1024,
     trustProxy: true,
+  })
+
+  // ─── OpenAPI / Swagger ──────────────────────────────────────────────────────
+  await app.register(swagger, {
+    openapi: {
+      openapi: '3.0.3',
+      info: {
+        title: 'Reno System API',
+        description: 'AI-native Business Operating System — REST API reference.\n\nAuthenticate with `Authorization: Bearer <jwt>` or `X-API-Key: <key>`.',
+        version: '1.0.0',
+        contact: { name: 'Reno Support', email: 'api@reno.app' },
+        license: { name: 'Proprietary' },
+      },
+      externalDocs: { description: 'Developer Portal', url: '/developer' },
+      servers: [
+        { url: '/v1', description: 'Current version' },
+      ],
+      components: {
+        securitySchemes: {
+          BearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+          ApiKeyHeader: { type: 'apiKey', in: 'header', name: 'X-API-Key' },
+        },
+      },
+      security: [{ BearerAuth: [] }, { ApiKeyHeader: [] }],
+      tags: [
+        { name: 'Auth', description: 'Authentication & session management' },
+        { name: 'Users', description: 'User management' },
+        { name: 'Org', description: 'Organization, companies, branches' },
+        { name: 'HR', description: 'Human resources — employees, attendance, leave, payroll' },
+        { name: 'Projects', description: 'Project & task management' },
+        { name: 'CRM', description: 'Customer relationship management' },
+        { name: 'Sales', description: 'Sales orders, quotes, invoices' },
+        { name: 'Finance', description: 'Accounting, budgets, reports' },
+        { name: 'Inventory', description: 'Products, warehouses, stock' },
+        { name: 'Procurement', description: 'Purchase orders, suppliers' },
+        { name: 'Manufacturing', description: 'Production, BOM, work orders' },
+        { name: 'Analytics', description: 'KPIs, dashboards, forecasts' },
+        { name: 'Brain', description: 'Reno AI Brain — natural language queries, insights' },
+        { name: 'Automation', description: 'Workflows, triggers, approvals' },
+        { name: 'Helpdesk', description: 'Service desk, tickets, SLA' },
+        { name: 'Documents', description: 'Document management, OCR, e-signatures' },
+        { name: 'Knowledge Base', description: 'KB articles, categories' },
+        { name: 'Comm', description: 'Communication — messages, announcements, meetings' },
+        { name: 'Portal', description: 'Customer & employee self-service portals' },
+        { name: 'Marketplace', description: 'Plugin & theme marketplace' },
+        { name: 'Security', description: 'Security events, sessions, IP allowlist' },
+        { name: 'Monitoring', description: 'Health, metrics, web vitals, AI monitor' },
+        { name: 'Backup', description: 'Backup jobs, snapshots, restore' },
+        { name: 'DR', description: 'Disaster recovery — playbooks, readiness, RTO/RPO' },
+        { name: 'AI SRE', description: 'AI Site Reliability Engineer — incidents, forecasts' },
+        { name: 'Deployment', description: 'Deployment audit log, environment validation' },
+        { name: 'Developer', description: 'Developer platform — API keys, webhooks, sandbox' },
+      ],
+    },
+  })
+
+  await app.register(swaggerUi, {
+    routePrefix: '/docs',
+    uiConfig: {
+      docExpansion: 'list',
+      deepLinking: true,
+      displayRequestDuration: true,
+      filter: true,
+    },
+    staticCSP: true,
+    transformSpecificationClone: true,
   })
 
   // ─── Response Compression ───────────────────────────────────────────────────
@@ -153,6 +221,8 @@ async function bootstrap() {
   ║  REST:       http://localhost:${PORT}/v1      ║
   ║  Health:     http://localhost:${PORT}/health  ║
   ║  Metrics:    http://localhost:${PORT}/metrics ║
+  ║  Docs:       http://localhost:${PORT}/docs    ║
+  ║  OpenAPI:    http://localhost:${PORT}/docs/json ║
   ║  Grafana:    http://localhost:3001         ║
   ║  Prometheus: http://localhost:9090         ║
   ║  Env:        ${(process.env['NODE_ENV'] ?? 'development').padEnd(12)}               ║

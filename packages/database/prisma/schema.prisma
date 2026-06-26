@@ -169,6 +169,7 @@ model CoreTenant {
   bkpSnapshots             BkpSnapshot[]
   bkpSchedules             BkpSchedule[]
   aiSreIncidents           AiSreIncident[]
+  devWebhooks              DevWebhook[]
 
   @@map("core_tenants")
 }
@@ -7055,4 +7056,48 @@ model DepDeploymentLog {
   @@index([version])
   @@index([startedAt(sort: Desc)])
   @@map("dep_deployment_logs")
+}
+
+// =============================================================================
+// DEVELOPER PLATFORM MODULE — Phase 27: Developer Platform
+// =============================================================================
+
+// dev_webhooks — Registered webhook endpoints for event delivery
+model DevWebhook {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  url         String    @db.Text
+  secret      String    @db.VarChar(255)        // HMAC-SHA256 signing secret (stored hashed)
+  events      Json      @default("[]") @db.JsonB // array of event types e.g. ["user.created","invoice.paid"]
+  isActive    Boolean   @default(true) @map("is_active")
+  failureCount Int      @default(0) @map("failure_count")
+  lastDeliveryAt DateTime? @map("last_delivery_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  tenant    CoreTenant        @relation(fields: [tenantId], references: [id])
+  deliveries DevWebhookDelivery[]
+
+  @@index([tenantId, isActive])
+  @@map("dev_webhooks")
+}
+
+// dev_webhook_deliveries — Audit log for every webhook delivery attempt
+model DevWebhookDelivery {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  webhookId    String    @map("webhook_id") @db.Uuid
+  eventType    String    @map("event_type") @db.VarChar(100)
+  payload      Json      @db.JsonB
+  statusCode   Int?      @map("status_code")
+  responseBody String?   @map("response_body") @db.Text
+  attemptCount Int       @default(1) @map("attempt_count")
+  success      Boolean   @default(false)
+  deliveredAt  DateTime  @default(now()) @map("delivered_at")
+
+  webhook DevWebhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId, success])
+  @@index([eventType, deliveredAt(sort: Desc)])
+  @@map("dev_webhook_deliveries")
 }

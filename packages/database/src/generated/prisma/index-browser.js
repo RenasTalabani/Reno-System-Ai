@@ -4862,6 +4862,32 @@ exports.Prisma.DepDeploymentLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.DevWebhookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  url: 'url',
+  secret: 'secret',
+  events: 'events',
+  isActive: 'isActive',
+  failureCount: 'failureCount',
+  lastDeliveryAt: 'lastDeliveryAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DevWebhookDeliveryScalarFieldEnum = {
+  id: 'id',
+  webhookId: 'webhookId',
+  eventType: 'eventType',
+  payload: 'payload',
+  statusCode: 'statusCode',
+  responseBody: 'responseBody',
+  attemptCount: 'attemptCount',
+  success: 'success',
+  deliveredAt: 'deliveredAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5132,7 +5158,9 @@ exports.Prisma.ModelName = {
   DrPlaybookExecution: 'DrPlaybookExecution',
   DrReadinessScore: 'DrReadinessScore',
   AiSreIncident: 'AiSreIncident',
-  DepDeploymentLog: 'DepDeploymentLog'
+  DepDeploymentLog: 'DepDeploymentLog',
+  DevWebhook: 'DevWebhook',
+  DevWebhookDelivery: 'DevWebhookDelivery'
 };
 
 /**

@@ -1,0 +1,23 @@
+{
+  "name": "@reno/plugin-sdk",
+  "version": "1.0.0",
+  "description": "Plugin & extension SDK for building Reno System plugins",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["reno", "plugin", "sdk", "extension"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

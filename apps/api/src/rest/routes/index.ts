@@ -32,6 +32,7 @@ import { backupRoutes } from './backup/index.js'
 import { drRoutes } from './dr/index.js'
 import { aiSreRoutes } from './ai-sre/index.js'
 import { deploymentRoutes } from './deployment/index.js'
+import { developerRoutes } from './developer/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -70,6 +71,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(drRoutes, { prefix: '/dr' })
       await v1.register(aiSreRoutes, { prefix: '/ai-sre' })
       await v1.register(deploymentRoutes, { prefix: '/deployment' })
+      await v1.register(developerRoutes, { prefix: '/developer' })
     },
     { prefix: '/v1' },
   )

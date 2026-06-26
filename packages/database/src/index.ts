@@ -35,4 +35,6 @@ export type {
   DrReadinessScore,
   AiSreIncident,
   DepDeploymentLog,
+  DevWebhook,
+  DevWebhookDelivery,
 } from './generated/prisma/index.js'
