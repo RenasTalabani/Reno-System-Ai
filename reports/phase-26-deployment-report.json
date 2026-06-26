@@ -1,0 +1,204 @@
+{
+  "phase": 26,
+  "title": "Production Deployment & CI/CD",
+  "version": "v26.0.0",
+  "commit": "9f36503",
+  "tag": "v26.0.0",
+  "status": "COMPLETE",
+  "completed_at": "2026-06-26",
+  "typescript_errors": 0,
+
+  "scope_delivered": {
+    "total_items": 20,
+    "completed": 20,
+    "files_added": 50,
+    "lines_added": 4366
+  },
+
+  "deliverables": {
+    "dockerfiles": {
+      "api": "docker/api/Dockerfile",
+      "api_dockerignore": "docker/api/.dockerignore",
+      "web": "docker/web/Dockerfile",
+      "web_dockerignore": "docker/web/.dockerignore",
+      "description": "5-stage multi-stage API build (base→installer→builder→pruner→runner, non-root user 1001). 4-stage Next.js standalone build (base→installer→builder→runner, non-root user 1001). Both use Node 22 Alpine, HEALTHCHECK, least-privilege execution."
+    },
+
+    "docker_compose": {
+      "production": "docker-compose.prod.yml",
+      "staging": "docker-compose.staging.yml",
+      "services_production": ["postgres:16-alpine", "redis:7-alpine", "api (2 replicas)", "web (2 replicas)", "nginx:1.27-alpine", "prometheus:v2.53.0", "grafana:11.1.0"],
+      "description": "Production: rolling update (maxSurge=1, maxUnavailable=0), resource limits, health checks, json-file logging with rotation, internal/public network isolation. Staging: lighter limits, single replicas, debug ports exposed."
+    },
+
+    "kubernetes_manifests": {
+      "namespace": "infra/k8s/namespace.yaml",
+      "api_deployment": "infra/k8s/api/deployment.yaml",
+      "api_service": "infra/k8s/api/service.yaml",
+      "api_hpa": "infra/k8s/api/hpa.yaml",
+      "api_configmap": "infra/k8s/api/configmap.yaml",
+      "web_deployment": "infra/k8s/web/deployment.yaml",
+      "web_service": "infra/k8s/web/service.yaml",
+      "ingress": "infra/k8s/ingress.yaml",
+      "secrets_example": "infra/k8s/secrets.yaml.example",
+      "description": "HPA: 2-10 replicas, CPU 70% / Memory 80% targets. Anti-affinity across nodes. Startup/liveness/readiness probes. Ingress with cert-manager TLS. Secrets example file (never committed)."
+    },
+
+    "helm_chart": {
+      "chart": "infra/helm/reno/Chart.yaml",
+      "values_default": "infra/helm/reno/values.yaml",
+      "values_staging": "infra/helm/reno/values.staging.yaml",
+      "values_production": "infra/helm/reno/values.production.yaml",
+      "templates": [
+        "infra/helm/reno/templates/deployment-api.yaml",
+        "infra/helm/reno/templates/deployment-web.yaml",
+        "infra/helm/reno/templates/services.yaml",
+        "infra/helm/reno/templates/ingress.yaml",
+        "infra/helm/reno/templates/hpa.yaml",
+        "infra/helm/reno/templates/secrets.yaml"
+      ],
+      "install_command": "helm upgrade --install reno ./infra/helm/reno -f infra/helm/reno/values.production.yaml --set global.imageTag=v26.0.0 --set secrets.databaseUrl='...' -n reno-system"
+    },
+
+    "github_actions": {
+      "ci": ".github/workflows/ci.yml",
+      "deploy_staging": ".github/workflows/deploy-staging.yml",
+      "deploy_production": ".github/workflows/deploy-prod.yml",
+      "rollback": ".github/workflows/rollback.yml",
+      "ci_jobs": ["typecheck (tsc --noEmit)", "test (postgres + redis services)", "build (docker buildx, cache gha)"],
+      "deploy_steps": ["pull images", "run DB migration", "rolling deploy", "60s health check", "record deployment log"],
+      "production_gate": "workflow_dispatch requires typing 'DEPLOY' to confirm + GitHub environment protection rules",
+      "rollback_steps": ["target version selection", "pull images", "deploy previous version", "health check", "record rollback log"]
+    },
+
+    "deployment_scripts": {
+      "deploy_sh": "scripts/deploy.sh",
+      "rollback_sh": "scripts/rollback.sh",
+      "migrate_sh": "scripts/migrate.sh",
+      "health_check_sh": "scripts/health-check.sh",
+      "env_validate_sh": "scripts/env-validate.sh",
+      "blue_green_sh": "scripts/blue-green-switch.sh",
+      "windows_deploy_ps1": "scripts/windows-deploy.ps1",
+      "usage": {
+        "deploy": "./scripts/deploy.sh production v26.0.0",
+        "rollback": "./scripts/rollback.sh production v25.0.0 'critical bug in v26'",
+        "windows": ".\\scripts\\windows-deploy.ps1 -Environment staging -ImageTag v26.0.0",
+        "health_check": "./scripts/health-check.sh http://localhost:4000 24 5",
+        "env_validate": "./scripts/env-validate.sh production",
+        "blue_green": "./scripts/blue-green-switch.sh green"
+      }
+    },
+
+    "rest_api_routes": {
+      "base_path": "/v1/deployment",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/v1/deployment/log",
+          "description": "Record deployment event (requires DEPLOY_TOKEN header)",
+          "auth": "Bearer DEPLOY_TOKEN"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/deployment/logs",
+          "description": "Paginated deployment audit log",
+          "query_params": ["environment", "limit", "offset"]
+        },
+        {
+          "method": "GET",
+          "path": "/v1/deployment/dashboard",
+          "description": "Deployment health summary: success rate, rollback count, by-environment breakdown"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/deployment/env-validation",
+          "description": "Runtime environment variable validation — returns 200 if all required vars present",
+          "returns": ["variable checks", "node version", "hostname", "uptime"]
+        },
+        {
+          "method": "GET",
+          "path": "/v1/deployment/rollback-candidates",
+          "description": "Lists healthy completed deployments available for rollback"
+        }
+      ]
+    },
+
+    "database": {
+      "new_model": "DepDeploymentLog",
+      "table": "dep_deployment_logs",
+      "migration": "packages/database/prisma/migrations/20260626000000_phase26_deployment/migration.sql",
+      "fields": ["id (UUID PK)", "version", "environment", "deployedBy", "strategy", "status", "previousVersion", "commitSha", "branch", "migrationRan", "healthCheckPassed", "testsPassed", "rollbackReason", "durationMs", "metadata (JSONB)", "startedAt", "completedAt", "createdAt"],
+      "indexes": ["(environment, status)", "version", "startedAt DESC"]
+    },
+
+    "environment_templates": {
+      "staging": ".env.staging.example",
+      "production": ".env.production.example",
+      "gitignore_protection": [".env.staging", ".env.production", "infra/k8s/secrets.yaml"],
+      "secret_generation_commands": {
+        "jwt_secrets": "openssl rand -hex 64",
+        "encryption_keys": "openssl rand -hex 32",
+        "approval_tokens": "openssl rand -base64 48"
+      }
+    }
+  },
+
+  "deployment_commands": {
+    "local_staging": "docker compose -f docker-compose.staging.yml up -d",
+    "local_production": "IMAGE_TAG=v26.0.0 docker compose -f docker-compose.prod.yml up -d",
+    "migrate_only": "./scripts/migrate.sh",
+    "health_check": "./scripts/health-check.sh http://localhost:4000",
+    "env_validate": "./scripts/env-validate.sh production",
+    "rollback": "./scripts/rollback.sh production v25.0.0 'reason'",
+    "k8s_deploy": "kubectl apply -f infra/k8s/",
+    "helm_deploy": "helm upgrade --install reno ./infra/helm/reno -f infra/helm/reno/values.production.yaml --set global.imageTag=v26.0.0 -n reno-system",
+    "windows_deploy": ".\\scripts\\windows-deploy.ps1 -Environment production -ImageTag v26.0.0"
+  },
+
+  "safety_guarantees": {
+    "no_secrets_in_git": "All .env files with real values gitignored; infra/k8s/secrets.yaml gitignored",
+    "zero_downtime": "maxSurge=1, maxUnavailable=0 on both Docker Compose (start-first) and K8s rolling update",
+    "rollback_verified": "rollback.sh + rollback.yml both run health check after switching; record rollback log",
+    "migration_safety": "Migration runs before traffic shift; --check-only flag available for dry-run",
+    "tenant_data_safety": "DB migration uses Prisma migrate deploy (forward-only, no destructive changes without explicit SQL)",
+    "production_gate": "GitHub Actions deploy-prod.yml requires typing 'DEPLOY' + environment protection rules + separate SSH key secret"
+  },
+
+  "critical_requirements_met": {
+    "no_secrets_exposed": true,
+    "separate_environments": true,
+    "tests_before_release": true,
+    "migration_checks": true,
+    "rollback_support": true,
+    "blue_green_support": true,
+    "health_checks_before_traffic": true,
+    "tenant_data_safe_during_migration": true,
+    "docker_and_kubernetes": true,
+    "windows_setup_instructions": true
+  },
+
+  "environment_variables": {
+    "required": [
+      "DATABASE_URL",
+      "REDIS_URL",
+      "JWT_SECRET (min 64 chars)",
+      "JWT_REFRESH_SECRET (min 64 chars)",
+      "ENCRYPTION_KEY (min 32 chars)",
+      "BACKUP_ENCRYPTION_KEY (min 32 chars)",
+      "RESTORE_APPROVAL_TOKEN",
+      "OPENAI_API_KEY"
+    ],
+    "production_only": [
+      "GRAFANA_ADMIN_PASSWORD",
+      "DEPLOY_TOKEN",
+      "DOMAIN",
+      "GITHUB_REPOSITORY",
+      "IMAGE_TAG"
+    ]
+  },
+
+  "approved_by": null,
+  "approval_pending": true,
+  "next_phase": 27,
+  "mandate": "STOP and wait for ChatGPT review before beginning Phase 27"
+}
