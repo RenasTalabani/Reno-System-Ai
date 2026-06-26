@@ -165,6 +165,10 @@ model CoreTenant {
   obsAlerts                ObsAlert[]
   obsIncidents             ObsIncident[]
   obsMetricSnapshots       ObsMetricSnapshot[]
+  bkpJobs                  BkpJob[]
+  bkpSnapshots             BkpSnapshot[]
+  bkpSchedules             BkpSchedule[]
+  aiSreIncidents           AiSreIncident[]
 
   @@map("core_tenants")
 }
@@ -6788,4 +6792,233 @@ model ObsServiceDependency {
 
   @@unique([fromService, toService])
   @@map("obs_service_dependencies")
+}
+
+// =============================================================================
+// BACKUP MODULE — Phase 25: Disaster Recovery & Backup Infrastructure
+// =============================================================================
+
+// bkp_jobs — Individual backup job executions
+model BkpJob {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String?   @map("tenant_id") @db.Uuid
+  jobType         String    @map("job_type") @db.VarChar(50) // full | incremental | pitr | config | tenant
+  status          String    @default("pending") @db.VarChar(30) // pending | running | completed | failed | verified
+  targetType      String    @default("postgres") @map("target_type") @db.VarChar(50)
+  sizeBytes       BigInt?   @map("size_bytes")
+  compressedBytes BigInt?   @map("compressed_bytes")
+  storageLocation String?   @map("storage_location") @db.VarChar(500)
+  encryptionKeyId String?   @map("encryption_key_id") @db.VarChar(100)
+  integrityHash   String?   @map("integrity_hash") @db.VarChar(128) // SHA-256 hex
+  isVerified      Boolean   @default(false) @map("is_verified")
+  isImmutable     Boolean   @default(false) @map("is_immutable")
+  immutableUntil  DateTime? @map("immutable_until")
+  rpoTargetMins   Int       @default(60) @map("rpo_target_mins")
+  startedAt       DateTime? @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  durationMs      Int?      @map("duration_ms")
+  errorMessage    String?   @map("error_message") @db.Text
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  tenant       CoreTenant?      @relation(fields: [tenantId], references: [id])
+  snapshots    BkpSnapshot[]
+  restoreTests BkpRestoreTest[]
+  replications BkpReplication[]
+
+  @@index([tenantId, jobType, status])
+  @@index([createdAt(sort: Desc)])
+  @@index([status, createdAt])
+  @@map("bkp_jobs")
+}
+
+// bkp_snapshots — Named point-in-time snapshots
+model BkpSnapshot {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String?   @map("tenant_id") @db.Uuid
+  jobId          String    @map("job_id") @db.Uuid
+  snapshotType   String    @map("snapshot_type") @db.VarChar(50) // full | incremental | wal
+  label          String?   @db.VarChar(255)
+  pitrTimestamp  DateTime? @map("pitr_timestamp")
+  baseSnapshotId String?   @map("base_snapshot_id") @db.Uuid
+  walStartLsn    String?   @map("wal_start_lsn") @db.VarChar(50)
+  walEndLsn      String?   @map("wal_end_lsn") @db.VarChar(50)
+  integrityHash  String?   @map("integrity_hash") @db.VarChar(128)
+  sizeBytes      BigInt?   @map("size_bytes")
+  isVerified     Boolean   @default(false) @map("is_verified")
+  verifiedAt     DateTime? @map("verified_at")
+  expiresAt      DateTime? @map("expires_at")
+  metadata       Json      @default("{}") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  tenant         CoreTenant?   @relation(fields: [tenantId], references: [id])
+  job            BkpJob        @relation(fields: [jobId], references: [id])
+  baseSnapshot   BkpSnapshot?  @relation("SnapshotChain", fields: [baseSnapshotId], references: [id])
+  childSnapshots BkpSnapshot[] @relation("SnapshotChain")
+
+  @@index([tenantId, snapshotType])
+  @@index([pitrTimestamp])
+  @@index([jobId])
+  @@map("bkp_snapshots")
+}
+
+// bkp_restore_tests — Automated restore test results
+model BkpRestoreTest {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId           String    @map("job_id") @db.Uuid
+  testType        String    @default("integrity") @map("test_type") @db.VarChar(50) // integrity | full_restore | partial | pitr
+  status          String    @default("pending") @db.VarChar(30) // pending | running | passed | failed
+  rtoActualMins   Int?      @map("rto_actual_mins")
+  rtoTargetMins   Int       @default(60) @map("rto_target_mins")
+  recordsVerified Int?      @map("records_verified")
+  checksumPassed  Boolean   @default(false) @map("checksum_passed")
+  testedAt        DateTime  @default(now()) @map("tested_at")
+  completedAt     DateTime? @map("completed_at")
+  errorMessage    String?   @map("error_message") @db.Text
+  evidence        Json      @default("{}") @db.JsonB
+
+  job BkpJob @relation(fields: [jobId], references: [id])
+
+  @@index([jobId])
+  @@index([status, testedAt])
+  @@map("bkp_restore_tests")
+}
+
+// bkp_replication — Cross-region replication tracking
+model BkpReplication {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId          String    @map("job_id") @db.Uuid
+  targetRegion   String    @map("target_region") @db.VarChar(100)
+  targetLocation String    @map("target_location") @db.VarChar(500)
+  status         String    @default("pending") @db.VarChar(30)
+  startedAt      DateTime? @map("started_at")
+  completedAt    DateTime? @map("completed_at")
+  errorMessage   String?   @map("error_message") @db.Text
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  job BkpJob @relation(fields: [jobId], references: [id])
+
+  @@index([jobId])
+  @@index([targetRegion, status])
+  @@map("bkp_replications")
+}
+
+// bkp_schedules — Backup schedule configurations
+model BkpSchedule {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String?   @map("tenant_id") @db.Uuid
+  name               String    @db.VarChar(200)
+  jobType            String    @map("job_type") @db.VarChar(50)
+  cronExpression     String    @map("cron_expression") @db.VarChar(100)
+  isActive           Boolean   @default(true) @map("is_active")
+  rpoTargetMins      Int       @default(60) @map("rpo_target_mins")
+  rtoTargetMins      Int       @default(240) @map("rto_target_mins")
+  retentionDays      Int       @default(30) @map("retention_days")
+  enableReplication  Boolean   @default(false) @map("enable_replication")
+  replicationRegions Json      @default("[]") @map("replication_regions") @db.JsonB
+  encryptionEnabled  Boolean   @default(true) @map("encryption_enabled")
+  lastRunAt          DateTime? @map("last_run_at")
+  nextRunAt          DateTime? @map("next_run_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
+
+  tenant CoreTenant? @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, isActive])
+  @@index([nextRunAt])
+  @@map("bkp_schedules")
+}
+
+// dr_playbooks — Disaster recovery runbooks
+model DrPlaybook {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String    @db.VarChar(255)
+  description   String?   @db.Text
+  category      String    @db.VarChar(100) // database | application | network | total
+  severity      String    @default("critical") @db.VarChar(30)
+  steps         Json      @db.JsonB // ordered array of step objects
+  rtoTargetMins Int       @default(240) @map("rto_target_mins")
+  rpoTargetMins Int       @default(60) @map("rpo_target_mins")
+  isActive      Boolean   @default(true) @map("is_active")
+  lastTestedAt  DateTime? @map("last_tested_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  executions DrPlaybookExecution[]
+
+  @@index([category, isActive])
+  @@map("dr_playbooks")
+}
+
+// dr_playbook_executions — DR playbook run history
+model DrPlaybookExecution {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  playbookId    String    @map("playbook_id") @db.Uuid
+  triggeredBy   String?   @map("triggered_by") @db.Uuid
+  triggerReason String?   @map("trigger_reason") @db.VarChar(255)
+  status        String    @default("running") @db.VarChar(30) // running | completed | failed | aborted
+  currentStep   Int       @default(0) @map("current_step")
+  stepResults   Json      @default("[]") @map("step_results") @db.JsonB
+  rtoActualMins Int?      @map("rto_actual_mins")
+  startedAt     DateTime  @default(now()) @map("started_at")
+  completedAt   DateTime? @map("completed_at")
+  notes         String?   @db.Text
+
+  playbook DrPlaybook @relation(fields: [playbookId], references: [id])
+
+  @@index([playbookId, status])
+  @@index([startedAt(sort: Desc)])
+  @@map("dr_playbook_executions")
+}
+
+// dr_readiness_scores — DR readiness scoring over time
+model DrReadinessScore {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  score            Int // 0-100
+  rtoScore         Int      @map("rto_score")
+  rpoScore         Int      @map("rpo_score")
+  backupScore      Int      @map("backup_score")
+  replicationScore Int      @map("replication_score")
+  testingScore     Int      @map("testing_score")
+  playbookScore    Int      @map("playbook_score")
+  details          Json     @db.JsonB
+  scoredAt         DateTime @default(now()) @map("scored_at")
+
+  @@index([scoredAt(sort: Desc)])
+  @@map("dr_readiness_scores")
+}
+
+// ai_sre_incidents — AI SRE incident records with full timeline + RCA
+model AiSreIncident {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String?   @map("tenant_id") @db.Uuid
+  title                 String    @db.VarChar(255)
+  severity              String    @db.VarChar(30) // low | medium | high | critical
+  category              String    @db.VarChar(100) // backup | database | api | infrastructure | capacity
+  status                String    @default("open") @db.VarChar(30) // open | investigating | mitigated | resolved
+  detectedAt            DateTime  @default(now()) @map("detected_at")
+  resolvedAt            DateTime? @map("resolved_at")
+  rootCause             String?   @map("root_cause") @db.Text
+  timeline              Json      @default("[]") @db.JsonB // array of {timestamp, event, source}
+  affectedServices      Json      @default("[]") @map("affected_services") @db.JsonB
+  recommendations       Json      @default("[]") @db.JsonB
+  capacityForecast      Json?     @map("capacity_forecast") @db.JsonB
+  digitalTwinState      Json?     @map("digital_twin_state") @db.JsonB
+  aiAnalysis            String?   @map("ai_analysis") @db.Text
+  humanApprovalRequired Boolean   @default(true) @map("human_approval_required")
+  autoActionsBlocked    Boolean   @default(true) @map("auto_actions_blocked")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  deletedAt             DateTime? @map("deleted_at")
+
+  tenant CoreTenant? @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([severity, detectedAt])
+  @@map("ai_sre_incidents")
 }

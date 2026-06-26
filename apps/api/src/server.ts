@@ -20,6 +20,7 @@ import { startJobProcessor, stopJobProcessor } from './jobs/processor.js'
 import { startKpiCollector, stopKpiCollector } from './observability/kpi-collector.js'
 import { installSlowQueryMonitor } from './observability/slow-query.js'
 import { initTracing, shutdownTracing } from './observability/tracing.js'
+import { startBackupScheduler, stopBackupScheduler } from './backup/backup.scheduler.js'
 import {
   registry,
   httpRequestsTotal,
@@ -139,6 +140,9 @@ async function bootstrap() {
   // ─── KPI Collector ──────────────────────────────────────────────────────────
   startKpiCollector()
 
+  // ─── Backup Scheduler ───────────────────────────────────────────────────────
+  startBackupScheduler()
+
   // ─── Start ───────────────────────────────────────────────────────────────────
   await app.listen({ port: PORT, host: HOST })
 
@@ -161,6 +165,7 @@ async function shutdown(signal: string) {
   logger.info(`${signal} received — shutting down gracefully`)
   stopJobProcessor()
   stopKpiCollector()
+  stopBackupScheduler()
   await Promise.all([
     prisma.$disconnect(),
     disconnectCache(),

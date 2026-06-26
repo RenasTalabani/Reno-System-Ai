@@ -4683,6 +4683,164 @@ exports.Prisma.ObsServiceDependencyScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BkpJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  jobType: 'jobType',
+  status: 'status',
+  targetType: 'targetType',
+  sizeBytes: 'sizeBytes',
+  compressedBytes: 'compressedBytes',
+  storageLocation: 'storageLocation',
+  encryptionKeyId: 'encryptionKeyId',
+  integrityHash: 'integrityHash',
+  isVerified: 'isVerified',
+  isImmutable: 'isImmutable',
+  immutableUntil: 'immutableUntil',
+  rpoTargetMins: 'rpoTargetMins',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  errorMessage: 'errorMessage',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.BkpSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  jobId: 'jobId',
+  snapshotType: 'snapshotType',
+  label: 'label',
+  pitrTimestamp: 'pitrTimestamp',
+  baseSnapshotId: 'baseSnapshotId',
+  walStartLsn: 'walStartLsn',
+  walEndLsn: 'walEndLsn',
+  integrityHash: 'integrityHash',
+  sizeBytes: 'sizeBytes',
+  isVerified: 'isVerified',
+  verifiedAt: 'verifiedAt',
+  expiresAt: 'expiresAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.BkpRestoreTestScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  testType: 'testType',
+  status: 'status',
+  rtoActualMins: 'rtoActualMins',
+  rtoTargetMins: 'rtoTargetMins',
+  recordsVerified: 'recordsVerified',
+  checksumPassed: 'checksumPassed',
+  testedAt: 'testedAt',
+  completedAt: 'completedAt',
+  errorMessage: 'errorMessage',
+  evidence: 'evidence'
+};
+
+exports.Prisma.BkpReplicationScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  targetRegion: 'targetRegion',
+  targetLocation: 'targetLocation',
+  status: 'status',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BkpScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  jobType: 'jobType',
+  cronExpression: 'cronExpression',
+  isActive: 'isActive',
+  rpoTargetMins: 'rpoTargetMins',
+  rtoTargetMins: 'rtoTargetMins',
+  retentionDays: 'retentionDays',
+  enableReplication: 'enableReplication',
+  replicationRegions: 'replicationRegions',
+  encryptionEnabled: 'encryptionEnabled',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.DrPlaybookScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  severity: 'severity',
+  steps: 'steps',
+  rtoTargetMins: 'rtoTargetMins',
+  rpoTargetMins: 'rpoTargetMins',
+  isActive: 'isActive',
+  lastTestedAt: 'lastTestedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.DrPlaybookExecutionScalarFieldEnum = {
+  id: 'id',
+  playbookId: 'playbookId',
+  triggeredBy: 'triggeredBy',
+  triggerReason: 'triggerReason',
+  status: 'status',
+  currentStep: 'currentStep',
+  stepResults: 'stepResults',
+  rtoActualMins: 'rtoActualMins',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  notes: 'notes'
+};
+
+exports.Prisma.DrReadinessScoreScalarFieldEnum = {
+  id: 'id',
+  score: 'score',
+  rtoScore: 'rtoScore',
+  rpoScore: 'rpoScore',
+  backupScore: 'backupScore',
+  replicationScore: 'replicationScore',
+  testingScore: 'testingScore',
+  playbookScore: 'playbookScore',
+  details: 'details',
+  scoredAt: 'scoredAt'
+};
+
+exports.Prisma.AiSreIncidentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  severity: 'severity',
+  category: 'category',
+  status: 'status',
+  detectedAt: 'detectedAt',
+  resolvedAt: 'resolvedAt',
+  rootCause: 'rootCause',
+  timeline: 'timeline',
+  affectedServices: 'affectedServices',
+  recommendations: 'recommendations',
+  capacityForecast: 'capacityForecast',
+  digitalTwinState: 'digitalTwinState',
+  aiAnalysis: 'aiAnalysis',
+  humanApprovalRequired: 'humanApprovalRequired',
+  autoActionsBlocked: 'autoActionsBlocked',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4943,7 +5101,16 @@ exports.Prisma.ModelName = {
   ObsAlert: 'ObsAlert',
   ObsIncident: 'ObsIncident',
   ObsMetricSnapshot: 'ObsMetricSnapshot',
-  ObsServiceDependency: 'ObsServiceDependency'
+  ObsServiceDependency: 'ObsServiceDependency',
+  BkpJob: 'BkpJob',
+  BkpSnapshot: 'BkpSnapshot',
+  BkpRestoreTest: 'BkpRestoreTest',
+  BkpReplication: 'BkpReplication',
+  BkpSchedule: 'BkpSchedule',
+  DrPlaybook: 'DrPlaybook',
+  DrPlaybookExecution: 'DrPlaybookExecution',
+  DrReadinessScore: 'DrReadinessScore',
+  AiSreIncident: 'AiSreIncident'
 };
 
 /**

@@ -1,0 +1,225 @@
+{
+  "__inputs": [],
+  "__requires": [],
+  "annotations": { "list": [] },
+  "description": "Reno System — Backup & Disaster Recovery Dashboard",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Backup Health",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 3600 },
+            { "color": "red", "value": 86400 }
+          ]},
+          "unit": "s",
+          "mappings": []
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 101,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "title": "Last Backup Age",
+      "type": "stat",
+      "targets": [{ "expr": "reno_backup_last_age_seconds", "legendFormat": "Age" }]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "red", "value": null },
+            { "color": "yellow", "value": 60 },
+            { "color": "green", "value": 80 }
+          ]},
+          "unit": "none",
+          "min": 0, "max": 100,
+          "mappings": []
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 102,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "title": "DR Readiness Score",
+      "type": "stat",
+      "targets": [{ "expr": "reno_dr_readiness_score", "legendFormat": "Score" }]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 30 },
+            { "color": "red", "value": 60 }
+          ]},
+          "unit": "m",
+          "mappings": []
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 103,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "title": "Current RPO (minutes)",
+      "type": "stat",
+      "targets": [{ "expr": "reno_rpo_current_minutes", "legendFormat": "RPO" }]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 180 },
+            { "color": "red", "value": 240 }
+          ]},
+          "unit": "m",
+          "mappings": []
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 104,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "title": "RTO Target (minutes)",
+      "type": "stat",
+      "targets": [{ "expr": "reno_rto_target_minutes", "legendFormat": "RTO Target" }]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "red", "value": null },
+            { "color": "green", "value": 1 }
+          ]},
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "id": 105,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "title": "Verifications Passed",
+      "type": "stat",
+      "targets": [{ "expr": "reno_backup_verifications_passed_total", "legendFormat": "Passed" }]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "red", "value": 1 }
+          ]},
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "id": 106,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "title": "Verifications Failed",
+      "type": "stat",
+      "targets": [{ "expr": "reno_backup_verifications_failed_total", "legendFormat": "Failed" }]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 200,
+      "title": "Backup Job Rates",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "id": 201,
+      "options": { "legend": { "displayMode": "list" } },
+      "title": "Backup Jobs by Type & Status (rate/5m)",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "rate(reno_backup_jobs_total{status='completed'}[5m])", "legendFormat": "{{job_type}} completed" },
+        { "expr": "rate(reno_backup_jobs_total{status='failed'}[5m])", "legendFormat": "{{job_type}} failed" }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "id": 202,
+      "options": { "legend": { "displayMode": "list" } },
+      "title": "Backup Size Distribution",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "histogram_quantile(0.50, rate(reno_backup_size_bytes_bucket[1h]))", "legendFormat": "p50 size" },
+        { "expr": "histogram_quantile(0.95, rate(reno_backup_size_bytes_bucket[1h]))", "legendFormat": "p95 size" }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "id": 300,
+      "title": "DR Readiness Trend",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0, "max": 100 } },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 15 },
+      "id": 301,
+      "options": { "legend": { "displayMode": "list" } },
+      "title": "DR Readiness Score Over Time",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "reno_dr_readiness_score", "legendFormat": "DR Readiness Score" },
+        { "expr": "reno_rpo_current_minutes / reno_rto_target_minutes * 100", "legendFormat": "RPO % of Target" }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "id": 400,
+      "title": "Restore Tests",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
+      "id": 401,
+      "options": { "legend": { "displayMode": "list" } },
+      "title": "Restore Tests by Type & Status",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "rate(reno_restore_tests_total{status='passed'}[1h])", "legendFormat": "{{test_type}} passed" },
+        { "expr": "rate(reno_restore_tests_total{status='failed'}[1h])", "legendFormat": "{{test_type}} failed" }
+      ]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": ["reno", "backup", "dr", "disaster-recovery"],
+  "time": { "from": "now-24h", "to": "now" },
+  "title": "Reno — Backup & DR",
+  "uid": "reno-backup-dr",
+  "version": 1
+}
