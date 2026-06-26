@@ -1,0 +1,162 @@
+{
+  "phase": 27,
+  "title": "Developer Platform",
+  "version": "v27.0.0",
+  "commit": "da90140",
+  "tag": "v27.0.0",
+  "status": "COMPLETE",
+  "completed_at": "2026-06-26",
+  "typescript_errors": 0,
+
+  "scope_delivered": {
+    "files_added": 31,
+    "lines_added": 6584
+  },
+
+  "deliverables": {
+    "openapi_swagger": {
+      "package": "@fastify/swagger + @fastify/swagger-ui",
+      "spec_url": "/docs/json",
+      "ui_url": "/docs",
+      "version": "OpenAPI 3.0.3",
+      "tags": 27,
+      "security_schemes": ["BearerAuth (JWT)", "ApiKeyHeader (X-API-Key)"],
+      "features": [
+        "Interactive Swagger UI at /docs",
+        "Machine-readable JSON spec at /docs/json",
+        "27 route group tags with descriptions",
+        "Full security scheme definitions",
+        "Importable into Postman, Insomnia, Stoplight"
+      ]
+    },
+
+    "webhook_system": {
+      "models": ["DevWebhook", "DevWebhookDelivery"],
+      "migration": "packages/database/prisma/migrations/20260627000000_phase27_developer_platform/migration.sql",
+      "service": "apps/api/src/developer/webhook.service.ts",
+      "supported_events": 23,
+      "event_types": [
+        "user.created", "user.updated", "user.deleted",
+        "tenant.created", "tenant.updated",
+        "invoice.created", "invoice.paid", "invoice.overdue",
+        "ticket.created", "ticket.resolved", "ticket.escalated",
+        "employee.created", "employee.terminated",
+        "leave.requested", "leave.approved", "leave.rejected",
+        "backup.completed", "backup.failed",
+        "deployment.completed", "deployment.failed", "deployment.rolledback",
+        "dr.readiness_changed", "ai_sre.incident_detected"
+      ],
+      "security": "HMAC-SHA256 signed payload (X-Reno-Signature: sha256=<hex>)",
+      "reliability": "Auto-disable after 50 consecutive failures; failure counter reset on success",
+      "delivery_audit": "Every delivery logged to dev_webhook_deliveries with status, response, attempt count"
+    },
+
+    "developer_rest_api": {
+      "base_path": "/v1/developer",
+      "endpoints": [
+        "GET    /api-keys            — List API keys (redacted)",
+        "POST   /api-keys            — Create API key (plaintext shown once)",
+        "DELETE /api-keys/:id        — Revoke API key",
+        "GET    /webhooks            — List webhooks",
+        "POST   /webhooks            — Register webhook (secret shown once)",
+        "PATCH  /webhooks/:id        — Update webhook (events, active, name)",
+        "DELETE /webhooks/:id        — Delete webhook",
+        "GET    /webhooks/:id/deliveries — Delivery history",
+        "POST   /webhooks/:id/test   — Send test event",
+        "GET    /sandbox             — Sandbox info, rate limits, SDK links",
+        "GET    /events              — Supported webhook event types"
+      ]
+    },
+
+    "typescript_sdk": {
+      "package": "@reno/sdk",
+      "location": "packages/sdk/",
+      "entrypoint": "packages/sdk/src/index.ts",
+      "modules": {
+        "auth": "login(), logout(), refresh(), me()",
+        "brain": "query(), getInsights()",
+        "webhooks": "list(), create(), update(), delete(), deliveries(), test()"
+      },
+      "features": [
+        "createRenoClient() factory — all modules pre-attached",
+        "Full TypeScript types on all requests and responses",
+        "RenoApiError class with status code + error code",
+        "Bearer token + API key authentication",
+        "Automatic token rotation after login/refresh",
+        "AbortSignal.timeout() on all requests (default 30s)"
+      ],
+      "usage": "const reno = createRenoClient({ baseUrl, apiKey, tenantId })"
+    },
+
+    "plugin_sdk": {
+      "package": "@reno/plugin-sdk",
+      "location": "packages/plugin-sdk/",
+      "features": [
+        "RenoPluginManifest — id, version, permissions, hooks, routes, widgets, settings",
+        "20+ PluginPermission types (read/write per module)",
+        "20+ PluginHookName lifecycle hooks",
+        "RenoPlugin base class with on() hook registration",
+        "definePlugin() functional helper for concise plugin definition",
+        "PluginContext: tenantId, settings, log(), emit()"
+      ],
+      "hook_categories": ["Install/uninstall", "User lifecycle", "Invoice lifecycle", "Ticket lifecycle", "Employee lifecycle", "Backup/deployment events", "Scheduled tasks"]
+    },
+
+    "cli": {
+      "package": "@reno/cli",
+      "binary": "reno",
+      "location": "packages/cli/",
+      "commands": [
+        "reno status              — Show API health",
+        "reno env validate        — Validate environment variables via API",
+        "reno deploy <env> <tag>  — Deploy via deploy.sh",
+        "reno rollback <env> <tag> — Rollback via rollback.sh",
+        "reno migrate             — Run DB migrations",
+        "reno logs [service]      — Tail container logs",
+        "reno help                — Show help"
+      ],
+      "env_vars": ["RENO_API_URL", "RENO_API_KEY", "RENO_TENANT_ID"]
+    },
+
+    "developer_portal": {
+      "url": "/developer",
+      "file": "apps/web/src/app/developer/page.tsx",
+      "sections": ["Getting Started", "TypeScript SDK", "Plugin SDK", "Webhooks", "Authentication"],
+      "features": [
+        "Links to live Swagger UI and OpenAPI JSON",
+        "SDK quickstart code samples",
+        "Plugin SDK example with hooks",
+        "Webhook registration + signature verification guide",
+        "Bearer token and API key auth examples",
+        "Quick links to all developer endpoints"
+      ]
+    },
+
+    "code_examples": {
+      "typescript_sdk": "examples/typescript-sdk/basic-usage.ts",
+      "webhook_verification": "examples/webhooks/verify-signature.ts",
+      "plugin": "examples/plugin/hello-world-plugin.ts"
+    }
+  },
+
+  "api_key_security": {
+    "storage": "SHA-256 hash stored in DB, plaintext never persisted",
+    "display": "Plaintext shown only once at creation time",
+    "format": "reno_<32-random-base64url-bytes>",
+    "prefix_stored": "First 12 chars stored for identification",
+    "scopes": ["read", "write", "admin", "developer"]
+  },
+
+  "webhook_security": {
+    "secret_storage": "SHA-256 hash stored, plaintext never persisted",
+    "signing_algorithm": "HMAC-SHA256",
+    "signature_header": "X-Reno-Signature: sha256=<hex>",
+    "timing_safe_verify": "crypto.timingSafeEqual prevents timing attacks",
+    "secret_format": "whsec_<32-random-base64url-bytes>"
+  },
+
+  "approved_by": null,
+  "approval_pending": true,
+  "next_phase": 28,
+  "mandate": "STOP and wait for ChatGPT review before beginning Phase 28"
+}
