@@ -1,0 +1,15 @@
+apiVersion: v2
+name: reno
+description: Reno System — Multi-tenant BOS/AIOS Platform
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Renas Talabani
+    email: renastalabani@gmail.com
+keywords:
+  - reno
+  - saas
+  - multi-tenant
+  - bos
+  - aios

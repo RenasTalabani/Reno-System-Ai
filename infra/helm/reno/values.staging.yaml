@@ -1,0 +1,35 @@
+# Staging overrides
+global:
+  imageTag: staging
+
+api:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+  autoscaling:
+    enabled: false
+  env:
+    NODE_ENV: staging
+    OTEL_ENABLED: "false"
+
+web:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: "0.5"
+      memory: 256Mi
+  env:
+    NODE_ENV: staging
+
+ingress:
+  hosts:
+    api: api.staging.reno.example.com
+    web: staging.reno.example.com

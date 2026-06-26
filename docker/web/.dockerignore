@@ -1,0 +1,13 @@
+node_modules
+.next
+.env*
+!.env.example
+.git
+.github
+*.log
+apps/api
+apps/mobile
+packages/database
+infra
+scripts
+*.md

@@ -1,0 +1,15 @@
+node_modules
+dist
+.env*
+!.env.example
+.git
+.github
+*.log
+.backups
+reports
+tests/load/results
+apps/mobile
+apps/web
+infra
+scripts
+*.md

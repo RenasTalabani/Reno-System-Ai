@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reno-system
+  labels:
+    app.kubernetes.io/name: reno-system
+    app.kubernetes.io/managed-by: helm

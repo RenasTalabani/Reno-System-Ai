@@ -9,11 +9,18 @@ build/
 out/
 *.tsbuildinfo
 
-# Environment files
+# Environment files (real values — never commit)
 .env
 .env.local
 .env.*.local
+.env.staging
+.env.production
 !.env.example
+!.env.staging.example
+!.env.production.example
+
+# Kubernetes secrets (real values — never commit)
+infra/k8s/secrets.yaml
 
 # Prisma
 prisma/*.db

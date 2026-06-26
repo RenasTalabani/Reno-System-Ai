@@ -4841,6 +4841,27 @@ exports.Prisma.AiSreIncidentScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.DepDeploymentLogScalarFieldEnum = {
+  id: 'id',
+  version: 'version',
+  environment: 'environment',
+  deployedBy: 'deployedBy',
+  strategy: 'strategy',
+  status: 'status',
+  previousVersion: 'previousVersion',
+  commitSha: 'commitSha',
+  branch: 'branch',
+  migrationRan: 'migrationRan',
+  healthCheckPassed: 'healthCheckPassed',
+  testsPassed: 'testsPassed',
+  rollbackReason: 'rollbackReason',
+  durationMs: 'durationMs',
+  metadata: 'metadata',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5110,7 +5131,8 @@ exports.Prisma.ModelName = {
   DrPlaybook: 'DrPlaybook',
   DrPlaybookExecution: 'DrPlaybookExecution',
   DrReadinessScore: 'DrReadinessScore',
-  AiSreIncident: 'AiSreIncident'
+  AiSreIncident: 'AiSreIncident',
+  DepDeploymentLog: 'DepDeploymentLog'
 };
 
 /**

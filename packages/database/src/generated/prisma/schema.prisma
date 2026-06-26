@@ -7022,3 +7022,34 @@ model AiSreIncident {
   @@index([severity, detectedAt])
   @@map("ai_sre_incidents")
 }
+
+// =============================================================================
+// DEPLOYMENT MODULE — Phase 26: Production Deployment & CI/CD
+// =============================================================================
+
+// dep_deployment_logs — Immutable audit trail for every deployment event
+model DepDeploymentLog {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version           String    @db.VarChar(50) // semver e.g. v26.0.0
+  environment       String    @db.VarChar(30) // dev | staging | production
+  deployedBy        String?   @map("deployed_by") @db.VarChar(100) // user/CI actor
+  strategy          String    @default("rolling") @db.VarChar(30) // rolling | blue-green | canary
+  status            String    @default("pending") @db.VarChar(30) // pending | running | succeeded | failed | rolled_back
+  previousVersion   String?   @map("previous_version") @db.VarChar(50)
+  commitSha         String?   @map("commit_sha") @db.VarChar(64)
+  branch            String?   @db.VarChar(255)
+  migrationRan      Boolean   @default(false) @map("migration_ran")
+  healthCheckPassed Boolean   @default(false) @map("health_check_passed")
+  testsPassed       Boolean   @default(false) @map("tests_passed")
+  rollbackReason    String?   @map("rollback_reason") @db.Text
+  durationMs        Int?      @map("duration_ms")
+  metadata          Json      @default("{}") @db.JsonB
+  startedAt         DateTime  @default(now()) @map("started_at")
+  completedAt       DateTime? @map("completed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  @@index([environment, status])
+  @@index([version])
+  @@index([startedAt(sort: Desc)])
+  @@map("dep_deployment_logs")
+}

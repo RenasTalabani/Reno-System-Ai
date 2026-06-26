@@ -1,0 +1,109 @@
+name: Deploy — Staging
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Image tag to deploy
+        required: false
+        default: staging
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: staging
+    concurrency:
+      group: deploy-staging
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: tag
+        run: |
+          TAG="${{ github.event.inputs.image_tag || 'staging' }}-${{ github.sha }}"
+          echo "tag=${TAG:0:50}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/api/Dockerfile
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ghcr.io/${{ github.repository }}/api:${{ steps.tag.outputs.tag }}
+            ghcr.io/${{ github.repository }}/api:staging
+
+      - name: Build & push Web
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/web/Dockerfile
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ghcr.io/${{ github.repository }}/web:${{ steps.tag.outputs.tag }}
+            ghcr.io/${{ github.repository }}/web:staging
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ vars.STAGING_API_URL }}
+            NEXT_PUBLIC_APP_VERSION=${{ steps.tag.outputs.tag }}
+
+      - name: Run DB migration (staging)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/reno
+            IMAGE_TAG=${{ steps.tag.outputs.tag }} docker compose -f docker-compose.staging.yml pull api
+            IMAGE_TAG=${{ steps.tag.outputs.tag }} docker compose -f docker-compose.staging.yml run --rm api node -e "
+              const { PrismaClient } = require('./node_modules/@prisma/client');
+              const p = new PrismaClient();
+              p.\$connect().then(() => { console.log('DB OK'); process.exit(0); }).catch(e => { console.error(e); process.exit(1); });
+            "
+
+      - name: Deploy staging stack
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/reno
+            IMAGE_TAG=${{ steps.tag.outputs.tag }} docker compose -f docker-compose.staging.yml up -d --no-build
+
+      - name: Health check staging
+        run: |
+          echo "Waiting for staging to be healthy..."
+          for i in $(seq 1 12); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ vars.STAGING_API_URL }}/health" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "Staging healthy after ${i}x5s"
+              exit 0
+            fi
+            echo "Attempt $i: status=$STATUS, retrying..."
+            sleep 5
+          done
+          echo "Staging health check FAILED"
+          exit 1

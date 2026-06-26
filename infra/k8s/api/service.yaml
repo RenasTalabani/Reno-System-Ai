@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reno-api-svc
+  namespace: reno-system
+  labels:
+    app: reno-api
+spec:
+  selector:
+    app: reno-api
+  ports:
+    - port: 4000
+      targetPort: 4000
+      name: http
+  type: ClusterIP
