@@ -3276,10 +3276,18 @@ exports.Prisma.BrainProviderConfigScalarFieldEnum = {
   provider: 'provider',
   name: 'name',
   apiKey: 'apiKey',
+  encryptedApiKey: 'encryptedApiKey',
+  keyHint: 'keyHint',
   baseUrl: 'baseUrl',
   model: 'model',
   isDefault: 'isDefault',
   isActive: 'isActive',
+  consentVerified: 'consentVerified',
+  status: 'status',
+  statusReason: 'statusReason',
+  fallbackProvider: 'fallbackProvider',
+  fallbackEnabled: 'fallbackEnabled',
+  moduleOverrides: 'moduleOverrides',
   config: 'config',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -4992,6 +5000,59 @@ exports.Prisma.AiFeedbackLoopScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AiProviderRegistryScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  providerType: 'providerType',
+  defaultModel: 'defaultModel',
+  capabilities: 'capabilities',
+  isBuiltIn: 'isBuiltIn',
+  isEnabled: 'isEnabled',
+  requiresApiKey: 'requiresApiKey',
+  requiresConsent: 'requiresConsent',
+  docsUrl: 'docsUrl',
+  iconUrl: 'iconUrl',
+  sortOrder: 'sortOrder',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TenantAiConsentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  providerSlug: 'providerSlug',
+  consentGiven: 'consentGiven',
+  consentGivenAt: 'consentGivenAt',
+  consentGivenBy: 'consentGivenBy',
+  consentText: 'consentText',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  revokeReason: 'revokeReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiProviderAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  providerSlug: 'providerSlug',
+  action: 'action',
+  status: 'status',
+  module: 'module',
+  requestSummary: 'requestSummary',
+  responseStatus: 'responseStatus',
+  tokensUsed: 'tokensUsed',
+  latencyMs: 'latencyMs',
+  errorMessage: 'errorMessage',
+  fallbackTo: 'fallbackTo',
+  metadata: 'metadata',
+  occurredAt: 'occurredAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5270,7 +5331,10 @@ exports.Prisma.ModelName = {
   AiDailyBriefing: 'AiDailyBriefing',
   AiBoardSimulation: 'AiBoardSimulation',
   AiVectorEmbedding: 'AiVectorEmbedding',
-  AiFeedbackLoop: 'AiFeedbackLoop'
+  AiFeedbackLoop: 'AiFeedbackLoop',
+  AiProviderRegistry: 'AiProviderRegistry',
+  TenantAiConsent: 'TenantAiConsent',
+  AiProviderAuditLog: 'AiProviderAuditLog'
 };
 
 /**

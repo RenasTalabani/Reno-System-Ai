@@ -45,4 +45,7 @@ export type {
   AiFeedbackLoop,
   AiExecRecommendation,
   AiBizPrediction,
+  AiProviderRegistry,
+  TenantAiConsent,
+  AiProviderAuditLog,
 } from './generated/prisma/index.js'

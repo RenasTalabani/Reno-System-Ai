@@ -176,6 +176,8 @@ model CoreTenant {
   aiBoardSimulations       AiBoardSimulation[]
   aiVectorEmbeddings       AiVectorEmbedding[]
   aiFeedbackLoops          AiFeedbackLoop[]
+  tenantAiConsents         TenantAiConsent[]
+  aiProviderAuditLogs      AiProviderAuditLog[]
 
   @@map("core_tenants")
 }
@@ -4746,23 +4748,32 @@ model BrainAgent {
 }
 
 model BrainProviderConfig {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String    @map("tenant_id") @db.Uuid
-  provider   String    @db.VarChar(50)
-  name       String    @db.VarChar(100)
-  apiKey     String?   @map("api_key") @db.VarChar(500)
-  baseUrl    String?   @map("base_url") @db.VarChar(500)
-  model      String    @db.VarChar(100)
-  isDefault  Boolean   @default(false) @map("is_default")
-  isActive   Boolean   @default(true) @map("is_active")
-  config     Json?
-  createdBy  String?   @map("created_by") @db.Uuid
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  provider          String    @db.VarChar(50)
+  name              String    @db.VarChar(100)
+  apiKey            String?   @map("api_key") @db.VarChar(500)
+  encryptedApiKey   String?   @map("encrypted_api_key") @db.Text
+  keyHint           String?   @map("key_hint") @db.VarChar(20)
+  baseUrl           String?   @map("base_url") @db.VarChar(500)
+  model             String    @db.VarChar(100)
+  isDefault         Boolean   @default(false) @map("is_default")
+  isActive          Boolean   @default(true) @map("is_active")
+  consentVerified   Boolean   @default(false) @map("consent_verified")
+  status            String    @default("active") @db.VarChar(20)
+  statusReason      String?   @map("status_reason") @db.VarChar(500)
+  fallbackProvider  String?   @map("fallback_provider") @db.VarChar(50)
+  fallbackEnabled   Boolean   @default(true) @map("fallback_enabled")
+  moduleOverrides   Json?     @map("module_overrides") @db.JsonB
+  config            Json?
+  createdBy         String?   @map("created_by") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
 
   tenant CoreTenant @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId])
+  @@index([tenantId, isDefault, isActive])
   @@map("brain_provider_configs")
 }
 
@@ -7249,4 +7260,80 @@ model AiFeedbackLoop {
   @@index([tenantId, sourceType])
   @@index([tenantId, outcome])
   @@map("ai_feedback_loops")
+}
+
+// =============================================================================
+// PHASE 31 — AI PROVIDER FOUNDATION
+// =============================================================================
+
+// System-wide catalog of available AI providers (no tenantId — global registry)
+model AiProviderRegistry {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String   @unique @db.VarChar(50)
+  name            String   @db.VarChar(100)
+  description     String?  @db.Text
+  providerType    String   @map("provider_type") @db.VarChar(50)
+  defaultModel    String   @map("default_model") @db.VarChar(100)
+  capabilities    String[]
+  isBuiltIn       Boolean  @default(false) @map("is_built_in")
+  isEnabled       Boolean  @default(true) @map("is_enabled")
+  requiresApiKey  Boolean  @default(false) @map("requires_api_key")
+  requiresConsent Boolean  @default(false) @map("requires_consent")
+  docsUrl         String?  @map("docs_url") @db.VarChar(500)
+  iconUrl         String?  @map("icon_url") @db.VarChar(500)
+  sortOrder       Int      @default(0) @map("sort_order")
+  metadata        Json?    @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([isEnabled])
+  @@map("ai_provider_registry")
+}
+
+// Per-tenant explicit consent for external AI providers
+model TenantAiConsent {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  providerSlug    String    @map("provider_slug") @db.VarChar(50)
+  consentGiven    Boolean   @default(false) @map("consent_given")
+  consentGivenAt  DateTime? @map("consent_given_at")
+  consentGivenBy  String?   @map("consent_given_by") @db.Uuid
+  consentText     String?   @map("consent_text") @db.Text
+  revokedAt       DateTime? @map("revoked_at")
+  revokedBy       String?   @map("revoked_by") @db.Uuid
+  revokeReason    String?   @map("revoke_reason") @db.VarChar(500)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, providerSlug])
+  @@index([tenantId])
+  @@map("tenant_ai_consents")
+}
+
+// Immutable audit log for every AI provider operation
+model AiProviderAuditLog {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  userId          String?  @map("user_id") @db.Uuid
+  providerSlug    String   @map("provider_slug") @db.VarChar(50)
+  action          String   @db.VarChar(50)
+  status          String   @default("success") @db.VarChar(20)
+  module          String?  @db.VarChar(100)
+  requestSummary  String?  @map("request_summary") @db.Text
+  responseStatus  Int?     @map("response_status")
+  tokensUsed      Int?     @map("tokens_used")
+  latencyMs       Int?     @map("latency_ms")
+  errorMessage    String?  @map("error_message") @db.VarChar(1000)
+  fallbackTo      String?  @map("fallback_to") @db.VarChar(50)
+  metadata        Json?    @db.JsonB
+  occurredAt      DateTime @default(now()) @map("occurred_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, providerSlug])
+  @@index([tenantId, action])
+  @@map("ai_provider_audit_logs")
 }
