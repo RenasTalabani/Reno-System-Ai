@@ -1,0 +1,165 @@
+{
+  "phase": 34,
+  "name": "Universal AI Skill Engine",
+  "status": "COMPLETE",
+  "version": "v34.0.0-phase34",
+  "completedAt": "2026-06-28",
+  "approvedBy": "Pending ChatGPT Review",
+  "goldenRuleCompliance": {
+    "rule1_renoBrainNotReplaced": true,
+    "rule2_claudeIsOptional": true,
+    "rule3_externalProvidersDisabledByDefault": true,
+    "rule4_tenantMustExplicitlyEnable": true,
+    "rule5_existingFeaturesNotBroken": true,
+    "rule6_apiKeysNotExposedToFrontend": true,
+    "rule7_noDataSentWithoutConsent": true,
+    "rule8_rbacRespected": true,
+    "rule9_criticalActionsRequireApproval": true,
+    "rule10_allActionsAudited": true
+  },
+  "deliverables": {
+    "skillPlanner": {
+      "file": "apps/api/src/brain/skill/skill-planner.ts",
+      "description": "Keyword→tool RegExp matching. Selects a subset of relevant tools per user request, reducing token usage. Zero cost (no AI call needed to plan).",
+      "keywordPatterns": 15,
+      "approach": "RegExp matching on user message → select tool subset → Claude gets fewer tokens in tool context"
+    },
+    "contextCompressor": {
+      "file": "apps/api/src/brain/skill/context-compressor.ts",
+      "description": "Recursively strips secrets and summarizes large data before sending to Claude.",
+      "secretKeys": ["password", "apiKey", "api_key", "secret", "token", "accessToken", "encryptedApiKey", "ssn", "salary", "netPay", "grossPay"],
+      "limits": {
+        "maxArrayItems": 10,
+        "maxStringLength": 500
+      },
+      "output": "compressionRatio, originalChars, compressedChars stored in AiSkillExecution"
+    },
+    "tokenBudgetManager": {
+      "file": "apps/api/src/brain/skill/token-budget.ts",
+      "description": "Per-request token estimation and monthly quota guard.",
+      "thresholds": {
+        "maxInputTokens": 32000,
+        "compressThreshold": 16000
+      },
+      "actions": ["proceed", "compress", "fallback", "reject"],
+      "estimationMethod": "chars / 4 approximation"
+    },
+    "executionGraph": {
+      "file": "apps/api/src/brain/skill/execution-graph.ts",
+      "description": "Tracks status of each tool call within a request: pending → running → success | error | proposed.",
+      "states": ["pending", "running", "success", "error", "proposed"],
+      "storedIn": "AiSkillExecution.executionGraph (JSONB)"
+    },
+    "toolRegistryService": {
+      "file": "apps/api/src/brain/skill/tool-registry.service.ts",
+      "description": "DB-first tool lookup with code fallback. Supports filters by category and module.",
+      "toolCount": 13,
+      "approach": "DB (ai_tool_registry) → fallback to TOOL_REGISTRY in code if DB not migrated"
+    },
+    "capabilityRegistry": {
+      "file": "apps/api/src/brain/skill/capability-registry.ts",
+      "description": "Maps business capabilities to tools and providers. 8 capabilities seeded.",
+      "capabilities": [
+        "generate_business_report",
+        "analyze_customer_inactivity",
+        "create_workflow_proposal",
+        "analyze_profit_decline",
+        "restock_low_inventory",
+        "draft_support_reply",
+        "employee_lookup",
+        "invoice_draft"
+      ]
+    },
+    "skillEngineOrchestrator": {
+      "file": "apps/api/src/brain/skill/index.ts",
+      "functions": ["prepareSkillExecution", "logSkillExecution", "getSkillExecutionStats"],
+      "description": "Orchestrates plan → compress → budget → returns enriched params. Audit logging to AiSkillExecution."
+    },
+    "claudeServiceIntegration": {
+      "file": "apps/api/src/brain/claude.service.ts",
+      "changes": [
+        "Step 5: prepareSkillExecution() called before Claude API call",
+        "budget reject → fallback to Reno Brain",
+        "budget fallback → fallback to Reno Brain (quota exceeded)",
+        "callClaudeWithTools() accepts selectedTools param",
+        "filterToolDefinitions() reduces tool context to planned tools",
+        "ExecutionGraph wired: addNode + markRunning + markSuccess/markError per tool call",
+        "proposalIds collected and returned",
+        "Step 9: logSkillExecution() called after every Claude call (success and error paths)"
+      ]
+    },
+    "discoveryApi": {
+      "file": "apps/api/src/rest/routes/brain/skill-engine.routes.ts",
+      "endpoints": [
+        { "method": "GET", "path": "/brain/tools", "description": "List all tools, filter by category/module" },
+        { "method": "GET", "path": "/brain/tools/categories", "description": "List distinct tool categories" },
+        { "method": "GET", "path": "/brain/tools/:toolId", "description": "Tool detail by ID" },
+        { "method": "GET", "path": "/brain/capabilities", "description": "List all capabilities, filter by category" },
+        { "method": "GET", "path": "/brain/capabilities/:capabilityId", "description": "Capability detail" },
+        { "method": "GET", "path": "/brain/skill-engine/stats", "description": "Execution stats for tenant (last N days)" }
+      ]
+    },
+    "migration": {
+      "file": "packages/database/prisma/migrations/20260628000000_phase34_skill_engine/migration.sql",
+      "tables": ["ai_tool_registry", "ai_capability_registry", "ai_skill_executions"],
+      "seedData": {
+        "aiToolRegistry": 13,
+        "aiCapabilityRegistry": 8
+      }
+    },
+    "prismaSchema": {
+      "newModels": ["AiToolRegistry", "AiCapabilityRegistry", "AiSkillExecution"],
+      "newExports": ["AiToolRegistry", "AiCapabilityRegistry", "AiSkillExecution"]
+    }
+  },
+  "auditModel": {
+    "model": "AiSkillExecution",
+    "table": "ai_skill_executions",
+    "fields": [
+      "tenantId", "userId", "conversationId", "provider", "userRequest",
+      "skillPlan", "executionGraph", "toolsUsed", "proposalsCreated",
+      "contextSizeBefore", "contextSizeAfter", "compressionRatio",
+      "estimatedTokens", "actualTokens", "estimatedCostUsd", "actualCostUsd",
+      "budgetAction", "status", "errorMessage", "durationMs", "occurredAt"
+    ]
+  },
+  "securityChecks": {
+    "claudeNeverBypassesRBAC": true,
+    "claudeNeverBypassesTenantIsolation": true,
+    "claudeNeverDirectlyDeletesData": true,
+    "claudeNeverSendsPayments": true,
+    "claudeNeverModifiesPayroll": true,
+    "claudeNeverExposesSecrets": "Context compressor strips secrets before any AI call",
+    "claudeNeverExecutesCriticalWithoutApproval": "All write actions create BrainAction or AiExecProposal",
+    "allWriteActionsCreateProposals": true,
+    "everyToolExecutionAudited": "ClaudeToolCall + AiSkillExecution both written on every call",
+    "externalProvidersOptional": true
+  },
+  "tokenOptimization": {
+    "skillPlannerSavings": "Keyword matching selects relevant tool subset — Claude gets 1-4 tools instead of all 13",
+    "contextCompressionSavings": "Business data compressed before injection into prompts",
+    "budgetGuard": "Requests exceeding 32K estimated tokens rejected or compressed before API call"
+  },
+  "typeScriptCheck": {
+    "api": "0 errors",
+    "web": "0 errors"
+  },
+  "gitCommit": "64ee34a",
+  "gitTag": "v34.0.0-phase34",
+  "filesChanged": [
+    "apps/api/src/brain/claude.service.ts",
+    "apps/api/src/brain/skill/context-compressor.ts",
+    "apps/api/src/brain/skill/token-budget.ts",
+    "apps/api/src/brain/skill/execution-graph.ts",
+    "apps/api/src/brain/skill/skill-planner.ts",
+    "apps/api/src/brain/skill/tool-registry.service.ts",
+    "apps/api/src/brain/skill/capability-registry.ts",
+    "apps/api/src/brain/skill/index.ts",
+    "apps/api/src/rest/routes/brain/skill-engine.routes.ts",
+    "apps/api/src/rest/routes/brain/index.ts",
+    "packages/database/prisma/schema.prisma",
+    "packages/database/src/index.ts",
+    "packages/database/prisma/migrations/20260628000000_phase34_skill_engine/migration.sql"
+  ],
+  "mandatoryRule": "STOPPED. Do not start Phase 35 until Phase 34 is reviewed and approved by ChatGPT."
+}
