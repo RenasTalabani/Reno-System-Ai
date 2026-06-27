@@ -1,0 +1,131 @@
+{
+  "phase": 36,
+  "name": "Multi-Agent AI Collaboration Platform",
+  "status": "COMPLETE",
+  "version": "v36.0.0-phase36",
+  "completedAt": "2026-06-28",
+  "approvedBy": "Pending ChatGPT Review",
+  "goldenRuleCompliance": {
+    "rule1_renoBrainNotReplaced": true,
+    "rule2_claudeIsOptional": true,
+    "rule3_externalProvidersDisabledByDefault": true,
+    "rule4_tenantMustExplicitlyEnable": true,
+    "rule5_existingFeaturesNotBroken": true,
+    "rule6_apiKeysNotExposedToFrontend": true,
+    "rule7_noDataSentWithoutConsent": true,
+    "rule8_rbacRespected": true,
+    "rule9_criticalActionsRequireApproval": true,
+    "rule10_allActionsAudited": true
+  },
+  "deliverables": {
+    "database": {
+      "models": [
+        { "name": "AiAgentTeam",          "table": "ai_agent_teams",          "description": "Groups of digital employees assembled for a specific task, with supervisor and member list" },
+        { "name": "AiAgentConversation",  "table": "ai_agent_conversations",  "description": "Multi-agent thread with topic, status, summary, outcome" },
+        { "name": "AiAgentMessage",       "table": "ai_agent_messages",       "description": "Per-message log: agent-to-agent or broadcast, typed (broadcast/delegation/response/executive_summary)" },
+        { "name": "AiAgentDecision",      "table": "ai_agent_decisions",      "description": "Decisions produced from collaboration, with evidence JSON and proposal link" },
+        { "name": "AiAgentVote",          "table": "ai_agent_votes",          "description": "Per-agent votes on decisions (yes/no/abstain), unique per decision+agent" },
+        { "name": "AiSharedWorkspace",    "table": "ai_shared_workspaces",    "description": "JSONB workspace where agents deposit their analysis findings" },
+        { "name": "AiSharedMemory",       "table": "ai_shared_memory",        "description": "Cross-agent scoped memory (global/team/task), unique per tenant+scope+key, with TTL" },
+        { "name": "AiDelegation",         "table": "ai_delegations",          "description": "Immutable log of every delegation: from/to agent, type, request, response, duration" },
+        { "name": "AiMeeting",            "table": "ai_meetings",             "description": "AI meeting sessions with agenda, status, summary, decision count" },
+        { "name": "AiMeetingParticipant", "table": "ai_meeting_participants", "description": "Per-agent meeting participation with role (chair/member)" }
+      ]
+    },
+    "services": {
+      "agentsService": {
+        "file": "apps/api/src/brain/collab/agents.service.ts",
+        "features": [
+          "20 default digital employees: CEO, COO, CFO, CTO, HR Director, Sales Director, Marketing Director, Procurement Director, Inventory Manager, Production Director, Finance Manager, Customer Success Manager, Support Manager, Legal Advisor, Compliance Officer, Security Officer, Business Analyst, Data Analyst, Project Manager, Automation Manager",
+          "selectAgentsForRequest(): keyword-based agent selection (RegExp per domain)",
+          "getAgentSystemPrompt(): per-role system prompt with safety constraints built in",
+          "listAgents(): DB-first (brain_agents) + defaults merge",
+          "getAgentBySlug(): DB-first + defaults fallback"
+        ]
+      },
+      "orchestratorService": {
+        "file": "apps/api/src/brain/collab/orchestrator.service.ts",
+        "runMultiAgentTask": {
+          "steps": [
+            "1. selectAgentsForRequest() → domain-relevant agent slugs",
+            "2. prisma.aiAgentTeam.create()",
+            "3. prisma.aiAgentConversation.create()",
+            "4. prisma.aiMeeting.create() + createMany participants",
+            "5. upsertWorkspace() → shared JSONB workspace",
+            "6. CEO posts opening broadcast message",
+            "7. Promise.all() → parallel delegation to all non-CEO agents",
+            "   Each agent: createDelegation() + callClaudeForChat() or callAI() + completeDelegation() + appendToWorkspace()",
+            "8. CEO synthesizes all findings into executive summary",
+            "9. CEO posts executive_summary message",
+            "10. prisma.aiAgentDecision.create() with evidence",
+            "11. Senior agents vote (CFO/COO/CTO/Business Analyst)",
+            "12. Meeting closed with summary",
+            "13. Conversation closed with outcome",
+            "14. Workspace updated with final summary",
+            "15. Team marked completed"
+          ],
+          "returns": "conversationId, meetingId, teamId, workspaceId, agentsInvolved, delegations, decisions, executiveSummary"
+        },
+        "getCollabDashboard": "teams count, meetings/delegations/decisions (30d), recent conversations"
+      },
+      "workspaceService": "upsertWorkspace, appendToWorkspace, getWorkspace, listWorkspaces",
+      "delegationService": "createDelegation, completeDelegation, listDelegations",
+      "meetingService": "listMeetings, getMeeting, createMeeting"
+    },
+    "api": {
+      "prefix": "/v1/ai-agents",
+      "endpoints": [
+        { "method": "GET",  "path": "/",                        "description": "List all agents (DB + defaults)" },
+        { "method": "POST", "path": "/",                        "description": "Create custom agent (writes to brain_agents)" },
+        { "method": "GET",  "path": "/:slug",                   "description": "Get agent by slug" },
+        { "method": "GET",  "path": "/teams/list",              "description": "List all agent teams" },
+        { "method": "POST", "path": "/teams/create",            "description": "Create agent team" },
+        { "method": "GET",  "path": "/conversations/list",      "description": "List conversations" },
+        { "method": "GET",  "path": "/conversations/:id/messages", "description": "Get conversation messages" },
+        { "method": "POST", "path": "/messages",                "description": "Post message to conversation" },
+        { "method": "POST", "path": "/delegate",                "description": "Run full multi-agent task (synchronous — waits for all agents)" },
+        { "method": "GET",  "path": "/workspace/list",          "description": "List shared workspaces" },
+        { "method": "GET",  "path": "/meetings/list",           "description": "List AI meetings" },
+        { "method": "POST", "path": "/meetings/create",         "description": "Create AI meeting" },
+        { "method": "GET",  "path": "/votes/list",              "description": "List votes (filter by decisionId)" },
+        { "method": "POST", "path": "/votes/cast",              "description": "Cast/update a vote" },
+        { "method": "GET",  "path": "/dashboard/summary",       "description": "Collaboration dashboard stats" }
+      ]
+    },
+    "webUI": {
+      "pages": [
+        { "path": "/ai-agents",              "description": "Dashboard: org chart, collab stats, recent conversations, delegate modal with inline result viewer" },
+        { "path": "/ai-agents/teams",        "description": "Team builder: list teams, create with agent slug composition" },
+        { "path": "/ai-agents/workspace",    "description": "Shared workspace explorer: per-agent analysis + CEO executive summary with expand/collapse" },
+        { "path": "/ai-agents/meetings",     "description": "AI meeting room: schedule, view participants (chair/member), read summary, see decision count" }
+      ]
+    },
+    "collaborationExamples": {
+      "reduceCosts": "CEO → CFO (finance) + Procurement Director + HR Director + Business Analyst → CEO produces executive recommendation",
+      "newBranch": "CEO → CFO (investment) + HR (hiring) + Marketing (campaign) + Legal (compliance) + COO (operations) → CEO final plan",
+      "customerSatisfaction": "CEO → Support Manager + CS Manager + Data Analyst + Sales Director → CEO combined report"
+    }
+  },
+  "safetyChecks": {
+    "agentsCannotBypassRBAC": true,
+    "agentsCannotBypassTenantIsolation": "tenantId on every model, every query scoped",
+    "agentsCannotApproveOwnActions": true,
+    "allAgentCommunicationAudited": "AiAgentMessage written for every broadcast, delegation, response, summary",
+    "allDelegationLogged": "AiDelegation with request, response, duration, status",
+    "allWritesGoThroughProposals": true,
+    "humanApprovalMandatory": "AiAgentDecision.status = 'pending' until human approves",
+    "noDestructiveActions": "Agents only read and create proposals"
+  },
+  "futurePreparation": {
+    "openAISupport": "Provider abstraction in executor uses provider param — adding 'openai' requires only a new callAI() adapter",
+    "geminiSupport": "Same abstraction — new adapter in provider.js",
+    "mcpServers": "Tool executor can be extended to route to MCP server calls",
+    "externalConnectors": "Workspace + Delegation log provides the event bus for future enterprise integrations",
+    "digitalWorkforce": "Agent team + schedule + delegation = foundation for autonomous digital workforce licensing"
+  },
+  "architecturalGoal": "Reno now behaves like an AI company: 20 specialized digital employees collaborate under CEO (supervisor) orchestration with Reno Brain as governance layer and Claude as optional reasoning engine. Every collaboration is fully auditable, tenant-isolated, and human-approval-gated.",
+  "typeScriptCheck": { "api": "0 errors", "web": "0 errors" },
+  "gitCommit": "1cbfb56",
+  "gitTag": "v36.0.0-phase36",
+  "mandatoryRule": "STOPPED. Do not start Phase 37 until Phase 36 is reviewed and approved by ChatGPT."
+}
