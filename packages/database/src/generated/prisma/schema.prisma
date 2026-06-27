@@ -169,6 +169,13 @@ model CoreTenant {
   bkpSnapshots             BkpSnapshot[]
   bkpSchedules             BkpSchedule[]
   aiSreIncidents           AiSreIncident[]
+  devWebhooks              DevWebhook[]
+  aiBusinessMemories       AiBusinessMemory[]
+  aiAccuracyMetrics        AiAccuracyMetric[]
+  aiDailyBriefings         AiDailyBriefing[]
+  aiBoardSimulations       AiBoardSimulation[]
+  aiVectorEmbeddings       AiVectorEmbedding[]
+  aiFeedbackLoops          AiFeedbackLoop[]
 
   @@map("core_tenants")
 }
@@ -7052,4 +7059,191 @@ model DepDeploymentLog {
   @@index([version])
   @@index([startedAt(sort: Desc)])
   @@map("dep_deployment_logs")
+}
+
+// =============================================================================
+// DEVELOPER PLATFORM MODULE — Phase 27: Developer Platform
+// =============================================================================
+
+// dev_webhooks — Registered webhook endpoints for event delivery
+model DevWebhook {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  name           String    @db.VarChar(255)
+  url            String    @db.Text
+  secret         String    @db.VarChar(255) // HMAC-SHA256 signing secret (stored hashed)
+  events         Json      @default("[]") @db.JsonB // array of event types e.g. ["user.created","invoice.paid"]
+  isActive       Boolean   @default(true) @map("is_active")
+  failureCount   Int       @default(0) @map("failure_count")
+  lastDeliveryAt DateTime? @map("last_delivery_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  tenant     CoreTenant           @relation(fields: [tenantId], references: [id])
+  deliveries DevWebhookDelivery[]
+
+  @@index([tenantId, isActive])
+  @@map("dev_webhooks")
+}
+
+// dev_webhook_deliveries — Audit log for every webhook delivery attempt
+model DevWebhookDelivery {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  webhookId    String   @map("webhook_id") @db.Uuid
+  eventType    String   @map("event_type") @db.VarChar(100)
+  payload      Json     @db.JsonB
+  statusCode   Int?     @map("status_code")
+  responseBody String?  @map("response_body") @db.Text
+  attemptCount Int      @default(1) @map("attempt_count")
+  success      Boolean  @default(false)
+  deliveredAt  DateTime @default(now()) @map("delivered_at")
+
+  webhook DevWebhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId, success])
+  @@index([eventType, deliveredAt(sort: Desc)])
+  @@map("dev_webhook_deliveries")
+}
+
+// =============================================================================
+// PHASE 29 — AI EVOLUTION / BUSINESS MEMORY / LEARNING ENGINE
+// =============================================================================
+
+model AiBusinessMemory {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  memoryType String    @map("memory_type") @db.VarChar(50)
+  entityType String?   @map("entity_type") @db.VarChar(50)
+  entityId   String?   @map("entity_id") @db.Uuid
+  entityName String?   @map("entity_name") @db.VarChar(255)
+  title      String    @db.VarChar(255)
+  content    String    @db.Text
+  evidence   Json      @default("[]") @db.JsonB
+  importance Float     @default(0.5)
+  confidence Float     @default(0.8)
+  tags       String[]
+  learnedAt  DateTime  @default(now()) @map("learned_at")
+  validUntil DateTime? @map("valid_until")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, memoryType])
+  @@index([tenantId, entityType, entityId])
+  @@map("ai_business_memories")
+}
+
+model AiAccuracyMetric {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  period          String   @db.VarChar(20)
+  periodDate      DateTime @map("period_date")
+  category        String?  @db.VarChar(50)
+  totalRecs       Int      @default(0) @map("total_recommendations")
+  acceptedRecs    Int      @default(0) @map("accepted_recommendations")
+  rejectedRecs    Int      @default(0) @map("rejected_recommendations")
+  ignoredRecs     Int      @default(0) @map("ignored_recommendations")
+  implementedRecs Int      @default(0) @map("implemented_recommendations")
+  avgConfidence   Float    @default(0) @map("avg_confidence")
+  accuracyRate    Float    @default(0) @map("accuracy_rate")
+  outcomeScore    Float?   @map("outcome_score")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, period, periodDate, category])
+  @@index([tenantId, period, periodDate])
+  @@map("ai_accuracy_metrics")
+}
+
+model AiDailyBriefing {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  briefingDate    DateTime @map("briefing_date")
+  headline        String   @db.VarChar(500)
+  summary         String   @db.Text
+  keyMetrics      Json     @default("{}") @map("key_metrics") @db.JsonB
+  topInsights     Json     @default("[]") @map("top_insights") @db.JsonB
+  urgentItems     Json     @default("[]") @map("urgent_items") @db.JsonB
+  opportunities   Json     @default("[]") @db.JsonB
+  risks           Json     @default("[]") @db.JsonB
+  todayPriorities Json     @default("[]") @map("today_priorities") @db.JsonB
+  businessMood    String   @default("stable") @map("business_mood") @db.VarChar(30)
+  generatedAt     DateTime @default(now()) @map("generated_at")
+  viewedBy        Json     @default("[]") @map("viewed_by") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, briefingDate])
+  @@index([tenantId, briefingDate(sort: Desc)])
+  @@map("ai_daily_briefings")
+}
+
+model AiBoardSimulation {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  sessionName  String    @map("session_name") @db.VarChar(255)
+  agenda       Json      @default("[]") @db.JsonB
+  boardMembers Json      @default("[]") @map("board_members") @db.JsonB
+  discussion   Json      @default("[]") @db.JsonB
+  decisions    Json      @default("[]") @db.JsonB
+  actionItems  Json      @default("[]") @map("action_items") @db.JsonB
+  keyConflicts Json      @default("[]") @map("key_conflicts") @db.JsonB
+  consensus    String?   @db.Text
+  status       String    @default("draft") @db.VarChar(20)
+  conductedAt  DateTime? @map("conducted_at")
+  createdBy    String    @map("created_by") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  isActive     Boolean   @default(true) @map("is_active")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@map("ai_board_simulations")
+}
+
+model AiVectorEmbedding {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String   @map("entity_id") @db.Uuid
+  chunkIndex Int      @default(0) @map("chunk_index")
+  content    String   @db.Text
+  embedding  Json     @db.JsonB
+  model      String   @default("text-embedding-3-small") @db.VarChar(100)
+  dimensions Int      @default(1536)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, entityType, entityId, chunkIndex])
+  @@index([tenantId, entityType])
+  @@map("ai_vector_embeddings")
+}
+
+model AiFeedbackLoop {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  sourceType        String   @map("source_type") @db.VarChar(50)
+  sourceId          String   @map("source_id") @db.Uuid
+  rating            Int
+  outcome           String   @db.VarChar(30)
+  feedbackText      String?  @map("feedback_text") @db.Text
+  rejectionReason   String?  @map("rejection_reason") @db.VarChar(200)
+  implementedResult String?  @map("implemented_result") @db.Text
+  confidenceAtTime  Float    @map("confidence_at_time")
+  actualAccurate    Boolean? @map("actual_accurate")
+  learnedPatterns   Json     @default("[]") @map("learned_patterns") @db.JsonB
+  submittedBy       String   @map("submitted_by") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, sourceType])
+  @@index([tenantId, outcome])
+  @@map("ai_feedback_loops")
 }

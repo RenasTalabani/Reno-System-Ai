@@ -37,4 +37,12 @@ export type {
   DepDeploymentLog,
   DevWebhook,
   DevWebhookDelivery,
+  AiBusinessMemory,
+  AiAccuracyMetric,
+  AiDailyBriefing,
+  AiBoardSimulation,
+  AiVectorEmbedding,
+  AiFeedbackLoop,
+  AiExecRecommendation,
+  AiBizPrediction,
 } from './generated/prisma/index.js'

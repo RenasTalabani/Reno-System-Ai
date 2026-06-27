@@ -6,6 +6,7 @@ import { brainMemoryRoutes } from './memory.routes.js'
 import { brainActionRoutes } from './actions.routes.js'
 import { brainProviderRoutes } from './providers.routes.js'
 import { brainTemplateRoutes } from './templates.routes.js'
+import { brainEvolutionRoutes } from './evolution.routes.js'
 
 export async function brainRoutes(app: FastifyInstance) {
   await app.register(brainDashboardRoutes, { prefix: '/dashboard' })
@@ -15,4 +16,5 @@ export async function brainRoutes(app: FastifyInstance) {
   await app.register(brainActionRoutes, { prefix: '/actions' })
   await app.register(brainProviderRoutes, { prefix: '/providers' })
   await app.register(brainTemplateRoutes, { prefix: '/templates' })
+  await app.register(brainEvolutionRoutes, { prefix: '' })
 }

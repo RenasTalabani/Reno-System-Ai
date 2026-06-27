@@ -4888,6 +4888,110 @@ exports.Prisma.DevWebhookDeliveryScalarFieldEnum = {
   deliveredAt: 'deliveredAt'
 };
 
+exports.Prisma.AiBusinessMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  memoryType: 'memoryType',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  entityName: 'entityName',
+  title: 'title',
+  content: 'content',
+  evidence: 'evidence',
+  importance: 'importance',
+  confidence: 'confidence',
+  tags: 'tags',
+  learnedAt: 'learnedAt',
+  validUntil: 'validUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiAccuracyMetricScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  periodDate: 'periodDate',
+  category: 'category',
+  totalRecs: 'totalRecs',
+  acceptedRecs: 'acceptedRecs',
+  rejectedRecs: 'rejectedRecs',
+  ignoredRecs: 'ignoredRecs',
+  implementedRecs: 'implementedRecs',
+  avgConfidence: 'avgConfidence',
+  accuracyRate: 'accuracyRate',
+  outcomeScore: 'outcomeScore',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiDailyBriefingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  briefingDate: 'briefingDate',
+  headline: 'headline',
+  summary: 'summary',
+  keyMetrics: 'keyMetrics',
+  topInsights: 'topInsights',
+  urgentItems: 'urgentItems',
+  opportunities: 'opportunities',
+  risks: 'risks',
+  todayPriorities: 'todayPriorities',
+  businessMood: 'businessMood',
+  generatedAt: 'generatedAt',
+  viewedBy: 'viewedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiBoardSimulationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sessionName: 'sessionName',
+  agenda: 'agenda',
+  boardMembers: 'boardMembers',
+  discussion: 'discussion',
+  decisions: 'decisions',
+  actionItems: 'actionItems',
+  keyConflicts: 'keyConflicts',
+  consensus: 'consensus',
+  status: 'status',
+  conductedAt: 'conductedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isActive: 'isActive'
+};
+
+exports.Prisma.AiVectorEmbeddingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  chunkIndex: 'chunkIndex',
+  content: 'content',
+  embedding: 'embedding',
+  model: 'model',
+  dimensions: 'dimensions',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiFeedbackLoopScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sourceType: 'sourceType',
+  sourceId: 'sourceId',
+  rating: 'rating',
+  outcome: 'outcome',
+  feedbackText: 'feedbackText',
+  rejectionReason: 'rejectionReason',
+  implementedResult: 'implementedResult',
+  confidenceAtTime: 'confidenceAtTime',
+  actualAccurate: 'actualAccurate',
+  learnedPatterns: 'learnedPatterns',
+  submittedBy: 'submittedBy',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5160,7 +5264,13 @@ exports.Prisma.ModelName = {
   AiSreIncident: 'AiSreIncident',
   DepDeploymentLog: 'DepDeploymentLog',
   DevWebhook: 'DevWebhook',
-  DevWebhookDelivery: 'DevWebhookDelivery'
+  DevWebhookDelivery: 'DevWebhookDelivery',
+  AiBusinessMemory: 'AiBusinessMemory',
+  AiAccuracyMetric: 'AiAccuracyMetric',
+  AiDailyBriefing: 'AiDailyBriefing',
+  AiBoardSimulation: 'AiBoardSimulation',
+  AiVectorEmbedding: 'AiVectorEmbedding',
+  AiFeedbackLoop: 'AiFeedbackLoop'
 };
 
 /**
