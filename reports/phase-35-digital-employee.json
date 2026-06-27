@@ -1,0 +1,149 @@
+{
+  "phase": 35,
+  "name": "Claude Digital Employee Framework",
+  "status": "COMPLETE",
+  "version": "v35.0.0-phase35",
+  "completedAt": "2026-06-28",
+  "approvedBy": "Pending ChatGPT Review",
+  "goldenRuleCompliance": {
+    "rule1_renoBrainNotReplaced": true,
+    "rule2_claudeIsOptional": true,
+    "rule3_externalProvidersDisabledByDefault": true,
+    "rule4_tenantMustExplicitlyEnable": true,
+    "rule5_existingFeaturesNotBroken": true,
+    "rule6_apiKeysNotExposedToFrontend": true,
+    "rule7_noDataSentWithoutConsent": true,
+    "rule8_rbacRespected": true,
+    "rule9_criticalActionsRequireApproval": true,
+    "rule10_allActionsAudited": true
+  },
+  "deliverables": {
+    "database": {
+      "models": [
+        {
+          "name": "AiWorkTask",
+          "table": "ai_work_tasks",
+          "description": "Main task entity with 9-state lifecycle, progress tracking, provider, risk level, tokens/cost",
+          "statusLifecycle": ["draft", "queued", "planning", "running", "waiting_for_approval", "paused", "completed", "failed", "cancelled"]
+        },
+        {
+          "name": "AiWorkStep",
+          "table": "ai_work_steps",
+          "description": "Individual execution steps within a task: tool calls, proposals, with status and duration"
+        },
+        {
+          "name": "AiWorkMemory",
+          "table": "ai_work_memory",
+          "description": "Key-value task context memory with TTL, unique per (taskId, key)"
+        },
+        {
+          "name": "AiWorkSchedule",
+          "table": "ai_work_schedules",
+          "description": "Recurring AI job scheduling with daily/weekly/monthly frequency, next-run computation"
+        },
+        {
+          "name": "AiWorkAuditLog",
+          "table": "ai_work_audit_logs",
+          "description": "Immutable audit trail for every AI action: created/started/completed/failed/paused/cancelled"
+        }
+      ]
+    },
+    "services": {
+      "taskService": {
+        "file": "apps/api/src/brain/work/task.service.ts",
+        "functions": [
+          "createTask", "listTasks", "getTask", "updateTaskStatus", "updateTaskProgress",
+          "addTaskStep", "setTaskMemory", "getTaskMemory", "logWorkAudit",
+          "getWorkDashboard", "getActivityFeed"
+        ]
+      },
+      "executorService": {
+        "file": "apps/api/src/brain/work/executor.service.ts",
+        "description": "Async task execution: builds system prompt, calls Claude or Reno Brain, records steps, stores memory, updates task to completed/failed",
+        "functions": ["executeTask", "spawnTaskExecution"],
+        "collaboration": "Claude uses callClaudeForChat() (full skill engine). Reno Brain uses callAI(provider=mock). Falls back to Reno Brain on Claude failure."
+      },
+      "scheduleService": {
+        "file": "apps/api/src/brain/work/schedule.service.ts",
+        "functions": ["createSchedule", "listSchedules", "updateSchedule", "deleteSchedule", "processDueSchedules"],
+        "scheduling": "computeNextRun() handles daily/weekly/monthly with dayOfWeek and hourOfDay config"
+      }
+    },
+    "api": {
+      "prefix": "/v1/ai-work",
+      "endpoints": [
+        { "method": "GET",    "path": "/tasks",                   "description": "List tasks with status/provider filters" },
+        { "method": "POST",   "path": "/tasks",                   "description": "Create new AI work task" },
+        { "method": "GET",    "path": "/tasks/:id",               "description": "Get task with steps and memory" },
+        { "method": "PATCH",  "path": "/tasks/:id",               "description": "Update task status/progress" },
+        { "method": "POST",   "path": "/tasks/:id/start",         "description": "Start or restart task execution (async)" },
+        { "method": "POST",   "path": "/tasks/:id/pause",         "description": "Pause a running task" },
+        { "method": "POST",   "path": "/tasks/:id/resume",        "description": "Resume a paused task" },
+        { "method": "POST",   "path": "/tasks/:id/cancel",        "description": "Cancel any non-terminal task" },
+        { "method": "GET",    "path": "/tasks/:id/steps",         "description": "Get all execution steps for a task" },
+        { "method": "GET",    "path": "/tasks/:id/memory",        "description": "Get task memory (context stored during execution)" },
+        { "method": "GET",    "path": "/tasks/dashboard/summary", "description": "Status breakdown, recent tasks, provider stats, 30-day cost" },
+        { "method": "GET",    "path": "/tasks/activity/feed",     "description": "Real-time activity feed (audit log)" },
+        { "method": "GET",    "path": "/tasks/audit/logs",        "description": "Full audit log with optional taskId filter" },
+        { "method": "GET",    "path": "/schedules",               "description": "List all recurring schedules" },
+        { "method": "POST",   "path": "/schedules",               "description": "Create recurring AI task schedule" },
+        { "method": "PATCH",  "path": "/schedules/:id",           "description": "Update schedule (enable/disable, reconfigure)" },
+        { "method": "DELETE", "path": "/schedules/:id",           "description": "Delete a schedule" }
+      ]
+    },
+    "webUI": {
+      "pages": [
+        { "path": "/ai-work",             "description": "Dashboard: status summary, recent tasks, token cost, provider breakdown" },
+        { "path": "/ai-work/tasks",       "description": "Task list with status filter tabs + inline create modal with auto-start" },
+        { "path": "/ai-work/tasks/[id]", "description": "Task detail: progress bar, step checklist, result viewer, lifecycle action buttons, approval gate notice" },
+        { "path": "/ai-work/schedule",   "description": "Recurring schedule manager: create modal, toggle enable/disable, delete" },
+        { "path": "/ai-work/activity",   "description": "Activity feed: every AI action with icons, task links, relative timestamps" }
+      ]
+    },
+    "migration": {
+      "file": "packages/database/prisma/migrations/20260628100000_phase35_digital_employee/migration.sql",
+      "tables": ["ai_work_tasks", "ai_work_steps", "ai_work_memory", "ai_work_schedules", "ai_work_audit_logs"]
+    }
+  },
+  "safetyChecks": {
+    "claudeCannotApproveOwnActions": true,
+    "claudeCannotBypassRBAC": true,
+    "claudeCannotBypassTenantIsolation": true,
+    "claudeCannotDeleteData": true,
+    "claudeCannotSendPayments": true,
+    "claudeCannotModifyPayroll": true,
+    "allWritesGoThroughProposals": true,
+    "everyActionAudited": "AiWorkAuditLog written on every task_created/started/completed/failed/paused/cancelled",
+    "humanApprovalGate": "waiting_for_approval status shown to user with action blocked until approved",
+    "fallbackToRenoBrain": "executor.service.ts falls back to Reno Brain if Claude call fails or returns isFallback"
+  },
+  "claudeAndRenoBrainCollaboration": {
+    "description": "Executor calls Claude via callClaudeForChat() with skill engine (plan+compress+budget+graph). Falls back to Reno Brain automatically on Claude error or quota exceeded.",
+    "renobrainIsDefault": true,
+    "claudeIsOptional": true
+  },
+  "typeScriptCheck": {
+    "api": "0 errors",
+    "web": "0 errors"
+  },
+  "gitCommit": "e626a5f",
+  "gitTag": "v35.0.0-phase35",
+  "filesChanged": [
+    "apps/api/src/brain/work/task.service.ts",
+    "apps/api/src/brain/work/executor.service.ts",
+    "apps/api/src/brain/work/schedule.service.ts",
+    "apps/api/src/rest/routes/ai-work/index.ts",
+    "apps/api/src/rest/routes/ai-work/tasks.routes.ts",
+    "apps/api/src/rest/routes/ai-work/schedules.routes.ts",
+    "apps/api/src/rest/routes/index.ts",
+    "apps/web/src/app/(dashboard)/ai-work/page.tsx",
+    "apps/web/src/app/(dashboard)/ai-work/tasks/page.tsx",
+    "apps/web/src/app/(dashboard)/ai-work/tasks/[id]/page.tsx",
+    "apps/web/src/app/(dashboard)/ai-work/schedule/page.tsx",
+    "apps/web/src/app/(dashboard)/ai-work/activity/page.tsx",
+    "packages/database/prisma/schema.prisma",
+    "packages/database/src/index.ts",
+    "packages/database/prisma/migrations/20260628100000_phase35_digital_employee/migration.sql"
+  ],
+  "mandatoryRule": "STOPPED. Do not start Phase 36 until Phase 35 is reviewed and approved by ChatGPT."
+}
