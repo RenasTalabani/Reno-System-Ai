@@ -3,6 +3,8 @@ import { prisma } from '@reno/database'
 import { callAI, type ProviderConfig } from '../../../brain/provider.js'
 import { buildContext, formatContextForPrompt } from '../../../brain/context.js'
 import { checkQuota, logUsage, estimateCost } from '../../../brain/quota.js'
+import { callClaudeForChat, getClaudeAvailability, getClaudeUsageStats } from '../../../brain/claude.service.js'
+import type { ProviderBadge } from '../../../brain/claude.service.js'
 
 export async function brainChatRoutes(app: FastifyInstance) {
   // POST /brain/chat — main NL query endpoint
@@ -10,7 +12,7 @@ export async function brainChatRoutes(app: FastifyInstance) {
     const { tenantId, userId } = req as any
     const body = req.body as any
 
-    const { message, agentSlug = 'reno-ceo', conversationId } = body
+    const { message, agentSlug = 'reno-ceo', conversationId, provider = 'reno_brain' } = body
 
     if (!message?.trim()) {
       return reply.code(400).send({ success: false, error: 'Message is required' })
@@ -62,64 +64,92 @@ export async function brainChatRoutes(app: FastifyInstance) {
     const ctx = await buildContext(tenantId, modules)
     const contextText = formatContextForPrompt(ctx)
 
-    // 6. Load tenant's AI provider config
-    const providerCfg = await prisma.brainProviderConfig.findFirst({
-      where: { tenantId, isActive: true, isDefault: true },
-    })
-
-    const config: ProviderConfig = {
-      provider: (providerCfg?.provider as any) ?? 'mock',
-      apiKey: providerCfg?.apiKey ?? undefined,
-      baseUrl: providerCfg?.baseUrl ?? undefined,
-      model: providerCfg?.model ?? agent.model,
-    }
-
-    // 7. Build system prompt
+    // 6. Build system prompt and messages array
     const systemPrompt = buildSystemPrompt(agent, contextText)
-
-    // 8. Build messages array
-    const messages = [
-      ...history.map(m => ({ role: m.role as any, content: m.content })),
+    const chatMessages = [
+      ...history.map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
       { role: 'user' as const, content: message },
     ]
 
-    // 9. Save user message
-    await prisma.brainMessage.create({
-      data: {
-        tenantId,
-        conversationId: conversation.id,
-        role: 'user',
-        content: message,
-      },
+    // 7. Save user message
+    const userDbMessage = await prisma.brainMessage.create({
+      data: { tenantId, conversationId: conversation.id, role: 'user', content: message },
     })
 
-    // 10. Call AI
+    // 8. Route to Claude or Reno Brain
     let aiResponse: any
+    let providerBadge: ProviderBadge
     let status = 'success'
     let errorCode: string | undefined
 
-    try {
-      aiResponse = await callAI(messages, {
-        model: config.model,
-        maxTokens: agent.maxTokens,
-        temperature: Number(agent.temperature),
-        systemPrompt,
-      }, config)
-    } catch (err: any) {
-      status = 'error'
-      errorCode = err.code ?? 'AI_CALL_FAILED'
-      aiResponse = {
-        content: `I encountered an error processing your request. Please check the AI provider configuration.\n\nError: ${err.message}`,
-        promptTokens: 0,
-        completionTokens: 0,
-        totalTokens: 0,
-        model: config.model,
-        provider: config.provider,
-        latencyMs: 0,
+    if (provider === 'claude') {
+      // Claude path — full consent/key/quota/fallback pipeline
+      try {
+        const claudeResult = await callClaudeForChat({
+          tenantId,
+          userId,
+          messages: chatMessages,
+          options: { model: agent.model, maxTokens: agent.maxTokens, temperature: Number(agent.temperature), systemPrompt },
+          module: 'brain',
+          agentName: agentSlug,
+        })
+        aiResponse = claudeResult
+        providerBadge = claudeResult.providerBadge
+      } catch (err: any) {
+        status = 'error'
+        errorCode = err.code ?? 'CLAUDE_CALL_FAILED'
+        aiResponse = {
+          content: `I encountered an error processing your request.\n\nError: ${err.message}`,
+          promptTokens: 0, completionTokens: 0, totalTokens: 0,
+          model: agent.model, provider: 'anthropic', latencyMs: 0,
+        }
+        providerBadge = { slug: 'claude', name: 'Claude', model: agent.model, isFallback: false }
       }
+    } else {
+      // Reno Brain path — existing logic
+      const providerCfg = await prisma.brainProviderConfig.findFirst({
+        where: { tenantId, isActive: true, isDefault: true },
+      })
+      const config: ProviderConfig = {
+        provider: (providerCfg?.provider as any) ?? 'mock',
+        apiKey: providerCfg?.apiKey ?? undefined,
+        baseUrl: providerCfg?.baseUrl ?? undefined,
+        model: providerCfg?.model ?? agent.model,
+      }
+
+      try {
+        aiResponse = await callAI(chatMessages, {
+          model: config.model,
+          maxTokens: agent.maxTokens,
+          temperature: Number(agent.temperature),
+          systemPrompt,
+        }, config)
+        providerBadge = { slug: 'reno_brain', name: 'Reno Brain', model: aiResponse.model, isFallback: false }
+      } catch (err: any) {
+        status = 'error'
+        errorCode = err.code ?? 'AI_CALL_FAILED'
+        aiResponse = {
+          content: `I encountered an error. Please check your AI configuration.\n\nError: ${err.message}`,
+          promptTokens: 0, completionTokens: 0, totalTokens: 0,
+          model: config.model, provider: config.provider, latencyMs: 0,
+        }
+        providerBadge = { slug: 'reno_brain', name: 'Reno Brain', model: config.model, isFallback: false }
+      }
+
+      // Log usage for Reno Brain path (Claude path logs itself)
+      const cost = estimateCost(aiResponse.model, aiResponse.promptTokens, aiResponse.completionTokens)
+      await logUsage({
+        tenantId, userId,
+        module: 'brain', feature: `agent:${agentSlug}`,
+        provider: aiResponse.provider, model: aiResponse.model,
+        promptTokens: aiResponse.promptTokens, completionTokens: aiResponse.completionTokens,
+        totalTokens: aiResponse.totalTokens, estimatedCostUsd: cost,
+        requestDurationMs: aiResponse.latencyMs, status, errorCode,
+        metadata: { agentSlug, conversationId: conversation.id },
+      })
     }
 
-    // 11. Save assistant message
+    // 9. Save assistant message with provider info
     const assistantMessage = await prisma.brainMessage.create({
       data: {
         tenantId,
@@ -130,31 +160,17 @@ export async function brainChatRoutes(app: FastifyInstance) {
         completionTokens: aiResponse.completionTokens,
         totalTokens: aiResponse.totalTokens,
         model: aiResponse.model,
-        provider: aiResponse.provider,
+        provider: providerBadge.slug,
         latencyMs: aiResponse.latencyMs,
+        metadata: {
+          providerBadge: providerBadge as any,
+          isFallback: providerBadge.isFallback,
+          fallbackReason: providerBadge.fallbackReason,
+        } as any,
       },
     })
 
-    // 12. Log usage
-    const cost = estimateCost(aiResponse.model, aiResponse.promptTokens, aiResponse.completionTokens)
-    await logUsage({
-      tenantId,
-      userId,
-      module: 'brain',
-      feature: `agent:${agentSlug}`,
-      provider: aiResponse.provider,
-      model: aiResponse.model,
-      promptTokens: aiResponse.promptTokens,
-      completionTokens: aiResponse.completionTokens,
-      totalTokens: aiResponse.totalTokens,
-      estimatedCostUsd: cost,
-      requestDurationMs: aiResponse.latencyMs,
-      status,
-      errorCode,
-      metadata: { agentSlug, conversationId: conversation.id },
-    })
-
-    // 13. Update conversation stats
+    // 10. Update conversation stats
     await prisma.brainConversation.update({
       where: { id: conversation.id },
       data: {
@@ -164,16 +180,15 @@ export async function brainChatRoutes(app: FastifyInstance) {
       },
     })
 
-    // 14. Brain audit log
+    // 11. Brain audit log
     await prisma.brainAuditLog.create({
       data: {
-        tenantId,
-        userId,
+        tenantId, userId,
         conversationId: conversation.id,
         agentId: agent.id,
         action: 'chat_message',
         module: 'brain',
-        description: `User query to ${agent.name}: "${message.substring(0, 100)}"`,
+        description: `[${providerBadge.name}] User query to ${agent.name}: "${message.substring(0, 100)}"`,
       },
     })
 
@@ -181,10 +196,14 @@ export async function brainChatRoutes(app: FastifyInstance) {
       success: true,
       data: {
         conversationId: conversation.id,
-        messageId: assistantMessage.id,
-        content: aiResponse.content,
-        model: aiResponse.model,
-        provider: aiResponse.provider,
+        // Full message objects for UI
+        userMessage: { id: userDbMessage.id, role: 'user', content: message, createdAt: userDbMessage.createdAt },
+        assistantMessage: {
+          id: assistantMessage.id, role: 'assistant', content: aiResponse.content,
+          createdAt: assistantMessage.createdAt, model: aiResponse.model,
+          provider: providerBadge.slug, providerBadge,
+        },
+        providerBadge,
         tokens: {
           prompt: aiResponse.promptTokens,
           completion: aiResponse.completionTokens,

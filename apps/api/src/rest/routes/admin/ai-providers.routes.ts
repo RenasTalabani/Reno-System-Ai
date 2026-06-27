@@ -7,6 +7,7 @@ import {
   saveProviderApiKey,
   logProviderAudit,
 } from '../../../brain/ai-provider.service.js'
+import { getClaudeAvailability, getClaudeUsageStats } from '../../../brain/claude.service.js'
 
 export async function adminAiProviderRoutes(app: FastifyInstance) {
   // GET /admin/ai/registry — list all available provider types
@@ -268,6 +269,7 @@ export async function adminAiProviderRoutes(app: FastifyInstance) {
     ])
 
     const activeConfig = configs.find(c => c.isDefault && c.isActive)
+    const claudeAvailability = await getClaudeAvailability(tenantId)
 
     return reply.send({
       success: true,
@@ -278,7 +280,23 @@ export async function adminAiProviderRoutes(app: FastifyInstance) {
         consents,
         availableProviders: registry,
         recentActivity: recentAudit,
+        claudeAvailability,
       },
     })
+  })
+
+  // GET /admin/ai/claude/availability — check if Claude is ready for this tenant
+  app.get('/claude/availability', async (req, reply) => {
+    const { tenantId } = req as any
+    const availability = await getClaudeAvailability(tenantId)
+    return reply.send({ success: true, data: availability })
+  })
+
+  // GET /admin/ai/claude/usage — Claude token & cost statistics
+  app.get('/claude/usage', async (req, reply) => {
+    const { tenantId } = req as any
+    const { days = '30' } = req.query as any
+    const stats = await getClaudeUsageStats(tenantId, Number(days))
+    return reply.send({ success: true, data: stats })
   })
 }

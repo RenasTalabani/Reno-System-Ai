@@ -1,0 +1,92 @@
+{
+  "phase": 32,
+  "name": "Claude Optional Integration",
+  "status": "COMPLETE",
+  "completedAt": "2026-06-27",
+
+  "features_completed": [
+    "claude.service.ts — full Claude call pipeline (consent → quota → decrypt → callAI → logUsage → logAudit → fallback)",
+    "callClaudeForChat() — routes to Anthropic API with encrypted key, falls back to Reno Brain on any failure",
+    "getClaudeAvailability() — checks consent + config + API key presence in one call",
+    "getClaudeUsageStats() — aggregated token/cost stats from AiUsageLog by provider='anthropic'",
+    "fallbackToRenoBrain() — silent fallback to provider='mock', sets isFallback=true with reason",
+    "chat.routes.ts updated — provider='reno_brain'|'claude' routing, full message objects returned, providerBadge on response",
+    "Claude path logs its own usage via logUsage(); Reno Brain path logs its own — no double-logging",
+    "Claude usage tracked under provider='anthropic' in AiUsageLog with cost estimation ($3/$15 per 1M tokens)",
+    "Provider badge returned on every chat response: { slug, name, model, isFallback, fallbackReason? }",
+    "GET /admin/ai/claude/availability — real-time Claude readiness check for tenant",
+    "GET /admin/ai/claude/usage — token usage, cost, daily stats, model breakdown",
+    "GET /admin/ai/status — now includes claudeAvailability",
+    "Brain chat UI updated — provider selector dropdown (Reno Brain / Claude)",
+    "UI shows Claude option only when availability=true (consent + config + key all verified)",
+    "Provider badge chip displayed on every assistant message bubble",
+    "Fallback notice shown inline when isFallback=true with fallbackReason text",
+    "Send button and header badge change color/icon for Claude vs Reno Brain",
+    "Warning banner displayed when Claude is selected: data sent to external service",
+    "Link to /settings/ai-providers in provider dropdown when Claude is not yet enabled",
+    "TypeScript API: 0 errors | TypeScript Web: 0 errors"
+  ],
+
+  "security_checks": [
+    "PASS: Claude is never active without explicit tenant consent (TenantAiConsent.consentGiven=true AND revokedAt=null)",
+    "PASS: Claude is never the default — provider='reno_brain' is default in all chat requests",
+    "PASS: API key decrypted in-memory only, never logged, never returned to client",
+    "PASS: Claude usage counts against the same tenant aiMonthlyTokenQuota as Reno Brain",
+    "PASS: Fallback to Reno Brain on: no consent / no config / no key / API error / quota exceeded",
+    "PASS: Every Claude call logged to AiProviderAuditLog (action='call', status='success'|'error'|'blocked')",
+    "PASS: Usage logged to AiUsageLog with provider='anthropic', model, tokens, cost, latencyMs",
+    "PASS: Frontend warning displayed whenever Claude provider is selected",
+    "PASS: providerBadge on every response — tenant always knows which AI answered",
+    "PASS: fallback is transparent — isFallback=true and fallbackReason shown to user in UI"
+  ],
+
+  "fallback_chain": [
+    "1. Consent not given or revoked → fallback to Reno Brain immediately",
+    "2. BrainProviderConfig not found for provider='anthropic' → fallback",
+    "3. API key missing (no encryptedApiKey and no apiKey) → fallback",
+    "4. Decryption failure → log audit error → fallback",
+    "5. Monthly quota exceeded → log audit blocked → fallback",
+    "6. Claude API call throws → log audit error → fallback if fallbackEnabled=true, else rethrow"
+  ],
+
+  "api_endpoints": [
+    "POST /api/v1/brain/chat — updated: accepts provider='reno_brain'|'claude', routes accordingly",
+    "GET /api/v1/admin/ai/claude/availability — check if Claude is ready for this tenant",
+    "GET /api/v1/admin/ai/claude/usage?days=30 — token/cost statistics for Claude",
+    "GET /api/v1/admin/ai/status — now includes claudeAvailability object"
+  ],
+
+  "files_created": [
+    "apps/api/src/brain/claude.service.ts"
+  ],
+
+  "files_modified": [
+    "apps/api/src/rest/routes/brain/chat.routes.ts",
+    "apps/api/src/rest/routes/admin/ai-providers.routes.ts",
+    "apps/web/src/app/(dashboard)/brain/chat/page.tsx"
+  ],
+
+  "tests": [
+    "TypeScript API: 0 errors",
+    "TypeScript Web: 0 errors"
+  ],
+
+  "known_issues": [],
+
+  "golden_rules_compliance": {
+    "doNotReplaceRenoBrain": "PASS — Reno Brain is still the default; provider.ts unchanged; mock path untouched",
+    "claudeMustBeOptional": "PASS — user must explicitly select 'claude' in the dropdown; default remains 'reno_brain'",
+    "externalProviderDisabledByDefault": "PASS — provider selector defaults to 'reno_brain' on every new conversation",
+    "tenantAdminMustExplicitlyEnable": "PASS — consent + BrainProviderConfig + encryptedApiKey all required before Claude is usable",
+    "doNotCrash": "PASS — every Claude failure falls back to Reno Brain silently; no unhandled rejections",
+    "doNotExposeApiKeys": "PASS — key decrypted in memory, never returned in any response, masked hint only in config endpoints",
+    "doNotSendDataWithoutConsent": "PASS — consent check is the first gate in callClaudeForChat(); no data sent if consent missing",
+    "respectRBAC": "PASS — all endpoints behind standard tenant auth middleware",
+    "criticalActionsRequireApproval": "PASS — no auto-actions; AI responses are informational only",
+    "allActionsAudited": "PASS — every Claude call (success, error, blocked, fallback) written to AiProviderAuditLog"
+  },
+
+  "next_phase": "Phase 33 — Claude Tool Calling for Reno",
+  "approval_required": true,
+  "stop_and_wait": "Do not begin Phase 33 until this Phase 32 report is reviewed and approved."
+}
