@@ -1,0 +1,83 @@
+{
+  "phase": 31,
+  "name": "AI Provider Foundation",
+  "status": "COMPLETE",
+  "commit": "ef3b425",
+  "tag": "v31.0.0-phase31",
+  "completedAt": "2026-06-27",
+
+  "features_completed": [
+    "AiProviderRegistry — system-wide catalog of provider types (reno_brain, claude, openai, google)",
+    "Registry seeded in migration: reno_brain (built-in, enabled), claude (optional), openai (optional), google (disabled by default)",
+    "TenantAiConsent — per-tenant explicit consent records with full revocation support",
+    "AiProviderAuditLog — immutable audit trail per provider (call, test, enable, disable, consent, revoke, fallback, key_update)",
+    "BrainProviderConfig extended: encryptedApiKey, keyHint, consentVerified, status, fallbackProvider, fallbackEnabled, moduleOverrides",
+    "crypto.service.ts — AES-256-GCM encryption/decryption for API keys at rest",
+    "ai-provider.service.ts — provider resolution, consent check, automatic fallback to Reno Brain, module-level overrides",
+    "callWithProvider() — unified call function with fallback logic and automatic audit logging",
+    "saveProviderApiKey() — encrypts key before storage, returns only hint",
+    "grantConsent() / revokeConsent() — full consent lifecycle management",
+    "logProviderAudit() — non-throwing audit writer (never crashes on audit failure)",
+    "POST /admin/ai/providers — create provider config",
+    "PUT /admin/ai/providers/:id/key — set encrypted API key (key never stored in response)",
+    "PATCH /admin/ai/providers/:id — update provider settings",
+    "DELETE /admin/ai/providers/:id — remove provider config",
+    "POST /admin/ai/providers/:id/test — live connection test",
+    "GET /admin/ai/registry — list available provider types",
+    "GET /admin/ai/consent — tenant consent status",
+    "POST /admin/ai/consent — grant consent with text acknowledgment",
+    "DELETE /admin/ai/consent/:providerSlug — revoke consent (deactivates provider config)",
+    "GET /admin/ai/audit — provider audit log with filters",
+    "GET /admin/ai/status — overall AI status for tenant",
+    "Web: Settings → AI Providers page with consent flow, key modal, audit log, test button"
+  ],
+
+  "security_checks": [
+    "PASS: Reno Brain untouched — existing behavior unchanged",
+    "PASS: External providers disabled by default (requires explicit consent + key)",
+    "PASS: API keys encrypted at rest with AES-256-GCM (ENCRYPTION_KEY env var)",
+    "PASS: Only masked key hint returned to frontend (e.g. sk-a...4cde)",
+    "PASS: Consent required before any external provider is active",
+    "PASS: Consent revocation immediately deactivates provider config",
+    "PASS: Every provider operation logged to AiProviderAuditLog",
+    "PASS: Automatic fallback to Reno Brain on API failure or missing consent",
+    "PASS: tenantId scoped on all consent and audit queries",
+    "PASS: No cross-tenant data access in any provider query"
+  ],
+
+  "database": {
+    "newModels": [
+      "AiProviderRegistry — system-level catalog (no tenantId)",
+      "TenantAiConsent — per-tenant consent (unique: tenantId + providerSlug)",
+      "AiProviderAuditLog — immutable audit trail"
+    ],
+    "extendedModels": [
+      "BrainProviderConfig — added encryptedApiKey, keyHint, consentVerified, status, statusReason, fallbackProvider, fallbackEnabled, moduleOverrides"
+    ],
+    "migration": "packages/database/prisma/migrations/20260627200000_phase31_ai_provider_foundation/migration.sql",
+    "prismaRegenerated": true
+  },
+
+  "tests": [
+    "TypeScript API: 0 errors",
+    "TypeScript Web: 0 errors"
+  ],
+
+  "known_issues": [],
+
+  "golden_rules_compliance": {
+    "doNotReplaceRenoBrain": "PASS — Reno Brain is still default, provider.ts unchanged",
+    "claudeMustBeOptional": "PASS — claude provider disabled by default, requires consent + key",
+    "externalProviderDisabledByDefault": "PASS — requires_consent=true, consent_given=false until admin acts",
+    "tenantAdminMustExplicitlyEnable": "PASS — consent modal + key setup required",
+    "doNotCrash": "PASS — all external calls have fallback to Reno Brain",
+    "doNotExposeApiKeys": "PASS — only encrypted storage and masked hints",
+    "doNotSendDataWithoutConsent": "PASS — consent checked before every external call",
+    "respectRBAC": "PASS — all routes behind standard auth middleware",
+    "criticalActionsRequireApproval": "PASS — no AI actions auto-execute",
+    "allActionsAudited": "PASS — AiProviderAuditLog on every operation"
+  },
+
+  "next_phase": "Phase 32 — Claude Optional Integration",
+  "approval_required": true
+}
