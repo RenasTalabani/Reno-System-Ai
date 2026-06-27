@@ -178,6 +178,7 @@ model CoreTenant {
   aiFeedbackLoops          AiFeedbackLoop[]
   tenantAiConsents         TenantAiConsent[]
   aiProviderAuditLogs      AiProviderAuditLog[]
+  claudeToolCalls          ClaudeToolCall[]
 
   @@map("core_tenants")
 }
@@ -7337,3 +7338,26 @@ model AiProviderAuditLog {
   @@index([tenantId, action])
   @@map("ai_provider_audit_logs")
 }
+
+// Phase 33: Claude Tool Calling
+
+model ClaudeToolCall {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  conversationId String?  @map("conversation_id") @db.Uuid
+  toolName       String   @map("tool_name") @db.VarChar(100)
+  toolCallId     String   @map("tool_call_id") @db.VarChar(100)
+  toolInput      Json     @map("tool_input") @db.JsonB
+  toolOutput     Json?    @map("tool_output") @db.JsonB
+  status         String   @default("success") @db.VarChar(20)
+  durationMs     Int?     @map("duration_ms")
+  errorMessage   String?  @map("error_message") @db.VarChar(1000)
+  proposalId     String?  @map("proposal_id") @db.Uuid
+  occurredAt     DateTime @default(now()) @map("occurred_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id])
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, toolName])
+  @@map("claude_tool_calls")
+}
+

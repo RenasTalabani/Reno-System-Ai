@@ -5053,6 +5053,22 @@ exports.Prisma.AiProviderAuditLogScalarFieldEnum = {
   occurredAt: 'occurredAt'
 };
 
+exports.Prisma.ClaudeToolCallScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  conversationId: 'conversationId',
+  toolName: 'toolName',
+  toolCallId: 'toolCallId',
+  toolInput: 'toolInput',
+  toolOutput: 'toolOutput',
+  status: 'status',
+  durationMs: 'durationMs',
+  errorMessage: 'errorMessage',
+  proposalId: 'proposalId',
+  occurredAt: 'occurredAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5334,7 +5350,8 @@ exports.Prisma.ModelName = {
   AiFeedbackLoop: 'AiFeedbackLoop',
   AiProviderRegistry: 'AiProviderRegistry',
   TenantAiConsent: 'TenantAiConsent',
-  AiProviderAuditLog: 'AiProviderAuditLog'
+  AiProviderAuditLog: 'AiProviderAuditLog',
+  ClaudeToolCall: 'ClaudeToolCall'
 };
 
 /**

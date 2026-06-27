@@ -88,6 +88,7 @@ export async function brainChatRoutes(app: FastifyInstance) {
         const claudeResult = await callClaudeForChat({
           tenantId,
           userId,
+          conversationId: conversation.id,
           messages: chatMessages,
           options: { model: agent.model, maxTokens: agent.maxTokens, temperature: Number(agent.temperature), systemPrompt },
           module: 'brain',

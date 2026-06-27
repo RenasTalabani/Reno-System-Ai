@@ -1,0 +1,114 @@
+{
+  "phase": 33,
+  "name": "Claude Tool Calling for Reno",
+  "status": "COMPLETE",
+  "completedAt": "2026-06-27",
+
+  "features_completed": [
+    "Tool registry (registry.ts) — 13 tools catalogued with category, isDestructive, requiresApproval, requiredModules",
+    "Anthropic tool definitions (definitions.ts) — full JSON Schema for all 13 tools in Anthropic API format",
+    "Tool executor (executor.ts) — routes tool calls, checks for destructive tools, calls implementations, logs every call",
+    "Read tools (read-tools.ts) — 8 read-only tools querying live Prisma data with tenant isolation",
+    "Proposal tools (proposal-tools.ts) — 5 write tools that create AiExecProposal records, never execute directly",
+    "callClaudeWithTools() — Anthropic tool use loop (up to 8 iterations), accumulates all token counts",
+    "callClaudeForChat() updated — now routes through tool calling instead of simple completion",
+    "logToolCall() — every tool call written to ClaudeToolCall audit table (never throws)",
+    "ClaudeToolCall model — immutable audit log: tool name, input, output, status, duration, proposalId",
+    "Phase 33 reuses existing AiExecProposal with proposalType = create_task | create_workflow | create_invoice_draft | create_purchase_order | create_support_reply",
+    "GET /brain/proposals — list proposals by status (pending_approval default)",
+    "GET /brain/proposals/:id — proposal detail",
+    "POST /brain/proposals/:id/approve — human approves (records approvedBy, approvedAt)",
+    "POST /brain/proposals/:id/reject — human rejects with reason",
+    "GET /brain/proposals/tool-calls — Claude tool call audit log with filters",
+    "TypeScript API: 0 errors | TypeScript Web: 0 errors"
+  ],
+
+  "tools_implemented": [
+    "read_dashboard_summary — cross-module business overview (revenue, employees, tickets, stock, POs, orders)",
+    "read_customer — CrmContact + CrmCompany search by name/email/ID",
+    "read_employee — HrEmployee search by name/email/code, includes department + current job title",
+    "read_invoice — SalesInvoice + line items by number/ID",
+    "read_inventory_stock — InvStockBalance by product name/code, shows on-hand/reserved/available",
+    "read_project — PmProject with task counts (open vs done), budget, progress",
+    "read_ticket — SdTicket with recent comments, SLA status, AI summary",
+    "generate_report — aggregated reports: revenue | hr_headcount | inventory | support | projects | procurement",
+    "create_task_proposal — creates AiExecProposal(proposalType=create_task), pending human approval",
+    "create_workflow_proposal — creates AiExecProposal(proposalType=create_workflow)",
+    "create_invoice_draft — creates AiExecProposal(proposalType=create_invoice_draft) with line items",
+    "create_purchase_order_proposal — creates AiExecProposal(proposalType=create_purchase_order)",
+    "create_support_reply_draft — creates AiExecProposal(proposalType=create_support_reply)"
+  ],
+
+  "security_checks": [
+    "PASS: All read tools scope every Prisma query to tenantId — no cross-tenant access possible",
+    "PASS: Destructive tools are blocked at executor level (isDestructive guard) — none are defined",
+    "PASS: All write actions create proposals only — Claude never directly modifies any data",
+    "PASS: Proposals require explicit human approve/reject via API endpoints",
+    "PASS: Every tool call logged to ClaudeToolCall (tenantId, userId, toolName, input, output, status, duration)",
+    "PASS: Employee tool never returns salary, payroll, or private financial data",
+    "PASS: Invoice tool returns only safe fields — no payment card data, no bank details",
+    "PASS: Tool loop capped at 8 iterations — prevents infinite tool call loops",
+    "PASS: logToolCall() catches all errors silently — audit failures never crash the AI response",
+    "PASS: Fallback to Reno Brain still triggers on any Claude error — existing safety net intact",
+    "PASS: Consent + API key + quota checks still run before any tool use (inherited from Phase 32)",
+    "PASS: RBAC: all /brain/proposals routes are behind standard tenant auth middleware"
+  ],
+
+  "database": {
+    "newModels": [
+      "ClaudeToolCall — audit log for every tool invocation (tool_name, tool_input, tool_output, status, duration_ms, proposal_id)"
+    ],
+    "reuseExistingModels": [
+      "AiExecProposal — reused from prior phases; Phase 33 adds proposalType values: create_task, create_workflow, create_invoice_draft, create_purchase_order, create_support_reply"
+    ],
+    "migration": "packages/database/prisma/migrations/20260627220000_phase33_claude_tools/migration.sql"
+  },
+
+  "api_endpoints": [
+    "GET /api/v1/brain/proposals — list AI execution proposals (status filter, pagination)",
+    "GET /api/v1/brain/proposals/:id — proposal detail + payload",
+    "POST /api/v1/brain/proposals/:id/approve — human approval (records who approved)",
+    "POST /api/v1/brain/proposals/:id/reject — human rejection with reason",
+    "GET /api/v1/brain/proposals/tool-calls — Claude tool call audit log"
+  ],
+
+  "files_created": [
+    "apps/api/src/brain/tools/registry.ts",
+    "apps/api/src/brain/tools/definitions.ts",
+    "apps/api/src/brain/tools/executor.ts",
+    "apps/api/src/brain/tools/read-tools.ts",
+    "apps/api/src/brain/tools/proposal-tools.ts",
+    "apps/api/src/rest/routes/brain/proposals.routes.ts",
+    "packages/database/prisma/migrations/20260627220000_phase33_claude_tools/migration.sql"
+  ],
+
+  "files_modified": [
+    "packages/database/prisma/schema.prisma — added ClaudeToolCall model + CoreTenant reverse relation",
+    "packages/database/src/index.ts — exported ClaudeToolCall + AiExecProposal types",
+    "apps/api/src/brain/claude.service.ts — replaced callAI() with callClaudeWithTools() tool loop",
+    "apps/api/src/rest/routes/brain/chat.routes.ts — pass conversationId to callClaudeForChat()",
+    "apps/api/src/rest/routes/brain/index.ts — registered brainProposalsRoutes at /proposals"
+  ],
+
+  "tests": [
+    "TypeScript API: 0 errors",
+    "TypeScript Web: 0 errors"
+  ],
+
+  "known_issues": [],
+
+  "critical_safety_rules_compliance": {
+    "claudeNeverDirectlyDeletesData": "PASS — no delete tools exist; all write tools create proposals only",
+    "claudeNeverDirectlySendsPayments": "PASS — no payment execution tool exists",
+    "claudeNeverDirectlyModifiesPayroll": "PASS — no payroll tool exists",
+    "claudeNeverBypassesRBAC": "PASS — all queries scoped by tenantId; auth middleware on all routes",
+    "claudeNeverAccessesAnotherTenantsData": "PASS — every Prisma query includes tenantId filter",
+    "claudeNeverExposesSecrets": "PASS — no secrets in tool output; employee tool excludes salary/payroll",
+    "claudeNeverExecutesCriticalActionsWithoutApproval": "PASS — write tools create pending proposals only",
+    "riskyToolCreatesProposalNotExecution": "PASS — all 5 write tools route through AiExecProposal"
+  },
+
+  "next_phase": "Phase 34 — AI Onboarding Agent",
+  "approval_required": true,
+  "stop_and_wait": "Do not begin Phase 34 until this Phase 33 report is reviewed and approved."
+}

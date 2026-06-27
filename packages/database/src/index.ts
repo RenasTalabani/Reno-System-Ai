@@ -48,4 +48,6 @@ export type {
   AiProviderRegistry,
   TenantAiConsent,
   AiProviderAuditLog,
+  ClaudeToolCall,
+  AiExecProposal,
 } from './generated/prisma/index.js'

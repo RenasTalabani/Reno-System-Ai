@@ -1,8 +1,11 @@
+import Anthropic from '@anthropic-ai/sdk'
 import { prisma } from '@reno/database'
 import { decryptApiKey } from './crypto.service.js'
 import { callAI, type ChatMessage, type ChatOptions, type AIResponse } from './provider.js'
 import { checkQuota, logUsage, estimateCost } from './quota.js'
 import { logProviderAudit } from './ai-provider.service.js'
+import { getAnthropicToolDefinitions } from './tools/definitions.js'
+import { executeTool, logToolCall } from './tools/executor.js'
 
 export interface ProviderBadge {
   slug: string
@@ -15,18 +18,20 @@ export interface ProviderBadge {
 export interface ClaudeCallResult extends AIResponse {
   providerBadge: ProviderBadge
   isFallback: boolean
+  toolCallCount?: number
 }
 
-// Full Claude call pipeline: consent → quota → decrypt → call Anthropic → log → fallback
+// Full Claude call pipeline: consent → quota → decrypt → call Anthropic (with tools) → log → fallback
 export async function callClaudeForChat(params: {
   tenantId: string
   userId: string
+  conversationId?: string
   messages: ChatMessage[]
   options: ChatOptions
   module?: string
   agentName: string
 }): Promise<ClaudeCallResult> {
-  const { tenantId, userId, messages, options, module: mod, agentName } = params
+  const { tenantId, userId, conversationId, messages, options, module: mod, agentName } = params
 
   // 1. Verify consent
   const consent = await prisma.tenantAiConsent.findUnique({
@@ -72,7 +77,7 @@ export async function callClaudeForChat(params: {
     })
   }
 
-  // 4. Check quota (Claude usage counts against the same tenant quota)
+  // 4. Check quota
   const quota = await checkQuota(tenantId)
   if (!quota.allowed) {
     await logProviderAudit({
@@ -86,19 +91,57 @@ export async function callClaudeForChat(params: {
     })
   }
 
-  // 5. Call Claude
+  // 5. Call Claude with tool use loop
   const start = Date.now()
-  let aiResponse: AIResponse
   let callStatus: 'success' | 'error' = 'success'
   let errorMessage: string | undefined
+  let toolCallCount = 0
 
   try {
-    aiResponse = await callAI(messages, options, {
-      provider: 'anthropic',
-      apiKey,
-      baseUrl: config.baseUrl ?? undefined,
-      model: config.model,
+    const result = await callClaudeWithTools({
+      apiKey, model: config.model, messages, options,
+      tenantId, userId, conversationId,
     })
+    toolCallCount = result.toolCallCount
+
+    // 6. Log usage
+    const cost = estimateCost(config.model, result.promptTokens, result.completionTokens)
+    await logUsage({
+      tenantId, userId,
+      module: mod ?? 'brain',
+      feature: `claude:${agentName}`,
+      provider: 'anthropic',
+      model: config.model,
+      promptTokens: result.promptTokens,
+      completionTokens: result.completionTokens,
+      totalTokens: result.totalTokens,
+      estimatedCostUsd: cost,
+      requestDurationMs: result.latencyMs,
+      status: callStatus,
+      metadata: { agentName, consentVerified: true, toolCallCount },
+    })
+
+    // 7. Audit log
+    await logProviderAudit({
+      tenantId, userId, providerSlug: 'claude',
+      action: 'call', status: callStatus,
+      module: mod,
+      tokensUsed: result.totalTokens,
+      latencyMs: result.latencyMs,
+    })
+
+    return {
+      content: result.content,
+      promptTokens: result.promptTokens,
+      completionTokens: result.completionTokens,
+      totalTokens: result.totalTokens,
+      model: config.model,
+      provider: 'anthropic',
+      latencyMs: result.latencyMs,
+      providerBadge: { slug: 'claude', name: 'Claude', model: config.model, isFallback: false },
+      isFallback: false,
+      toolCallCount,
+    }
   } catch (err: any) {
     callStatus = 'error'
     errorMessage = err.message
@@ -110,7 +153,6 @@ export async function callClaudeForChat(params: {
       latencyMs: Date.now() - start,
     })
 
-    // Fallback to Reno Brain if Claude fails and fallback is enabled
     const fallbackEnabled = config.fallbackEnabled ?? true
     if (fallbackEnabled) {
       return fallbackToRenoBrain(messages, options, {
@@ -120,40 +162,116 @@ export async function callClaudeForChat(params: {
     }
     throw err
   }
+}
 
-  // 6. Log usage (Claude usage tracked to AiUsageLog under provider='anthropic')
-  const cost = estimateCost(aiResponse.model, aiResponse.promptTokens, aiResponse.completionTokens)
-  await logUsage({
-    tenantId,
-    userId,
-    module: mod ?? 'brain',
-    feature: `claude:${agentName}`,
-    provider: 'anthropic',
-    model: aiResponse.model,
-    promptTokens: aiResponse.promptTokens,
-    completionTokens: aiResponse.completionTokens,
-    totalTokens: aiResponse.totalTokens,
-    estimatedCostUsd: cost,
-    requestDurationMs: aiResponse.latencyMs,
-    status: callStatus,
-    errorCode: errorMessage ? 'CLAUDE_ERROR' : undefined,
-    metadata: { agentName, consentVerified: true },
+// Internal: Anthropic messages API with tool use loop
+async function callClaudeWithTools(params: {
+  apiKey: string
+  model: string
+  messages: ChatMessage[]
+  options: ChatOptions
+  tenantId: string
+  userId: string
+  conversationId?: string
+}): Promise<{ content: string; promptTokens: number; completionTokens: number; totalTokens: number; latencyMs: number; toolCallCount: number }> {
+  const { apiKey, model, messages, options, tenantId, userId, conversationId } = params
+  const client = new Anthropic({ apiKey })
+  const start = Date.now()
+
+  const anthropicMessages: Anthropic.MessageParam[] = messages
+    .filter(m => m.role !== 'system')
+    .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
+
+  const systemPrompt = options.systemPrompt ?? messages.find(m => m.role === 'system')?.content
+  const toolDefs = getAnthropicToolDefinitions()
+
+  let totalInputTokens = 0
+  let totalOutputTokens = 0
+  let toolCallCount = 0
+  const maxIterations = 8
+
+  let response = await client.messages.create({
+    model,
+    max_tokens: options.maxTokens ?? 4096,
+    system: systemPrompt,
+    tools: toolDefs,
+    messages: anthropicMessages,
   })
 
-  // 7. Audit log
-  await logProviderAudit({
-    tenantId, userId, providerSlug: 'claude',
-    action: 'call', status: callStatus,
-    module: mod,
-    tokensUsed: aiResponse.totalTokens,
-    latencyMs: aiResponse.latencyMs,
-    errorMessage,
-  })
+  totalInputTokens += response.usage.input_tokens
+  totalOutputTokens += response.usage.output_tokens
+
+  let iterations = 0
+  while (response.stop_reason === 'tool_use' && iterations < maxIterations) {
+    iterations++
+    const toolResults: Anthropic.ToolResultBlockParam[] = []
+
+    for (const block of response.content) {
+      if (block.type !== 'tool_use') continue
+
+      toolCallCount++
+      const toolStart = Date.now()
+      let toolResult: { success: boolean; data?: unknown; error?: string; proposalId?: string; proposalSummary?: string }
+
+      try {
+        toolResult = await executeTool(block.name, block.input as Record<string, unknown>, {
+          tenantId, userId, conversationId,
+        })
+      } catch (err: any) {
+        toolResult = { success: false, error: err.message ?? 'Tool execution failed' }
+      }
+
+      await logToolCall({
+        tenantId, userId, conversationId,
+        toolName: block.name,
+        toolCallId: block.id,
+        toolInput: block.input as Record<string, unknown>,
+        toolOutput: toolResult,
+        status: toolResult.success ? (toolResult.proposalId ? 'proposed' : 'success') : 'error',
+        durationMs: Date.now() - toolStart,
+        errorMessage: toolResult.error,
+        proposalId: toolResult.proposalId,
+      })
+
+      const resultContent = toolResult.success
+        ? JSON.stringify(toolResult.data ?? { proposalId: toolResult.proposalId, summary: toolResult.proposalSummary })
+        : JSON.stringify({ error: toolResult.error })
+
+      toolResults.push({
+        type: 'tool_result',
+        tool_use_id: block.id,
+        content: resultContent,
+        is_error: !toolResult.success,
+      })
+    }
+
+    anthropicMessages.push({ role: 'assistant', content: response.content })
+    anthropicMessages.push({ role: 'user', content: toolResults })
+
+    response = await client.messages.create({
+      model,
+      max_tokens: options.maxTokens ?? 4096,
+      system: systemPrompt,
+      tools: toolDefs,
+      messages: anthropicMessages,
+    })
+
+    totalInputTokens += response.usage.input_tokens
+    totalOutputTokens += response.usage.output_tokens
+  }
+
+  const content = response.content
+    .filter(b => b.type === 'text')
+    .map(b => (b as Anthropic.TextBlock).text)
+    .join('\n')
 
   return {
-    ...aiResponse,
-    providerBadge: { slug: 'claude', name: 'Claude', model: aiResponse.model, isFallback: false },
-    isFallback: false,
+    content,
+    promptTokens: totalInputTokens,
+    completionTokens: totalOutputTokens,
+    totalTokens: totalInputTokens + totalOutputTokens,
+    latencyMs: Date.now() - start,
+    toolCallCount,
   }
 }
 
@@ -246,5 +364,6 @@ async function fallbackToRenoBrain(
     ...aiResponse,
     providerBadge: badge,
     isFallback: true,
+    toolCallCount: 0,
   }
 }
