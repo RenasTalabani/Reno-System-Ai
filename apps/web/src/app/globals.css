@@ -101,3 +101,107 @@
 
 /* ─── Focus Ring ─────────────────────────────────────────────────────────────── */
 :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
+
+/* ─── RTL Support ────────────────────────────────────────────────────────────── */
+[dir="rtl"] body { font-family: 'Noto Sans Arabic', 'Inter', sans-serif; }
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+[dir="rtl"] .rtl-space { margin-right: 0; margin-left: var(--space); }
+
+/* ─── High Contrast Mode (WCAG 2.2 AA+ / AAA) ────────────────────────────── */
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 60 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --border: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 90%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 100%;
+  --accent: 0 0% 20%;
+  --accent-foreground: 0 0% 100%;
+}
+.high-contrast * { text-shadow: none !important; }
+.high-contrast a { text-decoration: underline; }
+.high-contrast button, .high-contrast [role="button"] { outline: 2px solid currentColor; }
+
+/* ─── Color-blind Modes (CSS filter approach) ─────────────────────────────── */
+[data-color-blind="deuteranopia"] body { filter: url('#deuteranopia'); }
+[data-color-blind="protanopia"] body { filter: url('#protanopia'); }
+[data-color-blind="tritanopia"] body { filter: url('#tritanopia'); }
+[data-color-blind="monochromacy"] body { filter: grayscale(100%); }
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Smooth Page Transitions ──────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: fadeInUp 0.2s ease-out forwards; }
+
+/* ─── Gradient Text Utility ─────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand-secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glass Effect ──────────────────────────────────────────────────────────── */
+.glass {
+  background: hsl(var(--background) / 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* ─── Cmdk styles ─────────────────────────────────────────────────────────── */
+[cmdk-root] { width: 100%; }
+[cmdk-input-wrapper] { display: flex; align-items: center; }
+[cmdk-input] { width: 100%; background: transparent; border: none; outline: none; color: hsl(var(--foreground)); }
+[cmdk-input]::placeholder { color: hsl(var(--muted-foreground)); }
+[cmdk-item] {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+  cursor: pointer; transition: background 0.1s;
+  color: hsl(var(--foreground)); font-size: 0.875rem;
+}
+[cmdk-item][aria-selected="true"],
+[cmdk-item]:hover { background: hsl(var(--accent)); }
+[cmdk-group-heading] {
+  padding: 0.5rem 0.75rem 0.25rem;
+  font-size: 0.75rem; font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+[cmdk-separator] { height: 1px; background: hsl(var(--border)); margin: 0.25rem 0; }
+[cmdk-list] { overflow-y: auto; }
+[cmdk-dialog] > div {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+  overflow: hidden;
+  width: min(640px, calc(100vw - 2rem));
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+/* ─── SVG Color-blind Filters ────────────────────────────────────────────── */
+/* Inline SVG filters referenced by CSS url() */
+.svg-filters { position: absolute; width: 0; height: 0; }
