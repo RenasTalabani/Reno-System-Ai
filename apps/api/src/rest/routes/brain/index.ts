@@ -8,6 +8,7 @@ import { brainProviderRoutes } from './providers.routes.js'
 import { brainTemplateRoutes } from './templates.routes.js'
 import { brainEvolutionRoutes } from './evolution.routes.js'
 import { brainProposalsRoutes } from './proposals.routes.js'
+import { brainSkillEngineRoutes } from './skill-engine.routes.js'
 
 export async function brainRoutes(app: FastifyInstance) {
   await app.register(brainDashboardRoutes, { prefix: '/dashboard' })
@@ -19,4 +20,5 @@ export async function brainRoutes(app: FastifyInstance) {
   await app.register(brainTemplateRoutes, { prefix: '/templates' })
   await app.register(brainEvolutionRoutes, { prefix: '' })
   await app.register(brainProposalsRoutes, { prefix: '/proposals' })
+  await app.register(brainSkillEngineRoutes, { prefix: '' })
 }

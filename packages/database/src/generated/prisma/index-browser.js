@@ -5069,6 +5069,70 @@ exports.Prisma.ClaudeToolCallScalarFieldEnum = {
   occurredAt: 'occurredAt'
 };
 
+exports.Prisma.AiToolRegistryScalarFieldEnum = {
+  id: 'id',
+  toolId: 'toolId',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  module: 'module',
+  version: 'version',
+  owner: 'owner',
+  requiredPermissions: 'requiredPermissions',
+  riskLevel: 'riskLevel',
+  inputSchema: 'inputSchema',
+  outputSchema: 'outputSchema',
+  isDestructive: 'isDestructive',
+  requiresApproval: 'requiresApproval',
+  deprecated: 'deprecated',
+  replacementToolId: 'replacementToolId',
+  isEnabled: 'isEnabled',
+  keywords: 'keywords',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiCapabilityRegistryScalarFieldEnum = {
+  id: 'id',
+  capabilityId: 'capabilityId',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  toolIds: 'toolIds',
+  providers: 'providers',
+  keywords: 'keywords',
+  examples: 'examples',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiSkillExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  conversationId: 'conversationId',
+  provider: 'provider',
+  userRequest: 'userRequest',
+  skillPlan: 'skillPlan',
+  executionGraph: 'executionGraph',
+  toolsUsed: 'toolsUsed',
+  proposalsCreated: 'proposalsCreated',
+  contextSizeBefore: 'contextSizeBefore',
+  contextSizeAfter: 'contextSizeAfter',
+  compressionRatio: 'compressionRatio',
+  estimatedTokens: 'estimatedTokens',
+  actualTokens: 'actualTokens',
+  estimatedCostUsd: 'estimatedCostUsd',
+  actualCostUsd: 'actualCostUsd',
+  budgetAction: 'budgetAction',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  durationMs: 'durationMs',
+  occurredAt: 'occurredAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5351,7 +5415,10 @@ exports.Prisma.ModelName = {
   AiProviderRegistry: 'AiProviderRegistry',
   TenantAiConsent: 'TenantAiConsent',
   AiProviderAuditLog: 'AiProviderAuditLog',
-  ClaudeToolCall: 'ClaudeToolCall'
+  ClaudeToolCall: 'ClaudeToolCall',
+  AiToolRegistry: 'AiToolRegistry',
+  AiCapabilityRegistry: 'AiCapabilityRegistry',
+  AiSkillExecution: 'AiSkillExecution'
 };
 
 /**

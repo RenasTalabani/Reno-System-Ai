@@ -50,4 +50,7 @@ export type {
   AiProviderAuditLog,
   ClaudeToolCall,
   AiExecProposal,
+  AiToolRegistry,
+  AiCapabilityRegistry,
+  AiSkillExecution,
 } from './generated/prisma/index.js'

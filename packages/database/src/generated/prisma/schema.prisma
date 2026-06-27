@@ -179,6 +179,7 @@ model CoreTenant {
   tenantAiConsents         TenantAiConsent[]
   aiProviderAuditLogs      AiProviderAuditLog[]
   claudeToolCalls          ClaudeToolCall[]
+  aiSkillExecutions        AiSkillExecution[]
 
   @@map("core_tenants")
 }
@@ -7357,4 +7358,84 @@ model ClaudeToolCall {
   @@index([tenantId, occurredAt(sort: Desc)])
   @@index([tenantId, toolName])
   @@map("claude_tool_calls")
+}
+
+// Phase 34: Universal AI Skill Engine
+
+model AiToolRegistry {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  toolId              String   @unique @map("tool_id") @db.VarChar(100)
+  name                String   @db.VarChar(200)
+  description         String   @db.Text
+  category            String   @db.VarChar(50)
+  module              String?  @db.VarChar(50)
+  version             String   @default("1.0.0") @db.VarChar(20)
+  owner               String   @default("reno") @db.VarChar(100)
+  requiredPermissions Json     @default("[]") @map("required_permissions") @db.JsonB
+  riskLevel           String   @default("low") @map("risk_level") @db.VarChar(20)
+  inputSchema         Json     @map("input_schema") @db.JsonB
+  outputSchema        Json?    @map("output_schema") @db.JsonB
+  isDestructive       Boolean  @default(false) @map("is_destructive")
+  requiresApproval    Boolean  @default(false) @map("requires_approval")
+  deprecated          Boolean  @default(false)
+  replacementToolId   String?  @map("replacement_tool_id") @db.VarChar(100)
+  isEnabled           Boolean  @default(true) @map("is_enabled")
+  keywords            Json     @default("[]") @db.JsonB
+  metadata            Json?    @db.JsonB
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([module])
+  @@index([isEnabled])
+  @@map("ai_tool_registry")
+}
+
+model AiCapabilityRegistry {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  capabilityId String   @unique @map("capability_id") @db.VarChar(100)
+  name         String   @db.VarChar(200)
+  description  String   @db.Text
+  category     String   @db.VarChar(50)
+  toolIds      Json     @default("[]") @map("tool_ids") @db.JsonB
+  providers    Json     @default("[]") @db.JsonB
+  keywords     Json     @default("[]") @db.JsonB
+  examples     Json?    @db.JsonB
+  isEnabled    Boolean  @default(true) @map("is_enabled")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@map("ai_capability_registry")
+}
+
+model AiSkillExecution {
+  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String     @map("tenant_id") @db.Uuid
+  userId            String     @map("user_id") @db.Uuid
+  conversationId    String?    @map("conversation_id") @db.Uuid
+  provider          String     @db.VarChar(50)
+  userRequest       String     @map("user_request") @db.Text
+  skillPlan         Json       @map("skill_plan") @db.JsonB
+  executionGraph    Json       @map("execution_graph") @db.JsonB
+  toolsUsed         Json       @default("[]") @map("tools_used") @db.JsonB
+  proposalsCreated  Json       @default("[]") @map("proposals_created") @db.JsonB
+  contextSizeBefore Int?       @map("context_size_before")
+  contextSizeAfter  Int?       @map("context_size_after")
+  compressionRatio  Float?     @map("compression_ratio")
+  estimatedTokens   Int?       @map("estimated_tokens")
+  actualTokens      Int?       @map("actual_tokens")
+  estimatedCostUsd  Decimal?   @map("estimated_cost_usd") @db.Decimal(10, 6)
+  actualCostUsd     Decimal?   @map("actual_cost_usd") @db.Decimal(10, 6)
+  budgetAction      String?    @map("budget_action") @db.VarChar(20)
+  status            String     @default("success") @db.VarChar(20)
+  errorMessage      String?    @map("error_message") @db.Text
+  durationMs        Int?       @map("duration_ms")
+  occurredAt        DateTime   @default(now()) @map("occurred_at")
+  tenant            CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([tenantId, provider])
+  @@index([tenantId, status])
+  @@map("ai_skill_executions")
 }

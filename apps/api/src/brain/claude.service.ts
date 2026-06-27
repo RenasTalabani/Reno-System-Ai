@@ -6,6 +6,9 @@ import { checkQuota, logUsage, estimateCost } from './quota.js'
 import { logProviderAudit } from './ai-provider.service.js'
 import { getAnthropicToolDefinitions } from './tools/definitions.js'
 import { executeTool, logToolCall } from './tools/executor.js'
+import { planSkills, filterToolDefinitions } from './skill/skill-planner.js'
+import { prepareSkillExecution, logSkillExecution } from './skill/index.js'
+import { ExecutionGraph } from './skill/execution-graph.js'
 
 export interface ProviderBadge {
   slug: string
@@ -91,7 +94,27 @@ export async function callClaudeForChat(params: {
     })
   }
 
-  // 5. Call Claude with tool use loop
+  // 5. Skill Engine: plan + context compress + token budget
+  const skillPrep = await prepareSkillExecution({
+    tenantId, userId, conversationId,
+    userMessage: messages.filter(m => m.role === 'user').pop()?.content ?? '',
+    messages, options, agentName, module: mod,
+  })
+
+  if (skillPrep.budgetAction === 'reject') {
+    return fallbackToRenoBrain(messages, options, {
+      slug: 'claude', name: 'Claude', model: config.model,
+      isFallback: true, fallbackReason: 'Request too large for token budget',
+    })
+  }
+  if (skillPrep.budgetAction === 'fallback') {
+    return fallbackToRenoBrain(messages, options, {
+      slug: 'claude', name: 'Claude', model: config.model,
+      isFallback: true, fallbackReason: 'Monthly AI token quota exceeded',
+    })
+  }
+
+  // 6. Call Claude with tool use loop
   const start = Date.now()
   let callStatus: 'success' | 'error' = 'success'
   let errorMessage: string | undefined
@@ -99,12 +122,15 @@ export async function callClaudeForChat(params: {
 
   try {
     const result = await callClaudeWithTools({
-      apiKey, model: config.model, messages, options,
+      apiKey, model: config.model,
+      messages: skillPrep.processedMessages,
+      options,
       tenantId, userId, conversationId,
+      selectedTools: skillPrep.skillPlan.selectedTools,
     })
     toolCallCount = result.toolCallCount
 
-    // 6. Log usage
+    // 7. Log usage
     const cost = estimateCost(config.model, result.promptTokens, result.completionTokens)
     await logUsage({
       tenantId, userId,
@@ -121,13 +147,34 @@ export async function callClaudeForChat(params: {
       metadata: { agentName, consentVerified: true, toolCallCount },
     })
 
-    // 7. Audit log
+    // 8. Audit log
     await logProviderAudit({
       tenantId, userId, providerSlug: 'claude',
       action: 'call', status: callStatus,
       module: mod,
       tokensUsed: result.totalTokens,
       latencyMs: result.latencyMs,
+    })
+
+    // 9. Log skill execution
+    await logSkillExecution({
+      tenantId, userId, conversationId,
+      provider: 'claude',
+      userRequest: messages.filter(m => m.role === 'user').pop()?.content ?? '',
+      skillPlan: skillPrep.skillPlan,
+      executionGraph: result.executionGraphSummary,
+      toolsUsed: result.toolsUsed,
+      proposalsCreated: result.proposalIds,
+      contextSizeBefore: skillPrep.contextSizeBefore,
+      contextSizeAfter: skillPrep.contextSizeAfter,
+      compressionRatio: skillPrep.compressionRatio,
+      estimatedTokens: skillPrep.estimatedTokens,
+      actualTokens: result.totalTokens,
+      estimatedCostUsd: skillPrep.estimatedCostUsd,
+      actualCostUsd: cost,
+      budgetAction: skillPrep.budgetAction,
+      status: 'success',
+      durationMs: result.latencyMs,
     })
 
     return {
@@ -173,8 +220,19 @@ async function callClaudeWithTools(params: {
   tenantId: string
   userId: string
   conversationId?: string
-}): Promise<{ content: string; promptTokens: number; completionTokens: number; totalTokens: number; latencyMs: number; toolCallCount: number }> {
-  const { apiKey, model, messages, options, tenantId, userId, conversationId } = params
+  selectedTools?: string[]
+}): Promise<{
+  content: string
+  promptTokens: number
+  completionTokens: number
+  totalTokens: number
+  latencyMs: number
+  toolCallCount: number
+  toolsUsed: string[]
+  proposalIds: string[]
+  executionGraphSummary: Record<string, unknown>
+}> {
+  const { apiKey, model, messages, options, tenantId, userId, conversationId, selectedTools } = params
   const client = new Anthropic({ apiKey })
   const start = Date.now()
 
@@ -183,11 +241,17 @@ async function callClaudeWithTools(params: {
     .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
 
   const systemPrompt = options.systemPrompt ?? messages.find(m => m.role === 'system')?.content
-  const toolDefs = getAnthropicToolDefinitions()
+  const allToolDefs = getAnthropicToolDefinitions()
+  const toolDefs = selectedTools && selectedTools.length > 0
+    ? filterToolDefinitions(allToolDefs, selectedTools)
+    : allToolDefs
 
+  const graph = new ExecutionGraph()
   let totalInputTokens = 0
   let totalOutputTokens = 0
   let toolCallCount = 0
+  const toolsUsed: string[] = []
+  const proposalIds: string[] = []
   const maxIterations = 8
 
   let response = await client.messages.create({
@@ -211,6 +275,10 @@ async function callClaudeWithTools(params: {
 
       toolCallCount++
       const toolStart = Date.now()
+      graph.addNode(block.name)
+      graph.markRunning(block.name)
+      if (!toolsUsed.includes(block.name)) toolsUsed.push(block.name)
+
       let toolResult: { success: boolean; data?: unknown; error?: string; proposalId?: string; proposalSummary?: string }
 
       try {
@@ -219,6 +287,13 @@ async function callClaudeWithTools(params: {
         })
       } catch (err: any) {
         toolResult = { success: false, error: err.message ?? 'Tool execution failed' }
+      }
+
+      if (toolResult.success) {
+        graph.markSuccess(block.name, toolResult.proposalId)
+        if (toolResult.proposalId) proposalIds.push(toolResult.proposalId)
+      } else {
+        graph.markError(block.name, toolResult.error ?? 'Unknown error')
       }
 
       await logToolCall({
@@ -272,6 +347,9 @@ async function callClaudeWithTools(params: {
     totalTokens: totalInputTokens + totalOutputTokens,
     latencyMs: Date.now() - start,
     toolCallCount,
+    toolsUsed,
+    proposalIds,
+    executionGraphSummary: graph.toSummary() as unknown as Record<string, unknown>,
   }
 }
 
