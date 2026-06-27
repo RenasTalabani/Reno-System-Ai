@@ -53,4 +53,9 @@ export type {
   AiToolRegistry,
   AiCapabilityRegistry,
   AiSkillExecution,
+  AiWorkTask,
+  AiWorkStep,
+  AiWorkMemory,
+  AiWorkSchedule,
+  AiWorkAuditLog,
 } from './generated/prisma/index.js'

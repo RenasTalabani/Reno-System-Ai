@@ -5069,6 +5069,96 @@ exports.Prisma.ClaudeToolCallScalarFieldEnum = {
   occurredAt: 'occurredAt'
 };
 
+exports.Prisma.AiWorkTaskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  provider: 'provider',
+  agentSlug: 'agentSlug',
+  title: 'title',
+  description: 'description',
+  request: 'request',
+  status: 'status',
+  riskLevel: 'riskLevel',
+  priority: 'priority',
+  module: 'module',
+  plan: 'plan',
+  result: 'result',
+  errorMessage: 'errorMessage',
+  progressPct: 'progressPct',
+  totalSteps: 'totalSteps',
+  completedSteps: 'completedSteps',
+  tokensUsed: 'tokensUsed',
+  costUsd: 'costUsd',
+  scheduleId: 'scheduleId',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  pausedAt: 'pausedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiWorkStepScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  stepIndex: 'stepIndex',
+  title: 'title',
+  description: 'description',
+  toolName: 'toolName',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  proposalId: 'proposalId',
+  errorMessage: 'errorMessage',
+  durationMs: 'durationMs',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.AiWorkMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  key: 'key',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiWorkScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  request: 'request',
+  provider: 'provider',
+  agentSlug: 'agentSlug',
+  cronExpr: 'cronExpr',
+  intervalType: 'intervalType',
+  intervalValue: 'intervalValue',
+  dayOfWeek: 'dayOfWeek',
+  hourOfDay: 'hourOfDay',
+  isEnabled: 'isEnabled',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  runCount: 'runCount',
+  lastTaskId: 'lastTaskId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiWorkAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  userId: 'userId',
+  action: 'action',
+  provider: 'provider',
+  details: 'details',
+  occurredAt: 'occurredAt'
+};
+
 exports.Prisma.AiToolRegistryScalarFieldEnum = {
   id: 'id',
   toolId: 'toolId',
@@ -5416,6 +5506,11 @@ exports.Prisma.ModelName = {
   TenantAiConsent: 'TenantAiConsent',
   AiProviderAuditLog: 'AiProviderAuditLog',
   ClaudeToolCall: 'ClaudeToolCall',
+  AiWorkTask: 'AiWorkTask',
+  AiWorkStep: 'AiWorkStep',
+  AiWorkMemory: 'AiWorkMemory',
+  AiWorkSchedule: 'AiWorkSchedule',
+  AiWorkAuditLog: 'AiWorkAuditLog',
   AiToolRegistry: 'AiToolRegistry',
   AiCapabilityRegistry: 'AiCapabilityRegistry',
   AiSkillExecution: 'AiSkillExecution'

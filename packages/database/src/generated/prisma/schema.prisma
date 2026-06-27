@@ -180,6 +180,9 @@ model CoreTenant {
   aiProviderAuditLogs      AiProviderAuditLog[]
   claudeToolCalls          ClaudeToolCall[]
   aiSkillExecutions        AiSkillExecution[]
+  aiWorkTasks              AiWorkTask[]
+  aiWorkSchedules          AiWorkSchedule[]
+  aiWorkAuditLogs          AiWorkAuditLog[]
 
   @@map("core_tenants")
 }
@@ -7361,6 +7364,133 @@ model ClaudeToolCall {
 }
 
 // Phase 34: Universal AI Skill Engine
+
+// ─── Phase 35: Claude Digital Employee Framework ─────────────────────────────
+
+model AiWorkTask {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String           @map("tenant_id") @db.Uuid
+  userId         String           @map("user_id") @db.Uuid
+  provider       String           @default("mock") @db.VarChar(50)
+  agentSlug      String?          @map("agent_slug") @db.VarChar(100)
+  title          String           @db.VarChar(500)
+  description    String?          @db.Text
+  request        String           @db.Text
+  status         String           @default("draft") @db.VarChar(30)
+  riskLevel      String           @default("low") @map("risk_level") @db.VarChar(20)
+  priority       String           @default("normal") @db.VarChar(20)
+  module         String?          @db.VarChar(50)
+  plan           Json?            @db.JsonB
+  result         Json?            @db.JsonB
+  errorMessage   String?          @map("error_message") @db.Text
+  progressPct    Int              @default(0) @map("progress_pct")
+  totalSteps     Int              @default(0) @map("total_steps")
+  completedSteps Int              @default(0) @map("completed_steps")
+  tokensUsed     Int?             @map("tokens_used")
+  costUsd        Decimal?         @map("cost_usd") @db.Decimal(10, 6)
+  scheduleId     String?          @map("schedule_id") @db.Uuid
+  startedAt      DateTime?        @map("started_at")
+  completedAt    DateTime?        @map("completed_at")
+  pausedAt       DateTime?        @map("paused_at")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  tenant         CoreTenant       @relation(fields: [tenantId], references: [id])
+  steps          AiWorkStep[]
+  memory         AiWorkMemory[]
+  auditLogs      AiWorkAuditLog[]
+
+  @@index([tenantId, status])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, provider])
+  @@map("ai_work_tasks")
+}
+
+model AiWorkStep {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  taskId       String     @map("task_id") @db.Uuid
+  stepIndex    Int        @map("step_index")
+  title        String     @db.VarChar(500)
+  description  String?    @db.Text
+  toolName     String?    @map("tool_name") @db.VarChar(100)
+  status       String     @default("pending") @db.VarChar(20)
+  input        Json?      @db.JsonB
+  output       Json?      @db.JsonB
+  proposalId   String?    @map("proposal_id") @db.Uuid
+  errorMessage String?    @map("error_message") @db.Text
+  durationMs   Int?       @map("duration_ms")
+  startedAt    DateTime?  @map("started_at")
+  completedAt  DateTime?  @map("completed_at")
+  task         AiWorkTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([tenantId])
+  @@map("ai_work_steps")
+}
+
+model AiWorkMemory {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  taskId    String     @map("task_id") @db.Uuid
+  key       String     @db.VarChar(200)
+  value     Json       @db.JsonB
+  expiresAt DateTime?  @map("expires_at")
+  createdAt DateTime   @default(now()) @map("created_at")
+  task      AiWorkTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, key])
+  @@index([taskId])
+  @@index([tenantId])
+  @@map("ai_work_memory")
+}
+
+model AiWorkSchedule {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  userId        String     @map("user_id") @db.Uuid
+  title         String     @db.VarChar(500)
+  request       String     @db.Text
+  provider      String     @default("mock") @db.VarChar(50)
+  agentSlug     String?    @map("agent_slug") @db.VarChar(100)
+  cronExpr      String?    @map("cron_expr") @db.VarChar(100)
+  intervalType  String?    @map("interval_type") @db.VarChar(20)
+  intervalValue Int?       @map("interval_value")
+  dayOfWeek     Int?       @map("day_of_week")
+  hourOfDay     Int?       @map("hour_of_day")
+  isEnabled     Boolean    @default(true) @map("is_enabled")
+  lastRunAt     DateTime?  @map("last_run_at")
+  nextRunAt     DateTime?  @map("next_run_at")
+  runCount      Int        @default(0) @map("run_count")
+  lastTaskId    String?    @map("last_task_id") @db.Uuid
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, isEnabled])
+  @@index([nextRunAt])
+  @@map("ai_work_schedules")
+}
+
+model AiWorkAuditLog {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  taskId     String?     @map("task_id") @db.Uuid
+  userId     String?     @map("user_id") @db.Uuid
+  action     String      @db.VarChar(100)
+  provider   String?     @db.VarChar(50)
+  details    Json?       @db.JsonB
+  occurredAt DateTime    @default(now()) @map("occurred_at")
+  task       AiWorkTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  tenant     CoreTenant  @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, occurredAt(sort: Desc)])
+  @@index([taskId])
+  @@index([tenantId, action])
+  @@map("ai_work_audit_logs")
+}
+
+// ─── Phase 34: AI Tool/Capability Registry ───────────────────────────────────
 
 model AiToolRegistry {
   id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
