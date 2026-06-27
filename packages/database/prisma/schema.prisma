@@ -183,6 +183,11 @@ model CoreTenant {
   aiWorkTasks              AiWorkTask[]
   aiWorkSchedules          AiWorkSchedule[]
   aiWorkAuditLogs          AiWorkAuditLog[]
+  aiAgentTeams             AiAgentTeam[]
+  aiAgentConversations     AiAgentConversation[]
+  aiSharedMemory           AiSharedMemory[]
+  aiDelegations            AiDelegation[]
+  aiMeetings               AiMeeting[]
 
   @@map("core_tenants")
 }
@@ -7367,6 +7372,186 @@ model ClaudeToolCall {
 
 
 // Phase 34: Universal AI Skill Engine
+
+// ─── Phase 36: Multi-Agent AI Collaboration Platform ─────────────────────────
+
+model AiAgentTeam {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  name          String    @db.VarChar(300)
+  purpose       String    @db.Text
+  supervisorSlug String   @map("supervisor_slug") @db.VarChar(100)
+  agentSlugs    Json      @map("agent_slugs") @db.JsonB
+  status        String    @default("active") @db.VarChar(20)
+  taskId        String?   @map("task_id") @db.Uuid
+  createdBy     String?   @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id])
+  conversations AiAgentConversation[]
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("ai_agent_teams")
+}
+
+model AiAgentConversation {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  teamId      String?   @map("team_id") @db.Uuid
+  taskId      String?   @map("task_id") @db.Uuid
+  title       String    @db.VarChar(500)
+  topic       String    @db.Text
+  status      String    @default("active") @db.VarChar(20)
+  summary     String?   @db.Text
+  outcome     String?   @db.Text
+  startedAt   DateTime  @default(now()) @map("started_at")
+  endedAt     DateTime? @map("ended_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id])
+  team        AiAgentTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  messages    AiAgentMessage[]
+  decisions   AiAgentDecision[]
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([teamId])
+  @@map("ai_agent_conversations")
+}
+
+model AiAgentMessage {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  fromAgentSlug  String    @map("from_agent_slug") @db.VarChar(100)
+  toAgentSlug    String?   @map("to_agent_slug") @db.VarChar(100)
+  messageType    String    @map("message_type") @db.VarChar(30)
+  content        String    @db.Text
+  metadata       Json?     @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at")
+  conversation   AiAgentConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  @@index([conversationId])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("ai_agent_messages")
+}
+
+model AiAgentDecision {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  title          String    @db.VarChar(500)
+  description    String    @db.Text
+  decidedBy      String    @map("decided_by") @db.VarChar(100)
+  status         String    @default("pending") @db.VarChar(20)
+  outcome        String?   @db.Text
+  evidence       Json?     @db.JsonB
+  proposalId     String?   @map("proposal_id") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  conversation   AiAgentConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  votes          AiAgentVote[]
+  @@index([conversationId])
+  @@index([tenantId])
+  @@map("ai_agent_decisions")
+}
+
+model AiAgentVote {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  decisionId  String    @map("decision_id") @db.Uuid
+  agentSlug   String    @map("agent_slug") @db.VarChar(100)
+  vote        String    @db.VarChar(10)
+  reasoning   String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  decision    AiAgentDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  @@unique([decisionId, agentSlug])
+  @@index([decisionId])
+  @@map("ai_agent_votes")
+}
+
+model AiSharedWorkspace {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  taskId    String?  @map("task_id") @db.Uuid
+  teamId    String?  @map("team_id") @db.Uuid
+  name      String   @db.VarChar(300)
+  content   Json     @db.JsonB
+  createdBy String   @map("created_by") @db.VarChar(100)
+  updatedBy String?  @map("updated_by") @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@index([tenantId])
+  @@index([taskId])
+  @@index([teamId])
+  @@map("ai_shared_workspaces")
+}
+
+model AiSharedMemory {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  scope     String    @default("global") @db.VarChar(20)
+  key       String    @db.VarChar(200)
+  value     Json      @db.JsonB
+  agentSlug String    @map("agent_slug") @db.VarChar(100)
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id])
+  @@unique([tenantId, scope, key])
+  @@index([tenantId, scope])
+  @@map("ai_shared_memory")
+}
+
+model AiDelegation {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  fromAgentSlug  String    @map("from_agent_slug") @db.VarChar(100)
+  toAgentSlug    String    @map("to_agent_slug") @db.VarChar(100)
+  taskId         String?   @map("task_id") @db.Uuid
+  conversationId String?   @map("conversation_id") @db.Uuid
+  delegationType String    @map("delegation_type") @db.VarChar(30)
+  request        String    @db.Text
+  response       String?   @db.Text
+  status         String    @default("pending") @db.VarChar(20)
+  durationMs     Int?      @map("duration_ms")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  completedAt    DateTime? @map("completed_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([taskId])
+  @@index([toAgentSlug])
+  @@map("ai_delegations")
+}
+
+model AiMeeting {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  title          String    @db.VarChar(500)
+  agenda         String    @db.Text
+  status         String    @default("scheduled") @db.VarChar(20)
+  taskId         String?   @map("task_id") @db.Uuid
+  conversationId String?   @map("conversation_id") @db.Uuid
+  summary        String?   @db.Text
+  decisionsCount Int       @default(0) @map("decisions_count")
+  startedAt      DateTime? @map("started_at")
+  endedAt        DateTime? @map("ended_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id])
+  participants   AiMeetingParticipant[]
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, status])
+  @@map("ai_meetings")
+}
+
+model AiMeetingParticipant {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  meetingId  String    @map("meeting_id") @db.Uuid
+  agentSlug  String    @map("agent_slug") @db.VarChar(100)
+  role       String    @default("member") @db.VarChar(20)
+  joinedAt   DateTime  @default(now()) @map("joined_at")
+  leftAt     DateTime? @map("left_at")
+  meeting    AiMeeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  @@unique([meetingId, agentSlug])
+  @@index([meetingId])
+  @@map("ai_meeting_participants")
+}
 
 // ─── Phase 35: Claude Digital Employee Framework ─────────────────────────────
 

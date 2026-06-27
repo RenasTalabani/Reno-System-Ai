@@ -5069,6 +5069,137 @@ exports.Prisma.ClaudeToolCallScalarFieldEnum = {
   occurredAt: 'occurredAt'
 };
 
+exports.Prisma.AiAgentTeamScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  purpose: 'purpose',
+  supervisorSlug: 'supervisorSlug',
+  agentSlugs: 'agentSlugs',
+  status: 'status',
+  taskId: 'taskId',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiAgentConversationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  teamId: 'teamId',
+  taskId: 'taskId',
+  title: 'title',
+  topic: 'topic',
+  status: 'status',
+  summary: 'summary',
+  outcome: 'outcome',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiAgentMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  conversationId: 'conversationId',
+  fromAgentSlug: 'fromAgentSlug',
+  toAgentSlug: 'toAgentSlug',
+  messageType: 'messageType',
+  content: 'content',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiAgentDecisionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  conversationId: 'conversationId',
+  title: 'title',
+  description: 'description',
+  decidedBy: 'decidedBy',
+  status: 'status',
+  outcome: 'outcome',
+  evidence: 'evidence',
+  proposalId: 'proposalId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiAgentVoteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  decisionId: 'decisionId',
+  agentSlug: 'agentSlug',
+  vote: 'vote',
+  reasoning: 'reasoning',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiSharedWorkspaceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  taskId: 'taskId',
+  teamId: 'teamId',
+  name: 'name',
+  content: 'content',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiSharedMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  scope: 'scope',
+  key: 'key',
+  value: 'value',
+  agentSlug: 'agentSlug',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiDelegationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fromAgentSlug: 'fromAgentSlug',
+  toAgentSlug: 'toAgentSlug',
+  taskId: 'taskId',
+  conversationId: 'conversationId',
+  delegationType: 'delegationType',
+  request: 'request',
+  response: 'response',
+  status: 'status',
+  durationMs: 'durationMs',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.AiMeetingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  agenda: 'agenda',
+  status: 'status',
+  taskId: 'taskId',
+  conversationId: 'conversationId',
+  summary: 'summary',
+  decisionsCount: 'decisionsCount',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiMeetingParticipantScalarFieldEnum = {
+  id: 'id',
+  meetingId: 'meetingId',
+  agentSlug: 'agentSlug',
+  role: 'role',
+  joinedAt: 'joinedAt',
+  leftAt: 'leftAt'
+};
+
 exports.Prisma.AiWorkTaskScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
@@ -5506,6 +5637,16 @@ exports.Prisma.ModelName = {
   TenantAiConsent: 'TenantAiConsent',
   AiProviderAuditLog: 'AiProviderAuditLog',
   ClaudeToolCall: 'ClaudeToolCall',
+  AiAgentTeam: 'AiAgentTeam',
+  AiAgentConversation: 'AiAgentConversation',
+  AiAgentMessage: 'AiAgentMessage',
+  AiAgentDecision: 'AiAgentDecision',
+  AiAgentVote: 'AiAgentVote',
+  AiSharedWorkspace: 'AiSharedWorkspace',
+  AiSharedMemory: 'AiSharedMemory',
+  AiDelegation: 'AiDelegation',
+  AiMeeting: 'AiMeeting',
+  AiMeetingParticipant: 'AiMeetingParticipant',
   AiWorkTask: 'AiWorkTask',
   AiWorkStep: 'AiWorkStep',
   AiWorkMemory: 'AiWorkMemory',
