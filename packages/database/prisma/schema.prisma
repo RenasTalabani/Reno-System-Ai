@@ -220,6 +220,8 @@ model CoreTenant {
   fcstModels               FcstModel[]
   fcstPredictions          FcstPrediction[]
   fcstAnomalies            FcstAnomaly[]
+  fxRates                  FxRate[]
+  fxSettings               FxTenantSettings?
 
   @@map("core_tenants")
 }
@@ -8586,4 +8588,40 @@ model FcstAnomaly {
   tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("fcst_anomalies")
+}
+
+// ─── Phase 51: Multi-Currency & Global Finance ────────────────────────────────
+
+model FxCurrency {
+  code     String  @id @db.VarChar(3)
+  name     String  @db.VarChar(100)
+  symbol   String  @db.VarChar(10)
+  isActive Boolean @default(true) @map("is_active")
+  @@map("fx_currencies")
+}
+
+model FxRate {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  fromCurrency  String    @map("from_currency") @db.VarChar(3)
+  toCurrency    String    @map("to_currency") @db.VarChar(3)
+  rate          Decimal   @db.Decimal(18, 8)
+  source        String    @default("manual") @db.VarChar(30)
+  effectiveDate DateTime  @default(dbgenerated("CURRENT_DATE")) @map("effective_date") @db.Date
+  createdAt     DateTime  @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, fromCurrency, toCurrency, effectiveDate])
+  @@index([tenantId, effectiveDate(sort: Desc)])
+  @@map("fx_rates")
+}
+
+model FxTenantSettings {
+  tenantId           String   @id @map("tenant_id") @db.Uuid
+  baseCurrency       String   @default("USD") @map("base_currency") @db.VarChar(3)
+  enabledCurrencies  Json     @default("[\"USD\"]") @map("enabled_currencies") @db.JsonB
+  autoUpdateRates    Boolean  @default(false) @map("auto_update_rates")
+  rateSource         String   @default("manual") @map("rate_source") @db.VarChar(30)
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  tenant             CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@map("fx_tenant_settings")
 }
