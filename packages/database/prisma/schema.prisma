@@ -226,6 +226,8 @@ model CoreTenant {
   fsmWorkOrders            FsmWorkOrder[]
   fsmTechnicians           FsmTechnician[]
   vndVendors               VndVendor[]
+  lmsCourses               LmsCourse[]
+  lmsEnrollments           LmsEnrollment[]
 
   @@map("core_tenants")
 }
@@ -8820,4 +8822,82 @@ model VndPerformance {
   vendor        VndVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   @@unique([vendorId, period])
   @@map("vnd_performance")
+}
+
+// ─── Phase 55: Learning Management System ────────────────────────────────────
+
+model LmsCourse {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  title         String    @db.VarChar(300)
+  slug          String    @db.VarChar(300)
+  description   String?   @db.Text
+  category      String?   @db.VarChar(100)
+  level         String    @default("beginner") @db.VarChar(20)
+  status        String    @default("draft") @db.VarChar(20)
+  thumbnailUrl  String?   @map("thumbnail_url") @db.VarChar(500)
+  durationMin   Int       @default(0) @map("duration_min")
+  isMandatory   Boolean   @default(false) @map("is_mandatory")
+  passScore     Int       @default(70) @map("pass_score") @db.SmallInt
+  createdBy     String?   @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lessons       LmsLesson[]
+  enrollments   LmsEnrollment[]
+  @@unique([tenantId, slug])
+  @@index([tenantId, status])
+  @@map("lms_courses")
+}
+
+model LmsLesson {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  courseId    String    @map("course_id") @db.Uuid
+  title       String    @db.VarChar(300)
+  type        String    @default("text") @db.VarChar(20)
+  content     String?   @db.Text
+  videoUrl    String?   @map("video_url") @db.VarChar(500)
+  durationMin Int       @default(0) @map("duration_min")
+  orderIndex  Int       @default(0) @map("order_index")
+  isQuiz      Boolean   @default(false) @map("is_quiz")
+  quizData    Json      @default("{}") @map("quiz_data") @db.JsonB
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  course      LmsCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress    LmsProgress[]
+  @@index([courseId, orderIndex])
+  @@map("lms_lessons")
+}
+
+model LmsEnrollment {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  courseId    String    @map("course_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  status      String    @default("enrolled") @db.VarChar(20)
+  progress    Int       @default(0) @db.SmallInt
+  score       Decimal?  @db.Decimal(5, 2)
+  enrolledAt  DateTime  @default(now()) @map("enrolled_at")
+  completedAt DateTime? @map("completed_at")
+  dueDate     DateTime? @map("due_date") @db.Date
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course      LmsCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  @@unique([courseId, userId])
+  @@index([tenantId, userId])
+  @@map("lms_enrollments")
+}
+
+model LmsProgress {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  lessonId   String    @map("lesson_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  isComplete Boolean   @default(false) @map("is_complete")
+  score      Decimal?  @db.Decimal(5, 2)
+  attempts   Int       @default(0) @db.SmallInt
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  lesson     LmsLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  @@unique([lessonId, userId])
+  @@map("lms_progress")
 }
