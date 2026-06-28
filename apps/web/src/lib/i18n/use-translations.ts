@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { messages, type Locale, type Messages, LOCALES, getDirection } from './index.js'
+import { messages, type Locale, type Messages, LOCALES, getDirection } from './index'
 
 interface I18nStore {
   locale: Locale

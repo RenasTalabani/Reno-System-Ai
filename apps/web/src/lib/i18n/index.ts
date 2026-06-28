@@ -1,6 +1,6 @@
-import en, { type Messages } from './locales/en.js'
-import ar from './locales/ar.js'
-import ku from './locales/ku.js'
+import en, { type Messages } from './locales/en'
+import ar from './locales/ar'
+import ku from './locales/ku'
 
 export type Locale = 'en' | 'ar' | 'ku'
 export type Direction = 'ltr' | 'rtl'
