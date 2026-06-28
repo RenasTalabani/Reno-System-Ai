@@ -5442,6 +5442,66 @@ exports.Prisma.AiOnboardingAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AiWorkspaceSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  context: 'context',
+  totalTokens: 'totalTokens',
+  messageCount: 'messageCount',
+  lastActiveAt: 'lastActiveAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiWorkspaceMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  commandType: 'commandType',
+  result: 'result',
+  tokensUsed: 'tokensUsed',
+  provider: 'provider',
+  requiresApproval: 'requiresApproval',
+  approved: 'approved',
+  approvedBy: 'approvedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiWorkspaceMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  scope: 'scope',
+  memKey: 'memKey',
+  memValue: 'memValue',
+  source: 'source',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiWorkspaceCommandScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  prompt: 'prompt',
+  commandType: 'commandType',
+  status: 'status',
+  result: 'result',
+  requiresApproval: 'requiresApproval',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  executedAt: 'executedAt',
+  error: 'error',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5748,7 +5808,11 @@ exports.Prisma.ModelName = {
   AiOnboardingPlan: 'AiOnboardingPlan',
   AiOnboardingPlanItem: 'AiOnboardingPlanItem',
   AiIndustryTemplate: 'AiIndustryTemplate',
-  AiOnboardingAuditLog: 'AiOnboardingAuditLog'
+  AiOnboardingAuditLog: 'AiOnboardingAuditLog',
+  AiWorkspaceSession: 'AiWorkspaceSession',
+  AiWorkspaceMessage: 'AiWorkspaceMessage',
+  AiWorkspaceMemory: 'AiWorkspaceMemory',
+  AiWorkspaceCommand: 'AiWorkspaceCommand'
 };
 
 /**

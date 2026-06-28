@@ -189,6 +189,9 @@ model CoreTenant {
   aiDelegations            AiDelegation[]
   aiMeetings               AiMeeting[]
   aiOnboardingSessions     AiOnboardingSession[]
+  aiWorkspaceSessions      AiWorkspaceSession[]
+  aiWorkspaceMemory        AiWorkspaceMemory[]
+  aiWorkspaceCommands      AiWorkspaceCommand[]
 
   @@map("core_tenants")
 }
@@ -7882,4 +7885,85 @@ model AiOnboardingAuditLog {
   @@index([tenantId, createdAt(sort: Desc)])
   @@index([sessionId])
   @@map("ai_onboarding_audit_logs")
+}
+
+// ─── Phase 38: AI Workspace & Computer Assistant ──────────────────────────────
+
+model AiWorkspaceSession {
+  id           String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String               @map("tenant_id") @db.Uuid
+  userId       String               @map("user_id") @db.Uuid
+  title        String?              @db.VarChar(300)
+  context      Json?                @db.JsonB
+  totalTokens  Int                  @default(0) @map("total_tokens")
+  messageCount Int                  @default(0) @map("message_count")
+  lastActiveAt DateTime             @default(now()) @map("last_active_at")
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+  tenant       CoreTenant           @relation(fields: [tenantId], references: [id])
+  messages     AiWorkspaceMessage[]
+
+  @@index([tenantId, userId, lastActiveAt(sort: Desc)])
+  @@map("ai_workspace_sessions")
+}
+
+model AiWorkspaceMessage {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String             @map("tenant_id") @db.Uuid
+  sessionId        String             @map("session_id") @db.Uuid
+  role             String             @db.VarChar(20)
+  content          String             @db.Text
+  commandType      String?            @map("command_type") @db.VarChar(100)
+  result           Json?              @db.JsonB
+  tokensUsed       Int?               @map("tokens_used")
+  provider         String             @default("mock") @db.VarChar(50)
+  requiresApproval Boolean            @default(false) @map("requires_approval")
+  approved         Boolean?
+  approvedBy       String?            @map("approved_by") @db.Uuid
+  createdAt        DateTime           @default(now()) @map("created_at")
+  session          AiWorkspaceSession @relation(fields: [sessionId], references: [id])
+
+  @@index([tenantId, sessionId, createdAt])
+  @@map("ai_workspace_messages")
+}
+
+model AiWorkspaceMemory {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  userId    String     @map("user_id") @db.Uuid
+  scope     String     @default("user") @db.VarChar(50)
+  memKey    String     @map("mem_key") @db.VarChar(200)
+  memValue  Json       @map("mem_value") @db.JsonB
+  source    String?    @db.VarChar(100)
+  expiresAt DateTime?  @map("expires_at")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, userId, scope, memKey])
+  @@index([tenantId, userId])
+  @@map("ai_workspace_memory")
+}
+
+model AiWorkspaceCommand {
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String     @map("tenant_id") @db.Uuid
+  userId           String     @map("user_id") @db.Uuid
+  sessionId        String?    @map("session_id") @db.Uuid
+  prompt           String     @db.Text
+  commandType      String     @map("command_type") @db.VarChar(100)
+  status           String     @default("pending") @db.VarChar(30)
+  result           Json?      @db.JsonB
+  requiresApproval Boolean    @default(false) @map("requires_approval")
+  approvedBy       String?    @map("approved_by") @db.Uuid
+  approvedAt       DateTime?  @map("approved_at")
+  executedAt       DateTime?  @map("executed_at")
+  error            String?    @db.Text
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, userId, createdAt(sort: Desc)])
+  @@index([tenantId, status])
+  @@map("ai_workspace_commands")
 }

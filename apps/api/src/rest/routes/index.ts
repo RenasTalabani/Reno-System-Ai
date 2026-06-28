@@ -37,6 +37,7 @@ import { adminAiProviderRoutes } from './admin/ai-providers.routes.js'
 import { aiWorkRoutes } from './ai-work/index.js'
 import { aiAgentsRoutes } from './ai-agents/index.js'
 import { aiOnboardingRoutes } from './ai-onboarding/index.js'
+import { aiWorkspaceRoutes } from './ai-workspace/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -80,6 +81,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(aiWorkRoutes, { prefix: '/ai-work' })
       await v1.register(aiAgentsRoutes, { prefix: '/ai-agents' })
       await v1.register(aiOnboardingRoutes, { prefix: '/ai-onboarding' })
+      await v1.register(aiWorkspaceRoutes, { prefix: '/ai-workspace' })
     },
     { prefix: '/v1' },
   )

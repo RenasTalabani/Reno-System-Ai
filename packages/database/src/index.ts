@@ -74,4 +74,8 @@ export type {
   AiOnboardingPlanItem,
   AiIndustryTemplate,
   AiOnboardingAuditLog,
+  AiWorkspaceSession,
+  AiWorkspaceMessage,
+  AiWorkspaceMemory,
+  AiWorkspaceCommand,
 } from './generated/prisma/index.js'
