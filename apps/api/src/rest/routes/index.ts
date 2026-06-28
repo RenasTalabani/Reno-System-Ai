@@ -50,6 +50,7 @@ import { mobileModuleRoutes } from './mobile/index.js'
 import { partnerModuleRoutes } from './partners/index.js'
 import { forecastModuleRoutes } from './forecasting/index.js'
 import { fxModuleRoutes } from './fx/index.js'
+import { clmModuleRoutes } from './clm/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -106,6 +107,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(partnerModuleRoutes, { prefix: '/partners' })
       await v1.register(forecastModuleRoutes, { prefix: '/forecasting' })
       await v1.register(fxModuleRoutes, { prefix: '/fx' })
+      await v1.register(clmModuleRoutes, { prefix: '/clm' })
     },
     { prefix: '/v1' },
   )

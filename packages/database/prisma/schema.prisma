@@ -222,6 +222,7 @@ model CoreTenant {
   fcstAnomalies            FcstAnomaly[]
   fxRates                  FxRate[]
   fxSettings               FxTenantSettings?
+  clmContracts             ClmContract[]
 
   @@map("core_tenants")
 }
@@ -8624,4 +8625,64 @@ model FxTenantSettings {
   updatedAt          DateTime @updatedAt @map("updated_at")
   tenant             CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@map("fx_tenant_settings")
+}
+
+// ─── Phase 52: Contract Lifecycle Management (CLM) ───────────────────────────
+
+model ClmContract {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  title           String    @db.VarChar(300)
+  type            String    @default("service") @db.VarChar(50)
+  status          String    @default("draft") @db.VarChar(30)
+  counterparty    String?   @db.VarChar(200)
+  counterpartyId  String?   @map("counterparty_id") @db.Uuid
+  value           Decimal?  @db.Decimal(18, 2)
+  currency        String    @default("USD") @db.VarChar(3)
+  startDate       DateTime? @map("start_date") @db.Date
+  endDate         DateTime? @map("end_date") @db.Date
+  autoRenew       Boolean   @default(false) @map("auto_renew")
+  noticeDays      Int       @default(30) @map("notice_days")
+  body            String?   @db.Text
+  summary         String?   @db.Text
+  tags            Json      @default("[]") @db.JsonB
+  signedAt        DateTime? @map("signed_at")
+  signedBy        String?   @map("signed_by") @db.Uuid
+  createdBy       String?   @map("created_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  clauses         ClmClause[]
+  approvals       ClmApproval[]
+  @@index([tenantId, status])
+  @@index([tenantId, endDate])
+  @@map("clm_contracts")
+}
+
+model ClmClause {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  contractId String      @map("contract_id") @db.Uuid
+  title      String      @db.VarChar(200)
+  body       String      @db.Text
+  clauseType String      @default("standard") @map("clause_type") @db.VarChar(50)
+  orderIndex Int         @default(0) @map("order_index")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  contract   ClmContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  @@index([contractId, orderIndex])
+  @@map("clm_clauses")
+}
+
+model ClmApproval {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  contractId String      @map("contract_id") @db.Uuid
+  approverId String      @map("approver_id") @db.Uuid
+  status     String      @default("pending") @db.VarChar(20)
+  comments   String?     @db.Text
+  decidedAt  DateTime?   @map("decided_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  contract   ClmContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  @@index([contractId])
+  @@map("clm_approvals")
 }
