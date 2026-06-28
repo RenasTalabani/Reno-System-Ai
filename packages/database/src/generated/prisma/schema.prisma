@@ -188,6 +188,7 @@ model CoreTenant {
   aiSharedMemory           AiSharedMemory[]
   aiDelegations            AiDelegation[]
   aiMeetings               AiMeeting[]
+  aiOnboardingSessions     AiOnboardingSession[]
 
   @@map("core_tenants")
 }
@@ -7763,4 +7764,122 @@ model AiSkillExecution {
   @@index([tenantId, provider])
   @@index([tenantId, status])
   @@map("ai_skill_executions")
+}
+
+// ─── Phase 37: AI Company Setup & Industry Autopilot ─────────────────────────
+
+model AiOnboardingSession {
+  id               String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String                 @map("tenant_id") @db.Uuid
+  status           String                 @default("in_progress") @db.VarChar(30)
+  currentStep      Int                    @default(0) @map("current_step")
+  totalSteps       Int                    @default(10) @map("total_steps")
+  companyType      String?                @map("company_type") @db.VarChar(100)
+  companySize      String?                @map("company_size") @db.VarChar(50)
+  country          String?                @db.VarChar(100)
+  currency         String?                @db.VarChar(10)
+  branches         Int?
+  employees        Int?
+  services         Json?                  @db.JsonB
+  products         Json?                  @db.JsonB
+  goals            Json?                  @db.JsonB
+  detectedIndustry String?                @map("detected_industry") @db.VarChar(100)
+  industryConf     Float?                 @map("industry_confidence")
+  resumeToken      String?                @unique @map("resume_token") @db.VarChar(100)
+  completedAt      DateTime?              @map("completed_at")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @updatedAt @map("updated_at")
+  tenant           CoreTenant             @relation(fields: [tenantId], references: [id])
+  answers          AiOnboardingAnswer[]
+  plans            AiOnboardingPlan[]
+  auditLogs        AiOnboardingAuditLog[]
+
+  @@index([tenantId, status])
+  @@map("ai_onboarding_sessions")
+}
+
+model AiOnboardingAnswer {
+  id         String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String              @map("tenant_id") @db.Uuid
+  sessionId  String              @map("session_id") @db.Uuid
+  stepKey    String              @map("step_key") @db.VarChar(100)
+  question   String              @db.Text
+  answer     Json                @db.JsonB
+  answeredAt DateTime            @default(now()) @map("answered_at")
+  session    AiOnboardingSession @relation(fields: [sessionId], references: [id])
+
+  @@unique([sessionId, stepKey])
+  @@index([tenantId])
+  @@map("ai_onboarding_answers")
+}
+
+model AiOnboardingPlan {
+  id           String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String                 @map("tenant_id") @db.Uuid
+  sessionId    String                 @map("session_id") @db.Uuid
+  industry     String                 @db.VarChar(100)
+  templateUsed String?                @map("template_used") @db.VarChar(100)
+  summary      String                 @db.Text
+  status       String                 @default("pending") @db.VarChar(30)
+  approvedBy   String?                @map("approved_by") @db.Uuid
+  approvedAt   DateTime?              @map("approved_at")
+  appliedAt    DateTime?              @map("applied_at")
+  createdAt    DateTime               @default(now()) @map("created_at")
+  updatedAt    DateTime               @updatedAt @map("updated_at")
+  session      AiOnboardingSession    @relation(fields: [sessionId], references: [id])
+  items        AiOnboardingPlanItem[]
+
+  @@index([tenantId, status])
+  @@map("ai_onboarding_plans")
+}
+
+model AiOnboardingPlanItem {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  planId      String           @map("plan_id") @db.Uuid
+  category    String           @db.VarChar(50)
+  title       String           @db.VarChar(200)
+  description String           @db.Text
+  config      Json?            @db.JsonB
+  status      String           @default("pending") @db.VarChar(30)
+  order       Int              @default(0)
+  appliedAt   DateTime?        @map("applied_at")
+  error       String?          @db.Text
+  plan        AiOnboardingPlan @relation(fields: [planId], references: [id])
+
+  @@index([planId, status])
+  @@map("ai_onboarding_plan_items")
+}
+
+model AiIndustryTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug        String   @unique @db.VarChar(100)
+  name        String   @db.VarChar(200)
+  description String   @db.Text
+  modules     Json     @db.JsonB
+  roles       Json     @db.JsonB
+  workflows   Json     @db.JsonB
+  dashboards  Json     @db.JsonB
+  reports     Json     @db.JsonB
+  agents      Json     @db.JsonB
+  keywords    Json     @db.JsonB
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("ai_industry_templates")
+}
+
+model AiOnboardingAuditLog {
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String              @map("tenant_id") @db.Uuid
+  sessionId   String              @map("session_id") @db.Uuid
+  action      String              @db.VarChar(100)
+  details     Json?               @db.JsonB
+  performedBy String?             @map("performed_by") @db.Uuid
+  createdAt   DateTime            @default(now()) @map("created_at")
+  session     AiOnboardingSession @relation(fields: [sessionId], references: [id])
+
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([sessionId])
+  @@map("ai_onboarding_audit_logs")
 }

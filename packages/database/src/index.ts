@@ -68,4 +68,10 @@ export type {
   AiDelegation,
   AiMeeting,
   AiMeetingParticipant,
+  AiOnboardingSession,
+  AiOnboardingAnswer,
+  AiOnboardingPlan,
+  AiOnboardingPlanItem,
+  AiIndustryTemplate,
+  AiOnboardingAuditLog,
 } from './generated/prisma/index.js'

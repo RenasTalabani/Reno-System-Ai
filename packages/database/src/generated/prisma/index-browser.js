@@ -5354,6 +5354,94 @@ exports.Prisma.AiSkillExecutionScalarFieldEnum = {
   occurredAt: 'occurredAt'
 };
 
+exports.Prisma.AiOnboardingSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  status: 'status',
+  currentStep: 'currentStep',
+  totalSteps: 'totalSteps',
+  companyType: 'companyType',
+  companySize: 'companySize',
+  country: 'country',
+  currency: 'currency',
+  branches: 'branches',
+  employees: 'employees',
+  services: 'services',
+  products: 'products',
+  goals: 'goals',
+  detectedIndustry: 'detectedIndustry',
+  industryConf: 'industryConf',
+  resumeToken: 'resumeToken',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiOnboardingAnswerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sessionId: 'sessionId',
+  stepKey: 'stepKey',
+  question: 'question',
+  answer: 'answer',
+  answeredAt: 'answeredAt'
+};
+
+exports.Prisma.AiOnboardingPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sessionId: 'sessionId',
+  industry: 'industry',
+  templateUsed: 'templateUsed',
+  summary: 'summary',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  appliedAt: 'appliedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiOnboardingPlanItemScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  category: 'category',
+  title: 'title',
+  description: 'description',
+  config: 'config',
+  status: 'status',
+  order: 'order',
+  appliedAt: 'appliedAt',
+  error: 'error'
+};
+
+exports.Prisma.AiIndustryTemplateScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  modules: 'modules',
+  roles: 'roles',
+  workflows: 'workflows',
+  dashboards: 'dashboards',
+  reports: 'reports',
+  agents: 'agents',
+  keywords: 'keywords',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiOnboardingAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sessionId: 'sessionId',
+  action: 'action',
+  details: 'details',
+  performedBy: 'performedBy',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5654,7 +5742,13 @@ exports.Prisma.ModelName = {
   AiWorkAuditLog: 'AiWorkAuditLog',
   AiToolRegistry: 'AiToolRegistry',
   AiCapabilityRegistry: 'AiCapabilityRegistry',
-  AiSkillExecution: 'AiSkillExecution'
+  AiSkillExecution: 'AiSkillExecution',
+  AiOnboardingSession: 'AiOnboardingSession',
+  AiOnboardingAnswer: 'AiOnboardingAnswer',
+  AiOnboardingPlan: 'AiOnboardingPlan',
+  AiOnboardingPlanItem: 'AiOnboardingPlanItem',
+  AiIndustryTemplate: 'AiIndustryTemplate',
+  AiOnboardingAuditLog: 'AiOnboardingAuditLog'
 };
 
 /**
