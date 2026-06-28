@@ -209,6 +209,10 @@ model CoreTenant {
   mktUnsubscribes          MktUnsubscribe[]
   dixImportJobs            DixImportJob[]
   dixExportJobs            DixExportJob[]
+  mobPushTokens            MobPushToken[]
+  mobPushNotifications     MobPushNotification[]
+  mobOfflineQueue          MobOfflineQueue[]
+  mobBiometricKeys         MobBiometricKey[]
 
   @@map("core_tenants")
 }
@@ -8372,4 +8376,70 @@ model DixExportJob {
   tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("dix_export_jobs")
+}
+
+// ─── Phase 48: Advanced Mobile Features ──────────────────────────────────────
+
+model MobPushToken {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  token      String    @db.Text
+  platform   String    @default("android") @db.VarChar(10)
+  deviceName String?   @map("device_name") @db.VarChar(200)
+  appVersion String?   @map("app_version") @db.VarChar(50)
+  isActive   Boolean   @default(true) @map("is_active")
+  lastUsedAt DateTime  @default(now()) @map("last_used_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([userId, token])
+  @@index([tenantId])
+  @@map("mob_push_tokens")
+}
+
+model MobPushNotification {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  userId    String?   @map("user_id") @db.Uuid
+  title     String    @db.VarChar(255)
+  body      String    @db.Text
+  data      Json      @default("{}") @db.JsonB
+  status    String    @default("pending") @db.VarChar(20)
+  sentCount Int       @default(0) @map("sent_count")
+  sentAt    DateTime? @map("sent_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("mob_push_notifications")
+}
+
+model MobOfflineQueue {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  operation   String    @db.VarChar(10)
+  endpoint    String    @db.VarChar(500)
+  payload     Json      @default("{}") @db.JsonB
+  status      String    @default("pending") @db.VarChar(20)
+  retries     Int       @default(0) @db.SmallInt
+  error       String?   @db.Text
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([userId, status, createdAt])
+  @@map("mob_offline_queue")
+}
+
+model MobBiometricKey {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  deviceId     String    @map("device_id") @db.VarChar(255)
+  publicKey    String    @map("public_key") @db.Text
+  keyAlgorithm String    @default("ES256") @map("key_algorithm") @db.VarChar(30)
+  lastUsedAt   DateTime? @map("last_used_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([userId, deviceId])
+  @@map("mob_biometric_keys")
 }
