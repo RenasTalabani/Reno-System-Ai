@@ -192,6 +192,9 @@ model CoreTenant {
   aiWorkspaceSessions      AiWorkspaceSession[]
   aiWorkspaceMemory        AiWorkspaceMemory[]
   aiWorkspaceCommands      AiWorkspaceCommand[]
+  hrDepartments            HrDepartment[]
+  hrJobTitles              HrJobTitle[]
+  hrPayrollRuns            HrPayrollRun[]
 
   @@map("core_tenants")
 }
@@ -7941,4 +7944,58 @@ model AiWorkspaceCommand {
   @@index([tenantId, userId, createdAt(sort: Desc)])
   @@index([tenantId, status])
   @@map("ai_workspace_commands")
+}
+
+// ─── Phase 39: Reno HR Module — New models only (departments, job titles, payroll runs) ──
+
+model HrDepartment {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String         @map("tenant_id") @db.Uuid
+  name        String         @db.VarChar(200)
+  code        String?        @db.VarChar(50)
+  parentId    String?        @map("parent_id") @db.Uuid
+  headUserId  String?        @map("head_user_id") @db.Uuid
+  isActive    Boolean        @default(true) @map("is_active")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  deletedAt   DateTime?      @map("deleted_at")
+  tenant      CoreTenant     @relation(fields: [tenantId], references: [id])
+  parent      HrDepartment?  @relation("DeptChildren", fields: [parentId], references: [id])
+  children    HrDepartment[] @relation("DeptChildren")
+  @@unique([tenantId, code])
+  @@index([tenantId, isActive])
+  @@map("hr_departments")
+}
+
+model HrJobTitle {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  name      String     @db.VarChar(200)
+  grade     String?    @db.VarChar(50)
+  isActive  Boolean    @default(true) @map("is_active")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id])
+  @@index([tenantId])
+  @@map("hr_job_titles")
+}
+
+model HrPayrollRun {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  period          String     @db.VarChar(7)
+  status          String     @default("draft") @db.VarChar(30)
+  totalGross      Decimal    @default(0) @map("total_gross") @db.Decimal(15, 2)
+  totalNet        Decimal    @default(0) @map("total_net") @db.Decimal(15, 2)
+  totalDeductions Decimal    @default(0) @map("total_deductions") @db.Decimal(15, 2)
+  currency        String     @default("USD") @db.VarChar(10)
+  processedBy     String?    @map("processed_by") @db.Uuid
+  processedAt     DateTime?  @map("processed_at")
+  notes           String?    @db.Text
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id])
+  @@unique([tenantId, period])
+  @@index([tenantId, status])
+  @@map("hr_payroll_runs")
 }

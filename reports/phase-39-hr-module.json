@@ -1,0 +1,147 @@
+{
+  "phase": 39,
+  "name": "Reno HR Module",
+  "version": "v39.0.0-phase39",
+  "status": "complete",
+  "completedAt": "2026-06-28",
+  "summary": "Full-featured Human Resources module for Reno Enterprise BOS. Covers employee lifecycle, attendance, leave management, payroll, documents, shifts, holidays, and job positions. Extends existing comprehensive HR schema with three new models: HrDepartment, HrJobTitle, and HrPayrollRun.",
+  "goldenRulesCompliance": {
+    "renoBrainNotReplaced": true,
+    "claudeOptional": true,
+    "externalAiDisabledByDefault": true,
+    "tenantAdminMustEnableClaude": true,
+    "noExistingFeaturesBroken": true,
+    "noApiKeysExposedToFrontend": true,
+    "noTenantDataSentWithoutApproval": true,
+    "rbacRespected": true,
+    "criticalActionsRequireApproval": true,
+    "allActionsLogged": true
+  },
+  "schemaChanges": {
+    "newModels": [
+      {
+        "name": "HrDepartment",
+        "table": "hr_departments",
+        "description": "HR-specific department taxonomy with hierarchy support (separate from CoreDepartment org structure)"
+      },
+      {
+        "name": "HrJobTitle",
+        "table": "hr_job_titles",
+        "description": "Standardised job title catalogue with grade/level tagging"
+      },
+      {
+        "name": "HrPayrollRun",
+        "table": "hr_payroll_runs",
+        "description": "Payroll run header tracking period, totals, and status lifecycle"
+      }
+    ],
+    "existingModelsUnchanged": [
+      "HrEmployee", "HrJobPosition", "HrEmployeePosition", "HrShift",
+      "HrEmployeeShift", "HrAttendance", "HrLeaveType", "HrLeaveBalance",
+      "HrLeaveRequest", "HrPayrollGrade", "HrPayslip", "HrDocument", "HrHoliday"
+    ],
+    "migration": "packages/database/prisma/migrations/20260628500000_phase39_hr_module/migration.sql"
+  },
+  "apiEndpoints": {
+    "prefix": "/v1/hr",
+    "groups": [
+      {
+        "prefix": "/dashboard",
+        "endpoints": [
+          "GET /hr/dashboard — headcount KPIs, attendance summary, payroll totals, upcoming holidays",
+          "GET /hr/dashboard/headcount-trend?months=6 — monthly hired/terminated trend"
+        ]
+      },
+      {
+        "prefix": "/employees",
+        "endpoints": [
+          "GET /hr/employees — paginated list with search, department, status filters",
+          "GET /hr/employees/:id — full employee profile with positions, documents, shifts",
+          "POST /hr/employees — create employee (auto-generates employee code)",
+          "PUT /hr/employees/:id — update employee fields",
+          "PATCH /hr/employees/:id/status — change employment status (active/on_leave/terminated)",
+          "DELETE /hr/employees/:id — soft delete",
+          "GET /hr/employees/:id/leave-balance — per-type leave balances for a year",
+          "GET /hr/employees/:id/attendance — attendance history",
+          "GET /hr/employees/:id/payslips — payslip history"
+        ]
+      },
+      {
+        "prefix": "/attendance",
+        "endpoints": [
+          "GET /hr/attendance — paginated attendance records with filters",
+          "POST /hr/attendance — manual check-in/out or record creation",
+          "PATCH /hr/attendance/:id/approve — approve an attendance record",
+          "GET /hr/attendance/summary?month=&year= — monthly status breakdown by employee"
+        ]
+      },
+      {
+        "prefix": "/leave",
+        "endpoints": [
+          "GET /hr/leave/types — list active leave types",
+          "POST /hr/leave/types — create leave type",
+          "PUT /hr/leave/types/:id — update leave type",
+          "DELETE /hr/leave/types/:id — soft delete leave type",
+          "GET /hr/leave/requests — paginated requests with filters",
+          "POST /hr/leave/requests — submit leave request (checks overlap)",
+          "PATCH /hr/leave/requests/:id/approve — approve and deduct balance",
+          "PATCH /hr/leave/requests/:id/reject — reject and restore pending days",
+          "PATCH /hr/leave/requests/:id/cancel — cancel request"
+        ]
+      },
+      {
+        "prefix": "/payroll",
+        "endpoints": [
+          "GET /hr/payroll/payslips — paginated payslip list",
+          "GET /hr/payroll/payslips/:id — single payslip detail",
+          "POST /hr/payroll/payslips — create draft payslip",
+          "PATCH /hr/payroll/payslips/:id/process — mark as processed",
+          "PATCH /hr/payroll/payslips/:id/pay — mark as paid",
+          "PATCH /hr/payroll/payslips/:id/cancel — cancel payslip",
+          "GET /hr/payroll/summary?month=&year= — aggregated payroll totals"
+        ]
+      },
+      {
+        "prefix": "/documents",
+        "endpoints": ["Full document CRUD with expiry tracking and confidentiality flags"]
+      },
+      {
+        "prefix": "/shifts",
+        "endpoints": ["Shift pattern management and employee shift assignments"]
+      },
+      {
+        "prefix": "/holidays",
+        "endpoints": ["Public and company holiday calendar management"]
+      },
+      {
+        "prefix": "/positions",
+        "endpoints": ["Job position catalogue with headcount and salary grade ranges"]
+      }
+    ]
+  },
+  "webUiPages": [
+    "apps/web/src/app/(dashboard)/hr/page.tsx — HR dashboard with KPI cards and quick links",
+    "apps/web/src/app/(dashboard)/hr/employees/page.tsx — Employee directory with search/filter",
+    "apps/web/src/app/(dashboard)/hr/employees/[id]/page.tsx — Employee profile",
+    "apps/web/src/app/(dashboard)/hr/attendance/page.tsx — Attendance records",
+    "apps/web/src/app/(dashboard)/hr/leave/page.tsx — Leave request management",
+    "apps/web/src/app/(dashboard)/hr/payroll/page.tsx — Payroll and payslips",
+    "apps/web/src/app/(dashboard)/hr/documents/page.tsx — HR document vault",
+    "apps/web/src/app/(dashboard)/hr/settings/page.tsx — HR module configuration"
+  ],
+  "databaseExports": {
+    "newTypesAdded": ["HrDepartment", "HrJobTitle", "HrPayrollRun"],
+    "file": "packages/database/src/index.ts"
+  },
+  "seededData": {
+    "tenant": "demo",
+    "hrDepartments": ["Engineering", "Human Resources", "Sales", "Finance", "Operations"],
+    "hrJobTitles": [
+      "Software Engineer (L3)", "Senior Engineer (L4)", "Engineering Manager (M1)",
+      "HR Specialist (L3)", "Sales Executive (L3)", "Accountant (L3)", "Operations Manager (M1)"
+    ]
+  },
+  "routeRegistration": "apps/api/src/rest/routes/index.ts — hrRoutes registered at /v1/hr",
+  "auditLogging": "All write operations (create/update/delete employee, leave approve/reject, payslip process/pay) emit SysAuditLog entries with tenantId, userId, action, entityType, entityId",
+  "nextPhase": 40
+}

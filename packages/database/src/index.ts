@@ -78,4 +78,7 @@ export type {
   AiWorkspaceMessage,
   AiWorkspaceMemory,
   AiWorkspaceCommand,
+  HrDepartment,
+  HrJobTitle,
+  HrPayrollRun,
 } from './generated/prisma/index.js'
