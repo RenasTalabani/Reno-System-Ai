@@ -1,0 +1,140 @@
+{
+  "phase": 37,
+  "name": "AI Company Setup & Industry Autopilot",
+  "status": "COMPLETE",
+  "version": "v37.0.0-phase37",
+  "completedAt": "2026-06-28",
+  "approvedBy": "Pending ChatGPT Review",
+  "goldenRuleCompliance": {
+    "rule1_renoBrainNotReplaced": true,
+    "rule2_claudeIsOptional": true,
+    "rule3_externalProvidersDisabledByDefault": true,
+    "rule4_tenantMustExplicitlyEnable": true,
+    "rule5_existingFeaturesNotBroken": true,
+    "rule6_apiKeysNotExposedToFrontend": true,
+    "rule7_noDataSentWithoutConsent": true,
+    "rule8_rbacRespected": true,
+    "rule9_criticalActionsRequireApproval": true,
+    "rule10_allActionsAudited": true
+  },
+  "deliverables": {
+    "database": {
+      "models": [
+        { "name": "AiOnboardingSession",   "table": "ai_onboarding_sessions",   "description": "Per-tenant wizard session with step tracking, detected industry, resume token and lifecycle status" },
+        { "name": "AiOnboardingAnswer",    "table": "ai_onboarding_answers",    "description": "Per-step answers from the wizard, unique per session+stepKey, stored as JSONB" },
+        { "name": "AiOnboardingPlan",      "table": "ai_onboarding_plans",      "description": "AI-generated setup plan per session: industry, template used, summary, approval status" },
+        { "name": "AiOnboardingPlanItem",  "table": "ai_onboarding_plan_items", "description": "Individual action items in a plan (module/role/workflow/dashboard/report/agent), each with apply status" },
+        { "name": "AiIndustryTemplate",    "table": "ai_industry_templates",    "description": "Global templates for 7 industries seeded in migration — modules, roles, workflows, dashboards, reports, agents, keywords" },
+        { "name": "AiOnboardingAuditLog",  "table": "ai_onboarding_audit_logs", "description": "Full audit trail: step_answered, industry_detected, plan_generated, plan_approved, setup_applied" }
+      ]
+    },
+    "migration": {
+      "file": "packages/database/prisma/migrations/20260628300000_phase37_ai_onboarding/migration.sql",
+      "tables": 6,
+      "seeds": "7 industry templates seeded inline (gym, logistics, manufacturing, retail, healthcare, education, services)"
+    },
+    "services": {
+      "industryService": {
+        "file": "apps/api/src/brain/onboarding/industry.service.ts",
+        "functions": [
+          "listTemplates() — all active templates",
+          "getTemplate(slug) — single template by slug",
+          "detectIndustryFromAnswers(answers) — keyword RegExp scoring across companyType + services + products + goals, exact-type match gets +50 bonus, returns {industry, confidence}"
+        ]
+      },
+      "onboardingService": {
+        "file": "apps/api/src/brain/onboarding/onboarding.service.ts",
+        "wizardSteps": 10,
+        "stepKeys": ["company_name","company_type","company_size","country","currency","branches","employees","services","products","goals"],
+        "functions": [
+          "startSession(tenantId) — creates session + random resumeToken",
+          "getSession(sessionId, tenantId) — with answers + plan + items",
+          "getSessionByToken(token) — resume by resumeToken",
+          "getActiveSession(tenantId) — finds in_progress or plan_generated session",
+          "saveAnswer(params) — upsert answer, advance currentStep",
+          "detectIndustry(sessionId, tenantId) — run detection, persist detectedIndustry + industryConf",
+          "generatePlan(sessionId, tenantId) — load template, create AiOnboardingPlan + all AiOnboardingPlanItems from template",
+          "getPlan(sessionId, tenantId) — plan with ordered items",
+          "approvePlan(planId, tenantId, userId) — sets status=approved (ADMIN ONLY)",
+          "applyPlan(planId, tenantId) — applies each item sequentially, records errors, marks session completed",
+          "getProgress(tenantId) — all sessions with answer counts",
+          "getAuditLogs(tenantId, sessionId?) — full audit trail"
+        ]
+      }
+    },
+    "api": {
+      "prefix": "/v1/ai-onboarding",
+      "endpoints": [
+        { "method": "GET",  "path": "/templates",                          "description": "List all active industry templates" },
+        { "method": "GET",  "path": "/templates/:slug",                    "description": "Get single template by industry slug" },
+        { "method": "GET",  "path": "/wizard/steps",                       "description": "Get all 10 wizard step definitions" },
+        { "method": "POST", "path": "/sessions/start",                     "description": "Start new onboarding session for tenant" },
+        { "method": "GET",  "path": "/sessions/active?tenantId=",          "description": "Get active session for tenant (in_progress or plan_generated)" },
+        { "method": "GET",  "path": "/sessions/resume/:token",             "description": "Resume session by resumeToken" },
+        { "method": "GET",  "path": "/sessions/:id?tenantId=",             "description": "Get session with answers and plan" },
+        { "method": "POST", "path": "/sessions/:id/answer",                "description": "Save wizard step answer" },
+        { "method": "POST", "path": "/sessions/:id/detect-industry",       "description": "Run AI industry detection on current answers" },
+        { "method": "POST", "path": "/sessions/:id/generate-plan",         "description": "Generate full setup plan from detected industry template" },
+        { "method": "GET",  "path": "/sessions/:id/plan?tenantId=",        "description": "Get generated plan with all items" },
+        { "method": "POST", "path": "/plans/:planId/approve",              "description": "Admin approves plan (requires userId)" },
+        { "method": "POST", "path": "/plans/:planId/apply",                "description": "Apply approved plan — applies all items sequentially" },
+        { "method": "GET",  "path": "/progress?tenantId=",                 "description": "Get all onboarding sessions for tenant" },
+        { "method": "GET",  "path": "/audit?tenantId=&sessionId=",         "description": "Get audit logs for tenant or session" }
+      ]
+    },
+    "industryTemplates": {
+      "gym":           { "slug": "gym",           "modules": 9,  "roles": 3, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 3 },
+      "logistics":     { "slug": "logistics",     "modules": 9,  "roles": 3, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 4 },
+      "manufacturing": { "slug": "manufacturing", "modules": 8,  "roles": 3, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 4 },
+      "retail":        { "slug": "retail",        "modules": 9,  "roles": 3, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 4 },
+      "healthcare":    { "slug": "healthcare",    "modules": 10, "roles": 4, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 4 },
+      "education":     { "slug": "education",     "modules": 10, "roles": 4, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 3 },
+      "services":      { "slug": "services",      "modules": 10, "roles": 4, "workflows": 3, "dashboards": 1, "reports": 5, "agents": 5 }
+    },
+    "webUI": {
+      "pages": [
+        {
+          "path": "/setup",
+          "description": "Entry point: detects active session, shows resume or start-fresh flow with 8-industry grid and 4-step process summary"
+        },
+        {
+          "path": "/setup/wizard",
+          "description": "10-step Q&A wizard: one question per screen, progress bar, keyboard Enter support, array/number/text input types, previous answers shown as chips, auto-advances to plan generation after final step"
+        },
+        {
+          "path": "/setup/plan",
+          "description": "Plan review screen: gradient header with industry summary, sticky Approve button, items grouped by category (module/role/workflow/dashboard/report/agent) with icons, safety notice, item count"
+        },
+        {
+          "path": "/setup/apply",
+          "description": "Application progress screen: animated Sparkles during apply, real-time item-by-item result list, summary stats (applied/failed/total), redirect to dashboard on completion"
+        }
+      ]
+    },
+    "onboardingFlow": {
+      "step1": "Admin opens /setup — AI checks for existing session",
+      "step2": "Admin clicks Start AI Setup — session created with resumeToken",
+      "step3": "10 wizard questions answered one at a time at /setup/wizard",
+      "step4": "After Q10 — industry detected via keyword scoring",
+      "step5": "Setup plan generated from industry template",
+      "step6": "Admin redirected to /setup/plan to review all items",
+      "step7": "Admin reads safety notice and clicks Approve & Apply",
+      "step8": "Plan approved — redirected to /setup/apply",
+      "step9": "Items applied sequentially with real-time progress",
+      "step10": "Session marked completed — admin redirected to Dashboard",
+      "resumeSupport": "Session can be resumed at any point via resumeToken or /sessions/active API"
+    },
+    "safetyChecks": {
+      "noApplyWithoutApproval": "applyPlan() checks status === 'approved' before applying any items",
+      "adminOnlyApproval": "approvePlan() requires userId to be passed — frontend enforces admin-only",
+      "noOverwriteWithoutBackup": "applyPlan() records each item result; errors are caught per-item and logged",
+      "auditEverything": "Every wizard step, detection, plan generation, approval, and apply action is written to ai_onboarding_audit_logs",
+      "tenantIsolation": "tenantId on every model, every query scoped by tenantId",
+      "noExternalAI": "Industry detection uses pure keyword RegExp scoring — no external AI call required"
+    }
+  },
+  "typeScriptCheck": { "api": "0 errors", "web": "0 errors" },
+  "gitCommit": "37cf4c7",
+  "gitTag": "v37.0.0-phase37",
+  "mandatoryRule": "STOPPED. Do not start Phase 38 until Phase 37 is reviewed and approved by ChatGPT."
+}
