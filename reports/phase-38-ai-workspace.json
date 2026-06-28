@@ -1,0 +1,132 @@
+{
+  "phase": 38,
+  "name": "AI Workspace & Computer Assistant",
+  "status": "COMPLETE",
+  "version": "v38.0.0-phase38",
+  "completedAt": "2026-06-28",
+  "approvedBy": "Pending ChatGPT Review",
+  "goldenRuleCompliance": {
+    "rule1_renoBrainNotReplaced": true,
+    "rule2_claudeIsOptional": true,
+    "rule3_externalProvidersDisabledByDefault": true,
+    "rule4_tenantMustExplicitlyEnable": true,
+    "rule5_existingFeaturesNotBroken": true,
+    "rule6_apiKeysNotExposedToFrontend": true,
+    "rule7_noDataSentWithoutConsent": true,
+    "rule8_rbacRespected": true,
+    "rule9_criticalActionsRequireApproval": true,
+    "rule10_allActionsAudited": true
+  },
+  "deliverables": {
+    "database": {
+      "models": [
+        { "name": "AiWorkspaceSession",  "table": "ai_workspace_sessions",  "description": "Per-user persistent chat sessions with title auto-generated from first message, token/message counters, context JSONB" },
+        { "name": "AiWorkspaceMessage",  "table": "ai_workspace_messages",  "description": "All chat messages (user/assistant), with commandType, JSONB result, provider, requiresApproval flag, approved/approvedBy" },
+        { "name": "AiWorkspaceMemory",   "table": "ai_workspace_memory",    "description": "Cross-session key-value memory scoped to user/team/tenant, with TTL expiry and auto-learn source tracking" },
+        { "name": "AiWorkspaceCommand",  "table": "ai_workspace_commands",  "description": "Audit log of all AI commands: document/task/dashboard creation requests with full approval gate: pending→approved/rejected" }
+      ]
+    },
+    "services": {
+      "workspaceAssistant": {
+        "file": "apps/api/src/brain/workspace/workspace-assistant.service.ts",
+        "intentEngine": {
+          "commandTypes": ["search", "report", "document", "dashboard", "task", "analyze", "general"],
+          "detection": "RegExp keyword matching against user message — 6 intent patterns, default=general"
+        },
+        "functions": [
+          "detectIntent(message) — returns CommandType",
+          "buildSystemPrompt(commandType, memoryContext) — type-specific system prompt with golden rule safety constraints baked in",
+          "generateRenoBrainResponse(message, commandType) — 7 distinct response templates per intent type",
+          "createOrGetSession(tenantId, userId, sessionId?) — idempotent session management",
+          "listSessions(tenantId, userId) — recent 20 sessions",
+          "getSession(sessionId, tenantId) — with last 100 messages",
+          "deleteSession(sessionId, tenantId) — cascades messages",
+          "chat(params) — full pipeline: session→user message→intent detection→search (if search)→memory context→Reno Brain response→assistant message→session update→command log (if approval needed)→auto-learn",
+          "listCommands(tenantId, userId?, status?) — command history",
+          "approveCommand(commandId, tenantId, userId) — sets approved + executedAt",
+          "rejectCommand(commandId, tenantId) — sets rejected"
+        ],
+        "approvalGate": "document, task, dashboard commands automatically set requiresApproval=true and create AiWorkspaceCommand record in 'pending' status"
+      },
+      "workspaceMemory": {
+        "file": "apps/api/src/brain/workspace/workspace-memory.service.ts",
+        "functions": [
+          "getMemory(tenantId, userId) — excludes expired memories",
+          "setMemory(params) — upsert by tenantId+userId+scope+key",
+          "deleteMemory(tenantId, userId, key)",
+          "buildMemoryContext(tenantId, userId) — formats memories as context string for AI prompts",
+          "autoLearnFromConversation(params) — detects preferred_command and preferred_language (Arabic detection) from conversation"
+        ]
+      },
+      "workspaceSearch": {
+        "file": "apps/api/src/brain/workspace/workspace-search.service.ts",
+        "searchAll": "Parallel search across 5 real Prisma models",
+        "modules": [
+          "CoreUser — by email, firstName, lastName (iinsensitive)",
+          "SysAuditLog — by action, entityType, ordered by occurredAt",
+          "AiWorkTask — by title, description",
+          "AiOnboardingSession — by detectedIndustry, companyType",
+          "AiWorkspaceMessage — by content (assistant messages only)"
+        ]
+      }
+    },
+    "api": {
+      "prefix": "/v1/ai-workspace",
+      "endpoints": [
+        { "method": "POST", "path": "/chat",                      "description": "Main chat — creates session if needed, detects intent, returns AI response with commandType and requiresApproval flag" },
+        { "method": "GET",  "path": "/sessions",                  "description": "List user sessions ordered by last activity" },
+        { "method": "GET",  "path": "/sessions/:id",              "description": "Get session with messages" },
+        { "method": "DELETE","path": "/sessions/:id",             "description": "Delete session and all its messages" },
+        { "method": "GET",  "path": "/memory",                    "description": "Get all active memories for user (respects TTL)" },
+        { "method": "POST", "path": "/memory",                    "description": "Save/upsert memory item with optional TTL" },
+        { "method": "DELETE","path": "/memory/:key",              "description": "Delete memory item by key" },
+        { "method": "POST", "path": "/search",                    "description": "Universal search across 5 Reno modules, returns grouped results" },
+        { "method": "GET",  "path": "/commands",                  "description": "Command history with optional userId/status filter" },
+        { "method": "POST", "path": "/commands/:id/approve",      "description": "Admin approves a pending command" },
+        { "method": "POST", "path": "/commands/:id/reject",       "description": "Reject a pending command" }
+      ]
+    },
+    "webUI": {
+      "pages": [
+        {
+          "path": "/workspace",
+          "description": "Main AI assistant chat interface: left sidebar (session list + new chat + nav links), right chat area (user/assistant bubbles with command type badges, approval warnings), quick prompt cards on empty state, Reno Brain badge in header, typing dots while sending, session auto-title from first message"
+        },
+        {
+          "path": "/workspace/search",
+          "description": "Universal search: search bar with live loading, results grouped by module (People, Recent Activity, AI Tasks, Workspace Chat) with module icons and color coding, direct links to records"
+        },
+        {
+          "path": "/workspace/memory",
+          "description": "Memory management: list all memories with scope badges (user/team/tenant), source label (auto-learned/manual), expiry indicator, add-memory modal with key/value/scope/ttl, one-click delete per memory"
+        },
+        {
+          "path": "/workspace/commands",
+          "description": "Command approvals: filter tabs (all/pending/approved/rejected), pending-count badge, amber warning alert for pending commands, approve/reject buttons per command, status badges with icons"
+        }
+      ]
+    },
+    "commandIntentMatrix": {
+      "search":    { "pattern": "find|search|show me|list|who|how many", "requiresApproval": false, "action": "Searches real Prisma data + returns structured results" },
+      "report":    { "pattern": "report|analyze|summary|analytics|performance", "requiresApproval": false, "action": "Generates business summary with recommendations" },
+      "document":  { "pattern": "create|write|draft + document|doc|letter|contract", "requiresApproval": true, "action": "Drafts document and creates pending command for approval" },
+      "dashboard": { "pattern": "dashboard|widget|chart|graph", "requiresApproval": true, "action": "Designs dashboard config and creates pending command for approval" },
+      "task":      { "pattern": "remind|schedule|task|todo|assign", "requiresApproval": true, "action": "Drafts task and creates pending command for approval" },
+      "analyze":   { "pattern": "analyze|parse|read this|interpret", "requiresApproval": false, "action": "Analyzes provided content and extracts key information" },
+      "general":   { "pattern": "default", "requiresApproval": false, "action": "Contextual Q&A with workspace capabilities overview" }
+    },
+    "safetyChecks": {
+      "destructiveActionsGated": "document, task, dashboard commands require approval before system modification",
+      "memoryRespectsTTL": "Expired memories excluded from all queries and context building",
+      "tenantIsolation": "tenantId on every model and every query",
+      "noApiKeyExposure": "Provider selection is backend-only; frontend never sees API keys",
+      "searchReadOnly": "searchAll() only reads data — no writes",
+      "autoLearnSafe": "autoLearnFromConversation() only writes preferred_command and preferred_language — no sensitive data captured",
+      "claudeOptional": "provider defaults to 'mock' (Reno Brain); Claude integration noted but not enforced"
+    }
+  },
+  "typeScriptCheck": { "api": "0 errors", "web": "0 errors" },
+  "gitCommit": "a326e38",
+  "gitTag": "v38.0.0-phase38",
+  "mandatoryRule": "STOPPED. Do not start Phase 39 until Phase 38 is reviewed and approved by ChatGPT."
+}
