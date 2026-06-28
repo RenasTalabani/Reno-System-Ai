@@ -204,6 +204,9 @@ model CoreTenant {
   cdpCustomers             CdpCustomer[]
   cdpEvents                CdpEvent[]
   cdpSegments              CdpSegment[]
+  mktEmailTemplates        MktEmailTemplate[]
+  mktCampaigns             MktCampaign[]
+  mktUnsubscribes          MktUnsubscribe[]
 
   @@map("core_tenants")
 }
@@ -8248,4 +8251,82 @@ model CdpSegmentMember {
   customer   CdpCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   @@id([segmentId, customerId])
   @@map("cdp_segment_members")
+}
+
+// ─── Phase 46: Email Marketing & Campaigns ────────────────────────────────────
+
+model MktEmailTemplate {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  name      String    @db.VarChar(200)
+  subject   String    @db.VarChar(500)
+  htmlBody  String    @default("") @map("html_body") @db.Text
+  textBody  String?   @map("text_body") @db.Text
+  category  String    @default("general") @db.VarChar(50)
+  tags      Json      @default("[]") @db.JsonB
+  createdBy String?   @map("created_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("mkt_email_templates")
+}
+
+model MktCampaign {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @map("tenant_id") @db.Uuid
+  name               String    @db.VarChar(200)
+  subject            String    @db.VarChar(500)
+  templateId         String?   @map("template_id") @db.Uuid
+  fromName           String    @default("Reno") @map("from_name") @db.VarChar(200)
+  fromEmail          String    @default("noreply@reno.app") @map("from_email") @db.VarChar(255)
+  replyTo            String?   @map("reply_to") @db.VarChar(255)
+  htmlBody           String?   @map("html_body") @db.Text
+  textBody           String?   @map("text_body") @db.Text
+  segmentIds         Json      @default("[]") @map("segment_ids") @db.JsonB
+  status             String    @default("draft") @db.VarChar(30)
+  scheduledAt        DateTime? @map("scheduled_at")
+  sentAt             DateTime? @map("sent_at")
+  totalRecipients    Int       @default(0) @map("total_recipients")
+  sentCount          Int       @default(0) @map("sent_count")
+  openCount          Int       @default(0) @map("open_count")
+  clickCount         Int       @default(0) @map("click_count")
+  bounceCount        Int       @default(0) @map("bounce_count")
+  unsubscribeCount   Int       @default(0) @map("unsubscribe_count")
+  createdBy          String?   @map("created_by") @db.Uuid
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  tenant             CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sends              MktCampaignSend[]
+  @@index([tenantId, status])
+  @@map("mkt_campaigns")
+}
+
+model MktCampaignSend {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  campaignId     String    @map("campaign_id") @db.Uuid
+  customerId     String?   @map("customer_id") @db.Uuid
+  email          String    @db.VarChar(255)
+  status         String    @default("pending") @db.VarChar(30)
+  openedAt       DateTime? @map("opened_at")
+  clickedAt      DateTime? @map("clicked_at")
+  bouncedAt      DateTime? @map("bounced_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+  sentAt         DateTime? @map("sent_at")
+  error          String?   @db.Text
+  campaign       MktCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  @@index([campaignId])
+  @@index([tenantId, email])
+  @@map("mkt_campaign_sends")
+}
+
+model MktUnsubscribe {
+  tenantId  String   @map("tenant_id") @db.Uuid
+  email     String   @db.VarChar(255)
+  reason    String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@id([tenantId, email])
+  @@map("mkt_unsubscribes")
 }
