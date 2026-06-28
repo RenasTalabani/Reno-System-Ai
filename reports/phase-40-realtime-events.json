@@ -1,0 +1,18 @@
+{
+  "phase": 40,
+  "name": "Real-time Events & Live Dashboard",
+  "version": "v40.0.0-phase40",
+  "status": "complete",
+  "completedAt": "2026-06-28",
+  "summary": "Real-time event streaming via Server-Sent Events (SSE) with Redis pub/sub backbone. Every tenant gets an isolated event stream. Frontend subscribes via useRealtimeEvents hook. Live indicator shows connection state.",
+  "components": {
+    "redisEventBus": "packages/events/src/redis-bus.ts — RedisEventBus wraps ioredis pub/sub, per-tenant channels",
+    "sseRoutes": "apps/api/src/rest/routes/events/sse.routes.ts — GET /v1/events/stream (SSE), GET /v1/events/recent",
+    "realtimeHook": "apps/web/src/lib/use-realtime.ts — useRealtimeEvents(), useAllRealtimeEvents()",
+    "indicator": "apps/web/src/components/layout/realtime-indicator.tsx — live connection status widget"
+  },
+  "protocol": "SSE (text/event-stream) — no extra package needed, built into HTTP/Fastify",
+  "backpressure": "25s heartbeat keeps proxies from timing out connection",
+  "tenantIsolation": "Each tenant subscribes to reno:events:{tenantId} Redis channel",
+  "nextPhase": 41
+}
