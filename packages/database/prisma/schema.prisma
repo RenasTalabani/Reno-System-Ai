@@ -201,6 +201,9 @@ model CoreTenant {
   rptExports               RptExport[]
   wlThemes                 WlTheme[]
   wlDomains                WlDomainMapping[]
+  cdpCustomers             CdpCustomer[]
+  cdpEvents                CdpEvent[]
+  cdpSegments              CdpSegment[]
 
   @@map("core_tenants")
 }
@@ -8168,4 +8171,81 @@ model WlDomainMapping {
   tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@index([tenantId])
   @@map("wl_domain_mappings")
+}
+
+// ─── Phase 45: Customer Data Platform (CDP) ──────────────────────────────────
+
+model CdpCustomer {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  externalId     String?   @map("external_id") @db.VarChar(255)
+  email          String?   @db.VarChar(255)
+  phone          String?   @db.VarChar(50)
+  firstName      String?   @map("first_name") @db.VarChar(150)
+  lastName       String?   @map("last_name") @db.VarChar(150)
+  company        String?   @db.VarChar(255)
+  lifecycleStage String    @default("lead") @map("lifecycle_stage") @db.VarChar(50)
+  healthScore    Int       @default(50) @map("health_score") @db.SmallInt
+  ltv            Decimal   @default(0) @db.Decimal(15, 2)
+  tags           Json      @default("[]") @db.JsonB
+  traits         Json      @default("{}") @db.JsonB
+  firstSeenAt    DateTime  @default(now()) @map("first_seen_at")
+  lastSeenAt     DateTime  @default(now()) @map("last_seen_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  events         CdpEvent[]
+  segmentMembers CdpSegmentMember[]
+  @@unique([tenantId, email])
+  @@index([tenantId, lifecycleStage])
+  @@index([tenantId, healthScore(sort: Desc)])
+  @@map("cdp_customers")
+}
+
+model CdpEvent {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  customerId String      @map("customer_id") @db.Uuid
+  event      String      @db.VarChar(100)
+  source     String      @default("web") @db.VarChar(50)
+  properties Json        @default("{}") @db.JsonB
+  sessionId  String?     @map("session_id") @db.VarChar(255)
+  ipAddress  String?     @map("ip_address") @db.VarChar(45)
+  userAgent  String?     @map("user_agent") @db.Text
+  createdAt  DateTime    @default(now()) @map("created_at")
+  tenant     CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer   CdpCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  @@index([customerId, createdAt(sort: Desc)])
+  @@index([tenantId, event, createdAt(sort: Desc)])
+  @@map("cdp_events")
+}
+
+model CdpSegment {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  name            String    @db.VarChar(100)
+  description     String?   @db.Text
+  rules           Json      @default("[]") @db.JsonB
+  operator        String    @default("AND") @db.VarChar(10)
+  isDynamic       Boolean   @default(true) @map("is_dynamic")
+  memberCount     Int       @default(0) @map("member_count")
+  lastComputedAt  DateTime? @map("last_computed_at")
+  createdBy       String?   @map("created_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  members         CdpSegmentMember[]
+  @@index([tenantId])
+  @@map("cdp_segments")
+}
+
+model CdpSegmentMember {
+  segmentId  String     @map("segment_id") @db.Uuid
+  customerId String     @map("customer_id") @db.Uuid
+  addedAt    DateTime   @default(now()) @map("added_at")
+  segment    CdpSegment  @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  customer   CdpCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  @@id([segmentId, customerId])
+  @@map("cdp_segment_members")
 }
