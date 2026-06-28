@@ -225,6 +225,7 @@ model CoreTenant {
   clmContracts             ClmContract[]
   fsmWorkOrders            FsmWorkOrder[]
   fsmTechnicians           FsmTechnician[]
+  vndVendors               VndVendor[]
 
   @@map("core_tenants")
 }
@@ -8751,4 +8752,72 @@ model FsmChecklist {
   workOrder   FsmWorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
   @@index([workOrderId, orderIndex])
   @@map("fsm_checklists")
+}
+
+// ─── Phase 54: Vendor / Supplier Portal ──────────────────────────────────────
+
+model VndVendor {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  name          String    @db.VarChar(200)
+  code          String?   @db.VarChar(50)
+  category      String?   @db.VarChar(100)
+  status        String    @default("active") @db.VarChar(20)
+  contactName   String?   @map("contact_name") @db.VarChar(200)
+  contactEmail  String?   @map("contact_email") @db.VarChar(255)
+  contactPhone  String?   @map("contact_phone") @db.VarChar(50)
+  website       String?   @db.VarChar(500)
+  address       String?   @db.Text
+  taxId         String?   @map("tax_id") @db.VarChar(100)
+  paymentTerms  Int       @default(30) @map("payment_terms")
+  currency      String    @default("USD") @db.VarChar(3)
+  rating        Int       @default(3) @db.SmallInt
+  notes         String?   @db.Text
+  tags          Json      @default("[]") @db.JsonB
+  createdBy     String?   @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  quotes        VndQuote[]
+  performance   VndPerformance[]
+  @@unique([tenantId, code])
+  @@index([tenantId, status])
+  @@map("vnd_vendors")
+}
+
+model VndQuote {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  vendorId   String    @map("vendor_id") @db.Uuid
+  title      String    @db.VarChar(300)
+  status     String    @default("requested") @db.VarChar(20)
+  items      Json      @default("[]") @db.JsonB
+  total      Decimal?  @db.Decimal(18, 2)
+  currency   String    @default("USD") @db.VarChar(3)
+  validUntil DateTime? @map("valid_until") @db.Date
+  notes      String?   @db.Text
+  createdBy  String?   @map("created_by") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  vendor     VndVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  @@index([vendorId, status])
+  @@map("vnd_quotes")
+}
+
+model VndPerformance {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  vendorId      String    @map("vendor_id") @db.Uuid
+  period        String    @db.VarChar(7)
+  onTimeRate    Decimal   @default(100) @map("on_time_rate") @db.Decimal(5, 2)
+  qualityScore  Decimal   @default(100) @map("quality_score") @db.Decimal(5, 2)
+  defectRate    Decimal   @default(0) @map("defect_rate") @db.Decimal(5, 2)
+  responseHours Decimal?  @map("response_hours") @db.Decimal(8, 2)
+  poCount       Int       @default(0) @map("po_count")
+  totalSpend    Decimal   @default(0) @map("total_spend") @db.Decimal(18, 2)
+  notes         String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  vendor        VndVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  @@unique([vendorId, period])
+  @@map("vnd_performance")
 }
