@@ -228,6 +228,7 @@ model CoreTenant {
   vndVendors               VndVendor[]
   lmsCourses               LmsCourse[]
   lmsEnrollments           LmsEnrollment[]
+  astAssets                AstAsset[]
 
   @@map("core_tenants")
 }
@@ -8900,4 +8901,72 @@ model LmsProgress {
   lesson     LmsLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   @@unique([lessonId, userId])
   @@map("lms_progress")
+}
+
+// ─── Phase 56: Asset Management ───────────────────────────────────────────────
+
+model AstAsset {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  assetTag         String    @map("asset_tag") @db.VarChar(100)
+  name             String    @db.VarChar(300)
+  category         String?   @db.VarChar(100)
+  type             String?   @db.VarChar(100)
+  status           String    @default("active") @db.VarChar(20)
+  condition        String    @default("good") @db.VarChar(20)
+  serialNumber     String?   @map("serial_number") @db.VarChar(200)
+  manufacturer     String?   @db.VarChar(200)
+  model            String?   @db.VarChar(200)
+  location         String?   @db.VarChar(500)
+  assignedTo       String?   @map("assigned_to") @db.Uuid
+  purchaseDate     DateTime? @map("purchase_date") @db.Date
+  purchasePrice    Decimal?  @map("purchase_price") @db.Decimal(18, 2)
+  warrantyExpiry   DateTime? @map("warranty_expiry") @db.Date
+  nextService      DateTime? @map("next_service") @db.Date
+  depreciationYrs  Int       @default(5) @map("depreciation_yrs") @db.SmallInt
+  notes            String?   @db.Text
+  metadata         Json      @default("{}") @db.JsonB
+  createdBy        String?   @map("created_by") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  maintenance      AstMaintenance[]
+  assignments      AstAssignment[]
+  @@unique([tenantId, assetTag])
+  @@index([tenantId, status])
+  @@map("ast_assets")
+}
+
+model AstMaintenance {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  assetId     String    @map("asset_id") @db.Uuid
+  type        String    @default("routine") @db.VarChar(50)
+  status      String    @default("scheduled") @db.VarChar(20)
+  description String?   @db.Text
+  cost        Decimal?  @db.Decimal(18, 2)
+  vendor      String?   @db.VarChar(200)
+  scheduledAt DateTime? @map("scheduled_at") @db.Date
+  completedAt DateTime? @map("completed_at")
+  technician  String?   @db.VarChar(200)
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  asset       AstAsset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  @@index([assetId, status])
+  @@map("ast_maintenance")
+}
+
+model AstAssignment {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  assetId    String    @map("asset_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  assignedBy String?   @map("assigned_by") @db.Uuid
+  assignedAt DateTime  @default(now()) @map("assigned_at")
+  returnedAt DateTime? @map("returned_at")
+  notes      String?   @db.Text
+  asset      AstAsset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  @@index([assetId])
+  @@index([userId])
+  @@map("ast_assignments")
 }
