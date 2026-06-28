@@ -223,6 +223,8 @@ model CoreTenant {
   fxRates                  FxRate[]
   fxSettings               FxTenantSettings?
   clmContracts             ClmContract[]
+  fsmWorkOrders            FsmWorkOrder[]
+  fsmTechnicians           FsmTechnician[]
 
   @@map("core_tenants")
 }
@@ -8685,4 +8687,68 @@ model ClmApproval {
   contract   ClmContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
   @@index([contractId])
   @@map("clm_approvals")
+}
+
+// ─── Phase 53: Field Service Management ──────────────────────────────────────
+
+model FsmWorkOrder {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  title            String    @db.VarChar(300)
+  type             String    @default("maintenance") @db.VarChar(50)
+  priority         String    @default("medium") @db.VarChar(10)
+  status           String    @default("open") @db.VarChar(30)
+  customerId       String?   @map("customer_id") @db.Uuid
+  customerName     String?   @map("customer_name") @db.VarChar(200)
+  location         String?   @db.VarChar(500)
+  latitude         Decimal?  @db.Decimal(10, 8)
+  longitude        Decimal?  @db.Decimal(11, 8)
+  assignedTo       String?   @map("assigned_to") @db.Uuid
+  scheduledAt      DateTime? @map("scheduled_at")
+  startedAt        DateTime? @map("started_at")
+  completedAt      DateTime? @map("completed_at")
+  slaDueAt         DateTime? @map("sla_due_at")
+  description      String?   @db.Text
+  resolution       String?   @db.Text
+  partsUsed        Json      @default("[]") @map("parts_used") @db.JsonB
+  laborHours       Decimal   @default(0) @map("labor_hours") @db.Decimal(8, 2)
+  createdBy        String?   @map("created_by") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  checklists       FsmChecklist[]
+  @@index([tenantId, status, priority])
+  @@index([assignedTo, scheduledAt])
+  @@map("fsm_work_orders")
+}
+
+model FsmTechnician {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String    @map("tenant_id") @db.Uuid
+  userId            String    @map("user_id") @db.Uuid
+  name              String    @db.VarChar(200)
+  skills            Json      @default("[]") @db.JsonB
+  territory         String?   @db.VarChar(200)
+  isAvailable       Boolean   @default(true) @map("is_available")
+  currentLat        Decimal?  @map("current_lat") @db.Decimal(10, 8)
+  currentLng        Decimal?  @map("current_lng") @db.Decimal(11, 8)
+  locationUpdatedAt DateTime? @map("location_updated_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  tenant            CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, userId])
+  @@map("fsm_technicians")
+}
+
+model FsmChecklist {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  workOrderId String       @map("work_order_id") @db.Uuid
+  item        String       @db.VarChar(300)
+  isDone      Boolean      @default(false) @map("is_done")
+  doneAt      DateTime?    @map("done_at")
+  doneBy      String?      @map("done_by") @db.Uuid
+  orderIndex  Int          @default(0) @map("order_index")
+  workOrder   FsmWorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  @@index([workOrderId, orderIndex])
+  @@map("fsm_checklists")
 }
