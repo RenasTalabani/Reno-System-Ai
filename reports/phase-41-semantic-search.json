@@ -1,0 +1,19 @@
+{
+  "phase": 41,
+  "name": "pgvector & Semantic Search",
+  "version": "v41.0.0-phase41",
+  "status": "complete",
+  "completedAt": "2026-06-28",
+  "summary": "Semantic search infrastructure using pgvector for vector similarity search. Falls back to keyword search when no AI provider is configured. IVFFlat index for sub-millisecond similarity queries. Query result caching with 1-hour TTL.",
+  "components": {
+    "migration": "packages/database/prisma/migrations/20260628510000_phase41_pgvector — pgvector extension + IVFFlat index + cache table",
+    "service": "apps/api/src/search/semantic.service.ts — embedding generation, vector search, keyword fallback, cache",
+    "routes": "apps/api/src/rest/routes/search/ — GET /v1/search, POST /v1/search/index",
+    "webPage": "apps/web/src/app/(dashboard)/search/page.tsx — debounced search UI with entity-type grouping"
+  },
+  "vectorModel": "text-embedding-3-small (OpenAI, 1536 dims) — used when openai provider enabled",
+  "fallback": "keyword search across kb_articles, crm_contacts, hr_employees when no vector provider",
+  "cache": "semantic_search_cache table — 1-hour TTL, deduplicates by SHA-256(tenantId+query)",
+  "entityTypes": ["knowledge_article", "crm_contact", "document", "employee", "helpdesk_ticket", "project", "task"],
+  "nextPhase": 42
+}
