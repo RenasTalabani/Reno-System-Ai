@@ -41,6 +41,7 @@ import { aiWorkspaceRoutes } from './ai-workspace/index.js'
 import { realtimeRoutes } from './events/index.js'
 import { globalSearchRoutes } from './search/index.js'
 import { ssoModuleRoutes } from './sso/index.js'
+import { reportBuilderRoutes } from './reports/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -88,6 +89,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(realtimeRoutes, { prefix: '/events' })
       await v1.register(globalSearchRoutes, { prefix: '/search' })
       await v1.register(ssoModuleRoutes, { prefix: '/sso' })
+      await v1.register(reportBuilderRoutes, { prefix: '/reports' })
     },
     { prefix: '/v1' },
   )

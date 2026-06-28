@@ -196,6 +196,9 @@ model CoreTenant {
   hrJobTitles              HrJobTitle[]
   hrPayrollRuns            HrPayrollRun[]
   ssoProviders             SsoProvider[]
+  rptReports               RptReport[]
+  rptSchedules             RptSchedule[]
+  rptExports               RptExport[]
 
   @@map("core_tenants")
 }
@@ -8062,4 +8065,71 @@ model SsoAuditLog {
   @@index([tenantId, createdAt(sort: Desc)])
   @@index([tenantId, userId])
   @@map("sso_audit_logs")
+}
+
+// ─── Phase 43: Advanced Report Builder ───────────────────────────────────────
+
+model RptReport {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String      @map("tenant_id") @db.Uuid
+  name         String      @db.VarChar(255)
+  description  String?     @db.Text
+  module       String      @db.VarChar(50)
+  queryConfig  Json        @default("{}") @map("query_config") @db.JsonB
+  columns      Json        @default("[]") @db.JsonB
+  filters      Json        @default("[]") @db.JsonB
+  sort         Json        @default("[]") @db.JsonB
+  groupBy      Json        @default("[]") @db.JsonB
+  chartType    String?     @map("chart_type") @db.VarChar(30)
+  chartConfig  Json?       @map("chart_config") @db.JsonB
+  isPublic     Boolean     @default(false) @map("is_public")
+  isPinned     Boolean     @default(false) @map("is_pinned")
+  createdBy    String?     @map("created_by") @db.Uuid
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  deletedAt    DateTime?   @map("deleted_at")
+  tenant       CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  schedules    RptSchedule[]
+  exports      RptExport[]
+  @@index([tenantId, module])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("rpt_reports")
+}
+
+model RptSchedule {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  reportId    String    @map("report_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  cron        String    @db.VarChar(100)
+  format      String    @default("csv") @db.VarChar(10)
+  recipients  Json      @default("[]") @db.JsonB
+  isActive    Boolean   @default(true) @map("is_active")
+  lastRunAt   DateTime? @map("last_run_at")
+  nextRunAt   DateTime? @map("next_run_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  report      RptReport  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  @@index([tenantId, isActive])
+  @@map("rpt_schedules")
+}
+
+model RptExport {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  reportId    String?   @map("report_id") @db.Uuid
+  format      String    @default("csv") @db.VarChar(10)
+  status      String    @default("pending") @db.VarChar(20)
+  rowCount    Int?      @map("row_count")
+  fileUrl     String?   @map("file_url") @db.Text
+  error       String?   @db.Text
+  requestedBy String?   @map("requested_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  report      RptReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("rpt_exports")
 }
