@@ -207,6 +207,8 @@ model CoreTenant {
   mktEmailTemplates        MktEmailTemplate[]
   mktCampaigns             MktCampaign[]
   mktUnsubscribes          MktUnsubscribe[]
+  dixImportJobs            DixImportJob[]
+  dixExportJobs            DixExportJob[]
 
   @@map("core_tenants")
 }
@@ -8329,4 +8331,45 @@ model MktUnsubscribe {
   tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@id([tenantId, email])
   @@map("mkt_unsubscribes")
+}
+
+// ─── Phase 47: Data Import/Export Hub ────────────────────────────────────────
+
+model DixImportJob {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  entity         String    @db.VarChar(50)
+  filename       String    @db.VarChar(500)
+  status         String    @default("pending") @db.VarChar(30)
+  totalRows      Int       @default(0) @map("total_rows")
+  processedRows  Int       @default(0) @map("processed_rows")
+  successRows    Int       @default(0) @map("success_rows")
+  errorRows      Int       @default(0) @map("error_rows")
+  errors         Json      @default("[]") @db.JsonB
+  mapping        Json      @default("{}") @db.JsonB
+  startedAt      DateTime? @map("started_at")
+  finishedAt     DateTime? @map("finished_at")
+  createdBy      String?   @map("created_by") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("dix_import_jobs")
+}
+
+model DixExportJob {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  entity     String    @db.VarChar(50)
+  format     String    @default("csv") @db.VarChar(10)
+  filters    Json      @default("{}") @db.JsonB
+  columns    Json      @default("[]") @db.JsonB
+  status     String    @default("pending") @db.VarChar(30)
+  rowCount   Int       @default(0) @map("row_count")
+  fileUrl    String?   @map("file_url") @db.Text
+  createdBy  String?   @map("created_by") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  finishedAt DateTime? @map("finished_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("dix_export_jobs")
 }

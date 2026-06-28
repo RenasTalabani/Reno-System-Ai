@@ -45,6 +45,7 @@ import { reportBuilderRoutes } from './reports/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
+import { dataHubModuleRoutes } from './data-hub/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -96,6 +97,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })
+      await v1.register(dataHubModuleRoutes, { prefix: '/data-hub' })
     },
     { prefix: '/v1' },
   )
