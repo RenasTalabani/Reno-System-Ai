@@ -213,6 +213,10 @@ model CoreTenant {
   mobPushNotifications     MobPushNotification[]
   mobOfflineQueue          MobOfflineQueue[]
   mobBiometricKeys         MobBiometricKey[]
+  prtnPartners             PrtnPartner[]
+  prtnReferrals            PrtnReferral[]
+  prtnCommissions          PrtnCommission[]
+  prtnDeals                PrtnDeal[]
 
   @@map("core_tenants")
 }
@@ -8442,4 +8446,84 @@ model MobBiometricKey {
   tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@unique([userId, deviceId])
   @@map("mob_biometric_keys")
+}
+
+// ─── Phase 49: Partner & Reseller Platform ────────────────────────────────────
+
+model PrtnPartner {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  name             String    @db.VarChar(200)
+  type             String    @default("reseller") @db.VarChar(30)
+  status           String    @default("active") @db.VarChar(20)
+  contactEmail     String?   @map("contact_email") @db.VarChar(255)
+  contactName      String?   @map("contact_name") @db.VarChar(200)
+  website          String?   @db.VarChar(500)
+  tier             String    @default("standard") @db.VarChar(20)
+  commissionRate   Decimal   @default(10.00) @map("commission_rate") @db.Decimal(5, 2)
+  totalRevenue     Decimal   @default(0) @map("total_revenue") @db.Decimal(15, 2)
+  totalCommission  Decimal   @default(0) @map("total_commission") @db.Decimal(15, 2)
+  meta             Json      @default("{}") @db.JsonB
+  createdBy        String?   @map("created_by") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  referrals        PrtnReferral[]
+  commissions      PrtnCommission[]
+  deals            PrtnDeal[]
+  @@index([tenantId, status])
+  @@map("prtn_partners")
+}
+
+model PrtnReferral {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  partnerId        String    @map("partner_id") @db.Uuid
+  code             String    @unique @db.VarChar(50)
+  referredTenantId String?   @map("referred_tenant_id") @db.Uuid
+  status           String    @default("pending") @db.VarChar(20)
+  dealValue        Decimal?  @map("deal_value") @db.Decimal(15, 2)
+  commission       Decimal?  @db.Decimal(15, 2)
+  paidAt           DateTime? @map("paid_at")
+  convertedAt      DateTime? @map("converted_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  partner          PrtnPartner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  @@index([partnerId])
+  @@index([tenantId])
+  @@map("prtn_referrals")
+}
+
+model PrtnCommission {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  partnerId  String    @map("partner_id") @db.Uuid
+  referralId String?   @map("referral_id") @db.Uuid
+  amount     Decimal   @db.Decimal(15, 2)
+  status     String    @default("pending") @db.VarChar(20)
+  period     String    @db.VarChar(7)
+  notes      String?   @db.Text
+  paidAt     DateTime? @map("paid_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  partner    PrtnPartner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  @@index([partnerId, status])
+  @@map("prtn_commissions")
+}
+
+model PrtnDeal {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  partnerId String    @map("partner_id") @db.Uuid
+  title     String    @db.VarChar(200)
+  value     Decimal   @default(0) @db.Decimal(15, 2)
+  stage     String    @default("prospecting") @db.VarChar(30)
+  closeDate DateTime? @map("close_date") @db.Date
+  notes     String?   @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  partner   PrtnPartner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  @@index([partnerId, stage])
+  @@map("prtn_deals")
 }

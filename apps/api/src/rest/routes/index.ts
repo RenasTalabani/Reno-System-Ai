@@ -47,6 +47,7 @@ import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
 import { dataHubModuleRoutes } from './data-hub/index.js'
 import { mobileModuleRoutes } from './mobile/index.js'
+import { partnerModuleRoutes } from './partners/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -100,6 +101,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(mktRoutes, { prefix: '/marketing' })
       await v1.register(dataHubModuleRoutes, { prefix: '/data-hub' })
       await v1.register(mobileModuleRoutes, { prefix: '/mobile' })
+      await v1.register(partnerModuleRoutes, { prefix: '/partners' })
     },
     { prefix: '/v1' },
   )
