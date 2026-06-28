@@ -81,4 +81,7 @@ export type {
   HrDepartment,
   HrJobTitle,
   HrPayrollRun,
+  SsoProvider,
+  SsoSession,
+  SsoAuditLog,
 } from './generated/prisma/index.js'

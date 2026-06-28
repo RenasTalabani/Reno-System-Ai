@@ -195,6 +195,7 @@ model CoreTenant {
   hrDepartments            HrDepartment[]
   hrJobTitles              HrJobTitle[]
   hrPayrollRuns            HrPayrollRun[]
+  ssoProviders             SsoProvider[]
 
   @@map("core_tenants")
 }
@@ -7998,4 +7999,67 @@ model HrPayrollRun {
   @@unique([tenantId, period])
   @@index([tenantId, status])
   @@map("hr_payroll_runs")
+}
+
+// ─── Phase 42: SSO & Enterprise Identity ─────────────────────────────────────
+
+model SsoProvider {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  name             String    @db.VarChar(100)
+  type             String    @db.VarChar(30)
+  isEnabled        Boolean   @default(false) @map("is_enabled")
+  isDefault        Boolean   @default(false) @map("is_default")
+  config           Json      @default("{}") @db.JsonB
+  attributeMap     Json      @default("{}") @map("attribute_map") @db.JsonB
+  autoProvision    Boolean   @default(true) @map("auto_provision")
+  autoAssignRoles  Json      @default("[]") @map("auto_assign_roles") @db.JsonB
+  domainHint       String?   @map("domain_hint") @db.VarChar(255)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  createdBy        String?   @map("created_by") @db.Uuid
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sessions         SsoSession[]
+  auditLogs        SsoAuditLog[]
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("sso_providers")
+}
+
+model SsoSession {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String      @map("tenant_id") @db.Uuid
+  providerId   String      @map("provider_id") @db.Uuid
+  userId       String?     @map("user_id") @db.Uuid
+  externalId   String      @map("external_id") @db.VarChar(500)
+  email        String      @db.VarChar(255)
+  name         String?     @db.VarChar(255)
+  groups       Json        @default("[]") @db.JsonB
+  attributes   Json        @default("{}") @db.JsonB
+  provisioned  Boolean     @default(false)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  lastLoginAt  DateTime    @default(now()) @map("last_login_at")
+  provider     SsoProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  @@unique([providerId, externalId])
+  @@index([tenantId, email])
+  @@map("sso_sessions")
+}
+
+model SsoAuditLog {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  providerId  String?      @map("provider_id") @db.Uuid
+  userId      String?      @map("user_id") @db.Uuid
+  event       String       @db.VarChar(50)
+  email       String?      @db.VarChar(255)
+  ipAddress   String?      @map("ip_address") @db.VarChar(45)
+  userAgent   String?      @map("user_agent") @db.Text
+  success     Boolean      @default(true)
+  error       String?      @db.Text
+  metadata    Json?        @db.JsonB
+  createdAt   DateTime     @default(now()) @map("created_at")
+  provider    SsoProvider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, userId])
+  @@map("sso_audit_logs")
 }

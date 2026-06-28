@@ -1,0 +1,24 @@
+{
+  "phase": 42,
+  "name": "SSO & Enterprise Identity",
+  "version": "v42.0.0-phase42",
+  "status": "complete",
+  "completedAt": "2026-06-28",
+  "summary": "Enterprise Single Sign-On supporting SAML 2.0, OIDC, Azure Active Directory, and Google Workspace. Auto-provisions users on first login. Full audit log. SAML SP metadata endpoint for IdP configuration.",
+  "models": ["SsoProvider", "SsoSession", "SsoAuditLog"],
+  "endpoints": [
+    "GET /v1/sso/providers — list configured providers",
+    "POST /v1/sso/providers — create SSO provider",
+    "PUT /v1/sso/providers/:id — update provider config",
+    "DELETE /v1/sso/providers/:id — remove provider",
+    "PATCH /v1/sso/providers/:id/enable — enable/disable",
+    "GET /v1/sso/providers/:id/metadata — SAML SP metadata XML",
+    "POST /v1/sso/acs/:providerId — SAML Assertion Consumer Service",
+    "GET /v1/sso/oidc/authorize/:providerId — initiate OIDC flow",
+    "GET /v1/sso/oidc/callback — OIDC callback with token exchange",
+    "GET /v1/sso/audit — SSO audit log"
+  ],
+  "webUI": "apps/web/src/app/(dashboard)/settings/sso/page.tsx — provider list, toggle enable, delete, add modal",
+  "autoProvisioning": "Users auto-created on first SSO login; existing accounts matched by email",
+  "nextPhase": 43
+}
