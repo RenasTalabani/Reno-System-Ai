@@ -42,6 +42,7 @@ import { realtimeRoutes } from './events/index.js'
 import { globalSearchRoutes } from './search/index.js'
 import { ssoModuleRoutes } from './sso/index.js'
 import { reportBuilderRoutes } from './reports/index.js'
+import { wlRoutes } from './whitelabel/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -90,6 +91,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(globalSearchRoutes, { prefix: '/search' })
       await v1.register(ssoModuleRoutes, { prefix: '/sso' })
       await v1.register(reportBuilderRoutes, { prefix: '/reports' })
+      await v1.register(wlRoutes, { prefix: '/white-label' })
     },
     { prefix: '/v1' },
   )

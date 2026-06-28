@@ -199,6 +199,8 @@ model CoreTenant {
   rptReports               RptReport[]
   rptSchedules             RptSchedule[]
   rptExports               RptExport[]
+  wlThemes                 WlTheme[]
+  wlDomains                WlDomainMapping[]
 
   @@map("core_tenants")
 }
@@ -8132,4 +8134,38 @@ model RptExport {
   report      RptReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("rpt_exports")
+}
+
+// ─── Phase 44: White-Label & Theme Studio ─────────────────────────────────────
+
+model WlTheme {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  name       String    @db.VarChar(100)
+  isActive   Boolean   @default(false) @map("is_active")
+  colors     Json      @default("{}") @db.JsonB
+  typography Json      @default("{}") @db.JsonB
+  radius     Json      @default("{}") @db.JsonB
+  customCss  String?   @map("custom_css") @db.Text
+  logoUrl    String?   @map("logo_url") @db.Text
+  faviconUrl String?   @map("favicon_url") @db.Text
+  createdBy  String?   @map("created_by") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("wl_themes")
+}
+
+model WlDomainMapping {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  domain     String    @unique @db.VarChar(255)
+  isPrimary  Boolean   @default(false) @map("is_primary")
+  sslStatus  String    @default("pending") @map("ssl_status") @db.VarChar(30)
+  verifiedAt DateTime? @map("verified_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("wl_domain_mappings")
 }
