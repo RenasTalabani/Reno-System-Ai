@@ -217,6 +217,9 @@ model CoreTenant {
   prtnReferrals            PrtnReferral[]
   prtnCommissions          PrtnCommission[]
   prtnDeals                PrtnDeal[]
+  fcstModels               FcstModel[]
+  fcstPredictions          FcstPrediction[]
+  fcstAnomalies            FcstAnomaly[]
 
   @@map("core_tenants")
 }
@@ -8526,4 +8529,61 @@ model PrtnDeal {
   partner   PrtnPartner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   @@index([partnerId, stage])
   @@map("prtn_deals")
+}
+
+// ─── Phase 50: AI-Powered Forecasting & Predictive Analytics ─────────────────
+
+model FcstModel {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  name          String    @db.VarChar(200)
+  type          String    @default("revenue") @db.VarChar(50)
+  targetMetric  String    @map("target_metric") @db.VarChar(100)
+  features      Json      @default("[]") @db.JsonB
+  config        Json      @default("{}") @db.JsonB
+  status        String    @default("draft") @db.VarChar(20)
+  accuracy      Decimal?  @db.Decimal(5, 2)
+  lastTrainedAt DateTime? @map("last_trained_at")
+  createdBy     String?   @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  predictions   FcstPrediction[]
+  @@index([tenantId, type])
+  @@map("fcst_models")
+}
+
+model FcstPrediction {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  modelId    String    @map("model_id") @db.Uuid
+  period     String    @db.VarChar(7)
+  metric     String    @db.VarChar(100)
+  predicted  Decimal   @db.Decimal(18, 4)
+  actual     Decimal?  @db.Decimal(18, 4)
+  lowerBound Decimal?  @map("lower_bound") @db.Decimal(18, 4)
+  upperBound Decimal?  @map("upper_bound") @db.Decimal(18, 4)
+  confidence Decimal?  @db.Decimal(5, 2)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  model      FcstModel  @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  @@index([modelId, period])
+  @@index([tenantId, period(sort: Desc)])
+  @@map("fcst_predictions")
+}
+
+model FcstAnomaly {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  metric       String   @db.VarChar(100)
+  period       String   @db.VarChar(10)
+  expected     Decimal  @db.Decimal(18, 4)
+  actual       Decimal  @db.Decimal(18, 4)
+  deviation    Decimal  @db.Decimal(8, 4)
+  severity     String   @default("medium") @db.VarChar(10)
+  acknowledged Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("fcst_anomalies")
 }
