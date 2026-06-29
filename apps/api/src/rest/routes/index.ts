@@ -87,6 +87,16 @@ import { notificationsModuleRoutes } from './notifications-hub/index.js'
 import { taskBoardModuleRoutes } from './task-board/index.js'
 import { invoice2ModuleRoutes } from './invoice2/index.js'
 import { biDashboardModuleRoutes } from './bi-dashboard/index.js'
+import { clm2ModuleRoutes } from './clm2/index.js'
+import { treasuryModuleRoutes } from './treasury/index.js'
+import { ocrModuleRoutes } from './ocr/index.js'
+import { supplierPortalModuleRoutes } from './supplier-portal/index.js'
+import { loyalty2ModuleRoutes } from './loyalty2/index.js'
+import { forecasting2ModuleRoutes } from './forecasting2/index.js'
+import { complianceCalendarModuleRoutes } from './compliance-calendar/index.js'
+import { identityModuleRoutes } from './identity/index.js'
+import { platformHealthModuleRoutes } from './platform-health/index.js'
+import { marketplace2ModuleRoutes } from './marketplace2/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -180,6 +190,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(taskBoardModuleRoutes, { prefix: '/task-board' })
       await v1.register(invoice2ModuleRoutes, { prefix: '/invoice2' })
       await v1.register(biDashboardModuleRoutes, { prefix: '/bi-dashboard' })
+      await v1.register(clm2ModuleRoutes, { prefix: '/clm2' })
+      await v1.register(treasuryModuleRoutes, { prefix: '/treasury' })
+      await v1.register(ocrModuleRoutes, { prefix: '/ocr' })
+      await v1.register(supplierPortalModuleRoutes, { prefix: '/suppliers' })
+      await v1.register(loyalty2ModuleRoutes, { prefix: '/loyalty2' })
+      await v1.register(forecasting2ModuleRoutes, { prefix: '/forecasting2' })
+      await v1.register(complianceCalendarModuleRoutes, { prefix: '/compliance-calendar' })
+      await v1.register(identityModuleRoutes, { prefix: '/identity' })
+      await v1.register(platformHealthModuleRoutes, { prefix: '/platform-health' })
+      await v1.register(marketplace2ModuleRoutes, { prefix: '/marketplace2' })
     },
     { prefix: '/v1' },
   )

@@ -7506,6 +7506,257 @@ exports.Prisma.Inv2PaymentLinkScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.Clm2TemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  body: 'body',
+  variables: 'variables',
+  isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.Clm2ObligationScalarFieldEnum = {
+  id: 'id',
+  contractId: 'contractId',
+  title: 'title',
+  description: 'description',
+  dueDate: 'dueDate',
+  assigneeId: 'assigneeId',
+  status: 'status',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TrsAccountScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  accountNo: 'accountNo',
+  bankName: 'bankName',
+  currency: 'currency',
+  balance: 'balance',
+  type: 'type',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrsTxScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  type: 'type',
+  amount: 'amount',
+  currency: 'currency',
+  fxRate: 'fxRate',
+  description: 'description',
+  reference: 'reference',
+  valueDate: 'valueDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TrsFxRateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fromCcy: 'fromCcy',
+  toCcy: 'toCcy',
+  rate: 'rate',
+  source: 'source',
+  rateDate: 'rateDate',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.OcrJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  filename: 'filename',
+  fileUrl: 'fileUrl',
+  mimeType: 'mimeType',
+  status: 'status',
+  template: 'template',
+  pageCount: 'pageCount',
+  confidence: 'confidence',
+  rawText: 'rawText',
+  errorMsg: 'errorMsg',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.OcrFieldScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  key: 'key',
+  value: 'value',
+  confidence: 'confidence',
+  boundingBox: 'boundingBox',
+  pageNo: 'pageNo'
+};
+
+exports.Prisma.SuplProfileScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  category: 'category',
+  country: 'country',
+  email: 'email',
+  phone: 'phone',
+  status: 'status',
+  riskLevel: 'riskLevel',
+  onboardedAt: 'onboardedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SuplScorecardScalarFieldEnum = {
+  id: 'id',
+  supplierId: 'supplierId',
+  period: 'period',
+  quality: 'quality',
+  delivery: 'delivery',
+  price: 'price',
+  compliance: 'compliance',
+  overall: 'overall',
+  notes: 'notes',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SuplDocumentScalarFieldEnum = {
+  id: 'id',
+  supplierId: 'supplierId',
+  type: 'type',
+  name: 'name',
+  fileUrl: 'fileUrl',
+  expiresAt: 'expiresAt',
+  isVerified: 'isVerified',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.Lty2TierScalarFieldEnum = {
+  id: 'id',
+  programId: 'programId',
+  name: 'name',
+  minPoints: 'minPoints',
+  maxPoints: 'maxPoints',
+  multiplier: 'multiplier',
+  color: 'color',
+  benefits: 'benefits'
+};
+
+exports.Prisma.Lty2RewardScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  programId: 'programId',
+  name: 'name',
+  description: 'description',
+  pointsCost: 'pointsCost',
+  type: 'type',
+  value: 'value',
+  stock: 'stock',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.Lty2RedemptionScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  rewardId: 'rewardId',
+  pointsUsed: 'pointsUsed',
+  status: 'status',
+  redeemedAt: 'redeemedAt'
+};
+
+exports.Prisma.CcEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  category: 'category',
+  regulation: 'regulation',
+  jurisdiction: 'jurisdiction',
+  dueDate: 'dueDate',
+  recurrence: 'recurrence',
+  assigneeId: 'assigneeId',
+  status: 'status',
+  notes: 'notes',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CcReminderScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  daysBefore: 'daysBefore',
+  channel: 'channel',
+  sentAt: 'sentAt'
+};
+
+exports.Prisma.ScimTokenScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DirGroupScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  externalId: 'externalId',
+  assignedRoles: 'assignedRoles',
+  memberCount: 'memberCount',
+  syncedAt: 'syncedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PhltCheckScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  service: 'service',
+  status: 'status',
+  responseMs: 'responseMs',
+  message: 'message',
+  checkedAt: 'checkedAt'
+};
+
+exports.Prisma.PhltSloScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  service: 'service',
+  metric: 'metric',
+  target: 'target',
+  window: 'window',
+  current: 'current',
+  status: 'status',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PhltIncidentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sloId: 'sloId',
+  title: 'title',
+  severity: 'severity',
+  service: 'service',
+  status: 'status',
+  detectedAt: 'detectedAt',
+  resolvedAt: 'resolvedAt',
+  summary: 'summary'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -7958,7 +8209,27 @@ exports.Prisma.ModelName = {
   TskTask: 'TskTask',
   Inv2Quote: 'Inv2Quote',
   Inv2QuoteItem: 'Inv2QuoteItem',
-  Inv2PaymentLink: 'Inv2PaymentLink'
+  Inv2PaymentLink: 'Inv2PaymentLink',
+  Clm2Template: 'Clm2Template',
+  Clm2Obligation: 'Clm2Obligation',
+  TrsAccount: 'TrsAccount',
+  TrsTx: 'TrsTx',
+  TrsFxRate: 'TrsFxRate',
+  OcrJob: 'OcrJob',
+  OcrField: 'OcrField',
+  SuplProfile: 'SuplProfile',
+  SuplScorecard: 'SuplScorecard',
+  SuplDocument: 'SuplDocument',
+  Lty2Tier: 'Lty2Tier',
+  Lty2Reward: 'Lty2Reward',
+  Lty2Redemption: 'Lty2Redemption',
+  CcEvent: 'CcEvent',
+  CcReminder: 'CcReminder',
+  ScimToken: 'ScimToken',
+  DirGroup: 'DirGroup',
+  PhltCheck: 'PhltCheck',
+  PhltSlo: 'PhltSlo',
+  PhltIncident: 'PhltIncident'
 };
 
 /**
