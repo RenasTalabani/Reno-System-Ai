@@ -231,6 +231,7 @@ model CoreTenant {
   astAssets                AstAsset[]
   cmpFrameworks            CmpFramework[]
   cmpRisks                 CmpRisk[]
+  csAccounts               CsAccount[]
 
   @@map("core_tenants")
 }
@@ -9052,4 +9053,63 @@ model CmpFinding {
   control     CmpControl? @relation(fields: [controlId], references: [id], onDelete: SetNull)
   @@index([tenantId, status])
   @@map("cmp_audit_findings")
+}
+
+// ─── Phase 58: Customer Success Platform ─────────────────────────────────────
+
+model CsAccount {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  name         String    @db.VarChar(300)
+  plan         String?   @db.VarChar(100)
+  mrr          Decimal   @default(0) @db.Decimal(18, 2)
+  arr          Decimal   @default(0) @db.Decimal(18, 2)
+  healthScore  Int       @default(50) @map("health_score") @db.SmallInt
+  stage        String    @default("onboarding") @db.VarChar(50)
+  csmId        String?   @map("csm_id") @db.Uuid
+  renewalDate  DateTime? @map("renewal_date") @db.Date
+  churnRisk    String    @default("low") @map("churn_risk") @db.VarChar(20)
+  npsScore     Int?      @map("nps_score") @db.SmallInt
+  contacts     Json      @default("[]") @db.JsonB
+  tags         Json      @default("[]") @db.JsonB
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  touchpoints  CsTouchpoint[]
+  successPlans CsSuccessPlan[]
+  @@index([tenantId, stage])
+  @@map("cs_accounts")
+}
+
+model CsTouchpoint {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  accountId  String    @map("account_id") @db.Uuid
+  type       String    @default("call") @db.VarChar(50)
+  subject    String?   @db.VarChar(300)
+  notes      String?   @db.Text
+  outcome    String?   @db.VarChar(50)
+  sentiment  String    @default("neutral") @db.VarChar(20)
+  createdBy  String?   @map("created_by") @db.Uuid
+  occurredAt DateTime  @default(now()) @map("occurred_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  account    CsAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([accountId, occurredAt])
+  @@map("cs_touchpoints")
+}
+
+model CsSuccessPlan {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  accountId  String    @map("account_id") @db.Uuid
+  title      String    @db.VarChar(300)
+  status     String    @default("active") @db.VarChar(20)
+  goals      Json      @default("[]") @db.JsonB
+  milestones Json      @default("[]") @db.JsonB
+  dueDate    DateTime? @map("due_date") @db.Date
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  account    CsAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([accountId])
+  @@map("cs_success_plans")
 }
