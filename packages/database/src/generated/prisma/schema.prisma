@@ -300,6 +300,18 @@ model CoreTenant {
   phltChecks       PhltCheck[]
   phltSlos         PhltSlo[]
   phltIncidents    PhltIncident[]
+  dmsfolders       DmsFolder[]
+  dmsDocs          DmsDoc[]
+  trvTrips         TrvTrip[]
+  grantGrants      GrantGrant[]
+  propProperties   PropProperty[]
+  iotDevices       IotDevice[]
+  csrPrograms      CsrProgram[]
+  innIdeas         InnIdea[]
+  sub2Plans        Sub2Plan[]
+  sub2Subs         Sub2Sub[]
+  chatChannels     ChatChannel[]
+  etlConnectors    EtlConnector[]
 
   @@map("core_tenants")
 }
@@ -11311,4 +11323,447 @@ model PhltIncident {
 
   @@index([tenantId])
   @@map("phlt_incidents")
+}
+
+// ─────────────────────────────────────────────
+// Phase 101: Document Management System 2.0
+// ─────────────────────────────────────────────
+model DmsFolder {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String      @map("tenant_id") @db.Uuid
+  parentId  String?     @map("parent_id") @db.Uuid
+  name      String      @db.VarChar(255)
+  path      String      @db.VarChar(1000)
+  createdBy String      @map("created_by") @db.Uuid
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  tenant    CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent    DmsFolder?  @relation("FolderTree", fields: [parentId], references: [id])
+  children  DmsFolder[] @relation("FolderTree")
+  docs      DmsDoc[]
+
+  @@index([tenantId])
+  @@index([tenantId, parentId])
+  @@map("dms_folders")
+}
+
+model DmsDoc {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  folderId   String?    @map("folder_id") @db.Uuid
+  name       String     @db.VarChar(500)
+  mimeType   String     @map("mime_type") @db.VarChar(100)
+  sizeBytes  BigInt?    @map("size_bytes")
+  storageKey String     @map("storage_key") @db.VarChar(1000)
+  version    Int        @default(1)
+  status     String     @default("active") @db.VarChar(20)
+  tags       String[]   @default([])
+  uploadedBy String     @map("uploaded_by") @db.Uuid
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  folder     DmsFolder? @relation(fields: [folderId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, folderId])
+  @@map("dms_docs")
+}
+
+// ─────────────────────────────────────────────
+// Phase 102: Corporate Travel Management
+// ─────────────────────────────────────────────
+model TrvTrip {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  travelerId  String       @map("traveler_id") @db.Uuid
+  purpose     String       @db.VarChar(300)
+  destination String       @db.VarChar(300)
+  departDate  DateTime     @map("depart_date") @db.Date
+  returnDate  DateTime     @map("return_date") @db.Date
+  status      String       @default("draft") @db.VarChar(20)
+  budget      Decimal      @default(0) @db.Decimal(12, 2)
+  actualCost  Decimal      @default(0) @map("actual_cost") @db.Decimal(12, 2)
+  approvedBy  String?      @map("approved_by") @db.Uuid
+  approvedAt  DateTime?    @map("approved_at") @db.Timestamptz
+  notes       String?      @db.Text
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bookings    TrvBooking[]
+
+  @@index([tenantId])
+  @@index([tenantId, travelerId])
+  @@map("trv_trips")
+}
+
+model TrvBooking {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tripId      String    @map("trip_id") @db.Uuid
+  type        String    @db.VarChar(20)
+  provider    String?   @db.VarChar(200)
+  reference   String?   @db.VarChar(100)
+  cost        Decimal   @default(0) @db.Decimal(10, 2)
+  currency    String    @default("USD") @db.VarChar(3)
+  confirmedAt DateTime? @map("confirmed_at") @db.Timestamptz
+  details     Json      @default("{}")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  trip        TrvTrip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@map("trv_bookings")
+}
+
+// ─────────────────────────────────────────────
+// Phase 103: Grant & Funding Management
+// ─────────────────────────────────────────────
+model GrantGrant {
+  id         String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String           @map("tenant_id") @db.Uuid
+  title      String           @db.VarChar(300)
+  funder     String           @db.VarChar(200)
+  amount     Decimal          @db.Decimal(14, 2)
+  currency   String           @default("USD") @db.VarChar(3)
+  status     String           @default("prospect") @db.VarChar(20)
+  deadline   DateTime?        @db.Date
+  awardedAt  DateTime?        @map("awarded_at") @db.Date
+  startDate  DateTime?        @map("start_date") @db.Date
+  endDate    DateTime?        @map("end_date") @db.Date
+  ownerId    String           @map("owner_id") @db.Uuid
+  notes      String?          @db.Text
+  createdAt  DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  milestones GrantMilestone[]
+
+  @@index([tenantId])
+  @@map("grant_grants")
+}
+
+model GrantMilestone {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  grantId     String     @map("grant_id") @db.Uuid
+  title       String     @db.VarChar(300)
+  dueDate     DateTime   @map("due_date") @db.Date
+  amount      Decimal?   @db.Decimal(12, 2)
+  status      String     @default("pending") @db.VarChar(20)
+  completedAt DateTime?  @map("completed_at") @db.Date
+  notes       String?    @db.Text
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  grant       GrantGrant @relation(fields: [grantId], references: [id], onDelete: Cascade)
+
+  @@index([grantId])
+  @@map("grant_milestones")
+}
+
+// ─────────────────────────────────────────────
+// Phase 104: Property & Real Estate Management
+// ─────────────────────────────────────────────
+model PropProperty {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  name       String     @db.VarChar(255)
+  type       String     @db.VarChar(50)
+  address    String     @db.VarChar(500)
+  city       String?    @db.VarChar(100)
+  country    String?    @db.VarChar(100)
+  totalUnits Int        @default(1) @map("total_units")
+  status     String     @default("available") @db.VarChar(20)
+  notes      String?    @db.Text
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  units      PropUnit[]
+
+  @@index([tenantId])
+  @@map("prop_properties")
+}
+
+model PropUnit {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  propertyId  String       @map("property_id") @db.Uuid
+  unitNumber  String       @map("unit_number") @db.VarChar(50)
+  floor       Int?
+  sizeSqm     Decimal?     @map("size_sqm") @db.Decimal(10, 2)
+  status      String       @default("vacant") @db.VarChar(20)
+  monthlyRent Decimal?     @map("monthly_rent") @db.Decimal(10, 2)
+  currency    String       @default("USD") @db.VarChar(3)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  property    PropProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  leases      PropLease[]
+
+  @@index([propertyId])
+  @@map("prop_units")
+}
+
+model PropLease {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  unitId     String    @map("unit_id") @db.Uuid
+  tenantName String    @map("tenant_name") @db.VarChar(255)
+  startDate  DateTime  @map("start_date") @db.Date
+  endDate    DateTime  @map("end_date") @db.Date
+  rentAmount Decimal   @map("rent_amount") @db.Decimal(10, 2)
+  currency   String    @default("USD") @db.VarChar(3)
+  status     String    @default("active") @db.VarChar(20)
+  signedAt   DateTime? @map("signed_at") @db.Date
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  unit       PropUnit  @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@index([unitId])
+  @@map("prop_leases")
+}
+
+// ─────────────────────────────────────────────
+// Phase 105: IoT & Digital Twin
+// ─────────────────────────────────────────────
+model IotDevice {
+  id         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String         @map("tenant_id") @db.Uuid
+  name       String         @db.VarChar(255)
+  type       String         @db.VarChar(100)
+  serialNo   String?        @map("serial_no") @db.VarChar(100)
+  location   String?        @db.VarChar(300)
+  status     String         @default("online") @db.VarChar(20)
+  firmware   String?        @db.VarChar(50)
+  lastSeenAt DateTime?      @map("last_seen_at") @db.Timestamptz
+  metadata   Json           @default("{}")
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  telemetry  IotTelemetry[]
+  alerts     IotAlert[]
+
+  @@index([tenantId])
+  @@map("iot_devices")
+}
+
+model IotTelemetry {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  deviceId   String    @map("device_id") @db.Uuid
+  metric     String    @db.VarChar(100)
+  value      Decimal   @db.Decimal(18, 6)
+  unit       String?   @db.VarChar(20)
+  recordedAt DateTime  @default(now()) @map("recorded_at") @db.Timestamptz
+  device     IotDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId])
+  @@index([deviceId, metric, recordedAt])
+  @@map("iot_telemetry")
+}
+
+model IotAlert {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  deviceId   String    @map("device_id") @db.Uuid
+  type       String    @db.VarChar(50)
+  severity   String    @default("info") @db.VarChar(20)
+  message    String    @db.VarChar(500)
+  isResolved Boolean   @default(false) @map("is_resolved")
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  device     IotDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId])
+  @@map("iot_alerts")
+}
+
+// ─────────────────────────────────────────────
+// Phase 106: CSR & Sustainability
+// ─────────────────────────────────────────────
+model CsrProgram {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String      @map("tenant_id") @db.Uuid
+  name        String      @db.VarChar(255)
+  category    String      @db.VarChar(50)
+  description String?     @db.Text
+  budget      Decimal     @default(0) @db.Decimal(12, 2)
+  status      String      @default("active") @db.VarChar(20)
+  startDate   DateTime?   @map("start_date") @db.Date
+  endDate     DateTime?   @map("end_date") @db.Date
+  ownerId     String      @map("owner_id") @db.Uuid
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  metrics     CsrMetric[]
+
+  @@index([tenantId])
+  @@map("csr_programs")
+}
+
+model CsrMetric {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programId  String     @map("program_id") @db.Uuid
+  name       String     @db.VarChar(200)
+  unit       String     @db.VarChar(50)
+  target     Decimal?   @db.Decimal(14, 4)
+  actual     Decimal?   @db.Decimal(14, 4)
+  period     String     @db.VarChar(20)
+  recordedAt DateTime   @default(now()) @map("recorded_at") @db.Timestamptz
+  program    CsrProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([programId])
+  @@map("csr_metrics")
+}
+
+// ─────────────────────────────────────────────
+// Phase 107: Innovation Lab / Idea Management
+// ─────────────────────────────────────────────
+model InnIdea {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String          @map("tenant_id") @db.Uuid
+  title        String          @db.VarChar(300)
+  description  String?         @db.Text
+  category     String?         @db.VarChar(100)
+  status       String          @default("submitted") @db.VarChar(30)
+  submittedBy  String          @map("submitted_by") @db.Uuid
+  votes        Int             @default(0)
+  score        Decimal?        @db.Decimal(5, 2)
+  estimatedRoi Decimal?        @map("estimated_roi") @db.Decimal(14, 2)
+  approvedBy   String?         @map("approved_by") @db.Uuid
+  approvedAt   DateTime?       @map("approved_at") @db.Timestamptz
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  evaluations  InnEvaluation[]
+
+  @@index([tenantId])
+  @@map("inn_ideas")
+}
+
+model InnEvaluation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ideaId      String   @map("idea_id") @db.Uuid
+  evaluatorId String   @map("evaluator_id") @db.Uuid
+  feasibility Int?
+  impact      Int?
+  effort      Int?
+  score       Decimal? @db.Decimal(5, 2)
+  comments    String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  idea        InnIdea  @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+
+  @@index([ideaId])
+  @@map("inn_evaluations")
+}
+
+// ─────────────────────────────────────────────
+// Phase 108: Subscription Billing 2.0
+// ─────────────────────────────────────────────
+model Sub2Plan {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  name          String     @db.VarChar(200)
+  slug          String     @db.VarChar(100)
+  description   String?    @db.Text
+  interval      String     @default("monthly") @db.VarChar(20)
+  price         Decimal    @db.Decimal(10, 2)
+  currency      String     @default("USD") @db.VarChar(3)
+  trialDays     Int        @default(0) @map("trial_days")
+  features      Json       @default("[]")
+  isActive      Boolean    @default(true) @map("is_active")
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscriptions Sub2Sub[]
+
+  @@index([tenantId])
+  @@map("sub2_plans")
+}
+
+model Sub2Sub {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  planId      String     @map("plan_id") @db.Uuid
+  customerId  String     @map("customer_id") @db.Uuid
+  status      String     @default("active") @db.VarChar(20)
+  startedAt   DateTime   @default(now()) @map("started_at") @db.Timestamptz
+  trialEndsAt DateTime?  @map("trial_ends_at") @db.Timestamptz
+  cancelledAt DateTime?  @map("cancelled_at") @db.Timestamptz
+  renewsAt    DateTime?  @map("renews_at") @db.Timestamptz
+  mrr         Decimal    @default(0) @db.Decimal(10, 2)
+  metadata    Json       @default("{}")
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan        Sub2Plan   @relation(fields: [planId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, customerId])
+  @@map("sub2_subs")
+}
+
+// ─────────────────────────────────────────────
+// Phase 109: Communication Hub 2.0
+// ─────────────────────────────────────────────
+model ChatChannel {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String        @map("tenant_id") @db.Uuid
+  name        String        @db.VarChar(200)
+  type        String        @default("public") @db.VarChar(20)
+  description String?       @db.VarChar(500)
+  createdBy   String        @map("created_by") @db.Uuid
+  isArchived  Boolean       @default(false) @map("is_archived")
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  messages    ChatMessage[]
+
+  @@index([tenantId])
+  @@map("chat_channels")
+}
+
+model ChatMessage {
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  channelId String        @map("channel_id") @db.Uuid
+  senderId  String        @map("sender_id") @db.Uuid
+  content   String        @db.Text
+  type      String        @default("text") @db.VarChar(20)
+  replyToId String?       @map("reply_to_id") @db.Uuid
+  isEdited  Boolean       @default(false) @map("is_edited")
+  isDeleted Boolean       @default(false) @map("is_deleted")
+  reactions Json          @default("{}")
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  channel   ChatChannel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  replyTo   ChatMessage?  @relation("ThreadReply", fields: [replyToId], references: [id])
+  replies   ChatMessage[] @relation("ThreadReply")
+
+  @@index([channelId])
+  @@index([channelId, createdAt])
+  @@map("chat_messages")
+}
+
+// ─────────────────────────────────────────────
+// Phase 110: Data Pipeline & ETL
+// ─────────────────────────────────────────────
+model EtlConnector {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  name       String     @db.VarChar(200)
+  type       String     @db.VarChar(50)
+  config     Json       @default("{}")
+  status     String     @default("active") @db.VarChar(20)
+  lastTestAt DateTime?  @map("last_test_at") @db.Timestamptz
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  jobs       EtlJob[]
+
+  @@index([tenantId])
+  @@map("etl_connectors")
+}
+
+model EtlJob {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  connectorId   String       @map("connector_id") @db.Uuid
+  name          String       @db.VarChar(200)
+  schedule      String?      @db.VarChar(100)
+  status        String       @default("idle") @db.VarChar(20)
+  lastRunAt     DateTime?    @map("last_run_at") @db.Timestamptz
+  lastRunStatus String?      @map("last_run_status") @db.VarChar(20)
+  rowsProcessed BigInt?      @map("rows_processed")
+  errorMessage  String?      @map("error_message") @db.Text
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  connector     EtlConnector @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+
+  @@index([connectorId])
+  @@map("etl_jobs")
 }

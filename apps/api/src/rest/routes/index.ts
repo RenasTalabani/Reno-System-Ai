@@ -97,6 +97,16 @@ import { complianceCalendarModuleRoutes } from './compliance-calendar/index.js'
 import { identityModuleRoutes } from './identity/index.js'
 import { platformHealthModuleRoutes } from './platform-health/index.js'
 import { marketplace2ModuleRoutes } from './marketplace2/index.js'
+import { dmsModuleRoutes } from './dms/index.js'
+import { travelModuleRoutes } from './travel/index.js'
+import { grantsModuleRoutes } from './grants/index.js'
+import { propertyModuleRoutes } from './property/index.js'
+import { iotModuleRoutes } from './iot/index.js'
+import { csrModuleRoutes } from './csr/index.js'
+import { innovationModuleRoutes } from './innovation/index.js'
+import { sub2ModuleRoutes } from './sub2/index.js'
+import { chatModuleRoutes } from './chat/index.js'
+import { etlModuleRoutes } from './etl/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -200,6 +210,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(identityModuleRoutes, { prefix: '/identity' })
       await v1.register(platformHealthModuleRoutes, { prefix: '/platform-health' })
       await v1.register(marketplace2ModuleRoutes, { prefix: '/marketplace2' })
+      await v1.register(dmsModuleRoutes, { prefix: '/dms' })
+      await v1.register(travelModuleRoutes, { prefix: '/travel' })
+      await v1.register(grantsModuleRoutes, { prefix: '/grants' })
+      await v1.register(propertyModuleRoutes, { prefix: '/property' })
+      await v1.register(iotModuleRoutes, { prefix: '/iot' })
+      await v1.register(csrModuleRoutes, { prefix: '/csr' })
+      await v1.register(innovationModuleRoutes, { prefix: '/innovation' })
+      await v1.register(sub2ModuleRoutes, { prefix: '/sub2' })
+      await v1.register(chatModuleRoutes, { prefix: '/chat' })
+      await v1.register(etlModuleRoutes, { prefix: '/etl' })
     },
     { prefix: '/v1' },
   )

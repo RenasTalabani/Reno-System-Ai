@@ -7757,6 +7757,307 @@ exports.Prisma.PhltIncidentScalarFieldEnum = {
   summary: 'summary'
 };
 
+exports.Prisma.DmsFolderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  parentId: 'parentId',
+  name: 'name',
+  path: 'path',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DmsDocScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  folderId: 'folderId',
+  name: 'name',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  storageKey: 'storageKey',
+  version: 'version',
+  status: 'status',
+  tags: 'tags',
+  uploadedBy: 'uploadedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrvTripScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  travelerId: 'travelerId',
+  purpose: 'purpose',
+  destination: 'destination',
+  departDate: 'departDate',
+  returnDate: 'returnDate',
+  status: 'status',
+  budget: 'budget',
+  actualCost: 'actualCost',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrvBookingScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  type: 'type',
+  provider: 'provider',
+  reference: 'reference',
+  cost: 'cost',
+  currency: 'currency',
+  confirmedAt: 'confirmedAt',
+  details: 'details',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GrantGrantScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  funder: 'funder',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  deadline: 'deadline',
+  awardedAt: 'awardedAt',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  ownerId: 'ownerId',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GrantMilestoneScalarFieldEnum = {
+  id: 'id',
+  grantId: 'grantId',
+  title: 'title',
+  dueDate: 'dueDate',
+  amount: 'amount',
+  status: 'status',
+  completedAt: 'completedAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PropPropertyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  address: 'address',
+  city: 'city',
+  country: 'country',
+  totalUnits: 'totalUnits',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PropUnitScalarFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  unitNumber: 'unitNumber',
+  floor: 'floor',
+  sizeSqm: 'sizeSqm',
+  status: 'status',
+  monthlyRent: 'monthlyRent',
+  currency: 'currency',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PropLeaseScalarFieldEnum = {
+  id: 'id',
+  unitId: 'unitId',
+  tenantName: 'tenantName',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  rentAmount: 'rentAmount',
+  currency: 'currency',
+  status: 'status',
+  signedAt: 'signedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.IotDeviceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  serialNo: 'serialNo',
+  location: 'location',
+  status: 'status',
+  firmware: 'firmware',
+  lastSeenAt: 'lastSeenAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.IotTelemetryScalarFieldEnum = {
+  id: 'id',
+  deviceId: 'deviceId',
+  metric: 'metric',
+  value: 'value',
+  unit: 'unit',
+  recordedAt: 'recordedAt'
+};
+
+exports.Prisma.IotAlertScalarFieldEnum = {
+  id: 'id',
+  deviceId: 'deviceId',
+  type: 'type',
+  severity: 'severity',
+  message: 'message',
+  isResolved: 'isResolved',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CsrProgramScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  category: 'category',
+  description: 'description',
+  budget: 'budget',
+  status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CsrMetricScalarFieldEnum = {
+  id: 'id',
+  programId: 'programId',
+  name: 'name',
+  unit: 'unit',
+  target: 'target',
+  actual: 'actual',
+  period: 'period',
+  recordedAt: 'recordedAt'
+};
+
+exports.Prisma.InnIdeaScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  status: 'status',
+  submittedBy: 'submittedBy',
+  votes: 'votes',
+  score: 'score',
+  estimatedRoi: 'estimatedRoi',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InnEvaluationScalarFieldEnum = {
+  id: 'id',
+  ideaId: 'ideaId',
+  evaluatorId: 'evaluatorId',
+  feasibility: 'feasibility',
+  impact: 'impact',
+  effort: 'effort',
+  score: 'score',
+  comments: 'comments',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.Sub2PlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  interval: 'interval',
+  price: 'price',
+  currency: 'currency',
+  trialDays: 'trialDays',
+  features: 'features',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.Sub2SubScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  planId: 'planId',
+  customerId: 'customerId',
+  status: 'status',
+  startedAt: 'startedAt',
+  trialEndsAt: 'trialEndsAt',
+  cancelledAt: 'cancelledAt',
+  renewsAt: 'renewsAt',
+  mrr: 'mrr',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  description: 'description',
+  createdBy: 'createdBy',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  senderId: 'senderId',
+  content: 'content',
+  type: 'type',
+  replyToId: 'replyToId',
+  isEdited: 'isEdited',
+  isDeleted: 'isDeleted',
+  reactions: 'reactions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EtlConnectorScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  config: 'config',
+  status: 'status',
+  lastTestAt: 'lastTestAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EtlJobScalarFieldEnum = {
+  id: 'id',
+  connectorId: 'connectorId',
+  name: 'name',
+  schedule: 'schedule',
+  status: 'status',
+  lastRunAt: 'lastRunAt',
+  lastRunStatus: 'lastRunStatus',
+  rowsProcessed: 'rowsProcessed',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -8229,7 +8530,29 @@ exports.Prisma.ModelName = {
   DirGroup: 'DirGroup',
   PhltCheck: 'PhltCheck',
   PhltSlo: 'PhltSlo',
-  PhltIncident: 'PhltIncident'
+  PhltIncident: 'PhltIncident',
+  DmsFolder: 'DmsFolder',
+  DmsDoc: 'DmsDoc',
+  TrvTrip: 'TrvTrip',
+  TrvBooking: 'TrvBooking',
+  GrantGrant: 'GrantGrant',
+  GrantMilestone: 'GrantMilestone',
+  PropProperty: 'PropProperty',
+  PropUnit: 'PropUnit',
+  PropLease: 'PropLease',
+  IotDevice: 'IotDevice',
+  IotTelemetry: 'IotTelemetry',
+  IotAlert: 'IotAlert',
+  CsrProgram: 'CsrProgram',
+  CsrMetric: 'CsrMetric',
+  InnIdea: 'InnIdea',
+  InnEvaluation: 'InnEvaluation',
+  Sub2Plan: 'Sub2Plan',
+  Sub2Sub: 'Sub2Sub',
+  ChatChannel: 'ChatChannel',
+  ChatMessage: 'ChatMessage',
+  EtlConnector: 'EtlConnector',
+  EtlJob: 'EtlJob'
 };
 
 /**
