@@ -55,6 +55,7 @@ import { fsmModuleRoutes } from './fsm/index.js'
 import { vendorModuleRoutes } from './vendors/index.js'
 import { lmsModuleRoutes } from './lms/index.js'
 import { assetModuleRoutes } from './assets/index.js'
+import { complianceModuleRoutes } from './compliance/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -116,6 +117,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(vendorModuleRoutes, { prefix: '/vendors' })
       await v1.register(lmsModuleRoutes, { prefix: '/lms' })
       await v1.register(assetModuleRoutes, { prefix: '/assets' })
+      await v1.register(complianceModuleRoutes, { prefix: '/compliance' })
     },
     { prefix: '/v1' },
   )
