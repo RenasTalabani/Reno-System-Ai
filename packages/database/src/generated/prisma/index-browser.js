@@ -5502,6 +5502,1347 @@ exports.Prisma.AiWorkspaceCommandScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.HrDepartmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  parentId: 'parentId',
+  headUserId: 'headUserId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.HrJobTitleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  grade: 'grade',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HrPayrollRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  status: 'status',
+  totalGross: 'totalGross',
+  totalNet: 'totalNet',
+  totalDeductions: 'totalDeductions',
+  currency: 'currency',
+  processedBy: 'processedBy',
+  processedAt: 'processedAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SsoProviderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  isEnabled: 'isEnabled',
+  isDefault: 'isDefault',
+  config: 'config',
+  attributeMap: 'attributeMap',
+  autoProvision: 'autoProvision',
+  autoAssignRoles: 'autoAssignRoles',
+  domainHint: 'domainHint',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy'
+};
+
+exports.Prisma.SsoSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  providerId: 'providerId',
+  userId: 'userId',
+  externalId: 'externalId',
+  email: 'email',
+  name: 'name',
+  groups: 'groups',
+  attributes: 'attributes',
+  provisioned: 'provisioned',
+  createdAt: 'createdAt',
+  lastLoginAt: 'lastLoginAt'
+};
+
+exports.Prisma.SsoAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  providerId: 'providerId',
+  userId: 'userId',
+  event: 'event',
+  email: 'email',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  success: 'success',
+  error: 'error',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RptReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  module: 'module',
+  queryConfig: 'queryConfig',
+  columns: 'columns',
+  filters: 'filters',
+  sort: 'sort',
+  groupBy: 'groupBy',
+  chartType: 'chartType',
+  chartConfig: 'chartConfig',
+  isPublic: 'isPublic',
+  isPinned: 'isPinned',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.RptScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  name: 'name',
+  cron: 'cron',
+  format: 'format',
+  recipients: 'recipients',
+  isActive: 'isActive',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RptExportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  format: 'format',
+  status: 'status',
+  rowCount: 'rowCount',
+  fileUrl: 'fileUrl',
+  error: 'error',
+  requestedBy: 'requestedBy',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.WlThemeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  isActive: 'isActive',
+  colors: 'colors',
+  typography: 'typography',
+  radius: 'radius',
+  customCss: 'customCss',
+  logoUrl: 'logoUrl',
+  faviconUrl: 'faviconUrl',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WlDomainMappingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  domain: 'domain',
+  isPrimary: 'isPrimary',
+  sslStatus: 'sslStatus',
+  verifiedAt: 'verifiedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdpCustomerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  externalId: 'externalId',
+  email: 'email',
+  phone: 'phone',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  company: 'company',
+  lifecycleStage: 'lifecycleStage',
+  healthScore: 'healthScore',
+  ltv: 'ltv',
+  tags: 'tags',
+  traits: 'traits',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.CdpEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  customerId: 'customerId',
+  event: 'event',
+  source: 'source',
+  properties: 'properties',
+  sessionId: 'sessionId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdpSegmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  rules: 'rules',
+  operator: 'operator',
+  isDynamic: 'isDynamic',
+  memberCount: 'memberCount',
+  lastComputedAt: 'lastComputedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdpSegmentMemberScalarFieldEnum = {
+  segmentId: 'segmentId',
+  customerId: 'customerId',
+  addedAt: 'addedAt'
+};
+
+exports.Prisma.MktEmailTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  subject: 'subject',
+  htmlBody: 'htmlBody',
+  textBody: 'textBody',
+  category: 'category',
+  tags: 'tags',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MktCampaignScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  subject: 'subject',
+  templateId: 'templateId',
+  fromName: 'fromName',
+  fromEmail: 'fromEmail',
+  replyTo: 'replyTo',
+  htmlBody: 'htmlBody',
+  textBody: 'textBody',
+  segmentIds: 'segmentIds',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  sentAt: 'sentAt',
+  totalRecipients: 'totalRecipients',
+  sentCount: 'sentCount',
+  openCount: 'openCount',
+  clickCount: 'clickCount',
+  bounceCount: 'bounceCount',
+  unsubscribeCount: 'unsubscribeCount',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MktCampaignSendScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  campaignId: 'campaignId',
+  customerId: 'customerId',
+  email: 'email',
+  status: 'status',
+  openedAt: 'openedAt',
+  clickedAt: 'clickedAt',
+  bouncedAt: 'bouncedAt',
+  unsubscribedAt: 'unsubscribedAt',
+  sentAt: 'sentAt',
+  error: 'error'
+};
+
+exports.Prisma.MktUnsubscribeScalarFieldEnum = {
+  tenantId: 'tenantId',
+  email: 'email',
+  reason: 'reason',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DixImportJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  entity: 'entity',
+  filename: 'filename',
+  status: 'status',
+  totalRows: 'totalRows',
+  processedRows: 'processedRows',
+  successRows: 'successRows',
+  errorRows: 'errorRows',
+  errors: 'errors',
+  mapping: 'mapping',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DixExportJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  entity: 'entity',
+  format: 'format',
+  filters: 'filters',
+  columns: 'columns',
+  status: 'status',
+  rowCount: 'rowCount',
+  fileUrl: 'fileUrl',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  finishedAt: 'finishedAt'
+};
+
+exports.Prisma.MobPushTokenScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  token: 'token',
+  platform: 'platform',
+  deviceName: 'deviceName',
+  appVersion: 'appVersion',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MobPushNotificationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  body: 'body',
+  data: 'data',
+  status: 'status',
+  sentCount: 'sentCount',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MobOfflineQueueScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  operation: 'operation',
+  endpoint: 'endpoint',
+  payload: 'payload',
+  status: 'status',
+  retries: 'retries',
+  error: 'error',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MobBiometricKeyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  deviceId: 'deviceId',
+  publicKey: 'publicKey',
+  keyAlgorithm: 'keyAlgorithm',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PrtnPartnerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  status: 'status',
+  contactEmail: 'contactEmail',
+  contactName: 'contactName',
+  website: 'website',
+  tier: 'tier',
+  commissionRate: 'commissionRate',
+  totalRevenue: 'totalRevenue',
+  totalCommission: 'totalCommission',
+  meta: 'meta',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PrtnReferralScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  partnerId: 'partnerId',
+  code: 'code',
+  referredTenantId: 'referredTenantId',
+  status: 'status',
+  dealValue: 'dealValue',
+  commission: 'commission',
+  paidAt: 'paidAt',
+  convertedAt: 'convertedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PrtnCommissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  partnerId: 'partnerId',
+  referralId: 'referralId',
+  amount: 'amount',
+  status: 'status',
+  period: 'period',
+  notes: 'notes',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PrtnDealScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  partnerId: 'partnerId',
+  title: 'title',
+  value: 'value',
+  stage: 'stage',
+  closeDate: 'closeDate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FcstModelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  targetMetric: 'targetMetric',
+  features: 'features',
+  config: 'config',
+  status: 'status',
+  accuracy: 'accuracy',
+  lastTrainedAt: 'lastTrainedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FcstPredictionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelId: 'modelId',
+  period: 'period',
+  metric: 'metric',
+  predicted: 'predicted',
+  actual: 'actual',
+  lowerBound: 'lowerBound',
+  upperBound: 'upperBound',
+  confidence: 'confidence',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FcstAnomalyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  metric: 'metric',
+  period: 'period',
+  expected: 'expected',
+  actual: 'actual',
+  deviation: 'deviation',
+  severity: 'severity',
+  acknowledged: 'acknowledged',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FxCurrencyScalarFieldEnum = {
+  code: 'code',
+  name: 'name',
+  symbol: 'symbol',
+  isActive: 'isActive'
+};
+
+exports.Prisma.FxRateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fromCurrency: 'fromCurrency',
+  toCurrency: 'toCurrency',
+  rate: 'rate',
+  source: 'source',
+  effectiveDate: 'effectiveDate',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FxTenantSettingsScalarFieldEnum = {
+  tenantId: 'tenantId',
+  baseCurrency: 'baseCurrency',
+  enabledCurrencies: 'enabledCurrencies',
+  autoUpdateRates: 'autoUpdateRates',
+  rateSource: 'rateSource',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ClmContractScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  type: 'type',
+  status: 'status',
+  counterparty: 'counterparty',
+  counterpartyId: 'counterpartyId',
+  value: 'value',
+  currency: 'currency',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  autoRenew: 'autoRenew',
+  noticeDays: 'noticeDays',
+  body: 'body',
+  summary: 'summary',
+  tags: 'tags',
+  signedAt: 'signedAt',
+  signedBy: 'signedBy',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ClmClauseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  contractId: 'contractId',
+  title: 'title',
+  body: 'body',
+  clauseType: 'clauseType',
+  orderIndex: 'orderIndex',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ClmApprovalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  contractId: 'contractId',
+  approverId: 'approverId',
+  status: 'status',
+  comments: 'comments',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FsmWorkOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  type: 'type',
+  priority: 'priority',
+  status: 'status',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  location: 'location',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  assignedTo: 'assignedTo',
+  scheduledAt: 'scheduledAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  slaDueAt: 'slaDueAt',
+  description: 'description',
+  resolution: 'resolution',
+  partsUsed: 'partsUsed',
+  laborHours: 'laborHours',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FsmTechnicianScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  skills: 'skills',
+  territory: 'territory',
+  isAvailable: 'isAvailable',
+  currentLat: 'currentLat',
+  currentLng: 'currentLng',
+  locationUpdatedAt: 'locationUpdatedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FsmChecklistScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workOrderId: 'workOrderId',
+  item: 'item',
+  isDone: 'isDone',
+  doneAt: 'doneAt',
+  doneBy: 'doneBy',
+  orderIndex: 'orderIndex'
+};
+
+exports.Prisma.VndVendorScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  category: 'category',
+  status: 'status',
+  contactName: 'contactName',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  website: 'website',
+  address: 'address',
+  taxId: 'taxId',
+  paymentTerms: 'paymentTerms',
+  currency: 'currency',
+  rating: 'rating',
+  notes: 'notes',
+  tags: 'tags',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VndQuoteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vendorId: 'vendorId',
+  title: 'title',
+  status: 'status',
+  items: 'items',
+  total: 'total',
+  currency: 'currency',
+  validUntil: 'validUntil',
+  notes: 'notes',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VndPerformanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vendorId: 'vendorId',
+  period: 'period',
+  onTimeRate: 'onTimeRate',
+  qualityScore: 'qualityScore',
+  defectRate: 'defectRate',
+  responseHours: 'responseHours',
+  poCount: 'poCount',
+  totalSpend: 'totalSpend',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LmsCourseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  category: 'category',
+  level: 'level',
+  status: 'status',
+  thumbnailUrl: 'thumbnailUrl',
+  durationMin: 'durationMin',
+  isMandatory: 'isMandatory',
+  passScore: 'passScore',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LmsLessonScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  courseId: 'courseId',
+  title: 'title',
+  type: 'type',
+  content: 'content',
+  videoUrl: 'videoUrl',
+  durationMin: 'durationMin',
+  orderIndex: 'orderIndex',
+  isQuiz: 'isQuiz',
+  quizData: 'quizData',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LmsEnrollmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  courseId: 'courseId',
+  userId: 'userId',
+  status: 'status',
+  progress: 'progress',
+  score: 'score',
+  enrolledAt: 'enrolledAt',
+  completedAt: 'completedAt',
+  dueDate: 'dueDate'
+};
+
+exports.Prisma.LmsProgressScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  lessonId: 'lessonId',
+  userId: 'userId',
+  isComplete: 'isComplete',
+  score: 'score',
+  attempts: 'attempts',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AstAssetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  assetTag: 'assetTag',
+  name: 'name',
+  category: 'category',
+  type: 'type',
+  status: 'status',
+  condition: 'condition',
+  serialNumber: 'serialNumber',
+  manufacturer: 'manufacturer',
+  model: 'model',
+  location: 'location',
+  assignedTo: 'assignedTo',
+  purchaseDate: 'purchaseDate',
+  purchasePrice: 'purchasePrice',
+  warrantyExpiry: 'warrantyExpiry',
+  nextService: 'nextService',
+  depreciationYrs: 'depreciationYrs',
+  notes: 'notes',
+  metadata: 'metadata',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AstMaintenanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  assetId: 'assetId',
+  type: 'type',
+  status: 'status',
+  description: 'description',
+  cost: 'cost',
+  vendor: 'vendor',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  technician: 'technician',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AstAssignmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  assetId: 'assetId',
+  userId: 'userId',
+  assignedBy: 'assignedBy',
+  assignedAt: 'assignedAt',
+  returnedAt: 'returnedAt',
+  notes: 'notes'
+};
+
+exports.Prisma.CmpFrameworkScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  version: 'version',
+  type: 'type',
+  description: 'description',
+  status: 'status',
+  dueDate: 'dueDate',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CmpControlScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  frameworkId: 'frameworkId',
+  code: 'code',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  status: 'status',
+  riskLevel: 'riskLevel',
+  evidence: 'evidence',
+  ownerId: 'ownerId',
+  dueDate: 'dueDate',
+  lastReview: 'lastReview',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CmpRiskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  likelihood: 'likelihood',
+  impact: 'impact',
+  status: 'status',
+  mitigation: 'mitigation',
+  ownerId: 'ownerId',
+  reviewDate: 'reviewDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CmpFindingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  controlId: 'controlId',
+  title: 'title',
+  description: 'description',
+  severity: 'severity',
+  status: 'status',
+  remediation: 'remediation',
+  dueDate: 'dueDate',
+  closedAt: 'closedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CsAccountScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  plan: 'plan',
+  mrr: 'mrr',
+  arr: 'arr',
+  healthScore: 'healthScore',
+  stage: 'stage',
+  csmId: 'csmId',
+  renewalDate: 'renewalDate',
+  churnRisk: 'churnRisk',
+  npsScore: 'npsScore',
+  contacts: 'contacts',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CsTouchpointScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  accountId: 'accountId',
+  type: 'type',
+  subject: 'subject',
+  notes: 'notes',
+  outcome: 'outcome',
+  sentiment: 'sentiment',
+  createdBy: 'createdBy',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CsSuccessPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  accountId: 'accountId',
+  title: 'title',
+  status: 'status',
+  goals: 'goals',
+  milestones: 'milestones',
+  dueDate: 'dueDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApigwApiKeyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  keyPrefix: 'keyPrefix',
+  keyHash: 'keyHash',
+  status: 'status',
+  scopes: 'scopes',
+  rateLimit: 'rateLimit',
+  rateWindow: 'rateWindow',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
+  totalCalls: 'totalCalls',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ApigwWebhookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  url: 'url',
+  events: 'events',
+  status: 'status',
+  secret: 'secret',
+  headers: 'headers',
+  retryCount: 'retryCount',
+  lastFired: 'lastFired',
+  lastStatus: 'lastStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApigwUsageLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  keyId: 'keyId',
+  method: 'method',
+  path: 'path',
+  statusCode: 'statusCode',
+  durationMs: 'durationMs',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  occurredAt: 'occurredAt'
+};
+
+exports.Prisma.EvsEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  stream: 'stream',
+  type: 'type',
+  aggregateId: 'aggregateId',
+  aggregateType: 'aggregateType',
+  version: 'version',
+  payload: 'payload',
+  metadata: 'metadata',
+  actorId: 'actorId',
+  actorType: 'actorType',
+  occurredAt: 'occurredAt'
+};
+
+exports.Prisma.EvsSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  aggregateId: 'aggregateId',
+  aggregateType: 'aggregateType',
+  version: 'version',
+  state: 'state',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EvsProjectionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  stream: 'stream',
+  lastEvent: 'lastEvent',
+  checkpoint: 'checkpoint',
+  status: 'status',
+  error: 'error',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BillingPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  price: 'price',
+  currency: 'currency',
+  interval: 'interval',
+  intervalCount: 'intervalCount',
+  trialDays: 'trialDays',
+  features: 'features',
+  limits: 'limits',
+  isActive: 'isActive',
+  isPublic: 'isPublic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BillingSubscriptionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  planId: 'planId',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  trialStart: 'trialStart',
+  trialEnd: 'trialEnd',
+  cancelAt: 'cancelAt',
+  canceledAt: 'canceledAt',
+  endedAt: 'endedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BillingInvoiceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  subscriptionId: 'subscriptionId',
+  number: 'number',
+  status: 'status',
+  subtotal: 'subtotal',
+  tax: 'tax',
+  total: 'total',
+  currency: 'currency',
+  dueDate: 'dueDate',
+  paidAt: 'paidAt',
+  voidedAt: 'voidedAt',
+  notes: 'notes',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BillingInvoiceItemScalarFieldEnum = {
+  id: 'id',
+  invoiceId: 'invoiceId',
+  description: 'description',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  amount: 'amount',
+  taxRate: 'taxRate',
+  metadata: 'metadata'
+};
+
+exports.Prisma.BillingPaymentMethodScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  last4: 'last4',
+  brand: 'brand',
+  expiryMonth: 'expiryMonth',
+  expiryYear: 'expiryYear',
+  isDefault: 'isDefault',
+  providerRef: 'providerRef',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BillingUsageRecordScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  subscriptionId: 'subscriptionId',
+  metric: 'metric',
+  quantity: 'quantity',
+  recordedAt: 'recordedAt',
+  metadata: 'metadata'
+};
+
+exports.Prisma.ScmSupplierScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  contactName: 'contactName',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  paymentTerms: 'paymentTerms',
+  currency: 'currency',
+  rating: 'rating',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ScmPurchaseOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  supplierId: 'supplierId',
+  poNumber: 'poNumber',
+  status: 'status',
+  currency: 'currency',
+  subtotal: 'subtotal',
+  tax: 'tax',
+  total: 'total',
+  orderDate: 'orderDate',
+  expectedDate: 'expectedDate',
+  receivedDate: 'receivedDate',
+  notes: 'notes',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ScmPurchaseOrderItemScalarFieldEnum = {
+  id: 'id',
+  poId: 'poId',
+  sku: 'sku',
+  name: 'name',
+  quantity: 'quantity',
+  received: 'received',
+  unitPrice: 'unitPrice',
+  amount: 'amount'
+};
+
+exports.Prisma.ScmReceiptScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  poId: 'poId',
+  reference: 'reference',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ScmReceiptLineScalarFieldEnum = {
+  id: 'id',
+  receiptId: 'receiptId',
+  sku: 'sku',
+  expected: 'expected',
+  received: 'received',
+  rejected: 'rejected',
+  notes: 'notes'
+};
+
+exports.Prisma.QmsAuditScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  type: 'type',
+  standard: 'standard',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  leadAuditor: 'leadAuditor',
+  scope: 'scope',
+  findings: 'findings',
+  score: 'score',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QmsNonConformanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  auditId: 'auditId',
+  title: 'title',
+  description: 'description',
+  severity: 'severity',
+  status: 'status',
+  rootCause: 'rootCause',
+  correction: 'correction',
+  dueDate: 'dueDate',
+  closedAt: 'closedAt',
+  assignedTo: 'assignedTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QmsChecklistScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  standard: 'standard',
+  items: 'items',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PpmPortfolioScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  ownerId: 'ownerId',
+  budget: 'budget',
+  currency: 'currency',
+  status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PpmProjectScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  portfolioId: 'portfolioId',
+  name: 'name',
+  description: 'description',
+  managerId: 'managerId',
+  status: 'status',
+  priority: 'priority',
+  budget: 'budget',
+  spent: 'spent',
+  progress: 'progress',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  completedAt: 'completedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PpmMilestoneScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  name: 'name',
+  dueDate: 'dueDate',
+  status: 'status',
+  progress: 'progress'
+};
+
+exports.Prisma.PpmProjectMemberScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  role: 'role',
+  allocation: 'allocation',
+  joinedAt: 'joinedAt'
+};
+
+exports.Prisma.WsChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WsPresenceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  status: 'status',
+  lastSeen: 'lastSeen',
+  socketId: 'socketId',
+  metadata: 'metadata'
+};
+
+exports.Prisma.I18nLocaleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  code: 'code',
+  name: 'name',
+  nativeName: 'nativeName',
+  isRtl: 'isRtl',
+  isDefault: 'isDefault',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.I18nKeyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  namespace: 'namespace',
+  key: 'key',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.I18nValueScalarFieldEnum = {
+  id: 'id',
+  keyId: 'keyId',
+  locale: 'locale',
+  value: 'value'
+};
+
+exports.Prisma.SecTwoFaSecretScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  secret: 'secret',
+  isEnabled: 'isEnabled',
+  backupCodes: 'backupCodes',
+  enabledAt: 'enabledAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SecSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  token: 'token',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  isTrusted: 'isTrusted',
+  lastActiveAt: 'lastActiveAt',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MktAppScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  iconUrl: 'iconUrl',
+  category: 'category',
+  version: 'version',
+  author: 'author',
+  manifest: 'manifest',
+  permissions: 'permissions',
+  isPublished: 'isPublished',
+  isFeatured: 'isFeatured',
+  isFree: 'isFree',
+  price: 'price',
+  installs: 'installs',
+  rating: 'rating',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MktInstallScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  appId: 'appId',
+  installedBy: 'installedBy',
+  status: 'status',
+  config: 'config',
+  installedAt: 'installedAt'
+};
+
+exports.Prisma.AiStudioWorkflowScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  createdBy: 'createdBy',
+  name: 'name',
+  description: 'description',
+  trigger: 'trigger',
+  nodes: 'nodes',
+  edges: 'edges',
+  variables: 'variables',
+  status: 'status',
+  version: 'version',
+  isActive: 'isActive',
+  lastRunAt: 'lastRunAt',
+  runCount: 'runCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiStudioRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  triggeredBy: 'triggeredBy',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  steps: 'steps',
+  error: 'error',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  durationMs: 'durationMs'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5812,7 +7153,100 @@ exports.Prisma.ModelName = {
   AiWorkspaceSession: 'AiWorkspaceSession',
   AiWorkspaceMessage: 'AiWorkspaceMessage',
   AiWorkspaceMemory: 'AiWorkspaceMemory',
-  AiWorkspaceCommand: 'AiWorkspaceCommand'
+  AiWorkspaceCommand: 'AiWorkspaceCommand',
+  HrDepartment: 'HrDepartment',
+  HrJobTitle: 'HrJobTitle',
+  HrPayrollRun: 'HrPayrollRun',
+  SsoProvider: 'SsoProvider',
+  SsoSession: 'SsoSession',
+  SsoAuditLog: 'SsoAuditLog',
+  RptReport: 'RptReport',
+  RptSchedule: 'RptSchedule',
+  RptExport: 'RptExport',
+  WlTheme: 'WlTheme',
+  WlDomainMapping: 'WlDomainMapping',
+  CdpCustomer: 'CdpCustomer',
+  CdpEvent: 'CdpEvent',
+  CdpSegment: 'CdpSegment',
+  CdpSegmentMember: 'CdpSegmentMember',
+  MktEmailTemplate: 'MktEmailTemplate',
+  MktCampaign: 'MktCampaign',
+  MktCampaignSend: 'MktCampaignSend',
+  MktUnsubscribe: 'MktUnsubscribe',
+  DixImportJob: 'DixImportJob',
+  DixExportJob: 'DixExportJob',
+  MobPushToken: 'MobPushToken',
+  MobPushNotification: 'MobPushNotification',
+  MobOfflineQueue: 'MobOfflineQueue',
+  MobBiometricKey: 'MobBiometricKey',
+  PrtnPartner: 'PrtnPartner',
+  PrtnReferral: 'PrtnReferral',
+  PrtnCommission: 'PrtnCommission',
+  PrtnDeal: 'PrtnDeal',
+  FcstModel: 'FcstModel',
+  FcstPrediction: 'FcstPrediction',
+  FcstAnomaly: 'FcstAnomaly',
+  FxCurrency: 'FxCurrency',
+  FxRate: 'FxRate',
+  FxTenantSettings: 'FxTenantSettings',
+  ClmContract: 'ClmContract',
+  ClmClause: 'ClmClause',
+  ClmApproval: 'ClmApproval',
+  FsmWorkOrder: 'FsmWorkOrder',
+  FsmTechnician: 'FsmTechnician',
+  FsmChecklist: 'FsmChecklist',
+  VndVendor: 'VndVendor',
+  VndQuote: 'VndQuote',
+  VndPerformance: 'VndPerformance',
+  LmsCourse: 'LmsCourse',
+  LmsLesson: 'LmsLesson',
+  LmsEnrollment: 'LmsEnrollment',
+  LmsProgress: 'LmsProgress',
+  AstAsset: 'AstAsset',
+  AstMaintenance: 'AstMaintenance',
+  AstAssignment: 'AstAssignment',
+  CmpFramework: 'CmpFramework',
+  CmpControl: 'CmpControl',
+  CmpRisk: 'CmpRisk',
+  CmpFinding: 'CmpFinding',
+  CsAccount: 'CsAccount',
+  CsTouchpoint: 'CsTouchpoint',
+  CsSuccessPlan: 'CsSuccessPlan',
+  ApigwApiKey: 'ApigwApiKey',
+  ApigwWebhook: 'ApigwWebhook',
+  ApigwUsageLog: 'ApigwUsageLog',
+  EvsEvent: 'EvsEvent',
+  EvsSnapshot: 'EvsSnapshot',
+  EvsProjection: 'EvsProjection',
+  BillingPlan: 'BillingPlan',
+  BillingSubscription: 'BillingSubscription',
+  BillingInvoice: 'BillingInvoice',
+  BillingInvoiceItem: 'BillingInvoiceItem',
+  BillingPaymentMethod: 'BillingPaymentMethod',
+  BillingUsageRecord: 'BillingUsageRecord',
+  ScmSupplier: 'ScmSupplier',
+  ScmPurchaseOrder: 'ScmPurchaseOrder',
+  ScmPurchaseOrderItem: 'ScmPurchaseOrderItem',
+  ScmReceipt: 'ScmReceipt',
+  ScmReceiptLine: 'ScmReceiptLine',
+  QmsAudit: 'QmsAudit',
+  QmsNonConformance: 'QmsNonConformance',
+  QmsChecklist: 'QmsChecklist',
+  PpmPortfolio: 'PpmPortfolio',
+  PpmProject: 'PpmProject',
+  PpmMilestone: 'PpmMilestone',
+  PpmProjectMember: 'PpmProjectMember',
+  WsChannel: 'WsChannel',
+  WsPresence: 'WsPresence',
+  I18nLocale: 'I18nLocale',
+  I18nKey: 'I18nKey',
+  I18nValue: 'I18nValue',
+  SecTwoFaSecret: 'SecTwoFaSecret',
+  SecSession: 'SecSession',
+  MktApp: 'MktApp',
+  MktInstall: 'MktInstall',
+  AiStudioWorkflow: 'AiStudioWorkflow',
+  AiStudioRun: 'AiStudioRun'
 };
 
 /**

@@ -1,5 +1,5 @@
 // =============================================================================
-// Reno System — Prisma Schema
+// Reno System â€” Prisma Schema
 // Phase 0.1: Core Foundation + Translation & AI Usage Infrastructure
 // =============================================================================
 // Naming conventions:
@@ -20,7 +20,7 @@ datasource db {
 }
 
 // =============================================================================
-// CORE MODULE — Identity, Auth, Org Structure
+// CORE MODULE â€” Identity, Auth, Org Structure
 // =============================================================================
 
 model CoreTenant {
@@ -232,7 +232,7 @@ model CoreTenant {
   cmpFrameworks            CmpFramework[]
   cmpRisks                 CmpRisk[]
   csAccounts               CsAccount[]
-  apiKeys                  ApigwApiKey[]
+  apigwApiKeys              ApigwApiKey[]
   webhooks                 ApigwWebhook[]
   evsEvents                EvsEvent[]
   evsSnapshots             EvsSnapshot[]
@@ -241,8 +241,8 @@ model CoreTenant {
   billingInvoices          BillingInvoice[]
   billingPaymentMethods    BillingPaymentMethod[]
   billingUsageRecords      BillingUsageRecord[]
-  rptReports               RptReport[]
-  rptSchedules             RptSchedule[]
+
+
   scmPurchaseOrders        ScmPurchaseOrder[]
   scmSuppliers             ScmSupplier[]
   scmReceipts              ScmReceipt[]
@@ -252,7 +252,7 @@ model CoreTenant {
   ppmProjects              PpmProject[]
   secTwoFaSecrets          SecTwoFaSecret[]
   secSessions              SecSession[]
-  secIpRules               SecIpRule[]
+
   mktApps                  MktApp[]
   mktInstalls              MktInstall[]
   aiStudioWorkflows        AiStudioWorkflow[]
@@ -616,7 +616,7 @@ model CoreSession {
 }
 
 // =============================================================================
-// SYSTEM MODULE — Cross-cutting concerns
+// SYSTEM MODULE â€” Cross-cutting concerns
 // =============================================================================
 
 model SysAuditLog {
@@ -797,7 +797,7 @@ model SysApiKey {
 }
 
 // =============================================================================
-// SECURITY MODULE — Phase 22
+// SECURITY MODULE â€” Phase 22
 // =============================================================================
 
 model CoreTenantSecurityPolicy {
@@ -918,7 +918,7 @@ model SecIpRule {
   @@map("sec_ip_rules")
 }
 
-// sys_translations — User-generated content translations (entity-level)
+// sys_translations â€” User-generated content translations (entity-level)
 // e.g. product descriptions, HR document names, custom field values
 model SysTranslation {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -949,7 +949,7 @@ model SysTranslation {
   @@map("sys_translations")
 }
 
-// sys_ui_translations — Static UI/module string translations
+// sys_ui_translations â€” Static UI/module string translations
 // e.g. labels, button text, error messages, module names, report headers
 model SysUiTranslation {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -979,10 +979,10 @@ model SysUiTranslation {
 }
 
 // =============================================================================
-// AI MODULE — Usage Tracking & Cost Governance
+// AI MODULE â€” Usage Tracking & Cost Governance
 // =============================================================================
 
-// ai_usage_logs — Immutable AI request ledger for cost control and analytics
+// ai_usage_logs â€” Immutable AI request ledger for cost control and analytics
 // Every call to any AI model (Reno Brain, agents, translation) is logged here
 model AiUsageLog {
   id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -1015,7 +1015,7 @@ model AiUsageLog {
 }
 
 // =============================================================================
-// HR MODULE — Reno HR (Phase 1)
+// HR MODULE â€” Reno HR (Phase 1)
 // =============================================================================
 
 model HrEmployee {
@@ -1430,7 +1430,7 @@ model HrHoliday {
 }
 
 // =============================================================================
-// PROJECT MANAGEMENT MODULE — Phase 2
+// PROJECT MANAGEMENT MODULE â€” Phase 2
 // =============================================================================
 
 model PmProject {
@@ -1791,10 +1791,10 @@ model PmActivityLog {
 }
 
 // =============================================================================
-// CRM MODULE — Reno CRM (Phase 3)
+// CRM MODULE â€” Reno CRM (Phase 3)
 // =============================================================================
 
-// crm_pipelines — Sales pipeline definitions
+// crm_pipelines â€” Sales pipeline definitions
 model CrmPipeline {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -1817,7 +1817,7 @@ model CrmPipeline {
   @@map("crm_pipelines")
 }
 
-// crm_pipeline_stages — Configurable stages within a pipeline
+// crm_pipeline_stages â€” Configurable stages within a pipeline
 model CrmPipelineStage {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String    @map("tenant_id") @db.Uuid
@@ -1842,7 +1842,7 @@ model CrmPipelineStage {
   @@map("crm_pipeline_stages")
 }
 
-// crm_companies — Business/organization entities in CRM (separate from CoreCompany)
+// crm_companies â€” Business/organization entities in CRM (separate from CoreCompany)
 model CrmCompany {
   id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId             String    @map("tenant_id") @db.Uuid
@@ -1891,7 +1891,7 @@ model CrmCompany {
   @@map("crm_companies")
 }
 
-// crm_contacts — People (leads, prospects, customers, churned)
+// crm_contacts â€” People (leads, prospects, customers, churned)
 model CrmContact {
   id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId             String    @map("tenant_id") @db.Uuid
@@ -1957,7 +1957,7 @@ model CrmContact {
   @@map("crm_contacts")
 }
 
-// crm_opportunities — Sales deals / pipeline deals
+// crm_opportunities â€” Sales deals / pipeline deals
 model CrmOpportunity {
   id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId          String    @map("tenant_id") @db.Uuid
@@ -2007,7 +2007,7 @@ model CrmOpportunity {
   @@map("crm_opportunities")
 }
 
-// crm_activities — Unified activity log (calls, meetings, emails, notes, tasks, whatsapp, sms)
+// crm_activities â€” Unified activity log (calls, meetings, emails, notes, tasks, whatsapp, sms)
 model CrmActivity {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String    @map("tenant_id") @db.Uuid
@@ -2047,7 +2047,7 @@ model CrmActivity {
   @@map("crm_activities")
 }
 
-// crm_notes — Rich notes pinned to contacts, companies, or opportunities
+// crm_notes â€” Rich notes pinned to contacts, companies, or opportunities
 model CrmNote {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId      String    @map("tenant_id") @db.Uuid
@@ -2074,7 +2074,7 @@ model CrmNote {
   @@map("crm_notes")
 }
 
-// crm_contracts — Contracts linked to opportunities or companies
+// crm_contracts â€” Contracts linked to opportunities or companies
 model CrmContract {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId       String    @map("tenant_id") @db.Uuid
@@ -2113,7 +2113,7 @@ model CrmContract {
   @@map("crm_contracts")
 }
 
-// crm_email_logs — Email tracking for outbound communication
+// crm_email_logs â€” Email tracking for outbound communication
 model CrmEmailLog {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -2143,7 +2143,7 @@ model CrmEmailLog {
   @@map("crm_email_logs")
 }
 
-// crm_attachments — Files attached to any CRM entity
+// crm_attachments â€” Files attached to any CRM entity
 model CrmAttachment {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId      String    @map("tenant_id") @db.Uuid
@@ -2174,7 +2174,7 @@ model CrmAttachment {
   @@map("crm_attachments")
 }
 
-// crm_tags — Labels for contacts, companies, opportunities
+// crm_tags â€” Labels for contacts, companies, opportunities
 model CrmTag {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId   String    @map("tenant_id") @db.Uuid
@@ -2196,10 +2196,10 @@ model CrmTag {
 }
 
 // =============================================================================
-// SALES MODULE — Reno Sales (Phase 4)
+// SALES MODULE â€” Reno Sales (Phase 4)
 // =============================================================================
 
-// sales_currencies — Multi-currency support
+// sales_currencies â€” Multi-currency support
 model SalesCurrency {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String    @map("tenant_id") @db.Uuid
@@ -2223,7 +2223,7 @@ model SalesCurrency {
   @@map("sales_currencies")
 }
 
-// sales_taxes — Tax rule definitions
+// sales_taxes â€” Tax rule definitions
 model SalesTax {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -2251,7 +2251,7 @@ model SalesTax {
   @@map("sales_taxes")
 }
 
-// sales_price_lists — Price lists per market/segment
+// sales_price_lists â€” Price lists per market/segment
 model SalesPriceList {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -2275,7 +2275,7 @@ model SalesPriceList {
   @@map("sales_price_lists")
 }
 
-// sales_products — Product/service catalog for sales
+// sales_products â€” Product/service catalog for sales
 model SalesProduct {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId         String    @map("tenant_id") @db.Uuid
@@ -2314,7 +2314,7 @@ model SalesProduct {
   @@map("sales_products")
 }
 
-// sales_discounts — Discount codes / promotions
+// sales_discounts â€” Discount codes / promotions
 model SalesDiscount {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId      String    @map("tenant_id") @db.Uuid
@@ -2341,7 +2341,7 @@ model SalesDiscount {
   @@map("sales_discounts")
 }
 
-// sales_quotations — Customer quotes / proposals
+// sales_quotations â€” Customer quotes / proposals
 model SalesQuotation {
   id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId           String    @map("tenant_id") @db.Uuid
@@ -2392,7 +2392,7 @@ model SalesQuotation {
   @@map("sales_quotations")
 }
 
-// sales_quotation_items — Line items on quotation
+// sales_quotation_items â€” Line items on quotation
 model SalesQuotationItem {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String    @map("tenant_id") @db.Uuid
@@ -2421,7 +2421,7 @@ model SalesQuotationItem {
   @@map("sales_quotation_items")
 }
 
-// sales_orders — Confirmed sales orders
+// sales_orders â€” Confirmed sales orders
 model SalesOrder {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId       String    @map("tenant_id") @db.Uuid
@@ -2472,7 +2472,7 @@ model SalesOrder {
   @@map("sales_orders")
 }
 
-// sales_order_items — Line items on sales order
+// sales_order_items â€” Line items on sales order
 model SalesOrderItem {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId      String    @map("tenant_id") @db.Uuid
@@ -2503,7 +2503,7 @@ model SalesOrderItem {
   @@map("sales_order_items")
 }
 
-// sales_invoices — Invoices (from order or standalone)
+// sales_invoices â€” Invoices (from order or standalone)
 model SalesInvoice {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId       String    @map("tenant_id") @db.Uuid
@@ -2554,7 +2554,7 @@ model SalesInvoice {
   @@map("sales_invoices")
 }
 
-// sales_invoice_items — Line items on invoice
+// sales_invoice_items â€” Line items on invoice
 model SalesInvoiceItem {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -2583,7 +2583,7 @@ model SalesInvoiceItem {
   @@map("sales_invoice_items")
 }
 
-// sales_payment_methods — Reusable payment method configurations
+// sales_payment_methods â€” Reusable payment method configurations
 model SalesPaymentMethod {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -2605,7 +2605,7 @@ model SalesPaymentMethod {
   @@map("sales_payment_methods")
 }
 
-// sales_payments — Payment records against invoices
+// sales_payments â€” Payment records against invoices
 model SalesPayment {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String    @map("tenant_id") @db.Uuid
@@ -2642,7 +2642,7 @@ model SalesPayment {
   @@map("sales_payments")
 }
 
-// sales_subscriptions — Recurring billing / subscriptions
+// sales_subscriptions â€” Recurring billing / subscriptions
 model SalesSubscription {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String    @map("tenant_id") @db.Uuid
@@ -2687,11 +2687,11 @@ model SalesSubscription {
 }
 
 // =============================================================================
-// PHASE 5 — RENO FINANCE
-// Double-entry accounting · IFRS-ready · Immutable ledger · Multi-currency
+// PHASE 5 â€” RENO FINANCE
+// Double-entry accounting Â· IFRS-ready Â· Immutable ledger Â· Multi-currency
 // =============================================================================
 
-// fin_fiscal_years — Company financial years
+// fin_fiscal_years â€” Company financial years
 model FinFiscalYear {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String   @map("tenant_id") @db.Uuid
@@ -2718,7 +2718,7 @@ model FinFiscalYear {
   @@map("fin_fiscal_years")
 }
 
-// fin_periods — Accounting periods within a fiscal year
+// fin_periods â€” Accounting periods within a fiscal year
 model FinPeriod {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String   @map("tenant_id") @db.Uuid
@@ -2747,7 +2747,7 @@ model FinPeriod {
   @@map("fin_periods")
 }
 
-// fin_accounts — Chart of accounts (hierarchical, IFRS-ready)
+// fin_accounts â€” Chart of accounts (hierarchical, IFRS-ready)
 model FinAccount {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId      String   @map("tenant_id") @db.Uuid
@@ -2796,7 +2796,7 @@ model FinAccount {
   @@map("fin_accounts")
 }
 
-// fin_cost_centers — Cost center / department allocation
+// fin_cost_centers â€” Cost center / department allocation
 model FinCostCenter {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String   @map("tenant_id") @db.Uuid
@@ -2823,7 +2823,7 @@ model FinCostCenter {
   @@map("fin_cost_centers")
 }
 
-// fin_journal_entries — Double-entry journal headers
+// fin_journal_entries â€” Double-entry journal headers
 // Immutable once posted: never update debit/credit amounts on posted entries
 model FinJournalEntry {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -2890,7 +2890,7 @@ model FinJournalEntry {
   @@map("fin_journal_entries")
 }
 
-// fin_journal_lines — Individual debit/credit lines (immutable once posted)
+// fin_journal_lines â€” Individual debit/credit lines (immutable once posted)
 model FinJournalLine {
   id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId       String  @map("tenant_id") @db.Uuid
@@ -2933,7 +2933,7 @@ model FinJournalLine {
   @@map("fin_journal_lines")
 }
 
-// fin_bank_accounts — Company bank accounts
+// fin_bank_accounts â€” Company bank accounts
 model FinBankAccount {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId       String   @map("tenant_id") @db.Uuid
@@ -2966,7 +2966,7 @@ model FinBankAccount {
   @@map("fin_bank_accounts")
 }
 
-// fin_bank_transactions — Imported bank statement lines
+// fin_bank_transactions â€” Imported bank statement lines
 model FinBankTransaction {
   id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String   @map("tenant_id") @db.Uuid
@@ -3004,7 +3004,7 @@ model FinBankTransaction {
   @@map("fin_bank_transactions")
 }
 
-// fin_vendors — Supplier / vendor master (Accounts Payable)
+// fin_vendors â€” Supplier / vendor master (Accounts Payable)
 model FinVendor {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String   @map("tenant_id") @db.Uuid
@@ -3016,7 +3016,7 @@ model FinVendor {
   taxId        String?  @map("tax_id") @db.VarChar(100)
   currency     String   @default("USD") @db.VarChar(10)
   paymentTerms Int?     @map("payment_terms")
-  // days — e.g., 30 means net 30
+  // days â€” e.g., 30 means net 30
   apAccountId  String?  @map("ap_account_id") @db.Uuid
   // default AP control account for this vendor
   notes        String?  @db.Text
@@ -3039,7 +3039,7 @@ model FinVendor {
   @@map("fin_vendors")
 }
 
-// fin_vendor_bills — Accounts Payable bills from suppliers
+// fin_vendor_bills â€” Accounts Payable bills from suppliers
 model FinVendorBill {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String   @map("tenant_id") @db.Uuid
@@ -3086,7 +3086,7 @@ model FinVendorBill {
   @@map("fin_vendor_bills")
 }
 
-// fin_vendor_bill_lines — Line items on vendor bills
+// fin_vendor_bill_lines â€” Line items on vendor bills
 model FinVendorBillLine {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String  @map("tenant_id") @db.Uuid
@@ -3118,7 +3118,7 @@ model FinVendorBillLine {
   @@map("fin_vendor_bill_lines")
 }
 
-// fin_vendor_payments — Payments made to vendors (AP)
+// fin_vendor_payments â€” Payments made to vendors (AP)
 model FinVendorPayment {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId      String   @map("tenant_id") @db.Uuid
@@ -3153,7 +3153,7 @@ model FinVendorPayment {
   @@map("fin_vendor_payments")
 }
 
-// fin_budgets — Budget plans per fiscal year
+// fin_budgets â€” Budget plans per fiscal year
 model FinBudget {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String   @map("tenant_id") @db.Uuid
@@ -3180,7 +3180,7 @@ model FinBudget {
   @@map("fin_budgets")
 }
 
-// fin_budget_lines — Per account per period budget amounts
+// fin_budget_lines â€” Per account per period budget amounts
 model FinBudgetLine {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId     String  @map("tenant_id") @db.Uuid
@@ -3209,7 +3209,7 @@ model FinBudgetLine {
 }
 
 // =============================================================================
-// INVENTORY MODULE — Phase 6
+// INVENTORY MODULE â€” Phase 6
 // Movement-ledger system: every stock change creates an InvMovement record.
 // Stock balances are synchronized from movements. History is never deleted.
 // =============================================================================
@@ -3336,7 +3336,7 @@ model InvWarehouse {
   city               String?   @db.VarChar(100)
   country            String?   @db.VarChar(100)
   isDefault          Boolean   @default(false) @map("is_default")
-  // Finance integration prep — links to FinAccount for inventory valuation
+  // Finance integration prep â€” links to FinAccount for inventory valuation
   valuationAccountId String?   @map("valuation_account_id") @db.Uuid
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
@@ -3462,7 +3462,7 @@ model InvSerial {
   @@map("inv_serials")
 }
 
-// THE CORE MOVEMENT LEDGER — every stock change is recorded here. Never hard-delete.
+// THE CORE MOVEMENT LEDGER â€” every stock change is recorded here. Never hard-delete.
 model InvMovement {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String    @map("tenant_id") @db.Uuid
@@ -3720,8 +3720,8 @@ model InvReorderRule {
 }
 
 // =============================================================================
-// PROCUREMENT MODULE — Phase 7
-// Flow: Requisition → RFQ → Supplier Quotations → Purchase Order → Approve → Receive
+// PROCUREMENT MODULE â€” Phase 7
+// Flow: Requisition â†’ RFQ â†’ Supplier Quotations â†’ Purchase Order â†’ Approve â†’ Receive
 // Every operation is traced for analytics and AI Procurement Director.
 // =============================================================================
 
@@ -4173,7 +4173,7 @@ model ProcVendorEvaluation {
 }
 
 // =============================================================================
-// MANUFACTURING MODULE â€” Phase 8
+// MANUFACTURING MODULE Ã¢â‚¬â€ Phase 8
 // =============================================================================
 
 model MfgBomTemplate {
@@ -4564,7 +4564,7 @@ model MfgMrpRecommendation {
 
 
 // ============================================
-// PHASE 9 â€” RENO BI / ANALYTICS
+// PHASE 9 Ã¢â‚¬â€ RENO BI / ANALYTICS
 // ============================================
 
 model BiDashboard {
@@ -4790,7 +4790,7 @@ model BiDashboardPermission {
 
 
 // ============================================
-// PHASE 10 â€” RENO BRAIN / AI CORE
+// PHASE 10 Ã¢â‚¬â€ RENO BRAIN / AI CORE
 // ============================================
 
 model BrainAgent {
@@ -5022,7 +5022,7 @@ model BrainPermission {
 
 
 // ============================================================
-// Phase 11 — Automation / Workflow Engine
+// Phase 11 â€” Automation / Workflow Engine
 // ============================================================
 
 model AutoWorkflow {
@@ -5203,7 +5203,7 @@ model AutoWebhook {
 }
 
 // ============================================================
-// Phase 12 — Documents / Knowledge Center
+// Phase 12 â€” Documents / Knowledge Center
 // ============================================================
 
 model DocFolder {
@@ -5464,7 +5464,7 @@ model KbArticleVersion {
 }
 
 // ============================================================
-// Phase 13 — Portal / Customer & Employee Self-Service
+// Phase 13 â€” Portal / Customer & Employee Self-Service
 // ============================================================
 
 model PortalBranding {
@@ -5621,7 +5621,7 @@ model PortalTicketReply {
 }
 
 // ============================================================
-// Phase 15 — Service Desk / Support Center
+// Phase 15 â€” Service Desk / Support Center
 // ============================================================
 
 model SdCategory {
@@ -5844,7 +5844,7 @@ model SdCsat {
 }
 
 // =============================================================================
-// COMMUNICATION MODULE — Phase 16
+// COMMUNICATION MODULE â€” Phase 16
 // =============================================================================
 
 model CommTeam {
@@ -6203,7 +6203,7 @@ model CommAnnouncementRead {
 }
 
 // =============================================================================
-// MARKETPLACE MODULE — Phase 18: Plugin, Theme & App Ecosystem
+// MARKETPLACE MODULE â€” Phase 18: Plugin, Theme & App Ecosystem
 // =============================================================================
 
 model MktDeveloperAccount {
@@ -6533,7 +6533,7 @@ model MktAuditLog {
 }
 
 // =============================================================================
-// AI EXECUTIVE LAYER — Phase 19: Digital Twin / Autonomous Company Intelligence
+// AI EXECUTIVE LAYER â€” Phase 19: Digital Twin / Autonomous Company Intelligence
 // =============================================================================
 
 model AiDigitalTwin {
@@ -6808,7 +6808,7 @@ model AiLessonLearned {
 }
 
 // =============================================================================
-// OBSERVABILITY MODULE — Phase 24
+// OBSERVABILITY MODULE â€” Phase 24
 // =============================================================================
 
 model ObsAlert {
@@ -6895,10 +6895,10 @@ model ObsServiceDependency {
 }
 
 // =============================================================================
-// BACKUP MODULE — Phase 25: Disaster Recovery & Backup Infrastructure
+// BACKUP MODULE â€” Phase 25: Disaster Recovery & Backup Infrastructure
 // =============================================================================
 
-// bkp_jobs — Individual backup job executions
+// bkp_jobs â€” Individual backup job executions
 model BkpJob {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String?   @map("tenant_id") @db.Uuid
@@ -6934,7 +6934,7 @@ model BkpJob {
   @@map("bkp_jobs")
 }
 
-// bkp_snapshots — Named point-in-time snapshots
+// bkp_snapshots â€” Named point-in-time snapshots
 model BkpSnapshot {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId        String?   @map("tenant_id") @db.Uuid
@@ -6965,7 +6965,7 @@ model BkpSnapshot {
   @@map("bkp_snapshots")
 }
 
-// bkp_restore_tests — Automated restore test results
+// bkp_restore_tests â€” Automated restore test results
 model BkpRestoreTest {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   jobId           String    @map("job_id") @db.Uuid
@@ -6987,7 +6987,7 @@ model BkpRestoreTest {
   @@map("bkp_restore_tests")
 }
 
-// bkp_replication — Cross-region replication tracking
+// bkp_replication â€” Cross-region replication tracking
 model BkpReplication {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   jobId           String    @map("job_id") @db.Uuid
@@ -7006,7 +7006,7 @@ model BkpReplication {
   @@map("bkp_replications")
 }
 
-// bkp_schedules — Backup schedule configurations
+// bkp_schedules â€” Backup schedule configurations
 model BkpSchedule {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId         String?   @map("tenant_id") @db.Uuid
@@ -7033,7 +7033,7 @@ model BkpSchedule {
   @@map("bkp_schedules")
 }
 
-// dr_playbooks — Disaster recovery runbooks
+// dr_playbooks â€” Disaster recovery runbooks
 model DrPlaybook {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String    @db.VarChar(255)
@@ -7055,7 +7055,7 @@ model DrPlaybook {
   @@map("dr_playbooks")
 }
 
-// dr_playbook_executions — DR playbook run history
+// dr_playbook_executions â€” DR playbook run history
 model DrPlaybookExecution {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   playbookId    String    @map("playbook_id") @db.Uuid
@@ -7076,7 +7076,7 @@ model DrPlaybookExecution {
   @@map("dr_playbook_executions")
 }
 
-// dr_readiness_scores — DR readiness scoring over time
+// dr_readiness_scores â€” DR readiness scoring over time
 model DrReadinessScore {
   id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   score               Int      // 0-100
@@ -7093,7 +7093,7 @@ model DrReadinessScore {
   @@map("dr_readiness_scores")
 }
 
-// ai_sre_incidents — AI SRE incident records with full timeline + RCA
+// ai_sre_incidents â€” AI SRE incident records with full timeline + RCA
 model AiSreIncident {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId         String?   @map("tenant_id") @db.Uuid
@@ -7124,10 +7124,10 @@ model AiSreIncident {
 }
 
 // =============================================================================
-// DEPLOYMENT MODULE — Phase 26: Production Deployment & CI/CD
+// DEPLOYMENT MODULE â€” Phase 26: Production Deployment & CI/CD
 // =============================================================================
 
-// dep_deployment_logs — Immutable audit trail for every deployment event
+// dep_deployment_logs â€” Immutable audit trail for every deployment event
 model DepDeploymentLog {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   version         String    @db.VarChar(50)       // semver e.g. v26.0.0
@@ -7155,10 +7155,10 @@ model DepDeploymentLog {
 }
 
 // =============================================================================
-// DEVELOPER PLATFORM MODULE — Phase 27: Developer Platform
+// DEVELOPER PLATFORM MODULE â€” Phase 27: Developer Platform
 // =============================================================================
 
-// dev_webhooks — Registered webhook endpoints for event delivery
+// dev_webhooks â€” Registered webhook endpoints for event delivery
 model DevWebhook {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId    String    @map("tenant_id") @db.Uuid
@@ -7179,7 +7179,7 @@ model DevWebhook {
   @@map("dev_webhooks")
 }
 
-// dev_webhook_deliveries — Audit log for every webhook delivery attempt
+// dev_webhook_deliveries â€” Audit log for every webhook delivery attempt
 model DevWebhookDelivery {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   webhookId    String    @map("webhook_id") @db.Uuid
@@ -7199,7 +7199,7 @@ model DevWebhookDelivery {
 }
 
 // =============================================================================
-// PHASE 29 — AI EVOLUTION / BUSINESS MEMORY / LEARNING ENGINE
+// PHASE 29 â€” AI EVOLUTION / BUSINESS MEMORY / LEARNING ENGINE
 // =============================================================================
 
 model AiBusinessMemory {
@@ -7342,10 +7342,10 @@ model AiFeedbackLoop {
 }
 
 // =============================================================================
-// PHASE 31 — AI PROVIDER FOUNDATION
+// PHASE 31 â€” AI PROVIDER FOUNDATION
 // =============================================================================
 
-// System-wide catalog of available AI providers (no tenantId — global registry)
+// System-wide catalog of available AI providers (no tenantId â€” global registry)
 model AiProviderRegistry {
   id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   slug            String   @unique @db.VarChar(50)
@@ -7442,7 +7442,7 @@ model ClaudeToolCall {
 
 // Phase 34: Universal AI Skill Engine
 
-// ─── Phase 36: Multi-Agent AI Collaboration Platform ─────────────────────────
+// â”€â”€â”€ Phase 36: Multi-Agent AI Collaboration Platform â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model AiAgentTeam {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -7622,7 +7622,7 @@ model AiMeetingParticipant {
   @@map("ai_meeting_participants")
 }
 
-// ─── Phase 35: Claude Digital Employee Framework ─────────────────────────────
+// â”€â”€â”€ Phase 35: Claude Digital Employee Framework â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model AiWorkTask {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -7742,7 +7742,7 @@ model AiWorkAuditLog {
   @@map("ai_work_audit_logs")
 }
 
-// ─── Phase 34: AI Tool/Capability Registry ───────────────────────────────────
+// â”€â”€â”€ Phase 34: AI Tool/Capability Registry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model AiToolRegistry {
   id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -7819,7 +7819,7 @@ model AiSkillExecution {
   @@map("ai_skill_executions")
 }
 
-// ─── Phase 37: AI Company Setup & Industry Autopilot ─────────────────────────
+// â”€â”€â”€ Phase 37: AI Company Setup & Industry Autopilot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model AiOnboardingSession {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -7931,7 +7931,7 @@ model AiOnboardingAuditLog {
   @@map("ai_onboarding_audit_logs")
 }
 
-// ─── Phase 38: AI Workspace & Computer Assistant ──────────────────────────────
+// â”€â”€â”€ Phase 38: AI Workspace & Computer Assistant â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model AiWorkspaceSession {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8008,7 +8008,7 @@ model AiWorkspaceCommand {
   @@map("ai_workspace_commands")
 }
 
-// ─── Phase 39: Reno HR Module — New models only (departments, job titles, payroll runs) ──
+// â”€â”€â”€ Phase 39: Reno HR Module â€” New models only (departments, job titles, payroll runs) â”€â”€
 
 model HrDepartment {
   id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8062,7 +8062,7 @@ model HrPayrollRun {
   @@map("hr_payroll_runs")
 }
 
-// ─── Phase 42: SSO & Enterprise Identity ─────────────────────────────────────
+// â”€â”€â”€ Phase 42: SSO & Enterprise Identity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model SsoProvider {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8125,7 +8125,7 @@ model SsoAuditLog {
   @@map("sso_audit_logs")
 }
 
-// ─── Phase 43: Advanced Report Builder ───────────────────────────────────────
+// â”€â”€â”€ Phase 43: Advanced Report Builder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model RptReport {
   id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8192,7 +8192,7 @@ model RptExport {
   @@map("rpt_exports")
 }
 
-// ─── Phase 44: White-Label & Theme Studio ─────────────────────────────────────
+// â”€â”€â”€ Phase 44: White-Label & Theme Studio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model WlTheme {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8226,7 +8226,7 @@ model WlDomainMapping {
   @@map("wl_domain_mappings")
 }
 
-// ─── Phase 45: Customer Data Platform (CDP) ──────────────────────────────────
+// â”€â”€â”€ Phase 45: Customer Data Platform (CDP) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model CdpCustomer {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8303,7 +8303,7 @@ model CdpSegmentMember {
   @@map("cdp_segment_members")
 }
 
-// ─── Phase 46: Email Marketing & Campaigns ────────────────────────────────────
+// â”€â”€â”€ Phase 46: Email Marketing & Campaigns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model MktEmailTemplate {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8381,7 +8381,7 @@ model MktUnsubscribe {
   @@map("mkt_unsubscribes")
 }
 
-// ─── Phase 47: Data Import/Export Hub ────────────────────────────────────────
+// â”€â”€â”€ Phase 47: Data Import/Export Hub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model DixImportJob {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8422,7 +8422,7 @@ model DixExportJob {
   @@map("dix_export_jobs")
 }
 
-// ─── Phase 48: Advanced Mobile Features ──────────────────────────────────────
+// â”€â”€â”€ Phase 48: Advanced Mobile Features â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model MobPushToken {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8488,7 +8488,7 @@ model MobBiometricKey {
   @@map("mob_biometric_keys")
 }
 
-// ─── Phase 49: Partner & Reseller Platform ────────────────────────────────────
+// â”€â”€â”€ Phase 49: Partner & Reseller Platform â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model PrtnPartner {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8568,7 +8568,7 @@ model PrtnDeal {
   @@map("prtn_deals")
 }
 
-// ─── Phase 50: AI-Powered Forecasting & Predictive Analytics ─────────────────
+// â”€â”€â”€ Phase 50: AI-Powered Forecasting & Predictive Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model FcstModel {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8625,7 +8625,7 @@ model FcstAnomaly {
   @@map("fcst_anomalies")
 }
 
-// ─── Phase 51: Multi-Currency & Global Finance ────────────────────────────────
+// â”€â”€â”€ Phase 51: Multi-Currency & Global Finance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model FxCurrency {
   code     String  @id @db.VarChar(3)
@@ -8661,7 +8661,7 @@ model FxTenantSettings {
   @@map("fx_tenant_settings")
 }
 
-// ─── Phase 52: Contract Lifecycle Management (CLM) ───────────────────────────
+// â”€â”€â”€ Phase 52: Contract Lifecycle Management (CLM) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model ClmContract {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8721,7 +8721,7 @@ model ClmApproval {
   @@map("clm_approvals")
 }
 
-// ─── Phase 53: Field Service Management ──────────────────────────────────────
+// â”€â”€â”€ Phase 53: Field Service Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model FsmWorkOrder {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8785,7 +8785,7 @@ model FsmChecklist {
   @@map("fsm_checklists")
 }
 
-// ─── Phase 54: Vendor / Supplier Portal ──────────────────────────────────────
+// â”€â”€â”€ Phase 54: Vendor / Supplier Portal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model VndVendor {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8853,7 +8853,7 @@ model VndPerformance {
   @@map("vnd_performance")
 }
 
-// ─── Phase 55: Learning Management System ────────────────────────────────────
+// â”€â”€â”€ Phase 55: Learning Management System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model LmsCourse {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8931,7 +8931,7 @@ model LmsProgress {
   @@map("lms_progress")
 }
 
-// ─── Phase 56: Asset Management ───────────────────────────────────────────────
+// â”€â”€â”€ Phase 56: Asset Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model AstAsset {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8999,7 +8999,7 @@ model AstAssignment {
   @@map("ast_assignments")
 }
 
-// ─── Phase 57: Compliance & Audit Framework ───────────────────────────────────
+// â”€â”€â”€ Phase 57: Compliance & Audit Framework â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model CmpFramework {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -9080,7 +9080,7 @@ model CmpFinding {
   @@map("cmp_audit_findings")
 }
 
-// ─── Phase 58: Customer Success Platform ─────────────────────────────────────
+// â”€â”€â”€ Phase 58: Customer Success Platform â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model CsAccount {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -9139,7 +9139,7 @@ model CsSuccessPlan {
   @@map("cs_success_plans")
 }
 
-// ─── Phase 59: API Gateway & Developer Portal ─────────────────────────────────
+// â”€â”€â”€ Phase 59: API Gateway & Developer Portal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model ApigwApiKey {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -9197,7 +9197,7 @@ model ApigwUsageLog {
   @@map("apigw_usage_logs")
 }
 
-// ─── Phase 60: Event Sourcing & Audit Trail ───────────────────────────────────
+// â”€â”€â”€ Phase 60: Event Sourcing & Audit Trail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model EvsEvent {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -9247,7 +9247,7 @@ model EvsProjection {
 }
 
 // =============================================================================
-// PHASE 61 — Billing & Subscription Management
+// PHASE 61 â€” Billing & Subscription Management
 // =============================================================================
 
 model BillingPlan {
@@ -9367,70 +9367,9 @@ model BillingUsageRecord {
 }
 
 // =============================================================================
-// PHASE 62 — Advanced Reporting Engine
+// PHASE 62 â€” Advanced Reporting Engine
 // =============================================================================
-
-model RptReport {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId    String   @map("tenant_id") @db.Uuid
-  createdBy   String   @map("created_by") @db.Uuid
-  name        String   @db.VarChar(300)
-  description String?  @db.Text
-  type        String   @default("table") @db.VarChar(50)
-  dataSource  String   @map("data_source") @db.VarChar(100)
-  query       Json     @db.JsonB
-  columns     Json     @default("[]") @db.JsonB
-  filters     Json     @default("[]") @db.JsonB
-  sortBy      Json     @default("[]") @db.JsonB
-  groupBy     Json     @default("[]") @db.JsonB
-  chartConfig Json     @default("{}") @map("chart_config") @db.JsonB
-  isPublic    Boolean  @default(false) @map("is_public")
-  isTemplate  Boolean  @default(false) @map("is_template")
-  lastRunAt   DateTime? @map("last_run_at") @db.Timestamptz
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  schedules   RptSchedule[]
-  exports     RptExport[]
-  @@index([tenantId])
-  @@map("rpt_reports")
-}
-
-model RptSchedule {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String   @map("tenant_id") @db.Uuid
-  reportId   String   @map("report_id") @db.Uuid
-  name       String   @db.VarChar(200)
-  cron       String   @db.VarChar(100)
-  format     String   @default("pdf") @db.VarChar(20)
-  recipients Json     @default("[]") @db.JsonB
-  isActive   Boolean  @default(true) @map("is_active")
-  lastRunAt  DateTime? @map("last_run_at") @db.Timestamptz
-  nextRunAt  DateTime? @map("next_run_at") @db.Timestamptz
-  createdAt  DateTime @default(now()) @map("created_at")
-  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  report     RptReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  @@index([tenantId])
-  @@map("rpt_schedules")
-}
-
-model RptExport {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  reportId  String   @map("report_id") @db.Uuid
-  format    String   @db.VarChar(20)
-  status    String   @default("pending") @db.VarChar(20)
-  fileUrl   String?  @map("file_url") @db.VarChar(1000)
-  rowCount  Int?     @map("row_count")
-  error     String?  @db.Text
-  createdAt DateTime @default(now()) @map("created_at")
-  completedAt DateTime? @map("completed_at") @db.Timestamptz
-  report    RptReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  @@index([reportId])
-  @@map("rpt_exports")
-}
-
-// =============================================================================
-// PHASE 63 — Supply Chain Management
+// PHASE 63 â€” Supply Chain Management
 // =============================================================================
 
 model ScmSupplier {
@@ -9525,7 +9464,7 @@ model ScmReceiptLine {
 }
 
 // =============================================================================
-// PHASE 64 — Quality Management System (QMS)
+// PHASE 64 â€” Quality Management System (QMS)
 // =============================================================================
 
 model QmsAudit {
@@ -9583,7 +9522,7 @@ model QmsChecklist {
 }
 
 // =============================================================================
-// PHASE 65 — Project Portfolio Management
+// PHASE 65 â€” Project Portfolio Management
 // =============================================================================
 
 model PpmPortfolio {
@@ -9657,7 +9596,7 @@ model PpmProjectMember {
 }
 
 // =============================================================================
-// PHASE 66 — Real-time WebSockets & Notifications Hub
+// PHASE 66 â€” Real-time WebSockets & Notifications Hub
 // =============================================================================
 
 model WsChannel {
@@ -9685,7 +9624,7 @@ model WsPresence {
 }
 
 // =============================================================================
-// PHASE 67 — Multi-language / i18n Engine
+// PHASE 67 â€” Multi-language / i18n Engine
 // =============================================================================
 
 model I18nLocale {
@@ -9726,7 +9665,7 @@ model I18nValue {
 }
 
 // =============================================================================
-// PHASE 68 — Advanced Security (2FA, Sessions, IP Rules)
+// PHASE 68 â€” Advanced Security (2FA, Sessions, IP Rules)
 // =============================================================================
 
 model SecTwoFaSecret {
@@ -9762,22 +9701,8 @@ model SecSession {
   @@map("sec_sessions")
 }
 
-model SecIpRule {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId    String   @map("tenant_id") @db.Uuid
-  cidr        String   @db.VarChar(50)
-  type        String   @default("allow") @db.VarChar(10)
-  description String?  @db.VarChar(300)
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  @@unique([tenantId, cidr, type])
-  @@index([tenantId])
-  @@map("sec_ip_rules")
-}
-
 // =============================================================================
-// PHASE 69 — Marketplace / App Store
+// PHASE 69 â€” Marketplace / App Store
 // =============================================================================
 
 model MktApp {
@@ -9823,7 +9748,7 @@ model MktInstall {
 }
 
 // =============================================================================
-// PHASE 70 — AI Automation Studio
+// PHASE 70 â€” AI Automation Studio
 // =============================================================================
 
 model AiStudioWorkflow {
@@ -9868,3 +9793,5 @@ model AiStudioRun {
   @@index([tenantId, status])
   @@map("ai_studio_runs")
 }
+
+

@@ -1,24 +1,24 @@
-import type { FastifyInstance } from 'fastify'
-import { prisma } from '../../../lib/prisma.js'
+﻿import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
+import { prisma } from '@reno/database'
 
 export async function scmRoutes(app: FastifyInstance) {
-  const auth = { preHandler: [app.authenticate] }
-
-  app.get('/suppliers', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.addHook('preHandler', requireAuth)
+  app.get('/suppliers', async (req) => {
+    const { tenantId } = req
     const suppliers = await prisma.scmSupplier.findMany({ where: { tenantId }, orderBy: { name: 'asc' } })
     return { success: true, data: suppliers }
   })
 
-  app.post('/suppliers', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.post('/suppliers', async (req) => {
+    const { tenantId } = req
     const data = req.body as Record<string, unknown>
     const supplier = await prisma.scmSupplier.create({ data: { tenantId, ...data } as never })
     return { success: true, data: supplier }
   })
 
-  app.get('/purchase-orders', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.get('/purchase-orders', async (req) => {
+    const { tenantId } = req
     const q = req.query as Record<string, string>
     const orders = await prisma.scmPurchaseOrder.findMany({
       where: { tenantId, ...(q.status ? { status: q.status } : {}) },
@@ -28,8 +28,8 @@ export async function scmRoutes(app: FastifyInstance) {
     return { success: true, data: orders }
   })
 
-  app.post('/purchase-orders', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.post('/purchase-orders', async (req) => {
+    const { tenantId } = req
     const { items, ...rest } = req.body as Record<string, unknown>
     const po = await prisma.scmPurchaseOrder.create({
       data: { tenantId, ...rest, items: { create: (items as unknown[]) ?? [] } } as never,
@@ -38,21 +38,21 @@ export async function scmRoutes(app: FastifyInstance) {
     return { success: true, data: po }
   })
 
-  app.patch('/purchase-orders/:id/status', auth, async (req) => {
+  app.patch('/purchase-orders/:id/status', async (req) => {
     const { id } = req.params as { id: string }
     const { status } = req.body as { status: string }
     const po = await prisma.scmPurchaseOrder.update({ where: { id }, data: { status } })
     return { success: true, data: po }
   })
 
-  app.get('/receipts', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.get('/receipts', async (req) => {
+    const { tenantId } = req
     const receipts = await prisma.scmReceipt.findMany({ where: { tenantId }, include: { lines: true, po: true }, orderBy: { createdAt: 'desc' } })
     return { success: true, data: receipts }
   })
 
-  app.post('/receipts', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.post('/receipts', async (req) => {
+    const { tenantId } = req
     const { lines, ...rest } = req.body as Record<string, unknown>
     const receipt = await prisma.scmReceipt.create({
       data: { tenantId, ...rest, lines: { create: (lines as unknown[]) ?? [] } } as never,
@@ -61,8 +61,8 @@ export async function scmRoutes(app: FastifyInstance) {
     return { success: true, data: receipt }
   })
 
-  app.get('/summary', auth, async (req) => {
-    const { tenantId } = req.user as { tenantId: string }
+  app.get('/summary', async (req) => {
+    const { tenantId } = req
     const [suppliers, openPOs, pendingReceipts] = await Promise.all([
       prisma.scmSupplier.count({ where: { tenantId, isActive: true } }),
       prisma.scmPurchaseOrder.count({ where: { tenantId, status: { in: ['pending', 'approved'] } } }),
@@ -71,3 +71,5 @@ export async function scmRoutes(app: FastifyInstance) {
     return { success: true, data: { suppliers, openPOs, pendingReceipts } }
   })
 }
+
+
