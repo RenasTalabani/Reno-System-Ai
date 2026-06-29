@@ -67,6 +67,16 @@ import { ppmModuleRoutes } from './ppm/index.js'
 import { secAdvModuleRoutes } from './security-adv/index.js'
 import { appStoreModuleRoutes } from './app-store/index.js'
 import { aiStudioModuleRoutes } from './ai-studio/index.js'
+import { payrollModuleRoutes } from './payroll/index.js'
+import { loyaltyModuleRoutes } from './loyalty/index.js'
+import { fleetModuleRoutes } from './fleet/index.js'
+import { facilityModuleRoutes } from './facility/index.js'
+import { knowledgeBaseModuleRoutes } from './knowledge-base/index.js'
+import { budgetModuleRoutes } from './budget/index.js'
+import { omsModuleRoutes } from './oms/index.js'
+import { slaModuleRoutes } from './sla/index.js'
+import { riskModuleRoutes } from './risk/index.js'
+import { signaturesModuleRoutes } from './signatures/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -140,6 +150,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(secAdvModuleRoutes, { prefix: '/security-adv' })
       await v1.register(appStoreModuleRoutes, { prefix: '/app-store' })
       await v1.register(aiStudioModuleRoutes, { prefix: '/ai-studio' })
+      await v1.register(payrollModuleRoutes, { prefix: '/payroll' })
+      await v1.register(loyaltyModuleRoutes, { prefix: '/loyalty' })
+      await v1.register(fleetModuleRoutes, { prefix: '/fleet' })
+      await v1.register(facilityModuleRoutes, { prefix: '/facility' })
+      await v1.register(knowledgeBaseModuleRoutes, { prefix: '/knowledge-base' })
+      await v1.register(budgetModuleRoutes, { prefix: '/budget' })
+      await v1.register(omsModuleRoutes, { prefix: '/oms' })
+      await v1.register(slaModuleRoutes, { prefix: '/sla' })
+      await v1.register(riskModuleRoutes, { prefix: '/risk' })
+      await v1.register(signaturesModuleRoutes, { prefix: '/signatures' })
     },
     { prefix: '/v1' },
   )

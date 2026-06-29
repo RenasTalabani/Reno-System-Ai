@@ -257,6 +257,23 @@ model CoreTenant {
   mktInstalls              MktInstall[]
   aiStudioWorkflows        AiStudioWorkflow[]
   aiStudioRuns             AiStudioRun[]
+  payrollPayRuns           PayrollPayRun[]
+  payrollPayslips          PayrollPayslip[]
+  loyaltyPrograms          LoyaltyProgram[]
+  loyaltyMembers           LoyaltyMember[]
+  fleetVehicles            FleetVehicle[]
+  fleetDrivers             FleetDriver[]
+  fleetTrips               FleetTrip[]
+  facilityProperties       FacilityProperty[]
+  facilityLeases           FacilityLease[]
+  budgetPeriods            BudgetPeriod[]
+  budgetLines              BudgetLine[]
+  omsOrders                OmsOrder[]
+  omsShipments             OmsShipment[]
+  slaDefinitions           SlaDefinition[]
+  slaBreaches              SlaBreach[]
+  riskItems                RiskItem[]
+  sigRequests              SigRequest[]
 
   @@map("core_tenants")
 }
@@ -9794,4 +9811,417 @@ model AiStudioRun {
   @@map("ai_studio_runs")
 }
 
+// =============================================================================
+// PHASE 71 — Payroll Engine
+// =============================================================================
+
+model PayrollPayRun {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  period      String   @db.VarChar(20)
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  status      String   @default("draft") @db.VarChar(20)
+  totalGross  Decimal  @default(0) @map("total_gross") @db.Decimal(14, 2)
+  totalNet    Decimal  @default(0) @map("total_net") @db.Decimal(14, 2)
+  totalTax    Decimal  @default(0) @map("total_tax") @db.Decimal(14, 2)
+  processedAt DateTime? @map("processed_at") @db.Timestamptz
+  approvedBy  String?  @map("approved_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  payslips    PayrollPayslip[]
+  @@index([tenantId])
+  @@map("payroll_pay_runs")
+}
+
+model PayrollPayslip {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  payRunId     String   @map("pay_run_id") @db.Uuid
+  employeeId   String   @map("employee_id") @db.Uuid
+  grossPay     Decimal  @map("gross_pay") @db.Decimal(14, 2)
+  netPay       Decimal  @map("net_pay") @db.Decimal(14, 2)
+  taxAmount    Decimal  @default(0) @map("tax_amount") @db.Decimal(14, 2)
+  deductions   Json     @default("[]") @db.JsonB
+  allowances   Json     @default("[]") @db.JsonB
+  hoursWorked  Decimal? @map("hours_worked") @db.Decimal(8, 2)
+  paidAt       DateTime? @map("paid_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  payRun       PayrollPayRun @relation(fields: [payRunId], references: [id])
+  @@index([tenantId])
+  @@index([tenantId, payRunId])
+  @@map("payroll_payslips")
+}
+
+// =============================================================================
+// PHASE 72 — Customer Loyalty & Rewards
+// =============================================================================
+
+model LoyaltyProgram {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  name          String   @db.VarChar(200)
+  pointsPerUnit Decimal  @default(1) @map("points_per_unit") @db.Decimal(8, 4)
+  currency      String   @default("USD") @db.VarChar(10)
+  isActive      Boolean  @default(true) @map("is_active")
+  tiers         Json     @default("[]") @db.JsonB
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  members       LoyaltyMember[]
+  @@index([tenantId])
+  @@map("loyalty_programs")
+}
+
+model LoyaltyMember {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  programId   String   @map("program_id") @db.Uuid
+  customerId  String   @map("customer_id") @db.Uuid
+  tier        String   @default("bronze") @db.VarChar(50)
+  points      Int      @default(0)
+  lifetime    Int      @default(0) @map("lifetime_points")
+  joinedAt    DateTime @default(now()) @map("joined_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  program     LoyaltyProgram @relation(fields: [programId], references: [id])
+  transactions LoyaltyTransaction[]
+  @@unique([programId, customerId])
+  @@index([tenantId])
+  @@map("loyalty_members")
+}
+
+model LoyaltyTransaction {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  memberId   String   @map("member_id") @db.Uuid
+  type       String   @db.VarChar(20)
+  points     Int
+  description String? @db.VarChar(300)
+  refId      String?  @map("ref_id") @db.Uuid
+  refType    String?  @map("ref_type") @db.VarChar(50)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  member     LoyaltyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  @@index([memberId])
+  @@map("loyalty_transactions")
+}
+
+// =============================================================================
+// PHASE 73 — Fleet Management
+// =============================================================================
+
+model FleetVehicle {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  make         String   @db.VarChar(100)
+  model        String   @db.VarChar(100)
+  year         Int
+  licensePlate String   @map("license_plate") @db.VarChar(50)
+  vin          String?  @db.VarChar(50)
+  status       String   @default("available") @db.VarChar(20)
+  fuelType     String   @default("petrol") @map("fuel_type") @db.VarChar(20)
+  mileage      Int      @default(0)
+  lastService  DateTime? @map("last_service") @db.Date
+  nextService  DateTime? @map("next_service") @db.Date
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  trips        FleetTrip[]
+  @@unique([tenantId, licensePlate])
+  @@index([tenantId])
+  @@map("fleet_vehicles")
+}
+
+model FleetDriver {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  employeeId  String   @map("employee_id") @db.Uuid
+  licenseNo   String   @map("license_no") @db.VarChar(100)
+  licenseExpiry DateTime @map("license_expiry") @db.Date
+  status      String   @default("active") @db.VarChar(20)
+  rating      Decimal  @default(5) @db.Decimal(3, 2)
+  totalTrips  Int      @default(0) @map("total_trips")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  trips       FleetTrip[]
+  @@index([tenantId])
+  @@map("fleet_drivers")
+}
+
+model FleetTrip {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  vehicleId   String   @map("vehicle_id") @db.Uuid
+  driverId    String   @map("driver_id") @db.Uuid
+  purpose     String?  @db.VarChar(300)
+  origin      String   @db.VarChar(300)
+  destination String   @db.VarChar(300)
+  startOdo    Int      @map("start_odo")
+  endOdo      Int?     @map("end_odo")
+  startedAt   DateTime @map("started_at") @db.Timestamptz
+  endedAt     DateTime? @map("ended_at") @db.Timestamptz
+  status      String   @default("active") @db.VarChar(20)
+  fuelCost    Decimal? @map("fuel_cost") @db.Decimal(10, 2)
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vehicle     FleetVehicle @relation(fields: [vehicleId], references: [id])
+  driver      FleetDriver @relation(fields: [driverId], references: [id])
+  @@index([tenantId])
+  @@index([tenantId, vehicleId])
+  @@map("fleet_trips")
+}
+
+// =============================================================================
+// PHASE 74 — Facility Management
+// =============================================================================
+
+model FacilityProperty {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  address     String   @db.VarChar(500)
+  type        String   @default("office") @db.VarChar(50)
+  totalUnits  Int      @default(1) @map("total_units")
+  totalArea   Decimal? @map("total_area") @db.Decimal(12, 2)
+  status      String   @default("active") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leases      FacilityLease[]
+  @@index([tenantId])
+  @@map("facility_properties")
+}
+
+model FacilityLease {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  propertyId  String   @map("property_id") @db.Uuid
+  tenantName  String   @map("tenant_name") @db.VarChar(200)
+  unit        String   @db.VarChar(50)
+  rentAmount  Decimal  @map("rent_amount") @db.Decimal(14, 2)
+  deposit     Decimal  @default(0) @db.Decimal(14, 2)
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  status      String   @default("active") @db.VarChar(20)
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  facilityTenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  property    FacilityProperty @relation(fields: [propertyId], references: [id])
+  @@index([tenantId])
+  @@map("facility_leases")
+}
+
+// =============================================================================
+// PHASE 75 — Knowledge Base
+// =============================================================================
+
+// =============================================================================
+// PHASE 76 — Budget & Forecasting
+// =============================================================================
+
+model BudgetPeriod {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  fiscalYear  Int      @map("fiscal_year")
+  status      String   @default("draft") @db.VarChar(20)
+  totalBudget Decimal  @default(0) @map("total_budget") @db.Decimal(18, 2)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lines       BudgetLine[]
+  @@index([tenantId])
+  @@map("budget_periods")
+}
+
+model BudgetLine {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  periodId    String   @map("period_id") @db.Uuid
+  category    String   @db.VarChar(100)
+  description String   @db.VarChar(300)
+  budgeted    Decimal  @db.Decimal(14, 2)
+  actual      Decimal  @default(0) @db.Decimal(14, 2)
+  forecast    Decimal? @db.Decimal(14, 2)
+  department  String?  @db.VarChar(100)
+  notes       String?  @db.Text
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  period      BudgetPeriod @relation(fields: [periodId], references: [id])
+  @@index([tenantId])
+  @@map("budget_lines")
+}
+
+// =============================================================================
+// PHASE 77 — Order Management System
+// =============================================================================
+
+model OmsOrder {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  orderNo     String   @map("order_no") @db.VarChar(50)
+  customerId  String?  @map("customer_id") @db.Uuid
+  status      String   @default("pending") @db.VarChar(30)
+  channel     String   @default("web") @db.VarChar(30)
+  subtotal    Decimal  @db.Decimal(14, 2)
+  tax         Decimal  @default(0) @db.Decimal(14, 2)
+  shipping    Decimal  @default(0) @db.Decimal(14, 2)
+  discount    Decimal  @default(0) @db.Decimal(14, 2)
+  total       Decimal  @db.Decimal(14, 2)
+  currency    String   @default("USD") @db.VarChar(10)
+  shippingAddr Json    @default("{}") @map("shipping_addr") @db.JsonB
+  billingAddr Json     @default("{}") @map("billing_addr") @db.JsonB
+  notes       String?  @db.Text
+  placedAt    DateTime @default(now()) @map("placed_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lines       OmsOrderLine[]
+  shipments   OmsShipment[]
+  @@unique([tenantId, orderNo])
+  @@index([tenantId])
+  @@map("oms_orders")
+}
+
+model OmsOrderLine {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId    String   @map("order_id") @db.Uuid
+  productId  String?  @map("product_id") @db.Uuid
+  sku        String?  @db.VarChar(100)
+  name       String   @db.VarChar(300)
+  qty        Int
+  unitPrice  Decimal  @map("unit_price") @db.Decimal(14, 4)
+  discount   Decimal  @default(0) @db.Decimal(14, 4)
+  total      Decimal  @db.Decimal(14, 2)
+  order      OmsOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  @@index([orderId])
+  @@map("oms_order_lines")
+}
+
+model OmsShipment {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  orderId      String   @map("order_id") @db.Uuid
+  carrier      String?  @db.VarChar(100)
+  trackingNo   String?  @map("tracking_no") @db.VarChar(200)
+  status       String   @default("pending") @db.VarChar(30)
+  shippedAt    DateTime? @map("shipped_at") @db.Timestamptz
+  deliveredAt  DateTime? @map("delivered_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order        OmsOrder @relation(fields: [orderId], references: [id])
+  @@index([tenantId])
+  @@map("oms_shipments")
+}
+
+// =============================================================================
+// PHASE 78 — SLA Management
+// =============================================================================
+
+model SlaDefinition {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  name          String   @db.VarChar(200)
+  description   String?  @db.Text
+  module        String   @db.VarChar(50)
+  priority      String   @default("medium") @db.VarChar(20)
+  responseHours Int      @map("response_hours")
+  resolutionHours Int    @map("resolution_hours")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  breaches      SlaBreach[]
+  @@index([tenantId])
+  @@map("sla_definitions")
+}
+
+model SlaBreach {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  slaId        String   @map("sla_id") @db.Uuid
+  refId        String   @map("ref_id") @db.Uuid
+  refType      String   @map("ref_type") @db.VarChar(50)
+  type         String   @db.VarChar(20)
+  dueAt        DateTime @map("due_at") @db.Timestamptz
+  breachedAt   DateTime? @map("breached_at") @db.Timestamptz
+  resolvedAt   DateTime? @map("resolved_at") @db.Timestamptz
+  minutesLate  Int?     @map("minutes_late")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sla          SlaDefinition @relation(fields: [slaId], references: [id])
+  @@index([tenantId])
+  @@index([tenantId, slaId])
+  @@map("sla_breaches")
+}
+
+// =============================================================================
+// PHASE 79 — Risk Management
+// =============================================================================
+
+model RiskItem {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  title        String   @db.VarChar(300)
+  description  String?  @db.Text
+  category     String   @db.VarChar(100)
+  likelihood   Int      @default(3)
+  impact       Int      @default(3)
+  score        Int      @default(9)
+  status       String   @default("open") @db.VarChar(30)
+  owner        String?  @db.Uuid
+  mitigation   String?  @db.Text
+  residualScore Int?    @map("residual_score")
+  reviewDate   DateTime? @map("review_date") @db.Date
+  closedAt     DateTime? @map("closed_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessments  RiskAssessment[]
+  @@index([tenantId])
+  @@map("risk_items")
+}
+
+model RiskAssessment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  riskId      String   @map("risk_id") @db.Uuid
+  assessedBy  String   @map("assessed_by") @db.Uuid
+  likelihood  Int
+  impact      Int
+  score       Int
+  notes       String?  @db.Text
+  assessedAt  DateTime @default(now()) @map("assessed_at") @db.Timestamptz
+  risk        RiskItem @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  @@index([riskId])
+  @@map("risk_assessments")
+}
+
+// =============================================================================
+// PHASE 80 — Digital Signatures
+// =============================================================================
+
+model SigRequest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(300)
+  documentUrl String   @map("document_url") @db.VarChar(1000)
+  status      String   @default("pending") @db.VarChar(30)
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz
+  createdBy   String   @map("created_by") @db.Uuid
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  signers     SigSigner[]
+  @@index([tenantId])
+  @@map("sig_requests")
+}
+
+model SigSigner {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  requestId   String   @map("request_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  email       String   @db.VarChar(300)
+  role        String   @default("signer") @db.VarChar(50)
+  order       Int      @default(1)
+  status      String   @default("pending") @db.VarChar(20)
+  token       String   @unique @db.VarChar(200)
+  signedAt    DateTime? @map("signed_at") @db.Timestamptz
+  ipAddress   String?  @map("ip_address") @db.VarChar(50)
+  request     SigRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  @@index([requestId])
+  @@map("sig_signers")
+}
 

@@ -6843,6 +6843,291 @@ exports.Prisma.AiStudioRunScalarFieldEnum = {
   durationMs: 'durationMs'
 };
 
+exports.Prisma.PayrollPayRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  period: 'period',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  totalGross: 'totalGross',
+  totalNet: 'totalNet',
+  totalTax: 'totalTax',
+  processedAt: 'processedAt',
+  approvedBy: 'approvedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PayrollPayslipScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  payRunId: 'payRunId',
+  employeeId: 'employeeId',
+  grossPay: 'grossPay',
+  netPay: 'netPay',
+  taxAmount: 'taxAmount',
+  deductions: 'deductions',
+  allowances: 'allowances',
+  hoursWorked: 'hoursWorked',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LoyaltyProgramScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  pointsPerUnit: 'pointsPerUnit',
+  currency: 'currency',
+  isActive: 'isActive',
+  tiers: 'tiers',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LoyaltyMemberScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  programId: 'programId',
+  customerId: 'customerId',
+  tier: 'tier',
+  points: 'points',
+  lifetime: 'lifetime',
+  joinedAt: 'joinedAt'
+};
+
+exports.Prisma.LoyaltyTransactionScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  type: 'type',
+  points: 'points',
+  description: 'description',
+  refId: 'refId',
+  refType: 'refType',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FleetVehicleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  make: 'make',
+  model: 'model',
+  year: 'year',
+  licensePlate: 'licensePlate',
+  vin: 'vin',
+  status: 'status',
+  fuelType: 'fuelType',
+  mileage: 'mileage',
+  lastService: 'lastService',
+  nextService: 'nextService',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FleetDriverScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  licenseNo: 'licenseNo',
+  licenseExpiry: 'licenseExpiry',
+  status: 'status',
+  rating: 'rating',
+  totalTrips: 'totalTrips',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FleetTripScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vehicleId: 'vehicleId',
+  driverId: 'driverId',
+  purpose: 'purpose',
+  origin: 'origin',
+  destination: 'destination',
+  startOdo: 'startOdo',
+  endOdo: 'endOdo',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  status: 'status',
+  fuelCost: 'fuelCost'
+};
+
+exports.Prisma.FacilityPropertyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  address: 'address',
+  type: 'type',
+  totalUnits: 'totalUnits',
+  totalArea: 'totalArea',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FacilityLeaseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  propertyId: 'propertyId',
+  tenantName: 'tenantName',
+  unit: 'unit',
+  rentAmount: 'rentAmount',
+  deposit: 'deposit',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BudgetPeriodScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  fiscalYear: 'fiscalYear',
+  status: 'status',
+  totalBudget: 'totalBudget',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BudgetLineScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  periodId: 'periodId',
+  category: 'category',
+  description: 'description',
+  budgeted: 'budgeted',
+  actual: 'actual',
+  forecast: 'forecast',
+  department: 'department',
+  notes: 'notes'
+};
+
+exports.Prisma.OmsOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  orderNo: 'orderNo',
+  customerId: 'customerId',
+  status: 'status',
+  channel: 'channel',
+  subtotal: 'subtotal',
+  tax: 'tax',
+  shipping: 'shipping',
+  discount: 'discount',
+  total: 'total',
+  currency: 'currency',
+  shippingAddr: 'shippingAddr',
+  billingAddr: 'billingAddr',
+  notes: 'notes',
+  placedAt: 'placedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.OmsOrderLineScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  sku: 'sku',
+  name: 'name',
+  qty: 'qty',
+  unitPrice: 'unitPrice',
+  discount: 'discount',
+  total: 'total'
+};
+
+exports.Prisma.OmsShipmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  orderId: 'orderId',
+  carrier: 'carrier',
+  trackingNo: 'trackingNo',
+  status: 'status',
+  shippedAt: 'shippedAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SlaDefinitionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  module: 'module',
+  priority: 'priority',
+  responseHours: 'responseHours',
+  resolutionHours: 'resolutionHours',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SlaBreachScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  slaId: 'slaId',
+  refId: 'refId',
+  refType: 'refType',
+  type: 'type',
+  dueAt: 'dueAt',
+  breachedAt: 'breachedAt',
+  resolvedAt: 'resolvedAt',
+  minutesLate: 'minutesLate'
+};
+
+exports.Prisma.RiskItemScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  likelihood: 'likelihood',
+  impact: 'impact',
+  score: 'score',
+  status: 'status',
+  owner: 'owner',
+  mitigation: 'mitigation',
+  residualScore: 'residualScore',
+  reviewDate: 'reviewDate',
+  closedAt: 'closedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RiskAssessmentScalarFieldEnum = {
+  id: 'id',
+  riskId: 'riskId',
+  assessedBy: 'assessedBy',
+  likelihood: 'likelihood',
+  impact: 'impact',
+  score: 'score',
+  notes: 'notes',
+  assessedAt: 'assessedAt'
+};
+
+exports.Prisma.SigRequestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  documentUrl: 'documentUrl',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdBy: 'createdBy',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SigSignerScalarFieldEnum = {
+  id: 'id',
+  requestId: 'requestId',
+  name: 'name',
+  email: 'email',
+  role: 'role',
+  order: 'order',
+  status: 'status',
+  token: 'token',
+  signedAt: 'signedAt',
+  ipAddress: 'ipAddress'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -7246,7 +7531,28 @@ exports.Prisma.ModelName = {
   MktApp: 'MktApp',
   MktInstall: 'MktInstall',
   AiStudioWorkflow: 'AiStudioWorkflow',
-  AiStudioRun: 'AiStudioRun'
+  AiStudioRun: 'AiStudioRun',
+  PayrollPayRun: 'PayrollPayRun',
+  PayrollPayslip: 'PayrollPayslip',
+  LoyaltyProgram: 'LoyaltyProgram',
+  LoyaltyMember: 'LoyaltyMember',
+  LoyaltyTransaction: 'LoyaltyTransaction',
+  FleetVehicle: 'FleetVehicle',
+  FleetDriver: 'FleetDriver',
+  FleetTrip: 'FleetTrip',
+  FacilityProperty: 'FacilityProperty',
+  FacilityLease: 'FacilityLease',
+  BudgetPeriod: 'BudgetPeriod',
+  BudgetLine: 'BudgetLine',
+  OmsOrder: 'OmsOrder',
+  OmsOrderLine: 'OmsOrderLine',
+  OmsShipment: 'OmsShipment',
+  SlaDefinition: 'SlaDefinition',
+  SlaBreach: 'SlaBreach',
+  RiskItem: 'RiskItem',
+  RiskAssessment: 'RiskAssessment',
+  SigRequest: 'SigRequest',
+  SigSigner: 'SigSigner'
 };
 
 /**
