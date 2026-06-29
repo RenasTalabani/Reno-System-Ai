@@ -107,6 +107,16 @@ import { innovationModuleRoutes } from './innovation/index.js'
 import { sub2ModuleRoutes } from './sub2/index.js'
 import { chatModuleRoutes } from './chat/index.js'
 import { etlModuleRoutes } from './etl/index.js'
+import { legalModuleRoutes } from './legal/index.js'
+import { lms2ModuleRoutes } from './lms2/index.js'
+import { healthcareModuleRoutes } from './healthcare/index.js'
+import { posModuleRoutes } from './pos/index.js'
+import { retailModuleRoutes } from './retail/index.js'
+import { printMgmtModuleRoutes } from './print-mgmt/index.js'
+import { franchiseModuleRoutes } from './franchise/index.js'
+import { nonprofitModuleRoutes } from './nonprofit/index.js'
+import { rdModuleRoutes } from './rd/index.js'
+import { reporting3ModuleRoutes } from './reporting3/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -220,6 +230,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(sub2ModuleRoutes, { prefix: '/sub2' })
       await v1.register(chatModuleRoutes, { prefix: '/chat' })
       await v1.register(etlModuleRoutes, { prefix: '/etl' })
+      await v1.register(legalModuleRoutes, { prefix: '/legal' })
+      await v1.register(lms2ModuleRoutes, { prefix: '/lms2' })
+      await v1.register(healthcareModuleRoutes, { prefix: '/healthcare' })
+      await v1.register(posModuleRoutes, { prefix: '/pos' })
+      await v1.register(retailModuleRoutes, { prefix: '/retail' })
+      await v1.register(printMgmtModuleRoutes, { prefix: '/print-mgmt' })
+      await v1.register(franchiseModuleRoutes, { prefix: '/franchise' })
+      await v1.register(nonprofitModuleRoutes, { prefix: '/nonprofit' })
+      await v1.register(rdModuleRoutes, { prefix: '/rd' })
+      await v1.register(reporting3ModuleRoutes, { prefix: '/reporting3' })
     },
     { prefix: '/v1' },
   )

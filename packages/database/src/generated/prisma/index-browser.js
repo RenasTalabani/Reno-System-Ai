@@ -8058,6 +8058,323 @@ exports.Prisma.EtlJobScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LegalCaseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  caseNumber: 'caseNumber',
+  title: 'title',
+  type: 'type',
+  status: 'status',
+  clientName: 'clientName',
+  assignedTo: 'assignedTo',
+  priority: 'priority',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LegalTimesheetScalarFieldEnum = {
+  id: 'id',
+  caseId: 'caseId',
+  lawyerId: 'lawyerId',
+  description: 'description',
+  hours: 'hours',
+  ratePerHour: 'ratePerHour',
+  billedAt: 'billedAt',
+  isBillable: 'isBillable',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.Lms2CourseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  level: 'level',
+  status: 'status',
+  authorId: 'authorId',
+  thumbnailUrl: 'thumbnailUrl',
+  durationMins: 'durationMins',
+  price: 'price',
+  isPublic: 'isPublic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.Lms2ModuleScalarFieldEnum = {
+  id: 'id',
+  courseId: 'courseId',
+  title: 'title',
+  order: 'order',
+  type: 'type',
+  contentUrl: 'contentUrl',
+  durationMins: 'durationMins',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.Lms2EnrollmentScalarFieldEnum = {
+  id: 'id',
+  courseId: 'courseId',
+  learnerId: 'learnerId',
+  status: 'status',
+  progress: 'progress',
+  completedAt: 'completedAt',
+  score: 'score',
+  enrolledAt: 'enrolledAt'
+};
+
+exports.Prisma.HcPatientScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  dob: 'dob',
+  gender: 'gender',
+  email: 'email',
+  phone: 'phone',
+  bloodType: 'bloodType',
+  allergies: 'allergies',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HcAppointmentScalarFieldEnum = {
+  id: 'id',
+  patientId: 'patientId',
+  providerId: 'providerId',
+  type: 'type',
+  scheduledAt: 'scheduledAt',
+  durationMins: 'durationMins',
+  status: 'status',
+  notes: 'notes',
+  checkedInAt: 'checkedInAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PosOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  tableNumber: 'tableNumber',
+  type: 'type',
+  status: 'status',
+  subtotal: 'subtotal',
+  tax: 'tax',
+  tip: 'tip',
+  total: 'total',
+  cashierId: 'cashierId',
+  paidAt: 'paidAt',
+  paymentMethod: 'paymentMethod',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PosOrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  name: 'name',
+  sku: 'sku',
+  qty: 'qty',
+  unitPrice: 'unitPrice',
+  total: 'total',
+  notes: 'notes'
+};
+
+exports.Prisma.RetailStoreScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  address: 'address',
+  phone: 'phone',
+  managerId: 'managerId',
+  isActive: 'isActive',
+  openTime: 'openTime',
+  closeTime: 'closeTime',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RetailRegisterScalarFieldEnum = {
+  id: 'id',
+  storeId: 'storeId',
+  name: 'name',
+  status: 'status',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt',
+  openingBalance: 'openingBalance',
+  closingBalance: 'closingBalance'
+};
+
+exports.Prisma.PrintJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  type: 'type',
+  format: 'format',
+  quantity: 'quantity',
+  status: 'status',
+  cost: 'cost',
+  vendorId: 'vendorId',
+  submittedBy: 'submittedBy',
+  dueDate: 'dueDate',
+  deliveredAt: 'deliveredAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PrintAssetScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  name: 'name',
+  storageKey: 'storageKey',
+  mimeType: 'mimeType',
+  version: 'version',
+  isApproved: 'isApproved',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FranchiseeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  ownerId: 'ownerId',
+  territory: 'territory',
+  openedDate: 'openedDate',
+  status: 'status',
+  royaltyRate: 'royaltyRate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FranchiseRoyaltyScalarFieldEnum = {
+  id: 'id',
+  franchiseeId: 'franchiseeId',
+  period: 'period',
+  grossSales: 'grossSales',
+  royaltyAmount: 'royaltyAmount',
+  paidAt: 'paidAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FranchiseInspectionScalarFieldEnum = {
+  id: 'id',
+  franchiseeId: 'franchiseeId',
+  inspectorId: 'inspectorId',
+  score: 'score',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.NpDonorScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  phone: 'phone',
+  type: 'type',
+  status: 'status',
+  totalGiven: 'totalGiven',
+  firstGiftAt: 'firstGiftAt',
+  lastGiftAt: 'lastGiftAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NpDonationScalarFieldEnum = {
+  id: 'id',
+  donorId: 'donorId',
+  campaignId: 'campaignId',
+  amount: 'amount',
+  currency: 'currency',
+  channel: 'channel',
+  isRecurring: 'isRecurring',
+  receivedAt: 'receivedAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RdProjectScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  type: 'type',
+  status: 'status',
+  leadId: 'leadId',
+  budget: 'budget',
+  spentBudget: 'spentBudget',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  abstract: 'abstract',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RdExperimentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  name: 'name',
+  hypothesis: 'hypothesis',
+  methodology: 'methodology',
+  status: 'status',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  results: 'results',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RdPublicationScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  title: 'title',
+  journal: 'journal',
+  authors: 'authors',
+  doi: 'doi',
+  publishedAt: 'publishedAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.Rpt3TemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  query: 'query',
+  parameters: 'parameters',
+  schedule: 'schedule',
+  recipients: 'recipients',
+  isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.Rpt3RunScalarFieldEnum = {
+  id: 'id',
+  templateId: 'templateId',
+  status: 'status',
+  rowCount: 'rowCount',
+  sizeBytes: 'sizeBytes',
+  storageKey: 'storageKey',
+  errorMsg: 'errorMsg',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -8552,7 +8869,30 @@ exports.Prisma.ModelName = {
   ChatChannel: 'ChatChannel',
   ChatMessage: 'ChatMessage',
   EtlConnector: 'EtlConnector',
-  EtlJob: 'EtlJob'
+  EtlJob: 'EtlJob',
+  LegalCase: 'LegalCase',
+  LegalTimesheet: 'LegalTimesheet',
+  Lms2Course: 'Lms2Course',
+  Lms2Module: 'Lms2Module',
+  Lms2Enrollment: 'Lms2Enrollment',
+  HcPatient: 'HcPatient',
+  HcAppointment: 'HcAppointment',
+  PosOrder: 'PosOrder',
+  PosOrderItem: 'PosOrderItem',
+  RetailStore: 'RetailStore',
+  RetailRegister: 'RetailRegister',
+  PrintJob: 'PrintJob',
+  PrintAsset: 'PrintAsset',
+  Franchisee: 'Franchisee',
+  FranchiseRoyalty: 'FranchiseRoyalty',
+  FranchiseInspection: 'FranchiseInspection',
+  NpDonor: 'NpDonor',
+  NpDonation: 'NpDonation',
+  RdProject: 'RdProject',
+  RdExperiment: 'RdExperiment',
+  RdPublication: 'RdPublication',
+  Rpt3Template: 'Rpt3Template',
+  Rpt3Run: 'Rpt3Run'
 };
 
 /**
