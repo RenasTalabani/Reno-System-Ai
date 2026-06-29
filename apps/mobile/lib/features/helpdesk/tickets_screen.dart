@@ -9,14 +9,14 @@ import '../../shared/widgets/reno_app_bar.dart';
 final _ticketsProvider = FutureProvider.family<List<dynamic>, String>((ref, status) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  return await cache.getOrFetch('tickets_$status', () async {
+  return await cache.getOrFetch<List<dynamic>>(key: 'tickets_$status', fetch: () async {
     final r = await client.get('/v1/helpdesk/tickets', queryParameters: {
       if (status != 'all') 'status': status,
       'limit': 50,
     });
     final d = r.data;
-    return (d is List) ? d : (d is Map ? (d['data'] as List? ?? []) : []);
-  }, ttlSeconds: 60);
+    return (d is List) ? d : (d is Map ? (d['data'] as List<dynamic>? ?? []) : []);
+  }, ttlSeconds: 60) ?? [];
 });
 
 class TicketsScreen extends ConsumerStatefulWidget {

@@ -10,10 +10,10 @@ import '../../shared/widgets/loading_widget.dart' show StatusBadge;
 final _customerPortalProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  return await cache.getOrFetch('customer_portal_dashboard', () async {
+  return await cache.getOrFetch<Map<String, dynamic>>(key: 'customer_portal_dashboard', fetch: () async {
     final r = await client.get('/v1/portal/customer/dashboard');
-    return r.data ?? {};
-  });
+    return (r.data as Map<String, dynamic>?) ?? {};
+  }) ?? {};
 });
 
 class CustomerPortalScreen extends ConsumerWidget {

@@ -11,7 +11,7 @@ class TenantScreen extends ConsumerStatefulWidget {
 }
 
 class _TenantScreenState extends ConsumerState<TenantScreen> {
-  final _controller = TextEditingController(text: 'http://localhost:4000');
+  final _controller = TextEditingController(text: 'http://192.168.0.107:4000');
   bool _loading = false;
   String? _error;
 

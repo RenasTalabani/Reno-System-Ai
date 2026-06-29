@@ -117,7 +117,7 @@ class _BrainChatScreenState extends ConsumerState<BrainChatScreen> {
             controller: _scrollCtrl,
             padding: const EdgeInsets.all(12),
             itemCount: _messages.length,
-            itemBuilder: (_, i) => _BubbleRow(msg: _messages[i], userName: user?.name ?? 'You'),
+            itemBuilder: (_, i) => _BubbleRow(msg: _messages[i], userName: user?.fullName ?? 'You'),
           ),
         ),
         _InputBar(controller: _msgCtrl, sending: _sending, onSend: _send),

@@ -8,7 +8,7 @@ import '../../shared/widgets/reno_app_bar.dart';
 final _leaveRequestsProvider = FutureProvider<List<dynamic>>((ref) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  final list = await cache.getOrFetch('my_leave_requests', () async {
+  final list = await cache.getOrFetch(key: 'my_leave_requests', fetch: () async {
     final r = await client.get('/v1/portal/employee/leave/my-requests');
     return r.data ?? [];
   });

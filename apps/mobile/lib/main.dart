@@ -14,40 +14,40 @@ const _apiBase = String.fromEnvironment(
 );
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Global Flutter error handler (UI thread errors)
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    CrashReporter.reportError(
-      details.exception,
-      details.stack,
-      context: details.context?.toDescription() ?? 'flutter_framework',
-      fatal: false,
-    );
-  };
-
-  // Lock orientation to portrait on phones
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
-  // Init offline cache
-  await Hive.initFlutter();
-  await Hive.openBox('cache');
-  await Hive.openBox('settings');
-  await Hive.openBox('messages');
-
-  // Init local notifications
-  await PushService.init();
-
-  // Init crash reporter
-  await CrashReporter.init(_apiBase);
-
-  // Wrap entire app in runZonedGuarded to catch async errors
+  // runZonedGuarded must wrap ensureInitialized AND runApp in the same zone
   runZonedGuarded(
-    () {
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      // Global Flutter error handler (UI thread errors)
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+        CrashReporter.reportError(
+          details.exception,
+          details.stack,
+          context: details.context?.toDescription() ?? 'flutter_framework',
+          fatal: false,
+        );
+      };
+
+      // Lock orientation to portrait on phones
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+
+      // Init offline cache
+      await Hive.initFlutter();
+      await Hive.openBox('cache');
+      await Hive.openBox('settings');
+      await Hive.openBox('messages');
+
+      // Init local notifications
+      await PushService.init();
+
+      // Init crash reporter
+      await CrashReporter.init(_apiBase);
+
       runApp(
         const ProviderScope(
           child: RenoApp(),

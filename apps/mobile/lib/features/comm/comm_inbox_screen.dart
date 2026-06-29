@@ -9,10 +9,10 @@ import '../../shared/widgets/reno_app_bar.dart';
 final _commDashboardProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  return await cache.getOrFetch('comm_dashboard', () async {
+  return await cache.getOrFetch<Map<String, dynamic>>(key: 'comm_dashboard', fetch: () async {
     final r = await client.get('/v1/comm/dashboard');
-    return r.data ?? {};
-  }, ttlSeconds: 60);
+    return (r.data as Map<String, dynamic>?) ?? {};
+  }, ttlSeconds: 60) ?? {};
 });
 
 class CommInboxScreen extends ConsumerStatefulWidget {

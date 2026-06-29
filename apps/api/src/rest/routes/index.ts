@@ -59,6 +59,14 @@ import { complianceModuleRoutes } from './compliance/index.js'
 import { csModuleRoutes } from './customer-success/index.js'
 import { apiGatewayModuleRoutes } from './api-gateway/index.js'
 import { evsModuleRoutes } from './event-sourcing/index.js'
+import { billingModuleRoutes } from './billing/index.js'
+import { reportingModuleRoutes } from './reporting/index.js'
+import { scmModuleRoutes } from './supply-chain/index.js'
+import { qmsModuleRoutes } from './qms/index.js'
+import { ppmModuleRoutes } from './ppm/index.js'
+import { secAdvModuleRoutes } from './security-adv/index.js'
+import { appStoreModuleRoutes } from './app-store/index.js'
+import { aiStudioModuleRoutes } from './ai-studio/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -124,6 +132,14 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(csModuleRoutes, { prefix: '/customer-success' })
       await v1.register(apiGatewayModuleRoutes, { prefix: '/api-gateway' })
       await v1.register(evsModuleRoutes, { prefix: '/evs' })
+      await v1.register(billingModuleRoutes, { prefix: '/billing' })
+      await v1.register(reportingModuleRoutes, { prefix: '/reporting' })
+      await v1.register(scmModuleRoutes, { prefix: '/scm' })
+      await v1.register(qmsModuleRoutes, { prefix: '/qms' })
+      await v1.register(ppmModuleRoutes, { prefix: '/ppm' })
+      await v1.register(secAdvModuleRoutes, { prefix: '/security-adv' })
+      await v1.register(appStoreModuleRoutes, { prefix: '/app-store' })
+      await v1.register(aiStudioModuleRoutes, { prefix: '/ai-studio' })
     },
     { prefix: '/v1' },
   )

@@ -11,10 +11,10 @@ import '../../shared/widgets/reno_app_bar.dart';
 final _dashboardProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  return await cache.getOrFetch('dashboard_summary', () async {
+  return await cache.getOrFetch<Map<String, dynamic>>(key: 'dashboard_summary', fetch: () async {
     final r = await client.get('/v1/dashboard/summary');
-    return r.data ?? {};
-  });
+    return (r.data as Map<String, dynamic>?) ?? {};
+  }) ?? {};
 });
 
 class DashboardScreen extends ConsumerWidget {
@@ -69,7 +69,7 @@ class DashboardScreen extends ConsumerWidget {
       child: SafeArea(
         child: Column(children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Color(branding.primaryColor)),
+            decoration: BoxDecoration(color: branding.primaryColor),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -141,7 +141,7 @@ class _WelcomeCard extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('$greeting,', style: const TextStyle(color: Colors.white, fontSize: 14)),
-        Text(user?.name ?? 'User', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(user?.fullName ?? 'User', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(user?.role ?? '', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
       ]),

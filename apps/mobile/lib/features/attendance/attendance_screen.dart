@@ -8,10 +8,10 @@ import '../../shared/widgets/reno_app_bar.dart';
 final _attendanceSummaryProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  return await cache.getOrFetch('attendance_summary', () async {
+  return await cache.getOrFetch<Map<String, dynamic>>(key: 'attendance_summary', fetch: () async {
     final r = await client.get('/v1/hr/attendance/my-summary');
-    return r.data ?? {};
-  }, ttlSeconds: 120);
+    return (r.data as Map<String, dynamic>?) ?? {};
+  }, ttlSeconds: 120) ?? {};
 });
 
 final _attendanceLogsProvider = FutureProvider<List<dynamic>>((ref) async {

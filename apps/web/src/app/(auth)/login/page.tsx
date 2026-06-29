@@ -25,11 +25,18 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginForm>({
     resolver: zodResolver(LoginSchema),
-    defaultValues: { tenantSlug: 'demo' },
+    defaultValues: { tenantSlug: 'demo', email: '', password: '' },
   })
+
+  const fillDemo = () => {
+    setValue('tenantSlug', 'demo', { shouldValidate: true })
+    setValue('email', 'admin@demo.com', { shouldValidate: true })
+    setValue('password', 'Demo@123456', { shouldValidate: true })
+  }
 
   const onSubmit = async (data: LoginForm) => {
     try {
@@ -97,7 +104,7 @@ export default function LoginPage() {
                 {...register('email')}
                 type="email"
                 placeholder="admin@company.com"
-                autoComplete="email"
+                autoComplete="off"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
               />
               {errors.email && (
@@ -151,12 +158,18 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo credentials hint */}
-          <div className="mt-6 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
+          {/* Demo credentials — click to fill */}
+          <button
+            type="button"
+            onClick={fillDemo}
+            className="mt-6 w-full p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/20 transition-colors cursor-pointer"
+          >
             <p className="text-xs text-indigo-300 text-center">
-              <strong>Demo:</strong> admin@demo.com / Demo@123456 / workspace: demo
+              <strong>Click to fill demo credentials</strong>
+              <br />
+              <span className="opacity-75">admin@demo.com · Demo@123456 · workspace: demo</span>
             </p>
-          </div>
+          </button>
         </div>
 
         <p className="text-center text-slate-500 text-xs mt-6">

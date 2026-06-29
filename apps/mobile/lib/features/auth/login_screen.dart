@@ -14,6 +14,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _slugCtrl = TextEditingController(text: 'demo');
   bool _loading = false;
   bool _obscure = true;
   String? _error;
@@ -22,6 +23,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _slugCtrl.dispose();
     super.dispose();
   }
 
@@ -29,8 +31,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_emailCtrl.text.trim().isEmpty || _passCtrl.text.isEmpty) return;
     setState(() { _loading = true; _error = null; });
 
+    final slug = _slugCtrl.text.trim().isEmpty ? 'demo' : _slugCtrl.text.trim();
     final authService = ref.read(authServiceProvider);
-    final err = await authService.login(_emailCtrl.text.trim(), _passCtrl.text);
+    final err = await authService.loginWithSlug(_emailCtrl.text.trim(), _passCtrl.text, slug);
 
     if (!mounted) return;
     setState(() => _loading = false);
@@ -60,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
-                    color: Color(branding.primaryColor),
+                    color: branding.primaryColor,
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: const Icon(Icons.business_rounded, color: Colors.white, size: 40),
@@ -75,7 +78,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               Center(
                 child: Text(
-                  branding.tenantName,
+                  branding.tenantName ?? '',
                   style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
               ),
@@ -84,6 +87,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 4),
               Text('Welcome back', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey)),
               const SizedBox(height: 24),
+              TextField(
+                controller: _slugCtrl,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  labelText: 'Workspace',
+                  hintText: 'demo',
+                  prefixIcon: Icon(Icons.domain_outlined),
+                ),
+                onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              ),
+              const SizedBox(height: 16),
               TextField(
                 controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,

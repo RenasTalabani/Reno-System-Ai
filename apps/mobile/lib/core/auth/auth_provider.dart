@@ -84,8 +84,8 @@ class AuthService {
     _client.setBaseUrl(baseUrl);
 
     // Verify the API is reachable
-    final res = await _client.get('/v1/auth/health');
-    if (!res.success && res.error?.contains('Server error') == false) {
+    final res = await _client.get('/health');
+    if (res.error?.contains('Cannot connect') == true || res.error?.contains('timed out') == true) {
       return 'Cannot reach server at $baseUrl';
     }
 
@@ -94,6 +94,12 @@ class AuthService {
   }
 
   Future<String?> login(String email, String password) async {
+    final rawSlug = await _storage.getTenantSlug();
+    final tenantSlug = (rawSlug == null || rawSlug.startsWith('http')) ? 'demo' : rawSlug;
+    return loginWithSlug(email, password, tenantSlug);
+  }
+
+  Future<String?> loginWithSlug(String email, String password, String tenantSlug) async {
     final baseUrl = await _storage.getBaseUrl();
     if (baseUrl == null) return 'No server configured';
     _client.setBaseUrl(baseUrl);
@@ -101,14 +107,15 @@ class AuthService {
     final res = await _client.post('/v1/auth/login', data: {
       'email': email,
       'password': password,
+      'tenantSlug': tenantSlug,
     });
 
     if (!res.success) return res.error ?? 'Login failed';
 
     final data = res.data as Map<String, dynamic>;
-    final accessToken = data['data']?['accessToken'] as String?;
-    final refreshToken = data['data']?['refreshToken'] as String?;
-    final user = data['data']?['user'] as Map<String, dynamic>?;
+    final accessToken = data['accessToken'] as String?;
+    final refreshToken = data['refreshToken'] as String?;
+    final user = data['user'] as Map<String, dynamic>?;
 
     if (accessToken == null || user == null) return 'Invalid server response';
 

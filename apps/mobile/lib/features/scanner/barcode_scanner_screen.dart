@@ -42,6 +42,15 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
     }
   }
 
+  Widget _InfoRow(String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 3),
+    child: Row(children: [
+      Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+      const SizedBox(width: 8),
+      Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13))),
+    ]),
+  );
+
   void _showResultSheet(BuildContext context, String code, dynamic data) {
     showModalBottomSheet(
       context: context,

@@ -510,9 +510,9 @@ async function main() {
 
   // Default shifts
   const shiftDefs = [
-    { name: 'Morning Shift', code: 'MORNING', startTime: '08:00', endTime: '16:00', breakDuration: 60, workDays: ['mon', 'tue', 'wed', 'thu', 'fri'], overnightShift: false, color: '#6366f1' },
-    { name: 'Evening Shift', code: 'EVENING', startTime: '16:00', endTime: '00:00', breakDuration: 60, workDays: ['mon', 'tue', 'wed', 'thu', 'fri'], overnightShift: false, color: '#8b5cf6' },
-    { name: 'Night Shift', code: 'NIGHT', startTime: '00:00', endTime: '08:00', breakDuration: 60, workDays: ['mon', 'tue', 'wed', 'thu', 'fri'], overnightShift: true, color: '#1e293b' },
+    { name: 'Morning Shift', code: 'MORNING', startTime: '08:00', endTime: '16:00', workingHours: 8, breakMinutes: 60, workDays: [1, 2, 3, 4, 5], color: '#6366f1' },
+    { name: 'Evening Shift', code: 'EVENING', startTime: '16:00', endTime: '00:00', workingHours: 8, breakMinutes: 60, workDays: [1, 2, 3, 4, 5], color: '#8b5cf6' },
+    { name: 'Night Shift', code: 'NIGHT', startTime: '00:00', endTime: '08:00', workingHours: 8, breakMinutes: 60, workDays: [1, 2, 3, 4, 5], color: '#1e293b' },
   ]
 
   for (const s of shiftDefs) {
@@ -902,21 +902,21 @@ async function main() {
       code: 'SUP-0001', name: 'Global Materials Co.', legalName: 'Global Materials Corporation Ltd.',
       categoryId: createdCategories['RAW'],
       taxId: 'TX-001-2024', email: 'procurement@globalmaterials.com', phone: '+1-555-100-0001',
-      city: 'Chicago', country: 'US', currency: 'USD', paymentTerms: 'Net 30',
+      city: 'Chicago', country: 'US', currency: 'USD', paymentTerms: 30,
       leadTimeDays: 14, status: 'active',
     },
     {
       code: 'SUP-0002', name: 'TechParts Inc.', legalName: 'TechParts Incorporated',
       categoryId: createdCategories['IT'],
       taxId: 'TX-002-2024', email: 'sales@techparts.com', phone: '+1-555-200-0002',
-      city: 'San Jose', country: 'US', currency: 'USD', paymentTerms: 'Net 45',
+      city: 'San Jose', country: 'US', currency: 'USD', paymentTerms: 45,
       leadTimeDays: 7, status: 'active',
     },
     {
       code: 'SUP-0003', name: 'OfficeWorld GmbH', legalName: 'OfficeWorld GmbH',
       categoryId: createdCategories['OFF'],
       taxId: 'DE-003-2024', email: 'orders@officeworld.de', phone: '+49-555-300-0003',
-      city: 'Berlin', country: 'DE', currency: 'EUR', paymentTerms: 'Net 30',
+      city: 'Berlin', country: 'DE', currency: 'EUR', paymentTerms: 30,
       leadTimeDays: 5, status: 'active',
     },
   ]
@@ -1259,11 +1259,13 @@ async function main() {
   for (const agent of systemAgentDefs) {
     const existing = await prisma.brainAgent.findFirst({ where: { slug: agent.slug, isSystem: true } })
     if (!existing) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { canSuggestActions, canExecuteActions, riskLevel, ...agentData } = agent as any
       await prisma.brainAgent.create({
         data: {
           tenantId: null,
           isSystem: true,
-          ...agent,
+          ...agentData,
         },
       })
     }
@@ -1351,7 +1353,7 @@ async function main() {
   }
 
   // System workflow templates
-  const systemTemplates = [
+  const workflowTemplates = [
     {
       name: 'Welcome New Employee',
       description: 'Automatically notify HR team and create onboarding tasks when a new employee is added',
@@ -1616,7 +1618,7 @@ async function main() {
     },
   ]
 
-  for (const tpl of systemTemplates) {
+  for (const tpl of workflowTemplates) {
     const existing = await prisma.autoTemplate.findFirst({ where: { name: tpl.name, isSystem: true } })
     if (!existing) {
       await prisma.autoTemplate.create({
@@ -1630,7 +1632,7 @@ async function main() {
     }
   }
 
-  console.log(`   → Seeded 14 automation permissions and ${systemTemplates.length} system workflow templates`)
+  console.log(`   → Seeded 14 automation permissions and ${workflowTemplates.length} system workflow templates`)
 
   // ============================================================
   // Section 24 — Documents / Knowledge Center
@@ -1638,27 +1640,27 @@ async function main() {
   console.log('📄 Section 24: Documents / Knowledge Center...')
 
   const docPermissions = [
-    { name: 'docs:view', displayName: 'View Documents', module: 'documents', action: 'view', resource: 'docs' },
-    { name: 'docs:upload', displayName: 'Upload Files', module: 'documents', action: 'create', resource: 'docs' },
-    { name: 'docs:edit', displayName: 'Edit Documents', module: 'documents', action: 'update', resource: 'docs' },
-    { name: 'docs:delete', displayName: 'Delete Documents', module: 'documents', action: 'delete', resource: 'docs' },
-    { name: 'docs:download', displayName: 'Download Files', module: 'documents', action: 'read', resource: 'docs' },
-    { name: 'docs:approve', displayName: 'Approve Documents', module: 'documents', action: 'approve', resource: 'docs' },
-    { name: 'docs:folders:manage', displayName: 'Manage Folders', module: 'documents', action: 'manage', resource: 'doc_folders' },
-    { name: 'docs:templates:manage', displayName: 'Manage Templates', module: 'documents', action: 'manage', resource: 'doc_templates' },
-    { name: 'kb:view', displayName: 'View Knowledge Base', module: 'knowledge', action: 'view', resource: 'kb' },
-    { name: 'kb:write', displayName: 'Write Articles', module: 'knowledge', action: 'create', resource: 'kb' },
-    { name: 'kb:edit', displayName: 'Edit Articles', module: 'knowledge', action: 'update', resource: 'kb' },
-    { name: 'kb:delete', displayName: 'Delete Articles', module: 'knowledge', action: 'delete', resource: 'kb' },
-    { name: 'kb:publish', displayName: 'Publish Articles', module: 'knowledge', action: 'publish', resource: 'kb' },
-    { name: 'kb:categories:manage', displayName: 'Manage KB Categories', module: 'knowledge', action: 'manage', resource: 'kb_categories' },
+    { module: 'documents', resource: 'docs', action: 'view', scope: 'company' },
+    { module: 'documents', resource: 'docs', action: 'create', scope: 'company' },
+    { module: 'documents', resource: 'docs', action: 'update', scope: 'company' },
+    { module: 'documents', resource: 'docs', action: 'delete', scope: 'company' },
+    { module: 'documents', resource: 'docs', action: 'read', scope: 'company' },
+    { module: 'documents', resource: 'docs', action: 'approve', scope: 'company' },
+    { module: 'documents', resource: 'doc_folders', action: 'manage', scope: 'company' },
+    { module: 'documents', resource: 'doc_templates', action: 'manage', scope: 'company' },
+    { module: 'knowledge', resource: 'kb', action: 'view', scope: 'company' },
+    { module: 'knowledge', resource: 'kb', action: 'create', scope: 'company' },
+    { module: 'knowledge', resource: 'kb', action: 'update', scope: 'company' },
+    { module: 'knowledge', resource: 'kb', action: 'delete', scope: 'company' },
+    { module: 'knowledge', resource: 'kb', action: 'publish', scope: 'company' },
+    { module: 'knowledge', resource: 'kb_categories', action: 'manage', scope: 'company' },
   ]
 
   for (const perm of docPermissions) {
     await prisma.corePermission.upsert({
-      where: { name: perm.name },
+      where: { module_resource_action_scope: perm },
       update: {},
-      create: { ...perm, description: perm.displayName },
+      create: perm,
     })
   }
 
@@ -1672,16 +1674,16 @@ async function main() {
     { name: 'Operations', slug: 'operations', description: 'Operational guides and SOPs', icon: 'Settings', color: '#8b5cf6' },
   ]
 
-  const createdCategories: Record<string, string> = {}
+  const kbCreatedCats: Record<string, string> = {}
   for (const cat of kbCategories) {
     const existing = await prisma.kbCategory.findFirst({ where: { tenantId: tenant.id, slug: cat.slug } })
     if (!existing) {
       const created = await prisma.kbCategory.create({
         data: { tenantId: tenant.id, ...cat, createdBy: adminUser.id },
       })
-      createdCategories[cat.slug] = created.id
+      kbCreatedCats[cat.slug] = created.id
     } else {
-      createdCategories[cat.slug] = existing.id
+      kbCreatedCats[cat.slug] = existing.id
     }
   }
 
@@ -1790,7 +1792,7 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
   ]
 
   for (const art of sampleArticles) {
-    const catId = createdCategories[art.categorySlug]
+    const catId = kbCreatedCats[art.categorySlug]
     const existing = await prisma.kbArticle.findFirst({ where: { tenantId: tenant.id, slug: art.slug } })
     if (!existing) {
       const { categorySlug, ...articleData } = art
@@ -1843,11 +1845,11 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
   // -------------------------------------------------------------------------
   console.log('   → Seeding portal branding + permissions...')
 
-  const existingPortalBranding = await prisma.portalBranding.findUnique({ where: { tenantId: demoTenant.id } })
+  const existingPortalBranding = await prisma.portalBranding.findUnique({ where: { tenantId: tenant.id } })
   if (!existingPortalBranding) {
     await prisma.portalBranding.create({
       data: {
-        tenantId: demoTenant.id,
+        tenantId: tenant.id,
         portalName: `${tenantName} Portal`,
         primaryColor: '#6366f1',
         secondaryColor: '#8b5cf6',
@@ -1859,59 +1861,48 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
         customerPortalEnabled: true,
         supplierPortalEnabled: true,
         partnerPortalEnabled: false,
-        createdBy: adminUser.id,
-        updatedBy: adminUser.id,
       },
     })
   }
 
+  // Portal permissions — employee, customer, supplier portal modules
   const portalPermDefs = [
-    // Employee portal permissions
-    { module: 'portal', resource: 'employee_leave', action: 'read', scope: 'own' },
-    { module: 'portal', resource: 'employee_leave', action: 'create', scope: 'own' },
-    { module: 'portal', resource: 'employee_leave', action: 'delete', scope: 'own' },
-    { module: 'portal', resource: 'employee_payslips', action: 'read', scope: 'own' },
-    { module: 'portal', resource: 'employee_documents', action: 'read', scope: 'own' },
-    // Customer portal permissions
-    { module: 'portal', resource: 'customer_invoices', action: 'read', scope: 'own' },
-    { module: 'portal', resource: 'customer_orders', action: 'read', scope: 'own' },
-    // Supplier portal permissions
-    { module: 'portal', resource: 'supplier_orders', action: 'read', scope: 'own' },
-    { module: 'portal', resource: 'supplier_rfqs', action: 'read', scope: 'own' },
-    // Shared portal permissions
-    { module: 'portal', resource: 'tickets', action: 'read', scope: 'own' },
-    { module: 'portal', resource: 'tickets', action: 'create', scope: 'own' },
-    { module: 'portal', resource: 'notifications', action: 'read', scope: 'own' },
-    { module: 'portal', resource: 'notifications', action: 'update', scope: 'own' },
-    // Admin permissions
-    { module: 'portal', resource: 'branding', action: 'manage', scope: 'company' },
-    { module: 'portal', resource: 'users', action: 'manage', scope: 'company' },
+    { portalType: 'employee', module: 'leave', canView: true, canCreate: true },
+    { portalType: 'employee', module: 'payslips', canView: true, canDownload: true },
+    { portalType: 'employee', module: 'documents', canView: true, canDownload: true },
+    { portalType: 'employee', module: 'attendance', canView: true },
+    { portalType: 'customer', module: 'invoices', canView: true, canDownload: true },
+    { portalType: 'customer', module: 'orders', canView: true },
+    { portalType: 'customer', module: 'tickets', canView: true, canCreate: true },
+    { portalType: 'supplier', module: 'orders', canView: true },
+    { portalType: 'supplier', module: 'rfqs', canView: true },
   ]
 
   for (const perm of portalPermDefs) {
-    const existing = await prisma.sysPermission.findFirst({
-      where: { module: perm.module, resource: perm.resource, action: perm.action, scope: perm.scope },
+    const existing = await prisma.portalPermission.findFirst({
+      where: { tenantId: null, portalType: perm.portalType, module: perm.module, isSystem: true },
     })
     if (!existing) {
-      await prisma.sysPermission.create({ data: perm })
+      await prisma.portalPermission.create({
+        data: { tenantId: null, isSystem: true, ...perm },
+      })
     }
   }
 
   // Sample portal user mapping: admin user → employee portal
   const existingPortalUser = await prisma.portalUser.findUnique({
-    where: { tenantId_userId: { tenantId: demoTenant.id, userId: adminUser.id } },
+    where: { tenantId_userId: { tenantId: tenant.id, userId: adminUser.id } },
   })
   if (!existingPortalUser) {
     await prisma.portalUser.create({
       data: {
-        tenantId: demoTenant.id,
+        tenantId: tenant.id,
         userId: adminUser.id,
         portalType: 'employee',
         entityType: 'hr_employee',
         entityId: adminUser.id,
         isActive: true,
         createdBy: adminUser.id,
-        updatedBy: adminUser.id,
       },
     })
   }
@@ -1932,16 +1923,16 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
   ]
 
   for (const sla of slaDefs) {
-    const existing = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: demoTenant.id, priority: sla.priority } })
+    const existing = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: tenant.id, priority: sla.priority } })
     if (!existing) {
       await prisma.sdSlaPolicy.create({
-        data: { tenantId: demoTenant.id, ...sla, businessHoursOnly: true, createdBy: adminUser.id },
+        data: { tenantId: tenant.id, ...sla, businessHoursOnly: true, createdBy: adminUser.id },
       })
     }
   }
 
   // Categories
-  const catDefs = [
+  const sdCatDefs = [
     { name: 'Technical Support', description: 'Hardware and software issues', icon: 'wrench', color: '#6366f1' },
     { name: 'Account & Access', description: 'Login, permissions and account management', icon: 'user-cog', color: '#8b5cf6' },
     { name: 'Billing & Finance', description: 'Invoices, payments and subscriptions', icon: 'credit-card', color: '#10b981' },
@@ -1952,24 +1943,24 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
     { name: 'General Inquiry', description: 'Other general questions', icon: 'message-square', color: '#6b7280' },
   ]
 
-  for (let i = 0; i < catDefs.length; i++) {
-    const cat = catDefs[i]!
-    const existing = await prisma.sdCategory.findFirst({ where: { tenantId: demoTenant.id, name: cat.name } })
+  for (let i = 0; i < sdCatDefs.length; i++) {
+    const cat = sdCatDefs[i]!
+    const existing = await prisma.sdCategory.findFirst({ where: { tenantId: tenant.id, name: cat.name } })
     if (!existing) {
       await prisma.sdCategory.create({
-        data: { tenantId: demoTenant.id, ...cat, sortOrder: i, createdBy: adminUser.id },
+        data: { tenantId: tenant.id, ...cat, sortOrder: i, createdBy: adminUser.id },
       })
     }
   }
 
   // Escalation rules
-  const criticalPolicy = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: demoTenant.id, priority: 'critical' } })
+  const criticalPolicy = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: tenant.id, priority: 'critical' } })
   if (criticalPolicy) {
-    const existingRule = await prisma.sdEscalationRule.findFirst({ where: { tenantId: demoTenant.id, slaPolicyId: criticalPolicy.id } })
+    const existingRule = await prisma.sdEscalationRule.findFirst({ where: { tenantId: tenant.id, slaPolicyId: criticalPolicy.id } })
     if (!existingRule) {
       await prisma.sdEscalationRule.create({
         data: {
-          tenantId: demoTenant.id, slaPolicyId: criticalPolicy.id,
+          tenantId: tenant.id, slaPolicyId: criticalPolicy.id,
           name: 'Critical SLA Breach Alert',
           triggerType: 'sla_breach', triggerMinutes: 120,
           priority: 'critical', action: 'notify',
@@ -1980,11 +1971,11 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
   }
 
   // Register admin as support agent
-  const existingAgent = await prisma.sdAgent.findFirst({ where: { tenantId: demoTenant.id, userId: adminUser.id } })
+  const existingAgent = await prisma.sdAgent.findFirst({ where: { tenantId: tenant.id, userId: adminUser.id } })
   if (!existingAgent) {
     await prisma.sdAgent.create({
       data: {
-        tenantId: demoTenant.id, userId: adminUser.id,
+        tenantId: tenant.id, userId: adminUser.id,
         displayName: 'Admin Agent',
         specializations: ['Technical Support', 'Account & Access'],
         maxTickets: 30, isAvailable: true, createdBy: adminUser.id,
@@ -1993,10 +1984,10 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
   }
 
   // Sample tickets
-  const techCat = await prisma.sdCategory.findFirst({ where: { tenantId: demoTenant.id, name: 'Technical Support' } })
-  const hrCat = await prisma.sdCategory.findFirst({ where: { tenantId: demoTenant.id, name: 'HR & Payroll' } })
-  const mediumPolicy = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: demoTenant.id, priority: 'medium' } })
-  const agentRecord = await prisma.sdAgent.findFirst({ where: { tenantId: demoTenant.id, userId: adminUser.id } })
+  const techCat = await prisma.sdCategory.findFirst({ where: { tenantId: tenant.id, name: 'Technical Support' } })
+  const hrCat = await prisma.sdCategory.findFirst({ where: { tenantId: tenant.id, name: 'HR & Payroll' } })
+  const mediumPolicy = await prisma.sdSlaPolicy.findFirst({ where: { tenantId: tenant.id, priority: 'medium' } })
+  const agentRecord = await prisma.sdAgent.findFirst({ where: { tenantId: tenant.id, userId: adminUser.id } })
 
   const sampleTickets = [
     { subject: 'Cannot login to the system', description: 'Getting error 401 when trying to login', priority: 'high', status: 'open', categoryId: techCat?.id },
@@ -2007,13 +1998,13 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
   ]
 
   for (const t of sampleTickets) {
-    const existing = await prisma.sdTicket.findFirst({ where: { tenantId: demoTenant.id, subject: t.subject } })
+    const existing = await prisma.sdTicket.findFirst({ where: { tenantId: tenant.id, subject: t.subject } })
     if (!existing) {
       const ts = Date.now().toString(36).toUpperCase()
       const rnd = Math.random().toString(36).substring(2, 5).toUpperCase()
       await prisma.sdTicket.create({
         data: {
-          tenantId: demoTenant.id,
+          tenantId: tenant.id,
           number: `TKT-${ts}-${rnd}`,
           source: 'internal',
           subject: t.subject, description: t.description,
@@ -2030,7 +2021,7 @@ All customer interactions MUST be logged in Reno CRM. This includes calls, email
     }
   }
 
-  console.log(`   → Seeded ${slaDefs.length} SLA policies, ${catDefs.length} categories, 1 escalation rule, 1 agent, ${sampleTickets.length} sample tickets`)
+  console.log(`   → Seeded ${slaDefs.length} SLA policies, ${sdCatDefs.length} categories, 1 escalation rule, 1 agent, ${sampleTickets.length} sample tickets`)
 
   // ---------------------------------------------------------------------------
   // Section 27 — Communication Suite

@@ -10,11 +10,11 @@ final _documentsProvider = FutureProvider.family<List<dynamic>, String>((ref, qu
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
   if (query.isEmpty) {
-    return await cache.getOrFetch('documents_recent', () async {
+    return await cache.getOrFetch<List<dynamic>>(key: 'documents_recent', fetch: () async {
       final r = await client.get('/v1/documents/articles', queryParameters: {'limit': 30, 'status': 'published'});
       final d = r.data;
-      return (d is List) ? d : (d is Map ? (d['data'] as List? ?? []) : []);
-    });
+      return (d is List) ? d : (d is Map ? (d['data'] as List<dynamic>? ?? []) : []);
+    }) ?? [];
   } else {
     final r = await client.get('/v1/documents/search', queryParameters: {'q': query, 'limit': 20});
     final d = r.data;
