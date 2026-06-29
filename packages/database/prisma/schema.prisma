@@ -232,6 +232,8 @@ model CoreTenant {
   cmpFrameworks            CmpFramework[]
   cmpRisks                 CmpRisk[]
   csAccounts               CsAccount[]
+  apiKeys                  ApigwApiKey[]
+  webhooks                 ApigwWebhook[]
 
   @@map("core_tenants")
 }
@@ -9112,4 +9114,62 @@ model CsSuccessPlan {
   account    CsAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
   @@index([accountId])
   @@map("cs_success_plans")
+}
+
+// ─── Phase 59: API Gateway & Developer Portal ─────────────────────────────────
+
+model ApigwApiKey {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(200)
+  keyPrefix   String    @map("key_prefix") @db.VarChar(10)
+  keyHash     String    @unique @map("key_hash") @db.VarChar(64)
+  status      String    @default("active") @db.VarChar(20)
+  scopes      Json      @default("[]") @db.JsonB
+  rateLimit   Int       @default(1000) @map("rate_limit")
+  rateWindow  String    @default("1h") @map("rate_window") @db.VarChar(10)
+  expiresAt   DateTime? @map("expires_at")
+  lastUsedAt  DateTime? @map("last_used_at")
+  totalCalls  BigInt    @default(0) @map("total_calls")
+  createdBy   String?   @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  usageLogs   ApigwUsageLog[]
+  @@index([tenantId, status])
+  @@map("apigw_api_keys")
+}
+
+model ApigwWebhook {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String    @db.VarChar(200)
+  url         String    @db.VarChar(500)
+  events      Json      @default("[]") @db.JsonB
+  status      String    @default("active") @db.VarChar(20)
+  secret      String?   @db.VarChar(64)
+  headers     Json      @default("{}") @db.JsonB
+  retryCount  Int       @default(3) @map("retry_count") @db.SmallInt
+  lastFired   DateTime? @map("last_fired")
+  lastStatus  Int?      @map("last_status") @db.SmallInt
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, status])
+  @@map("apigw_webhooks")
+}
+
+model ApigwUsageLog {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  keyId       String?   @map("key_id") @db.Uuid
+  method      String    @db.VarChar(10)
+  path        String    @db.VarChar(500)
+  statusCode  Int       @map("status_code") @db.SmallInt
+  durationMs  Int       @map("duration_ms")
+  ip          String?   @db.VarChar(45)
+  userAgent   String?   @map("user_agent") @db.VarChar(500)
+  occurredAt  DateTime  @default(now()) @map("occurred_at")
+  apiKey      ApigwApiKey? @relation(fields: [keyId], references: [id], onDelete: SetNull)
+  @@index([tenantId, occurredAt])
+  @@map("apigw_usage_logs")
 }
