@@ -274,6 +274,21 @@ model CoreTenant {
   riskItems          RiskItem[]
   sigRequests        SigRequest[]
 
+  attShifts        AttShift[]
+  attTimesheets    AttTimesheet[]
+  surSurveys       SurSurvey[]
+  pcCategories     PcCategory[]
+  pcProducts       PcProduct[]
+  expReports       ExpReport[]
+  atsJobs          AtsJob[]
+  atsCandidates    AtsCandidate[]
+  evtEvents        EvtEvent[]
+  ntfTemplates     NtfTemplate[]
+  ntfLogs          NtfLog[]
+  tskBoards        TskBoard[]
+  inv2Quotes       Inv2Quote[]
+  inv2PaymentLinks Inv2PaymentLink[]
+
   @@map("core_tenants")
 }
 
@@ -10361,4 +10376,561 @@ model SigSigner {
 
   @@index([requestId])
   @@map("sig_signers")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 81: TIME & ATTENDANCE
+// ───────────────────────────────────────────────────────────
+model AttShift {
+  id         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String         @map("tenant_id") @db.Uuid
+  name       String         @db.VarChar(100)
+  startTime  String         @map("start_time") @db.VarChar(5)
+  endTime    String         @map("end_time") @db.VarChar(5)
+  breakMins  Int            @default(0) @map("break_mins")
+  isActive   Boolean        @default(true) @map("is_active")
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  tenant     CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  timesheets AttTimesheet[]
+
+  @@index([tenantId])
+  @@map("att_shifts")
+}
+
+model AttTimesheet {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String          @map("tenant_id") @db.Uuid
+  employeeId   String          @map("employee_id") @db.Uuid
+  shiftId      String?         @map("shift_id") @db.Uuid
+  periodStart  DateTime        @map("period_start") @db.Date
+  periodEnd    DateTime        @map("period_end") @db.Date
+  totalHours   Decimal         @default(0) @map("total_hours") @db.Decimal(8, 2)
+  overtimeHrs  Decimal         @default(0) @map("overtime_hrs") @db.Decimal(8, 2)
+  status       String          @default("draft") @db.VarChar(20)
+  approvedBy   String?         @map("approved_by") @db.Uuid
+  approvedAt   DateTime?       @map("approved_at") @db.Timestamptz
+  notes        String?         @db.Text
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  shift        AttShift?       @relation(fields: [shiftId], references: [id])
+  clockEntries AttClockEntry[]
+
+  @@index([tenantId])
+  @@index([tenantId, employeeId])
+  @@map("att_timesheets")
+}
+
+model AttClockEntry {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  timesheetId String       @map("timesheet_id") @db.Uuid
+  clockIn     DateTime     @map("clock_in") @db.Timestamptz
+  clockOut    DateTime?    @map("clock_out") @db.Timestamptz
+  breakStart  DateTime?    @map("break_start") @db.Timestamptz
+  breakEnd    DateTime?    @map("break_end") @db.Timestamptz
+  location    String?      @db.VarChar(200)
+  note        String?      @db.VarChar(500)
+  timesheet   AttTimesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
+
+  @@index([timesheetId])
+  @@map("att_clock_entries")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 82: CUSTOMER SURVEYS & FEEDBACK
+// ───────────────────────────────────────────────────────────
+model SurSurvey {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String        @map("tenant_id") @db.Uuid
+  title       String        @db.VarChar(300)
+  description String?       @db.Text
+  status      String        @default("draft") @db.VarChar(20)
+  startsAt    DateTime?     @map("starts_at") @db.Timestamptz
+  endsAt      DateTime?     @map("ends_at") @db.Timestamptz
+  isAnonymous Boolean       @default(false) @map("is_anonymous")
+  createdBy   String        @map("created_by") @db.Uuid
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  questions   SurQuestion[]
+  responses   SurResponse[]
+
+  @@index([tenantId])
+  @@map("sur_surveys")
+}
+
+model SurQuestion {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  surveyId   String      @map("survey_id") @db.Uuid
+  text       String      @db.VarChar(1000)
+  type       String      @db.VarChar(30)
+  options    Json?
+  isRequired Boolean     @default(false) @map("is_required")
+  order      Int         @default(1)
+  survey     SurSurvey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answers    SurAnswer[]
+
+  @@index([surveyId])
+  @@map("sur_questions")
+}
+
+model SurResponse {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  surveyId     String      @map("survey_id") @db.Uuid
+  respondentId String?     @map("respondent_id") @db.Uuid
+  completedAt  DateTime?   @map("completed_at") @db.Timestamptz
+  metadata     Json?
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  survey       SurSurvey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answers      SurAnswer[]
+
+  @@index([surveyId])
+  @@map("sur_responses")
+}
+
+model SurAnswer {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  responseId String      @map("response_id") @db.Uuid
+  questionId String      @map("question_id") @db.Uuid
+  value      Json
+  response   SurResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question   SurQuestion @relation(fields: [questionId], references: [id])
+
+  @@index([responseId])
+  @@map("sur_answers")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 83: PRODUCT CATALOG
+// ───────────────────────────────────────────────────────────
+model PcCategory {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String      @map("tenant_id") @db.Uuid
+  name      String      @db.VarChar(200)
+  slug      String      @db.VarChar(200)
+  parentId  String?     @map("parent_id") @db.Uuid
+  sortOrder Int         @default(0) @map("sort_order")
+  isActive  Boolean     @default(true) @map("is_active")
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  tenant    CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  products  PcProduct[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("pc_categories")
+}
+
+model PcProduct {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String      @map("tenant_id") @db.Uuid
+  categoryId  String?     @map("category_id") @db.Uuid
+  sku         String      @db.VarChar(100)
+  name        String      @db.VarChar(500)
+  description String?     @db.Text
+  basePrice   Decimal     @map("base_price") @db.Decimal(18, 4)
+  currency    String      @default("USD") @db.VarChar(3)
+  taxRate     Decimal     @default(0) @map("tax_rate") @db.Decimal(5, 4)
+  unit        String?     @db.VarChar(30)
+  weight      Decimal?    @db.Decimal(10, 3)
+  isActive    Boolean     @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category    PcCategory? @relation(fields: [categoryId], references: [id])
+  variants    PcVariant[]
+
+  @@unique([tenantId, sku])
+  @@index([tenantId])
+  @@map("pc_products")
+}
+
+model PcVariant {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId  String    @map("product_id") @db.Uuid
+  sku        String    @db.VarChar(100)
+  name       String    @db.VarChar(300)
+  attributes Json?
+  price      Decimal?  @db.Decimal(18, 4)
+  stockQty   Int       @default(0) @map("stock_qty")
+  isActive   Boolean   @default(true) @map("is_active")
+  product    PcProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("pc_variants")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 84: EXPENSE MANAGEMENT
+// ───────────────────────────────────────────────────────────
+model ExpReport {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  employeeId  String     @map("employee_id") @db.Uuid
+  title       String     @db.VarChar(300)
+  period      String     @db.VarChar(20)
+  currency    String     @default("USD") @db.VarChar(3)
+  totalAmount Decimal    @default(0) @map("total_amount") @db.Decimal(18, 2)
+  status      String     @default("draft") @db.VarChar(20)
+  approvedBy  String?    @map("approved_by") @db.Uuid
+  approvedAt  DateTime?  @map("approved_at") @db.Timestamptz
+  paidAt      DateTime?  @map("paid_at") @db.Timestamptz
+  notes       String?    @db.Text
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  items       ExpItem[]
+
+  @@index([tenantId])
+  @@index([tenantId, employeeId])
+  @@map("exp_reports")
+}
+
+model ExpItem {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportId    String    @map("report_id") @db.Uuid
+  date        DateTime  @db.Date
+  category    String    @db.VarChar(100)
+  description String    @db.VarChar(500)
+  amount      Decimal   @db.Decimal(18, 2)
+  currency    String    @default("USD") @db.VarChar(3)
+  receiptUrl  String?   @map("receipt_url") @db.VarChar(1000)
+  isBillable  Boolean   @default(false) @map("is_billable")
+  report      ExpReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
+  @@map("exp_items")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 85: RECRUITMENT / ATS
+// ───────────────────────────────────────────────────────────
+model AtsJob {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String           @map("tenant_id") @db.Uuid
+  title        String           @db.VarChar(300)
+  department   String?          @db.VarChar(100)
+  location     String?          @db.VarChar(200)
+  type         String           @default("full_time") @db.VarChar(30)
+  description  String?          @db.Text
+  requirements String?          @db.Text
+  salaryMin    Decimal?         @map("salary_min") @db.Decimal(18, 2)
+  salaryMax    Decimal?         @map("salary_max") @db.Decimal(18, 2)
+  currency     String           @default("USD") @db.VarChar(3)
+  status       String           @default("draft") @db.VarChar(20)
+  publishedAt  DateTime?        @map("published_at") @db.Timestamptz
+  closesAt     DateTime?        @map("closes_at") @db.Timestamptz
+  createdBy    String           @map("created_by") @db.Uuid
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  applications AtsApplication[]
+
+  @@index([tenantId])
+  @@map("ats_jobs")
+}
+
+model AtsCandidate {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String           @map("tenant_id") @db.Uuid
+  firstName    String           @map("first_name") @db.VarChar(100)
+  lastName     String           @map("last_name") @db.VarChar(100)
+  email        String           @db.VarChar(300)
+  phone        String?          @db.VarChar(30)
+  resumeUrl    String?          @map("resume_url") @db.VarChar(1000)
+  linkedinUrl  String?          @map("linkedin_url") @db.VarChar(500)
+  source       String?          @db.VarChar(50)
+  tags         Json             @default("[]")
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  applications AtsApplication[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@map("ats_candidates")
+}
+
+model AtsApplication {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId       String         @map("job_id") @db.Uuid
+  candidateId String         @map("candidate_id") @db.Uuid
+  stage       String         @default("applied") @db.VarChar(50)
+  score       Int?
+  notes       String?        @db.Text
+  rejectedAt  DateTime?      @map("rejected_at") @db.Timestamptz
+  hiredAt     DateTime?      @map("hired_at") @db.Timestamptz
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  job         AtsJob         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate   AtsCandidate   @relation(fields: [candidateId], references: [id])
+  interviews  AtsInterview[]
+
+  @@index([jobId])
+  @@index([candidateId])
+  @@map("ats_applications")
+}
+
+model AtsInterview {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  applicationId String         @map("application_id") @db.Uuid
+  type          String         @db.VarChar(50)
+  scheduledAt   DateTime       @map("scheduled_at") @db.Timestamptz
+  durationMins  Int            @default(60) @map("duration_mins")
+  interviewers  Json           @default("[]")
+  location      String?        @db.VarChar(300)
+  meetingLink   String?        @map("meeting_link") @db.VarChar(500)
+  status        String         @default("scheduled") @db.VarChar(20)
+  feedback      String?        @db.Text
+  rating        Int?
+  application   AtsApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("ats_interviews")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 86: EVENT MANAGEMENT
+// ───────────────────────────────────────────────────────────
+model EvtEvent {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String            @map("tenant_id") @db.Uuid
+  title         String            @db.VarChar(300)
+  description   String?           @db.Text
+  location      String?           @db.VarChar(300)
+  isVirtual     Boolean           @default(false) @map("is_virtual")
+  meetingLink   String?           @map("meeting_link") @db.VarChar(500)
+  startsAt      DateTime          @map("starts_at") @db.Timestamptz
+  endsAt        DateTime          @map("ends_at") @db.Timestamptz
+  capacity      Int?
+  status        String            @default("draft") @db.VarChar(20)
+  createdBy     String            @map("created_by") @db.Uuid
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+  tenant        CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  ticketTypes   EvtTicketType[]
+  registrations EvtRegistration[]
+
+  @@index([tenantId])
+  @@map("evt_events")
+}
+
+model EvtTicketType {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId       String            @map("event_id") @db.Uuid
+  name          String            @db.VarChar(100)
+  price         Decimal           @default(0) @db.Decimal(18, 2)
+  currency      String            @default("USD") @db.VarChar(3)
+  quantity      Int?
+  soldCount     Int               @default(0) @map("sold_count")
+  isActive      Boolean           @default(true) @map("is_active")
+  event         EvtEvent          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  registrations EvtRegistration[]
+
+  @@index([eventId])
+  @@map("evt_ticket_types")
+}
+
+model EvtRegistration {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId       String         @map("event_id") @db.Uuid
+  ticketTypeId  String?        @map("ticket_type_id") @db.Uuid
+  attendeeName  String         @map("attendee_name") @db.VarChar(200)
+  attendeeEmail String         @map("attendee_email") @db.VarChar(300)
+  status        String         @default("registered") @db.VarChar(20)
+  checkedInAt   DateTime?      @map("checked_in_at") @db.Timestamptz
+  cancelledAt   DateTime?      @map("cancelled_at") @db.Timestamptz
+  notes         String?        @db.VarChar(500)
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  event         EvtEvent       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketType    EvtTicketType? @relation(fields: [ticketTypeId], references: [id])
+
+  @@index([eventId])
+  @@map("evt_registrations")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 87: NOTIFICATIONS HUB
+// ───────────────────────────────────────────────────────────
+model NtfTemplate {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  name      String     @db.VarChar(200)
+  channel   String     @db.VarChar(20)
+  subject   String?    @db.VarChar(500)
+  body      String     @db.Text
+  variables Json       @default("[]")
+  isActive  Boolean    @default(true) @map("is_active")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  logs      NtfLog[]
+
+  @@index([tenantId])
+  @@map("ntf_templates")
+}
+
+model NtfLog {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  templateId String?      @map("template_id") @db.Uuid
+  channel    String       @db.VarChar(20)
+  recipient  String       @db.VarChar(500)
+  subject    String?      @db.VarChar(500)
+  body       String?      @db.Text
+  status     String       @default("pending") @db.VarChar(20)
+  sentAt     DateTime?    @map("sent_at") @db.Timestamptz
+  failedAt   DateTime?    @map("failed_at") @db.Timestamptz
+  errorMsg   String?      @map("error_msg") @db.VarChar(1000)
+  metadata   Json?
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template   NtfTemplate? @relation(fields: [templateId], references: [id])
+
+  @@index([tenantId])
+  @@map("ntf_logs")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 88: TASK & SPRINT BOARD
+// ───────────────────────────────────────────────────────────
+model TskBoard {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String      @map("tenant_id") @db.Uuid
+  name        String      @db.VarChar(200)
+  description String?     @db.Text
+  type        String      @default("kanban") @db.VarChar(20)
+  isActive    Boolean     @default(true) @map("is_active")
+  createdBy   String      @map("created_by") @db.Uuid
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  columns     TskColumn[]
+  sprints     TskSprint[]
+  tasks       TskTask[]
+
+  @@index([tenantId])
+  @@map("tsk_boards")
+}
+
+model TskColumn {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  boardId    String    @map("board_id") @db.Uuid
+  name       String    @db.VarChar(100)
+  order      Int       @default(0)
+  color      String?   @db.VarChar(20)
+  isTerminal Boolean   @default(false) @map("is_terminal")
+  board      TskBoard  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  tasks      TskTask[]
+
+  @@index([boardId])
+  @@map("tsk_columns")
+}
+
+model TskSprint {
+  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  boardId  String    @map("board_id") @db.Uuid
+  name     String    @db.VarChar(200)
+  goal     String?   @db.VarChar(1000)
+  startsAt DateTime  @map("starts_at") @db.Date
+  endsAt   DateTime  @map("ends_at") @db.Date
+  status   String    @default("planned") @db.VarChar(20)
+  velocity Int?
+  board    TskBoard  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  tasks    TskTask[]
+
+  @@index([boardId])
+  @@map("tsk_sprints")
+}
+
+model TskTask {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  boardId     String     @map("board_id") @db.Uuid
+  columnId    String?    @map("column_id") @db.Uuid
+  sprintId    String?    @map("sprint_id") @db.Uuid
+  title       String     @db.VarChar(500)
+  description String?    @db.Text
+  type        String     @default("task") @db.VarChar(20)
+  priority    String     @default("medium") @db.VarChar(20)
+  storyPoints Int?       @map("story_points")
+  assigneeId  String?    @map("assignee_id") @db.Uuid
+  reporterId  String     @map("reporter_id") @db.Uuid
+  dueDate     DateTime?  @map("due_date") @db.Date
+  completedAt DateTime?  @map("completed_at") @db.Timestamptz
+  order       Int        @default(0)
+  labels      Json       @default("[]")
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  board       TskBoard   @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  column      TskColumn? @relation(fields: [columnId], references: [id])
+  sprint      TskSprint? @relation(fields: [sprintId], references: [id])
+
+  @@index([boardId])
+  @@index([boardId, columnId])
+  @@map("tsk_tasks")
+}
+
+// ───────────────────────────────────────────────────────────
+// PHASE 89: INVOICE & PAYMENTS 2.0
+// ───────────────────────────────────────────────────────────
+model Inv2Quote {
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String            @map("tenant_id") @db.Uuid
+  number       String            @db.VarChar(50)
+  clientName   String            @map("client_name") @db.VarChar(300)
+  clientEmail  String            @map("client_email") @db.VarChar(300)
+  currency     String            @default("USD") @db.VarChar(3)
+  subtotal     Decimal           @default(0) @db.Decimal(18, 2)
+  taxAmount    Decimal           @default(0) @map("tax_amount") @db.Decimal(18, 2)
+  total        Decimal           @default(0) @db.Decimal(18, 2)
+  status       String            @default("draft") @db.VarChar(20)
+  type         String            @default("quote") @db.VarChar(20)
+  validUntil   DateTime?         @map("valid_until") @db.Date
+  notes        String?           @db.Text
+  terms        String?           @db.Text
+  sentAt       DateTime?         @map("sent_at") @db.Timestamptz
+  acceptedAt   DateTime?         @map("accepted_at") @db.Timestamptz
+  createdBy    String            @map("created_by") @db.Uuid
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  items        Inv2QuoteItem[]
+  paymentLinks Inv2PaymentLink[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@map("inv2_quotes")
+}
+
+model Inv2QuoteItem {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId     String    @map("quote_id") @db.Uuid
+  description String    @db.VarChar(1000)
+  quantity    Decimal   @default(1) @db.Decimal(10, 3)
+  unitPrice   Decimal   @map("unit_price") @db.Decimal(18, 4)
+  taxRate     Decimal   @default(0) @map("tax_rate") @db.Decimal(5, 4)
+  total       Decimal   @db.Decimal(18, 2)
+  order       Int       @default(1)
+  quote       Inv2Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([quoteId])
+  @@map("inv2_quote_items")
+}
+
+model Inv2PaymentLink {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  quoteId     String?    @map("quote_id") @db.Uuid
+  token       String     @unique @db.VarChar(200)
+  amount      Decimal    @db.Decimal(18, 2)
+  currency    String     @default("USD") @db.VarChar(3)
+  description String?    @db.VarChar(500)
+  status      String     @default("active") @db.VarChar(20)
+  expiresAt   DateTime?  @map("expires_at") @db.Timestamptz
+  paidAt      DateTime?  @map("paid_at") @db.Timestamptz
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  quote       Inv2Quote? @relation(fields: [quoteId], references: [id])
+
+  @@index([tenantId])
+  @@map("inv2_payment_links")
 }

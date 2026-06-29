@@ -77,6 +77,16 @@ import { omsModuleRoutes } from './oms/index.js'
 import { slaModuleRoutes } from './sla/index.js'
 import { riskModuleRoutes } from './risk/index.js'
 import { signaturesModuleRoutes } from './signatures/index.js'
+import { timeAttendanceModuleRoutes } from './time-attendance/index.js'
+import { surveysModuleRoutes } from './surveys/index.js'
+import { productsModuleRoutes } from './products/index.js'
+import { expensesModuleRoutes } from './expenses/index.js'
+import { atsModuleRoutes } from './ats/index.js'
+import { eventsModuleRoutes } from './events-mgmt/index.js'
+import { notificationsModuleRoutes } from './notifications-hub/index.js'
+import { taskBoardModuleRoutes } from './task-board/index.js'
+import { invoice2ModuleRoutes } from './invoice2/index.js'
+import { biDashboardModuleRoutes } from './bi-dashboard/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -160,6 +170,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(slaModuleRoutes, { prefix: '/sla' })
       await v1.register(riskModuleRoutes, { prefix: '/risk' })
       await v1.register(signaturesModuleRoutes, { prefix: '/signatures' })
+      await v1.register(timeAttendanceModuleRoutes, { prefix: '/time-attendance' })
+      await v1.register(surveysModuleRoutes, { prefix: '/surveys' })
+      await v1.register(productsModuleRoutes, { prefix: '/products' })
+      await v1.register(expensesModuleRoutes, { prefix: '/expenses' })
+      await v1.register(atsModuleRoutes, { prefix: '/ats' })
+      await v1.register(eventsModuleRoutes, { prefix: '/events-mgmt' })
+      await v1.register(notificationsModuleRoutes, { prefix: '/notifications-hub' })
+      await v1.register(taskBoardModuleRoutes, { prefix: '/task-board' })
+      await v1.register(invoice2ModuleRoutes, { prefix: '/invoice2' })
+      await v1.register(biDashboardModuleRoutes, { prefix: '/bi-dashboard' })
     },
     { prefix: '/v1' },
   )

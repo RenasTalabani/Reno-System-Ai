@@ -7128,6 +7128,384 @@ exports.Prisma.SigSignerScalarFieldEnum = {
   ipAddress: 'ipAddress'
 };
 
+exports.Prisma.AttShiftScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  breakMins: 'breakMins',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AttTimesheetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  shiftId: 'shiftId',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  totalHours: 'totalHours',
+  overtimeHrs: 'overtimeHrs',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AttClockEntryScalarFieldEnum = {
+  id: 'id',
+  timesheetId: 'timesheetId',
+  clockIn: 'clockIn',
+  clockOut: 'clockOut',
+  breakStart: 'breakStart',
+  breakEnd: 'breakEnd',
+  location: 'location',
+  note: 'note'
+};
+
+exports.Prisma.SurSurveyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  isAnonymous: 'isAnonymous',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SurQuestionScalarFieldEnum = {
+  id: 'id',
+  surveyId: 'surveyId',
+  text: 'text',
+  type: 'type',
+  options: 'options',
+  isRequired: 'isRequired',
+  order: 'order'
+};
+
+exports.Prisma.SurResponseScalarFieldEnum = {
+  id: 'id',
+  surveyId: 'surveyId',
+  respondentId: 'respondentId',
+  completedAt: 'completedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SurAnswerScalarFieldEnum = {
+  id: 'id',
+  responseId: 'responseId',
+  questionId: 'questionId',
+  value: 'value'
+};
+
+exports.Prisma.PcCategoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PcProductScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  categoryId: 'categoryId',
+  sku: 'sku',
+  name: 'name',
+  description: 'description',
+  basePrice: 'basePrice',
+  currency: 'currency',
+  taxRate: 'taxRate',
+  unit: 'unit',
+  weight: 'weight',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PcVariantScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  sku: 'sku',
+  name: 'name',
+  attributes: 'attributes',
+  price: 'price',
+  stockQty: 'stockQty',
+  isActive: 'isActive'
+};
+
+exports.Prisma.ExpReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  title: 'title',
+  period: 'period',
+  currency: 'currency',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  paidAt: 'paidAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExpItemScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  date: 'date',
+  category: 'category',
+  description: 'description',
+  amount: 'amount',
+  currency: 'currency',
+  receiptUrl: 'receiptUrl',
+  isBillable: 'isBillable'
+};
+
+exports.Prisma.AtsJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  department: 'department',
+  location: 'location',
+  type: 'type',
+  description: 'description',
+  requirements: 'requirements',
+  salaryMin: 'salaryMin',
+  salaryMax: 'salaryMax',
+  currency: 'currency',
+  status: 'status',
+  publishedAt: 'publishedAt',
+  closesAt: 'closesAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AtsCandidateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  phone: 'phone',
+  resumeUrl: 'resumeUrl',
+  linkedinUrl: 'linkedinUrl',
+  source: 'source',
+  tags: 'tags',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AtsApplicationScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  candidateId: 'candidateId',
+  stage: 'stage',
+  score: 'score',
+  notes: 'notes',
+  rejectedAt: 'rejectedAt',
+  hiredAt: 'hiredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AtsInterviewScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  type: 'type',
+  scheduledAt: 'scheduledAt',
+  durationMins: 'durationMins',
+  interviewers: 'interviewers',
+  location: 'location',
+  meetingLink: 'meetingLink',
+  status: 'status',
+  feedback: 'feedback',
+  rating: 'rating'
+};
+
+exports.Prisma.EvtEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  isVirtual: 'isVirtual',
+  meetingLink: 'meetingLink',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  capacity: 'capacity',
+  status: 'status',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EvtTicketTypeScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  name: 'name',
+  price: 'price',
+  currency: 'currency',
+  quantity: 'quantity',
+  soldCount: 'soldCount',
+  isActive: 'isActive'
+};
+
+exports.Prisma.EvtRegistrationScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  ticketTypeId: 'ticketTypeId',
+  attendeeName: 'attendeeName',
+  attendeeEmail: 'attendeeEmail',
+  status: 'status',
+  checkedInAt: 'checkedInAt',
+  cancelledAt: 'cancelledAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.NtfTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  channel: 'channel',
+  subject: 'subject',
+  body: 'body',
+  variables: 'variables',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NtfLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  templateId: 'templateId',
+  channel: 'channel',
+  recipient: 'recipient',
+  subject: 'subject',
+  body: 'body',
+  status: 'status',
+  sentAt: 'sentAt',
+  failedAt: 'failedAt',
+  errorMsg: 'errorMsg',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TskBoardScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TskColumnScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  name: 'name',
+  order: 'order',
+  color: 'color',
+  isTerminal: 'isTerminal'
+};
+
+exports.Prisma.TskSprintScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  name: 'name',
+  goal: 'goal',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  status: 'status',
+  velocity: 'velocity'
+};
+
+exports.Prisma.TskTaskScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  columnId: 'columnId',
+  sprintId: 'sprintId',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  priority: 'priority',
+  storyPoints: 'storyPoints',
+  assigneeId: 'assigneeId',
+  reporterId: 'reporterId',
+  dueDate: 'dueDate',
+  completedAt: 'completedAt',
+  order: 'order',
+  labels: 'labels',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.Inv2QuoteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  number: 'number',
+  clientName: 'clientName',
+  clientEmail: 'clientEmail',
+  currency: 'currency',
+  subtotal: 'subtotal',
+  taxAmount: 'taxAmount',
+  total: 'total',
+  status: 'status',
+  type: 'type',
+  validUntil: 'validUntil',
+  notes: 'notes',
+  terms: 'terms',
+  sentAt: 'sentAt',
+  acceptedAt: 'acceptedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.Inv2QuoteItemScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  description: 'description',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  taxRate: 'taxRate',
+  total: 'total',
+  order: 'order'
+};
+
+exports.Prisma.Inv2PaymentLinkScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  quoteId: 'quoteId',
+  token: 'token',
+  amount: 'amount',
+  currency: 'currency',
+  description: 'description',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -7552,7 +7930,35 @@ exports.Prisma.ModelName = {
   RiskItem: 'RiskItem',
   RiskAssessment: 'RiskAssessment',
   SigRequest: 'SigRequest',
-  SigSigner: 'SigSigner'
+  SigSigner: 'SigSigner',
+  AttShift: 'AttShift',
+  AttTimesheet: 'AttTimesheet',
+  AttClockEntry: 'AttClockEntry',
+  SurSurvey: 'SurSurvey',
+  SurQuestion: 'SurQuestion',
+  SurResponse: 'SurResponse',
+  SurAnswer: 'SurAnswer',
+  PcCategory: 'PcCategory',
+  PcProduct: 'PcProduct',
+  PcVariant: 'PcVariant',
+  ExpReport: 'ExpReport',
+  ExpItem: 'ExpItem',
+  AtsJob: 'AtsJob',
+  AtsCandidate: 'AtsCandidate',
+  AtsApplication: 'AtsApplication',
+  AtsInterview: 'AtsInterview',
+  EvtEvent: 'EvtEvent',
+  EvtTicketType: 'EvtTicketType',
+  EvtRegistration: 'EvtRegistration',
+  NtfTemplate: 'NtfTemplate',
+  NtfLog: 'NtfLog',
+  TskBoard: 'TskBoard',
+  TskColumn: 'TskColumn',
+  TskSprint: 'TskSprint',
+  TskTask: 'TskTask',
+  Inv2Quote: 'Inv2Quote',
+  Inv2QuoteItem: 'Inv2QuoteItem',
+  Inv2PaymentLink: 'Inv2PaymentLink'
 };
 
 /**
