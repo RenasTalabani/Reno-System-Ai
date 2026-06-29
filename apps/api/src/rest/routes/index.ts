@@ -58,6 +58,7 @@ import { assetModuleRoutes } from './assets/index.js'
 import { complianceModuleRoutes } from './compliance/index.js'
 import { csModuleRoutes } from './customer-success/index.js'
 import { apiGatewayModuleRoutes } from './api-gateway/index.js'
+import { evsModuleRoutes } from './event-sourcing/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -122,6 +123,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(complianceModuleRoutes, { prefix: '/compliance' })
       await v1.register(csModuleRoutes, { prefix: '/customer-success' })
       await v1.register(apiGatewayModuleRoutes, { prefix: '/api-gateway' })
+      await v1.register(evsModuleRoutes, { prefix: '/evs' })
     },
     { prefix: '/v1' },
   )

@@ -234,6 +234,8 @@ model CoreTenant {
   csAccounts               CsAccount[]
   apiKeys                  ApigwApiKey[]
   webhooks                 ApigwWebhook[]
+  evsEvents                EvsEvent[]
+  evsSnapshots             EvsSnapshot[]
 
   @@map("core_tenants")
 }
@@ -9172,4 +9174,53 @@ model ApigwUsageLog {
   apiKey      ApigwApiKey? @relation(fields: [keyId], references: [id], onDelete: SetNull)
   @@index([tenantId, occurredAt])
   @@map("apigw_usage_logs")
+}
+
+// ─── Phase 60: Event Sourcing & Audit Trail ───────────────────────────────────
+
+model EvsEvent {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  stream        String    @db.VarChar(200)
+  type          String    @db.VarChar(200)
+  aggregateId   String    @map("aggregate_id") @db.VarChar(200)
+  aggregateType String    @map("aggregate_type") @db.VarChar(100)
+  version       Int       @default(1)
+  payload       Json      @default("{}") @db.JsonB
+  metadata      Json      @default("{}") @db.JsonB
+  actorId       String?   @map("actor_id") @db.Uuid
+  actorType     String    @default("user") @map("actor_type") @db.VarChar(50)
+  occurredAt    DateTime  @default(now()) @map("occurred_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, stream, occurredAt])
+  @@index([tenantId, aggregateId, version])
+  @@index([tenantId, type, occurredAt])
+  @@map("evs_events")
+}
+
+model EvsSnapshot {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  aggregateId   String    @map("aggregate_id") @db.VarChar(200)
+  aggregateType String    @map("aggregate_type") @db.VarChar(100)
+  version       Int
+  state         Json      @default("{}") @db.JsonB
+  createdAt     DateTime  @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, aggregateId, version])
+  @@map("evs_snapshots")
+}
+
+model EvsProjection {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  name       String    @db.VarChar(200)
+  stream     String?   @db.VarChar(200)
+  lastEvent  String?   @map("last_event") @db.Uuid
+  checkpoint DateTime? @db.Timestamptz
+  status     String    @default("active") @db.VarChar(20)
+  error      String?   @db.Text
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  @@unique([tenantId, name])
+  @@map("evs_projections")
 }
