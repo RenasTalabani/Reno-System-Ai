@@ -8712,6 +8712,334 @@ exports.Prisma.DamDistributionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MbrChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  status: 'status',
+  language: 'language',
+  timezone: 'timezone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MbrProgramScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  title: 'title',
+  type: 'type',
+  scheduledAt: 'scheduledAt',
+  durationMin: 'durationMin',
+  status: 'status',
+  description: 'description',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MbrContentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  type: 'type',
+  fileUrl: 'fileUrl',
+  duration: 'duration',
+  status: 'status',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EduSchoolScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  address: 'address',
+  phone: 'phone',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EduClassScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  grade: 'grade',
+  capacity: 'capacity',
+  teacherId: 'teacherId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EduStudentScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  dateOfBirth: 'dateOfBirth',
+  guardianName: 'guardianName',
+  guardianPhone: 'guardianPhone',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EduEnrollmentScalarFieldEnum = {
+  id: 'id',
+  classId: 'classId',
+  studentId: 'studentId',
+  enrolledAt: 'enrolledAt',
+  status: 'status'
+};
+
+exports.Prisma.HotelPropertyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  address: 'address',
+  stars: 'stars',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HotelRoomScalarFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  roomNumber: 'roomNumber',
+  type: 'type',
+  floor: 'floor',
+  capacity: 'capacity',
+  ratePerNight: 'ratePerNight',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HotelReservationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  roomId: 'roomId',
+  guestName: 'guestName',
+  guestEmail: 'guestEmail',
+  checkIn: 'checkIn',
+  checkOut: 'checkOut',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SptFacilityScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  address: 'address',
+  capacity: 'capacity',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SptMemberScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  membershipType: 'membershipType',
+  expiresAt: 'expiresAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SptBookingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  facilityId: 'facilityId',
+  memberId: 'memberId',
+  startAt: 'startAt',
+  endAt: 'endAt',
+  status: 'status',
+  amount: 'amount',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FpaClientScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  riskProfile: 'riskProfile',
+  netWorth: 'netWorth',
+  status: 'status',
+  advisorId: 'advisorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FpaPlanScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  name: 'name',
+  type: 'type',
+  goal: 'goal',
+  targetDate: 'targetDate',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VetPetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  species: 'species',
+  breed: 'breed',
+  dob: 'dob',
+  ownerName: 'ownerName',
+  ownerPhone: 'ownerPhone',
+  ownerEmail: 'ownerEmail',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VetVisitScalarFieldEnum = {
+  id: 'id',
+  petId: 'petId',
+  visitDate: 'visitDate',
+  reason: 'reason',
+  diagnosis: 'diagnosis',
+  treatment: 'treatment',
+  weight: 'weight',
+  vetId: 'vetId',
+  amount: 'amount',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WstRouteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  area: 'area',
+  frequency: 'frequency',
+  wasteType: 'wasteType',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WstCollectionScalarFieldEnum = {
+  id: 'id',
+  routeId: 'routeId',
+  collectedAt: 'collectedAt',
+  weightKg: 'weightKg',
+  vehicleId: 'vehicleId',
+  operatorId: 'operatorId',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CemPlotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  plotNumber: 'plotNumber',
+  section: 'section',
+  type: 'type',
+  status: 'status',
+  price: 'price',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CemIntermentScalarFieldEnum = {
+  id: 'id',
+  plotId: 'plotId',
+  deceasedName: 'deceasedName',
+  dateOfBirth: 'dateOfBirth',
+  dateOfDeath: 'dateOfDeath',
+  intermentDate: 'intermentDate',
+  familyContact: 'familyContact',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TktEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  venue: 'venue',
+  startAt: 'startAt',
+  endAt: 'endAt',
+  status: 'status',
+  totalCapacity: 'totalCapacity',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TktTicketTypeScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  name: 'name',
+  price: 'price',
+  quantity: 'quantity',
+  sold: 'sold',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TktOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ticketTypeId: 'ticketTypeId',
+  buyerName: 'buyerName',
+  buyerEmail: 'buyerEmail',
+  quantity: 'quantity',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  qrCode: 'qrCode',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AutoVehicleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vin: 'vin',
+  make: 'make',
+  model: 'model',
+  year: 'year',
+  color: 'color',
+  mileage: 'mileage',
+  price: 'price',
+  status: 'status',
+  condition: 'condition',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AutoTestDriveScalarFieldEnum = {
+  id: 'id',
+  vehicleId: 'vehicleId',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  scheduledAt: 'scheduledAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AutoSaleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vehicleId: 'vehicleId',
+  customerName: 'customerName',
+  salePrice: 'salePrice',
+  saleDate: 'saleDate',
+  salesRepId: 'salesRepId',
+  financed: 'financed',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -9257,7 +9585,34 @@ exports.Prisma.ModelName = {
   MeetCatering: 'MeetCatering',
   DamCollection: 'DamCollection',
   DamAsset: 'DamAsset',
-  DamDistribution: 'DamDistribution'
+  DamDistribution: 'DamDistribution',
+  MbrChannel: 'MbrChannel',
+  MbrProgram: 'MbrProgram',
+  MbrContent: 'MbrContent',
+  EduSchool: 'EduSchool',
+  EduClass: 'EduClass',
+  EduStudent: 'EduStudent',
+  EduEnrollment: 'EduEnrollment',
+  HotelProperty: 'HotelProperty',
+  HotelRoom: 'HotelRoom',
+  HotelReservation: 'HotelReservation',
+  SptFacility: 'SptFacility',
+  SptMember: 'SptMember',
+  SptBooking: 'SptBooking',
+  FpaClient: 'FpaClient',
+  FpaPlan: 'FpaPlan',
+  VetPet: 'VetPet',
+  VetVisit: 'VetVisit',
+  WstRoute: 'WstRoute',
+  WstCollection: 'WstCollection',
+  CemPlot: 'CemPlot',
+  CemInterment: 'CemInterment',
+  TktEvent: 'TktEvent',
+  TktTicketType: 'TktTicketType',
+  TktOrder: 'TktOrder',
+  AutoVehicle: 'AutoVehicle',
+  AutoTestDrive: 'AutoTestDrive',
+  AutoSale: 'AutoSale'
 };
 
 /**

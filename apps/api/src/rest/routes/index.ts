@@ -127,6 +127,16 @@ import { marineModuleRoutes } from './marine/index.js'
 import { governmentModuleRoutes } from './government/index.js'
 import { meetingsModuleRoutes } from './meetings/index.js'
 import { damModuleRoutes } from './dam/index.js'
+import { mediaModuleRoutes } from './media/index.js'
+import { educationAdminModuleRoutes } from './education-admin/index.js'
+import { hospitalityModuleRoutes } from './hospitality/index.js'
+import { sportsModuleRoutes } from './sports/index.js'
+import { financialAdvisoryModuleRoutes } from './financial-advisory/index.js'
+import { veterinaryModuleRoutes } from './veterinary/index.js'
+import { wasteModuleRoutes } from './waste/index.js'
+import { cemeteryModuleRoutes } from './cemetery/index.js'
+import { ticketingModuleRoutes } from './ticketing/index.js'
+import { automotiveModuleRoutes } from './automotive/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -260,6 +270,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(governmentModuleRoutes, { prefix: '/government' })
       await v1.register(meetingsModuleRoutes, { prefix: '/meetings' })
       await v1.register(damModuleRoutes, { prefix: '/dam' })
+      await v1.register(mediaModuleRoutes, { prefix: '/media' })
+      await v1.register(educationAdminModuleRoutes, { prefix: '/education' })
+      await v1.register(hospitalityModuleRoutes, { prefix: '/hospitality' })
+      await v1.register(sportsModuleRoutes, { prefix: '/sports' })
+      await v1.register(financialAdvisoryModuleRoutes, { prefix: '/financial-advisory' })
+      await v1.register(veterinaryModuleRoutes, { prefix: '/veterinary' })
+      await v1.register(wasteModuleRoutes, { prefix: '/waste' })
+      await v1.register(cemeteryModuleRoutes, { prefix: '/cemetery' })
+      await v1.register(ticketingModuleRoutes, { prefix: '/ticketing' })
+      await v1.register(automotiveModuleRoutes, { prefix: '/automotive' })
     },
     { prefix: '/v1' },
   )
