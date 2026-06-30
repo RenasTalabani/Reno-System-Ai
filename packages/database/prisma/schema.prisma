@@ -364,6 +364,19 @@ model CoreTenant {
   fdlOrders                FdlOrder[]
   phxDrugs                 PhxDrug[]
   phxPrescriptions         PhxPrescription[]
+  avnAircraft              AvnAircraft[]
+  avnFlights               AvnFlight[]
+  crnVehicles              CrnVehicle[]
+  crnRentals               CrnRental[]
+  lndOrders                LndOrder[]
+  secContracts             SecContract[]
+  dntPatients              DntPatient[]
+  adfProjects              AdfProject[]
+  cnfHalls                 CnfHall[]
+  cnfBookings              CnfBooking[]
+  pubTitles                PubTitle[]
+  fshSites                 FshSite[]
+  slrInstallations         SlrInstallation[]
   @@map("core_tenants")
 }
 
@@ -13318,5 +13331,309 @@ model PhxPrescription {
   @@index([tenantId])
   @@index([drugId])
   @@map("phx_prescriptions")
+}
+
+
+// â”€â”€â”€ Phase 151: Aviation Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model AvnAircraft {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  tailNumber   String   @map("tail_number") @db.VarChar(20)
+  type         String   @db.VarChar(100)
+  manufacturer String?  @db.VarChar(100)
+  capacity     Int      @default(0)
+  status       String   @default("active") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  flights      AvnFlight[]
+  @@index([tenantId])
+  @@map("avn_aircraft")
+}
+
+model AvnFlight {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  aircraftId   String   @map("aircraft_id") @db.Uuid
+  flightNo     String   @map("flight_no") @db.VarChar(20)
+  origin       String   @db.VarChar(10)
+  destination  String   @db.VarChar(10)
+  departureAt  DateTime @map("departure_at") @db.Timestamptz
+  arrivalAt    DateTime? @map("arrival_at") @db.Timestamptz
+  status       String   @default("scheduled") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  aircraft     AvnAircraft @relation(fields: [aircraftId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([aircraftId])
+  @@map("avn_flights")
+}
+
+// â”€â”€â”€ Phase 152: Car Rental â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model CrnVehicle {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  make        String   @db.VarChar(100)
+  model       String   @db.VarChar(100)
+  year        Int
+  plate       String   @db.VarChar(20)
+  category    String   @db.VarChar(50)
+  dailyRate   Decimal  @map("daily_rate") @db.Decimal(10,2)
+  status      String   @default("available") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rentals     CrnRental[]
+  @@index([tenantId])
+  @@map("crn_vehicles")
+}
+
+model CrnRental {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  vehicleId    String   @map("vehicle_id") @db.Uuid
+  renterName   String   @map("renter_name") @db.VarChar(255)
+  renterPhone  String?  @map("renter_phone") @db.VarChar(30)
+  startDate    DateTime @map("start_date") @db.Date
+  endDate      DateTime @map("end_date") @db.Date
+  totalAmount  Decimal  @map("total_amount") @db.Decimal(10,2)
+  status       String   @default("active") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vehicle      CrnVehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([vehicleId])
+  @@map("crn_rentals")
+}
+
+// â”€â”€â”€ Phase 153: Laundry Services â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model LndOrder {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  orderRef     String   @unique @map("order_ref") @db.VarChar(50)
+  customerName String   @map("customer_name") @db.VarChar(255)
+  customerPhone String? @map("customer_phone") @db.VarChar(30)
+  items        Int      @default(1)
+  totalAmount  Decimal  @map("total_amount") @db.Decimal(10,2)
+  status       String   @default("received") @db.VarChar(20)
+  receivedAt   DateTime @default(now()) @map("received_at") @db.Timestamptz
+  readyAt      DateTime? @map("ready_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("lnd_orders")
+}
+
+// â”€â”€â”€ Phase 154: Security Services â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model SecContract {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  clientName   String   @map("client_name") @db.VarChar(255)
+  siteAddress  String   @map("site_address") @db.VarChar(500)
+  serviceType  String   @map("service_type") @db.VarChar(100)
+  startDate    DateTime @map("start_date") @db.Date
+  endDate      DateTime? @map("end_date") @db.Date
+  status       String   @default("active") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patrols      SecPatrol[]
+  @@index([tenantId])
+  @@map("sec_contracts")
+}
+
+model SecPatrol {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contractId  String   @map("contract_id") @db.Uuid
+  officerId   String?  @map("officer_id") @db.Uuid
+  startedAt   DateTime @map("started_at") @db.Timestamptz
+  endedAt     DateTime? @map("ended_at") @db.Timestamptz
+  notes       String?  @db.Text
+  incident    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  contract    SecContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  @@index([contractId])
+  @@map("sec_patrols")
+}
+
+// â”€â”€â”€ Phase 155: Dental Practice â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model DntPatient {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  email       String?  @db.VarChar(255)
+  phone       String?  @db.VarChar(30)
+  dob         DateTime? @db.Date
+  status      String   @default("active") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  appointments DntAppointment[]
+  @@index([tenantId])
+  @@map("dnt_patients")
+}
+
+model DntAppointment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  patientId   String   @map("patient_id") @db.Uuid
+  dentistId   String?  @map("dentist_id") @db.Uuid
+  scheduledAt DateTime @map("scheduled_at") @db.Timestamptz
+  procedure   String?  @db.VarChar(255)
+  status      String   @default("scheduled") @db.VarChar(20)
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  patient     DntPatient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  @@index([patientId])
+  @@map("dnt_appointments")
+}
+
+// â”€â”€â”€ Phase 156: Architecture / Design Firm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model AdfProject {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  clientName  String   @map("client_name") @db.VarChar(255)
+  type        String   @db.VarChar(100)
+  budget      Decimal? @db.Decimal(15,2)
+  startDate   DateTime? @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  status      String   @default("proposal") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  milestones  AdfMilestone[]
+  @@index([tenantId])
+  @@map("adf_projects")
+}
+
+model AdfMilestone {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  dueDate     DateTime? @map("due_date") @db.Date
+  status      String   @default("pending") @db.VarChar(20)
+  deliverable String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  project     AdfProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@index([projectId])
+  @@map("adf_milestones")
+}
+
+// â”€â”€â”€ Phase 157: Conference Center â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model CnfHall {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  capacity    Int
+  amenities   String?  @db.Text
+  pricePerDay Decimal  @map("price_per_day") @db.Decimal(10,2)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bookings    CnfBooking[]
+  @@index([tenantId])
+  @@map("cnf_halls")
+}
+
+model CnfBooking {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  hallId      String   @map("hall_id") @db.Uuid
+  clientName  String   @map("client_name") @db.VarChar(255)
+  eventName   String   @map("event_name") @db.VarChar(255)
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  attendees   Int      @default(0)
+  totalAmount Decimal  @map("total_amount") @db.Decimal(10,2)
+  status      String   @default("confirmed") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  hall        CnfHall @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([hallId])
+  @@map("cnf_bookings")
+}
+
+// â”€â”€â”€ Phase 158: Publishing House â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model PubTitle {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  title         String   @db.VarChar(500)
+  author        String   @db.VarChar(255)
+  isbn          String?  @db.VarChar(20)
+  genre         String?  @db.VarChar(100)
+  publishedDate DateTime? @map("published_date") @db.Date
+  status        String   @default("manuscript") @db.VarChar(30)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  printRuns     PubPrintRun[]
+  @@index([tenantId])
+  @@map("pub_titles")
+}
+
+model PubPrintRun {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  titleId     String   @map("title_id") @db.Uuid
+  edition     Int      @default(1)
+  copies      Int
+  printedAt   DateTime? @map("printed_at") @db.Date
+  unitCost    Decimal  @map("unit_cost") @db.Decimal(8,2)
+  status      String   @default("planned") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  title       PubTitle @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  @@index([titleId])
+  @@map("pub_print_runs")
+}
+
+// â”€â”€â”€ Phase 159: Fishery Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model FshSite {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  location    String?  @db.VarChar(255)
+  type        String   @db.VarChar(50)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  catches     FshCatch[]
+  @@index([tenantId])
+  @@map("fsh_sites")
+}
+
+model FshCatch {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId      String   @map("site_id") @db.Uuid
+  species     String   @db.VarChar(100)
+  quantity    Decimal  @db.Decimal(10,3)
+  unit        String   @db.VarChar(20)
+  caughtAt    DateTime @map("caught_at") @db.Timestamptz
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  site        FshSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  @@index([siteId])
+  @@map("fsh_catches")
+}
+
+// â”€â”€â”€ Phase 160: Solar / Renewable Energy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+model SlrInstallation {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  clientName   String   @map("client_name") @db.VarChar(255)
+  address      String   @db.VarChar(500)
+  panelCount   Int      @map("panel_count")
+  capacityKw   Decimal  @map("capacity_kw") @db.Decimal(8,2)
+  installedAt  DateTime? @map("installed_at") @db.Date
+  status       String   @default("pending") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  readings     SlrReading[]
+  @@index([tenantId])
+  @@map("slr_installations")
+}
+
+model SlrReading {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  installationId String   @map("installation_id") @db.Uuid
+  readingAt      DateTime @map("reading_at") @db.Timestamptz
+  outputKwh      Decimal  @map("output_kwh") @db.Decimal(10,3)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  installation   SlrInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  @@index([installationId])
+  @@map("slr_readings")
 }
 

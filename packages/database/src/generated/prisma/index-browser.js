@@ -9283,6 +9283,227 @@ exports.Prisma.PhxPrescriptionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AvnAircraftScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  tailNumber: 'tailNumber',
+  type: 'type',
+  manufacturer: 'manufacturer',
+  capacity: 'capacity',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AvnFlightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  aircraftId: 'aircraftId',
+  flightNo: 'flightNo',
+  origin: 'origin',
+  destination: 'destination',
+  departureAt: 'departureAt',
+  arrivalAt: 'arrivalAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CrnVehicleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  make: 'make',
+  model: 'model',
+  year: 'year',
+  plate: 'plate',
+  category: 'category',
+  dailyRate: 'dailyRate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CrnRentalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vehicleId: 'vehicleId',
+  renterName: 'renterName',
+  renterPhone: 'renterPhone',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LndOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  orderRef: 'orderRef',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  items: 'items',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  receivedAt: 'receivedAt',
+  readyAt: 'readyAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SecContractScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientName: 'clientName',
+  siteAddress: 'siteAddress',
+  serviceType: 'serviceType',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SecPatrolScalarFieldEnum = {
+  id: 'id',
+  contractId: 'contractId',
+  officerId: 'officerId',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  notes: 'notes',
+  incident: 'incident',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DntPatientScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  dob: 'dob',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DntAppointmentScalarFieldEnum = {
+  id: 'id',
+  patientId: 'patientId',
+  dentistId: 'dentistId',
+  scheduledAt: 'scheduledAt',
+  procedure: 'procedure',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AdfProjectScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  clientName: 'clientName',
+  type: 'type',
+  budget: 'budget',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AdfMilestoneScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  title: 'title',
+  dueDate: 'dueDate',
+  status: 'status',
+  deliverable: 'deliverable',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CnfHallScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  capacity: 'capacity',
+  amenities: 'amenities',
+  pricePerDay: 'pricePerDay',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CnfBookingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  hallId: 'hallId',
+  clientName: 'clientName',
+  eventName: 'eventName',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  attendees: 'attendees',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PubTitleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  author: 'author',
+  isbn: 'isbn',
+  genre: 'genre',
+  publishedDate: 'publishedDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PubPrintRunScalarFieldEnum = {
+  id: 'id',
+  titleId: 'titleId',
+  edition: 'edition',
+  copies: 'copies',
+  printedAt: 'printedAt',
+  unitCost: 'unitCost',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FshSiteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  location: 'location',
+  type: 'type',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FshCatchScalarFieldEnum = {
+  id: 'id',
+  siteId: 'siteId',
+  species: 'species',
+  quantity: 'quantity',
+  unit: 'unit',
+  caughtAt: 'caughtAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SlrInstallationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientName: 'clientName',
+  address: 'address',
+  panelCount: 'panelCount',
+  capacityKw: 'capacityKw',
+  installedAt: 'installedAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SlrReadingScalarFieldEnum = {
+  id: 'id',
+  installationId: 'installationId',
+  readingAt: 'readingAt',
+  outputKwh: 'outputKwh',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -9876,7 +10097,26 @@ exports.Prisma.ModelName = {
   FdlMenuItem: 'FdlMenuItem',
   FdlOrder: 'FdlOrder',
   PhxDrug: 'PhxDrug',
-  PhxPrescription: 'PhxPrescription'
+  PhxPrescription: 'PhxPrescription',
+  AvnAircraft: 'AvnAircraft',
+  AvnFlight: 'AvnFlight',
+  CrnVehicle: 'CrnVehicle',
+  CrnRental: 'CrnRental',
+  LndOrder: 'LndOrder',
+  SecContract: 'SecContract',
+  SecPatrol: 'SecPatrol',
+  DntPatient: 'DntPatient',
+  DntAppointment: 'DntAppointment',
+  AdfProject: 'AdfProject',
+  AdfMilestone: 'AdfMilestone',
+  CnfHall: 'CnfHall',
+  CnfBooking: 'CnfBooking',
+  PubTitle: 'PubTitle',
+  PubPrintRun: 'PubPrintRun',
+  FshSite: 'FshSite',
+  FshCatch: 'FshCatch',
+  SlrInstallation: 'SlrInstallation',
+  SlrReading: 'SlrReading'
 };
 
 /**

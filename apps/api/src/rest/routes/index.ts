@@ -147,6 +147,16 @@ import { coworkingModuleRoutes } from './coworking/index.js'
 import { petBoardingModuleRoutes } from './pet-boarding/index.js'
 import { foodDeliveryModuleRoutes } from './food-delivery/index.js'
 import { pharmacyModuleRoutes } from './pharmacy/index.js'
+import { aviationModuleRoutes } from './aviation/index.js'
+import { carRentalModuleRoutes } from './car-rental/index.js'
+import { laundryModuleRoutes } from './laundry/index.js'
+import { securityServicesModuleRoutes } from './security-services/index.js'
+import { dentalModuleRoutes } from './dental/index.js'
+import { architectureModuleRoutes } from './architecture/index.js'
+import { conferenceModuleRoutes } from './conference/index.js'
+import { publishingModuleRoutes } from './publishing/index.js'
+import { fisheryModuleRoutes } from './fishery/index.js'
+import { solarModuleRoutes } from './solar/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -300,6 +310,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(petBoardingModuleRoutes, { prefix: '/pet-boarding' })
       await v1.register(foodDeliveryModuleRoutes, { prefix: '/food-delivery' })
       await v1.register(pharmacyModuleRoutes, { prefix: '/pharmacy' })
+      await v1.register(aviationModuleRoutes, { prefix: '/aviation' })
+      await v1.register(carRentalModuleRoutes, { prefix: '/car-rental' })
+      await v1.register(laundryModuleRoutes, { prefix: '/laundry' })
+      await v1.register(securityServicesModuleRoutes, { prefix: '/security-services' })
+      await v1.register(dentalModuleRoutes, { prefix: '/dental' })
+      await v1.register(architectureModuleRoutes, { prefix: '/architecture' })
+      await v1.register(conferenceModuleRoutes, { prefix: '/conference' })
+      await v1.register(publishingModuleRoutes, { prefix: '/publishing' })
+      await v1.register(fisheryModuleRoutes, { prefix: '/fishery' })
+      await v1.register(solarModuleRoutes, { prefix: '/solar' })
     },
     { prefix: '/v1' },
   )
