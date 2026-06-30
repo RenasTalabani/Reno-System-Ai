@@ -117,6 +117,16 @@ import { franchiseModuleRoutes } from './franchise/index.js'
 import { nonprofitModuleRoutes } from './nonprofit/index.js'
 import { rdModuleRoutes } from './rd/index.js'
 import { reporting3ModuleRoutes } from './reporting3/index.js'
+import { energyModuleRoutes } from './energy/index.js'
+import { transportModuleRoutes } from './transport/index.js'
+import { insuranceModuleRoutes } from './insurance/index.js'
+import { reCrmModuleRoutes } from './re-crm/index.js'
+import { constructionModuleRoutes } from './construction/index.js'
+import { agricultureModuleRoutes } from './agriculture/index.js'
+import { marineModuleRoutes } from './marine/index.js'
+import { governmentModuleRoutes } from './government/index.js'
+import { meetingsModuleRoutes } from './meetings/index.js'
+import { damModuleRoutes } from './dam/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -240,6 +250,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(nonprofitModuleRoutes, { prefix: '/nonprofit' })
       await v1.register(rdModuleRoutes, { prefix: '/rd' })
       await v1.register(reporting3ModuleRoutes, { prefix: '/reporting3' })
+      await v1.register(energyModuleRoutes, { prefix: '/energy' })
+      await v1.register(transportModuleRoutes, { prefix: '/transport' })
+      await v1.register(insuranceModuleRoutes, { prefix: '/insurance' })
+      await v1.register(reCrmModuleRoutes, { prefix: '/re-crm' })
+      await v1.register(constructionModuleRoutes, { prefix: '/construction' })
+      await v1.register(agricultureModuleRoutes, { prefix: '/agriculture' })
+      await v1.register(marineModuleRoutes, { prefix: '/marine' })
+      await v1.register(governmentModuleRoutes, { prefix: '/government' })
+      await v1.register(meetingsModuleRoutes, { prefix: '/meetings' })
+      await v1.register(damModuleRoutes, { prefix: '/dam' })
     },
     { prefix: '/v1' },
   )

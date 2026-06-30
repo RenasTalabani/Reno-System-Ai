@@ -8375,6 +8375,343 @@ exports.Prisma.Rpt3RunScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.EngyMeterScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  location: 'location',
+  unit: 'unit',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EngyReadingScalarFieldEnum = {
+  id: 'id',
+  meterId: 'meterId',
+  value: 'value',
+  recordedAt: 'recordedAt',
+  source: 'source',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EngyAlertScalarFieldEnum = {
+  id: 'id',
+  meterId: 'meterId',
+  type: 'type',
+  threshold: 'threshold',
+  actualValue: 'actualValue',
+  status: 'status',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TrpRouteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  origin: 'origin',
+  destination: 'destination',
+  distanceKm: 'distanceKm',
+  estimatedMins: 'estimatedMins',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrpDriverScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  licenseNo: 'licenseNo',
+  phone: 'phone',
+  status: 'status',
+  vehicleId: 'vehicleId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrpShipmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  routeId: 'routeId',
+  driverId: 'driverId',
+  trackingCode: 'trackingCode',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  actualDeliveredAt: 'actualDeliveredAt',
+  cargo: 'cargo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InsPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  policyNumber: 'policyNumber',
+  type: 'type',
+  holderName: 'holderName',
+  holderEmail: 'holderEmail',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  premium: 'premium',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InsClaimScalarFieldEnum = {
+  id: 'id',
+  policyId: 'policyId',
+  claimNumber: 'claimNumber',
+  incidentDate: 'incidentDate',
+  description: 'description',
+  amount: 'amount',
+  status: 'status',
+  settledAt: 'settledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReCrmLeadScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  budget: 'budget',
+  propertyType: 'propertyType',
+  status: 'status',
+  assignedTo: 'assignedTo',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReCrmShowingScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  propertyAddress: 'propertyAddress',
+  scheduledAt: 'scheduledAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ConProjectScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  siteAddress: 'siteAddress',
+  status: 'status',
+  budget: 'budget',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ConRfiScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  number: 'number',
+  subject: 'subject',
+  status: 'status',
+  dueDate: 'dueDate',
+  submittedBy: 'submittedBy',
+  response: 'response',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ConPunchItemScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  assignedTo: 'assignedTo',
+  dueDate: 'dueDate',
+  closedAt: 'closedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AgrFarmScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  location: 'location',
+  areaHa: 'areaHa',
+  soilType: 'soilType',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgrCropScalarFieldEnum = {
+  id: 'id',
+  farmId: 'farmId',
+  name: 'name',
+  variety: 'variety',
+  plantedAt: 'plantedAt',
+  expectedHarvestAt: 'expectedHarvestAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AgrHarvestScalarFieldEnum = {
+  id: 'id',
+  cropId: 'cropId',
+  yieldKg: 'yieldKg',
+  harvestedAt: 'harvestedAt',
+  quality: 'quality',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MarVesselScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  imoNumber: 'imoNumber',
+  type: 'type',
+  flagCountry: 'flagCountry',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MarVoyageScalarFieldEnum = {
+  id: 'id',
+  vesselId: 'vesselId',
+  voyageNumber: 'voyageNumber',
+  departurePort: 'departurePort',
+  arrivalPort: 'arrivalPort',
+  departedAt: 'departedAt',
+  arrivedAt: 'arrivedAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MarCargoManifestScalarFieldEnum = {
+  id: 'id',
+  voyageId: 'voyageId',
+  description: 'description',
+  weightKg: 'weightKg',
+  commodity: 'commodity',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GovRegulationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  regCode: 'regCode',
+  authority: 'authority',
+  effectiveDate: 'effectiveDate',
+  category: 'category',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GovPermitScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regulationId: 'regulationId',
+  permitNumber: 'permitNumber',
+  type: 'type',
+  holderName: 'holderName',
+  issuedDate: 'issuedDate',
+  expiryDate: 'expiryDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GovFilingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regulationId: 'regulationId',
+  title: 'title',
+  dueDate: 'dueDate',
+  submittedAt: 'submittedAt',
+  status: 'status',
+  filedBy: 'filedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MeetRoomScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  capacity: 'capacity',
+  floor: 'floor',
+  building: 'building',
+  amenities: 'amenities',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MeetBookingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  roomId: 'roomId',
+  title: 'title',
+  organizer: 'organizer',
+  startAt: 'startAt',
+  endAt: 'endAt',
+  attendees: 'attendees',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MeetCateringScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  items: 'items',
+  totalCost: 'totalCost',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DamCollectionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  isPublic: 'isPublic',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DamAssetScalarFieldEnum = {
+  id: 'id',
+  collectionId: 'collectionId',
+  name: 'name',
+  fileUrl: 'fileUrl',
+  mimeType: 'mimeType',
+  fileSize: 'fileSize',
+  tags: 'tags',
+  rightsHolder: 'rightsHolder',
+  licenseType: 'licenseType',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DamDistributionScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  channel: 'channel',
+  distributedAt: 'distributedAt',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -8892,7 +9229,35 @@ exports.Prisma.ModelName = {
   RdExperiment: 'RdExperiment',
   RdPublication: 'RdPublication',
   Rpt3Template: 'Rpt3Template',
-  Rpt3Run: 'Rpt3Run'
+  Rpt3Run: 'Rpt3Run',
+  EngyMeter: 'EngyMeter',
+  EngyReading: 'EngyReading',
+  EngyAlert: 'EngyAlert',
+  TrpRoute: 'TrpRoute',
+  TrpDriver: 'TrpDriver',
+  TrpShipment: 'TrpShipment',
+  InsPolicy: 'InsPolicy',
+  InsClaim: 'InsClaim',
+  ReCrmLead: 'ReCrmLead',
+  ReCrmShowing: 'ReCrmShowing',
+  ConProject: 'ConProject',
+  ConRfi: 'ConRfi',
+  ConPunchItem: 'ConPunchItem',
+  AgrFarm: 'AgrFarm',
+  AgrCrop: 'AgrCrop',
+  AgrHarvest: 'AgrHarvest',
+  MarVessel: 'MarVessel',
+  MarVoyage: 'MarVoyage',
+  MarCargoManifest: 'MarCargoManifest',
+  GovRegulation: 'GovRegulation',
+  GovPermit: 'GovPermit',
+  GovFiling: 'GovFiling',
+  MeetRoom: 'MeetRoom',
+  MeetBooking: 'MeetBooking',
+  MeetCatering: 'MeetCatering',
+  DamCollection: 'DamCollection',
+  DamAsset: 'DamAsset',
+  DamDistribution: 'DamDistribution'
 };
 
 /**

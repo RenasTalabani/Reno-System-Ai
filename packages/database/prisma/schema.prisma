@@ -323,6 +323,17 @@ model CoreTenant {
   npDonors                 NpDonor[]
   rdProjects               RdProject[]
   rpt3Templates            Rpt3Template[]
+  engyMeters               EngyMeter[]
+  trpRoutes                TrpRoute[]
+  trpDrivers               TrpDriver[]
+  insPolicies              InsPolicy[]
+  reCrmLeads               ReCrmLead[]
+  conProjects              ConProject[]
+  agrFarms                 AgrFarm[]
+  marVessels               MarVessel[]
+  govRegulations           GovRegulation[]
+  meetRooms                MeetRoom[]
+  damCollections           DamCollection[]
   @@map("core_tenants")
 }
 
@@ -11999,3 +12010,478 @@ model Rpt3Run {
   @@index([templateId])
   @@map("rpt3_runs")
 }
+// ─────────────────────────────────────────────
+// Phase 121: Energy Management
+// ─────────────────────────────────────────────
+model EngyMeter {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  name      String   @db.VarChar(200)
+  type      String   @db.VarChar(30)
+  location  String?  @db.VarChar(300)
+  unit      String   @default("kWh") @db.VarChar(20)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  readings  EngyReading[]
+  alerts    EngyAlert[]
+  @@index([tenantId])
+  @@map("engy_meters")
+}
+
+model EngyReading {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  meterId    String   @map("meter_id") @db.Uuid
+  value      Decimal  @db.Decimal(14,4)
+  recordedAt DateTime @map("recorded_at") @db.Timestamptz
+  source     String   @default("manual") @db.VarChar(20)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  meter      EngyMeter @relation(fields: [meterId], references: [id], onDelete: Cascade)
+  @@index([meterId])
+  @@map("engy_readings")
+}
+
+model EngyAlert {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  meterId     String   @map("meter_id") @db.Uuid
+  type        String   @db.VarChar(30)
+  threshold   Decimal  @db.Decimal(14,4)
+  actualValue Decimal  @map("actual_value") @db.Decimal(14,4)
+  status      String   @default("open") @db.VarChar(20)
+  resolvedAt  DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  meter       EngyMeter @relation(fields: [meterId], references: [id], onDelete: Cascade)
+  @@index([meterId])
+  @@map("engy_alerts")
+}
+
+// ─────────────────────────────────────────────
+// Phase 122: Transportation & Logistics
+// ─────────────────────────────────────────────
+model TrpRoute {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  name           String   @db.VarChar(255)
+  origin         String   @db.VarChar(300)
+  destination    String   @db.VarChar(300)
+  distanceKm     Decimal? @map("distance_km") @db.Decimal(10,2)
+  estimatedMins  Int?     @map("estimated_mins")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  shipments      TrpShipment[]
+  @@index([tenantId])
+  @@map("trp_routes")
+}
+
+model TrpDriver {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  name      String   @db.VarChar(200)
+  licenseNo String   @map("license_no") @db.VarChar(100)
+  phone     String?  @db.VarChar(30)
+  status    String   @default("available") @db.VarChar(20)
+  vehicleId String?  @map("vehicle_id") @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  shipments TrpShipment[]
+  @@index([tenantId])
+  @@map("trp_drivers")
+}
+
+model TrpShipment {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  routeId           String?  @map("route_id") @db.Uuid
+  driverId          String?  @map("driver_id") @db.Uuid
+  trackingCode      String   @map("tracking_code") @db.VarChar(100)
+  status            String   @default("pending") @db.VarChar(20)
+  scheduledAt       DateTime? @map("scheduled_at") @db.Timestamptz
+  actualDeliveredAt DateTime? @map("actual_delivered_at") @db.Timestamptz
+  cargo             Json     @default("{}")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  route             TrpRoute? @relation(fields: [routeId], references: [id])
+  driver            TrpDriver? @relation(fields: [driverId], references: [id])
+  @@index([tenantId])
+  @@index([routeId])
+  @@index([driverId])
+  @@map("trp_shipments")
+}
+
+// ─────────────────────────────────────────────
+// Phase 123: Insurance Management
+// ─────────────────────────────────────────────
+model InsPolicy {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  policyNumber String   @map("policy_number") @db.VarChar(100)
+  type         String   @db.VarChar(50)
+  holderName   String   @map("holder_name") @db.VarChar(255)
+  holderEmail  String?  @map("holder_email") @db.VarChar(255)
+  startDate    DateTime @map("start_date") @db.Date
+  endDate      DateTime @map("end_date") @db.Date
+  premium      Decimal  @db.Decimal(14,2)
+  status       String   @default("active") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  claims       InsClaim[]
+  @@index([tenantId])
+  @@map("ins_policies")
+}
+
+model InsClaim {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  policyId     String   @map("policy_id") @db.Uuid
+  claimNumber  String   @map("claim_number") @db.VarChar(100)
+  incidentDate DateTime @map("incident_date") @db.Date
+  description  String?  @db.Text
+  amount       Decimal  @db.Decimal(14,2)
+  status       String   @default("submitted") @db.VarChar(20)
+  settledAt    DateTime? @map("settled_at") @db.Date
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  policy       InsPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  @@index([policyId])
+  @@map("ins_claims")
+}
+
+// ─────────────────────────────────────────────
+// Phase 124: Real Estate CRM
+// ─────────────────────────────────────────────
+model ReCrmLead {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(255)
+  email        String?  @db.VarChar(255)
+  phone        String?  @db.VarChar(30)
+  budget       Decimal? @db.Decimal(14,2)
+  propertyType String?  @map("property_type") @db.VarChar(50)
+  status       String   @default("new") @db.VarChar(20)
+  assignedTo   String?  @map("assigned_to") @db.Uuid
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  showings     ReCrmShowing[]
+  @@index([tenantId])
+  @@map("re_crm_leads")
+}
+
+model ReCrmShowing {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String   @map("lead_id") @db.Uuid
+  propertyAddress String   @map("property_address") @db.VarChar(500)
+  scheduledAt     DateTime @map("scheduled_at") @db.Timestamptz
+  status          String   @default("scheduled") @db.VarChar(20)
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  lead            ReCrmLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  @@index([leadId])
+  @@map("re_crm_showings")
+}
+
+// ─────────────────────────────────────────────
+// Phase 125: Construction Management
+// ─────────────────────────────────────────────
+model ConProject {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(300)
+  siteAddress String?  @map("site_address") @db.VarChar(500)
+  status      String   @default("planning") @db.VarChar(20)
+  budget      Decimal? @db.Decimal(14,2)
+  startDate   DateTime? @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  createdBy   String   @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rfis        ConRfi[]
+  punchItems  ConPunchItem[]
+  @@index([tenantId])
+  @@map("con_projects")
+}
+
+model ConRfi {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  number      String   @db.VarChar(50)
+  subject     String   @db.VarChar(500)
+  status      String   @default("open") @db.VarChar(20)
+  dueDate     DateTime? @map("due_date") @db.Date
+  submittedBy String   @map("submitted_by") @db.Uuid
+  response    String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  project     ConProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@index([projectId])
+  @@map("con_rfis")
+}
+
+model ConPunchItem {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  description String   @db.VarChar(500)
+  status      String   @default("open") @db.VarChar(20)
+  priority    String   @default("medium") @db.VarChar(10)
+  assignedTo  String?  @map("assigned_to") @db.Uuid
+  dueDate     DateTime? @map("due_date") @db.Date
+  closedAt    DateTime? @map("closed_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  project     ConProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@index([projectId])
+  @@map("con_punch_items")
+}
+
+// ─────────────────────────────────────────────
+// Phase 126: Agriculture Management
+// ─────────────────────────────────────────────
+model AgrFarm {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  name      String   @db.VarChar(255)
+  location  String?  @db.VarChar(500)
+  areaHa    Decimal? @map("area_ha") @db.Decimal(10,2)
+  soilType  String?  @map("soil_type") @db.VarChar(100)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  crops     AgrCrop[]
+  @@index([tenantId])
+  @@map("agr_farms")
+}
+
+model AgrCrop {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  farmId            String   @map("farm_id") @db.Uuid
+  name              String   @db.VarChar(255)
+  variety           String?  @db.VarChar(100)
+  plantedAt         DateTime? @map("planted_at") @db.Date
+  expectedHarvestAt DateTime? @map("expected_harvest_at") @db.Date
+  status            String   @default("growing") @db.VarChar(20)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  farm              AgrFarm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  harvests          AgrHarvest[]
+  @@index([farmId])
+  @@map("agr_crops")
+}
+
+model AgrHarvest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cropId      String   @map("crop_id") @db.Uuid
+  yieldKg     Decimal  @map("yield_kg") @db.Decimal(10,2)
+  harvestedAt DateTime @map("harvested_at") @db.Date
+  quality     String?  @db.VarChar(30)
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  crop        AgrCrop @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  @@index([cropId])
+  @@map("agr_harvests")
+}
+
+// ─────────────────────────────────────────────
+// Phase 127: Marine Fleet Management
+// ─────────────────────────────────────────────
+model MarVessel {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  imoNumber   String?  @map("imo_number") @db.VarChar(20)
+  type        String   @db.VarChar(50)
+  flagCountry String?  @map("flag_country") @db.VarChar(3)
+  status      String   @default("active") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  voyages     MarVoyage[]
+  @@index([tenantId])
+  @@map("mar_vessels")
+}
+
+model MarVoyage {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vesselId      String   @map("vessel_id") @db.Uuid
+  voyageNumber  String   @map("voyage_number") @db.VarChar(100)
+  departurePort String   @map("departure_port") @db.VarChar(100)
+  arrivalPort   String   @map("arrival_port") @db.VarChar(100)
+  departedAt    DateTime? @map("departed_at") @db.Timestamptz
+  arrivedAt     DateTime? @map("arrived_at") @db.Timestamptz
+  status        String   @default("planned") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  vessel        MarVessel @relation(fields: [vesselId], references: [id], onDelete: Cascade)
+  cargoManifests MarCargoManifest[]
+  @@index([vesselId])
+  @@map("mar_voyages")
+}
+
+model MarCargoManifest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  voyageId    String   @map("voyage_id") @db.Uuid
+  description String   @db.VarChar(500)
+  weightKg    Decimal? @map("weight_kg") @db.Decimal(12,2)
+  commodity   String?  @db.VarChar(100)
+  status      String   @default("loaded") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  voyage      MarVoyage @relation(fields: [voyageId], references: [id], onDelete: Cascade)
+  @@index([voyageId])
+  @@map("mar_cargo_manifests")
+}
+
+// ─────────────────────────────────────────────
+// Phase 128: Government & Compliance Portal
+// ─────────────────────────────────────────────
+model GovRegulation {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  title         String   @db.VarChar(500)
+  regCode       String?  @map("reg_code") @db.VarChar(100)
+  authority     String?  @db.VarChar(255)
+  effectiveDate DateTime? @map("effective_date") @db.Date
+  category      String?  @db.VarChar(100)
+  status        String   @default("active") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  permits       GovPermit[]
+  filings       GovFiling[]
+  @@index([tenantId])
+  @@map("gov_regulations")
+}
+
+model GovPermit {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  regulationId  String?  @map("regulation_id") @db.Uuid
+  permitNumber  String   @map("permit_number") @db.VarChar(100)
+  type          String   @db.VarChar(50)
+  holderName    String   @map("holder_name") @db.VarChar(255)
+  issuedDate    DateTime? @map("issued_date") @db.Date
+  expiryDate    DateTime? @map("expiry_date") @db.Date
+  status        String   @default("active") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  regulation    GovRegulation? @relation(fields: [regulationId], references: [id])
+  @@index([tenantId])
+  @@index([regulationId])
+  @@map("gov_permits")
+}
+
+model GovFiling {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  regulationId String?  @map("regulation_id") @db.Uuid
+  title        String   @db.VarChar(500)
+  dueDate      DateTime @map("due_date") @db.Date
+  submittedAt  DateTime? @map("submitted_at") @db.Timestamptz
+  status       String   @default("pending") @db.VarChar(20)
+  filedBy      String?  @map("filed_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  regulation   GovRegulation? @relation(fields: [regulationId], references: [id])
+  @@index([tenantId])
+  @@index([regulationId])
+  @@map("gov_filings")
+}
+
+// ─────────────────────────────────────────────
+// Phase 129: Conference & Meeting Management
+// ─────────────────────────────────────────────
+model MeetRoom {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  name      String   @db.VarChar(255)
+  capacity  Int      @default(10)
+  floor     String?  @db.VarChar(50)
+  building  String?  @db.VarChar(100)
+  amenities String[] @default([])
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bookings  MeetBooking[]
+  @@index([tenantId])
+  @@map("meet_rooms")
+}
+
+model MeetBooking {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  roomId     String   @map("room_id") @db.Uuid
+  title      String   @db.VarChar(300)
+  organizer  String   @db.Uuid
+  startAt    DateTime @map("start_at") @db.Timestamptz
+  endAt      DateTime @map("end_at") @db.Timestamptz
+  attendees  String[] @default([])
+  status     String   @default("confirmed") @db.VarChar(20)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  room       MeetRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  catering   MeetCatering[]
+  @@index([tenantId])
+  @@index([roomId])
+  @@map("meet_bookings")
+}
+
+model MeetCatering {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId String   @map("booking_id") @db.Uuid
+  items     Json     @default("[]")
+  totalCost Decimal  @default(0) @map("total_cost") @db.Decimal(10,2)
+  status    String   @default("requested") @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  booking   MeetBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  @@index([bookingId])
+  @@map("meet_catering")
+}
+
+// ─────────────────────────────────────────────
+// Phase 130: Digital Asset Management
+// ─────────────────────────────────────────────
+model DamCollection {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  description String?  @db.VarChar(500)
+  isPublic    Boolean  @default(false) @map("is_public")
+  createdBy   String   @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assets      DamAsset[]
+  @@index([tenantId])
+  @@map("dam_collections")
+}
+
+model DamAsset {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  collectionId String   @map("collection_id") @db.Uuid
+  name         String   @db.VarChar(300)
+  fileUrl      String   @map("file_url") @db.VarChar(1000)
+  mimeType     String   @map("mime_type") @db.VarChar(100)
+  fileSize     BigInt?  @map("file_size")
+  tags         String[] @default([])
+  rightsHolder String?  @map("rights_holder") @db.VarChar(255)
+  licenseType  String?  @map("license_type") @db.VarChar(50)
+  expiresAt    DateTime? @map("expires_at") @db.Date
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  collection   DamCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  distributions DamDistribution[]
+  @@index([collectionId])
+  @@map("dam_assets")
+}
+
+model DamDistribution {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetId       String   @map("asset_id") @db.Uuid
+  channel       String   @db.VarChar(100)
+  distributedAt DateTime? @map("distributed_at") @db.Timestamptz
+  status        String   @default("pending") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  asset         DamAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  @@index([assetId])
+  @@map("dam_distributions")
+}
+
