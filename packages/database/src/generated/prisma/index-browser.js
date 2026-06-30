@@ -9504,6 +9504,82 @@ exports.Prisma.SlrReadingScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AiwSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  provider: 'provider',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiwMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  provider: 'provider',
+  tokens: 'tokens',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiwMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  type: 'type',
+  key: 'key',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiwTaskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  title: 'title',
+  description: 'description',
+  steps: 'steps',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  completedAt: 'completedAt',
+  result: 'result',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiwDocumentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  type: 'type',
+  sizeBytes: 'sizeBytes',
+  summary: 'summary',
+  analysis: 'analysis',
+  status: 'status',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AiwSearchLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  query: 'query',
+  modules: 'modules',
+  resultCount: 'resultCount',
+  durationMs: 'durationMs',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10116,7 +10192,13 @@ exports.Prisma.ModelName = {
   FshSite: 'FshSite',
   FshCatch: 'FshCatch',
   SlrInstallation: 'SlrInstallation',
-  SlrReading: 'SlrReading'
+  SlrReading: 'SlrReading',
+  AiwSession: 'AiwSession',
+  AiwMessage: 'AiwMessage',
+  AiwMemory: 'AiwMemory',
+  AiwTask: 'AiwTask',
+  AiwDocument: 'AiwDocument',
+  AiwSearchLog: 'AiwSearchLog'
 };
 
 /**

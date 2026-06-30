@@ -377,6 +377,11 @@ model CoreTenant {
   pubTitles                PubTitle[]
   fshSites                 FshSite[]
   slrInstallations         SlrInstallation[]
+  aiwSessions              AiwSession[]
+  aiwMemory                AiwMemory[]
+  aiwTasks                 AiwTask[]
+  aiwDocuments             AiwDocument[]
+  aiwSearchLogs            AiwSearchLog[]
   @@map("core_tenants")
 }
 
@@ -13635,5 +13640,112 @@ model SlrReading {
   installation   SlrInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
   @@index([installationId])
   @@map("slr_readings")
+}
+
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PHASE 38 â€” Reno AI Workspace & Universal Desktop Assistant
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+model AiwSession {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  title       String?  @db.VarChar(500)
+  provider    String   @default("reno-brain") @db.VarChar(50)
+  status      String   @default("active") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  messages    AiwMessage[]
+  tasks       AiwTask[]
+  @@index([tenantId])
+  @@index([userId])
+  @@map("aiw_sessions")
+}
+
+model AiwMessage {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId   String   @map("session_id") @db.Uuid
+  role        String   @db.VarChar(20)
+  content     String   @db.Text
+  provider    String?  @db.VarChar(50)
+  tokens      Int?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  session     AiwSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  @@index([sessionId])
+  @@map("aiw_messages")
+}
+
+model AiwMemory {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  type        String   @db.VarChar(50)
+  key         String   @db.VarChar(500)
+  value       Json
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([userId])
+  @@unique([tenantId, userId, type, key])
+  @@map("aiw_memory")
+}
+
+model AiwTask {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  sessionId    String?  @map("session_id") @db.Uuid
+  title        String   @db.VarChar(500)
+  description  String?  @db.Text
+  steps        Json
+  status       String   @default("pending_approval") @db.VarChar(30)
+  approvedBy   String?  @map("approved_by") @db.Uuid
+  approvedAt   DateTime? @map("approved_at") @db.Timestamptz
+  completedAt  DateTime? @map("completed_at") @db.Timestamptz
+  result       Json?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  session      AiwSession? @relation(fields: [sessionId], references: [id])
+  @@index([tenantId])
+  @@index([userId])
+  @@map("aiw_tasks")
+}
+
+model AiwDocument {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  name        String   @db.VarChar(500)
+  type        String   @db.VarChar(20)
+  sizeBytes   Int?     @map("size_bytes")
+  summary     String?  @db.Text
+  analysis    Json?
+  status      String   @default("pending") @db.VarChar(20)
+  approvedAt  DateTime? @map("approved_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([userId])
+  @@map("aiw_documents")
+}
+
+model AiwSearchLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  query       String   @db.VarChar(1000)
+  modules     String[]
+  resultCount Int      @default(0) @map("result_count")
+  durationMs  Int?     @map("duration_ms")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("aiw_search_logs")
 }
 
