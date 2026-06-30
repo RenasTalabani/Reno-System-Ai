@@ -274,113 +274,116 @@ model CoreTenant {
   riskItems          RiskItem[]
   sigRequests        SigRequest[]
 
-  attShifts         AttShift[]
-  attTimesheets     AttTimesheet[]
-  surSurveys        SurSurvey[]
-  pcCategories      PcCategory[]
-  pcProducts        PcProduct[]
-  expReports        ExpReport[]
-  atsJobs           AtsJob[]
-  atsCandidates     AtsCandidate[]
-  evtEvents         EvtEvent[]
-  ntfTemplates      NtfTemplate[]
-  ntfLogs           NtfLog[]
-  tskBoards         TskBoard[]
-  inv2Quotes        Inv2Quote[]
-  inv2PaymentLinks  Inv2PaymentLink[]
-  clm2Templates     Clm2Template[]
-  trsAccounts       TrsAccount[]
-  trsFxRates        TrsFxRate[]
-  ocrJobs           OcrJob[]
-  suplProfiles      SuplProfile[]
-  lty2Rewards       Lty2Reward[]
-  ccEvents          CcEvent[]
-  scimTokens        ScimToken[]
-  dirGroups         DirGroup[]
-  phltChecks        PhltCheck[]
-  phltSlos          PhltSlo[]
-  phltIncidents     PhltIncident[]
-  dmsfolders        DmsFolder[]
-  dmsDocs           DmsDoc[]
-  trvTrips          TrvTrip[]
-  grantGrants       GrantGrant[]
-  propProperties    PropProperty[]
-  iotDevices        IotDevice[]
-  csrPrograms       CsrProgram[]
-  innIdeas          InnIdea[]
-  sub2Plans         Sub2Plan[]
-  sub2Subs          Sub2Sub[]
-  chatChannels      ChatChannel[]
-  etlConnectors     EtlConnector[]
-  legalCases        LegalCase[]
-  lms2Courses       Lms2Course[]
-  hcPatients        HcPatient[]
-  posOrders         PosOrder[]
-  retailStores      RetailStore[]
-  printJobs         PrintJob[]
-  franchisees       Franchisee[]
-  npDonors          NpDonor[]
-  rdProjects        RdProject[]
-  rpt3Templates     Rpt3Template[]
-  engyMeters        EngyMeter[]
-  trpRoutes         TrpRoute[]
-  trpDrivers        TrpDriver[]
-  insPolicies       InsPolicy[]
-  reCrmLeads        ReCrmLead[]
-  conProjects       ConProject[]
-  agrFarms          AgrFarm[]
-  marVessels        MarVessel[]
-  govRegulations    GovRegulation[]
-  meetRooms         MeetRoom[]
-  damCollections    DamCollection[]
-  mbrChannels       MbrChannel[]
-  mbrContent        MbrContent[]
-  eduSchools        EduSchool[]
-  hotelProperties   HotelProperty[]
-  hotelReservations HotelReservation[]
-  sptFacilities     SptFacility[]
-  sptMembers        SptMember[]
-  sptBookings       SptBooking[]
-  fpaClients        FpaClient[]
-  vetPets           VetPet[]
-  wstRoutes         WstRoute[]
-  cemPlots          CemPlot[]
-  tktEvents         TktEvent[]
-  tktOrders         TktOrder[]
-  autoVehicles      AutoVehicle[]
-  autoSales         AutoSale[]
-  mneSites          MneSite[]
-  txtCollections    TxtCollection[]
-  clnJobs           ClnJob[]
-  pctContracts      PctContract[]
-  phoSessions       PhoSession[]
-  mscArtists        MscArtist[]
-  mscBookings       MscBooking[]
-  cwkSpaces         CwkSpace[]
-  cwkReservations   CwkReservation[]
-  pbdPets           PbdPet[]
-  fdlRestaurants    FdlRestaurant[]
-  fdlOrders         FdlOrder[]
-  phxDrugs          PhxDrug[]
-  phxPrescriptions  PhxPrescription[]
-  avnAircraft       AvnAircraft[]
-  avnFlights        AvnFlight[]
-  crnVehicles       CrnVehicle[]
-  crnRentals        CrnRental[]
-  lndOrders         LndOrder[]
-  secContracts      SecContract[]
-  dntPatients       DntPatient[]
-  adfProjects       AdfProject[]
-  cnfHalls          CnfHall[]
-  cnfBookings       CnfBooking[]
-  pubTitles         PubTitle[]
-  fshSites          FshSite[]
-  slrInstallations  SlrInstallation[]
-  aiwSessions       AiwSession[]
-  aiwMemory         AiwMemory[]
-  aiwTasks          AiwTask[]
-  aiwDocuments      AiwDocument[]
-  aiwSearchLogs     AiwSearchLog[]
+  attShifts           AttShift[]
+  attTimesheets       AttTimesheet[]
+  surSurveys          SurSurvey[]
+  pcCategories        PcCategory[]
+  pcProducts          PcProduct[]
+  expReports          ExpReport[]
+  atsJobs             AtsJob[]
+  atsCandidates       AtsCandidate[]
+  evtEvents           EvtEvent[]
+  ntfTemplates        NtfTemplate[]
+  ntfLogs             NtfLog[]
+  tskBoards           TskBoard[]
+  inv2Quotes          Inv2Quote[]
+  inv2PaymentLinks    Inv2PaymentLink[]
+  clm2Templates       Clm2Template[]
+  trsAccounts         TrsAccount[]
+  trsFxRates          TrsFxRate[]
+  ocrJobs             OcrJob[]
+  suplProfiles        SuplProfile[]
+  lty2Rewards         Lty2Reward[]
+  ccEvents            CcEvent[]
+  scimTokens          ScimToken[]
+  dirGroups           DirGroup[]
+  phltChecks          PhltCheck[]
+  phltSlos            PhltSlo[]
+  phltIncidents       PhltIncident[]
+  dmsfolders          DmsFolder[]
+  dmsDocs             DmsDoc[]
+  trvTrips            TrvTrip[]
+  grantGrants         GrantGrant[]
+  propProperties      PropProperty[]
+  iotDevices          IotDevice[]
+  csrPrograms         CsrProgram[]
+  innIdeas            InnIdea[]
+  sub2Plans           Sub2Plan[]
+  sub2Subs            Sub2Sub[]
+  chatChannels        ChatChannel[]
+  etlConnectors       EtlConnector[]
+  legalCases          LegalCase[]
+  lms2Courses         Lms2Course[]
+  hcPatients          HcPatient[]
+  posOrders           PosOrder[]
+  retailStores        RetailStore[]
+  printJobs           PrintJob[]
+  franchisees         Franchisee[]
+  npDonors            NpDonor[]
+  rdProjects          RdProject[]
+  rpt3Templates       Rpt3Template[]
+  engyMeters          EngyMeter[]
+  trpRoutes           TrpRoute[]
+  trpDrivers          TrpDriver[]
+  insPolicies         InsPolicy[]
+  reCrmLeads          ReCrmLead[]
+  conProjects         ConProject[]
+  agrFarms            AgrFarm[]
+  marVessels          MarVessel[]
+  govRegulations      GovRegulation[]
+  meetRooms           MeetRoom[]
+  damCollections      DamCollection[]
+  mbrChannels         MbrChannel[]
+  mbrContent          MbrContent[]
+  eduSchools          EduSchool[]
+  hotelProperties     HotelProperty[]
+  hotelReservations   HotelReservation[]
+  sptFacilities       SptFacility[]
+  sptMembers          SptMember[]
+  sptBookings         SptBooking[]
+  fpaClients          FpaClient[]
+  vetPets             VetPet[]
+  wstRoutes           WstRoute[]
+  cemPlots            CemPlot[]
+  tktEvents           TktEvent[]
+  tktOrders           TktOrder[]
+  autoVehicles        AutoVehicle[]
+  autoSales           AutoSale[]
+  mneSites            MneSite[]
+  txtCollections      TxtCollection[]
+  clnJobs             ClnJob[]
+  pctContracts        PctContract[]
+  phoSessions         PhoSession[]
+  mscArtists          MscArtist[]
+  mscBookings         MscBooking[]
+  cwkSpaces           CwkSpace[]
+  cwkReservations     CwkReservation[]
+  pbdPets             PbdPet[]
+  fdlRestaurants      FdlRestaurant[]
+  fdlOrders           FdlOrder[]
+  phxDrugs            PhxDrug[]
+  phxPrescriptions    PhxPrescription[]
+  avnAircraft         AvnAircraft[]
+  avnFlights          AvnFlight[]
+  crnVehicles         CrnVehicle[]
+  crnRentals          CrnRental[]
+  lndOrders           LndOrder[]
+  secContracts        SecContract[]
+  dntPatients         DntPatient[]
+  adfProjects         AdfProject[]
+  cnfHalls            CnfHall[]
+  cnfBookings         CnfBooking[]
+  pubTitles           PubTitle[]
+  fshSites            FshSite[]
+  slrInstallations    SlrInstallation[]
+  aiwSessions         AiwSession[]
+  aiwMemory           AiwMemory[]
+  aiwTasks            AiwTask[]
+  aiwDocuments        AiwDocument[]
+  aiwSearchLogs       AiwSearchLog[]
+  awltProposals       AwltProposal[]
+  awltCommandLogs     AwltCommandLog[]
+  awltProjectContexts AwltProjectContext[]
 
   @@map("core_tenants")
 }
@@ -14077,4 +14080,74 @@ model AiwSearchLog {
 
   @@index([tenantId])
   @@map("aiw_search_logs")
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PHASE 39 â€” AI Workspace Live Tools
+// Every action is PROPOSED â†’ APPROVED â†’ EXECUTED. No auto-execution.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+model AwltProposal {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String           @map("tenant_id") @db.Uuid
+  userId          String           @map("user_id") @db.Uuid
+  tool            String           @db.VarChar(50)
+  title           String           @db.VarChar(500)
+  description     String?          @db.Text
+  payload         Json
+  status          String           @default("pending_approval") @db.VarChar(30)
+  result          Json?
+  aiExplanation   String?          @map("ai_explanation") @db.Text
+  approvedBy      String?          @map("approved_by") @db.Uuid
+  approvedAt      DateTime?        @map("approved_at") @db.Timestamptz
+  executedAt      DateTime?        @map("executed_at") @db.Timestamptz
+  rejectedBy      String?          @map("rejected_by") @db.Uuid
+  rejectedAt      DateTime?        @map("rejected_at") @db.Timestamptz
+  rejectionReason String?          @map("rejection_reason") @db.Text
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  tenant          CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  logs            AwltCommandLog[]
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([tenantId, tool])
+  @@index([tenantId, status])
+  @@map("awlt_proposals")
+}
+
+model AwltCommandLog {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  proposalId String       @map("proposal_id") @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  userId     String       @map("user_id") @db.Uuid
+  tool       String       @db.VarChar(50)
+  input      Json
+  output     Json?
+  status     String       @db.VarChar(20)
+  durationMs Int?         @map("duration_ms")
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  proposal   AwltProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([proposalId])
+  @@map("awlt_command_logs")
+}
+
+model AwltProjectContext {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  userId     String     @map("user_id") @db.Uuid
+  name       String     @db.VarChar(255)
+  type       String     @db.VarChar(50)
+  metadata   Json
+  lastSyncAt DateTime?  @map("last_sync_at") @db.Timestamptz
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, name, type])
+  @@index([tenantId])
+  @@map("awlt_project_contexts")
 }

@@ -158,6 +158,7 @@ import { publishingModuleRoutes } from './publishing/index.js'
 import { fisheryModuleRoutes } from './fishery/index.js'
 import { solarModuleRoutes } from './solar/index.js'
 import { aiWorkspaceRoutes as aiWorkspacePhase38Routes } from './ai-workspace/phase38.js'
+import { liveToolsModuleRoutes } from './live-tools/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -322,6 +323,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(fisheryModuleRoutes, { prefix: '/fishery' })
       await v1.register(solarModuleRoutes, { prefix: '/solar' })
       await v1.register(aiWorkspacePhase38Routes, { prefix: '/ai-workspace' })
+      await v1.register(liveToolsModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

@@ -382,6 +382,9 @@ model CoreTenant {
   aiwTasks                 AiwTask[]
   aiwDocuments             AiwDocument[]
   aiwSearchLogs            AiwSearchLog[]
+  awltProposals            AwltProposal[]
+  awltCommandLogs          AwltCommandLog[]
+  awltProjectContexts      AwltProjectContext[]
   @@map("core_tenants")
 }
 
@@ -13747,5 +13750,73 @@ model AiwSearchLog {
   tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@index([tenantId])
   @@map("aiw_search_logs")
+}
+
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PHASE 39 â€” AI Workspace Live Tools
+// Every action is PROPOSED â†’ APPROVED â†’ EXECUTED. No auto-execution.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+model AwltProposal {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  tool             String    @db.VarChar(50)
+  title            String    @db.VarChar(500)
+  description      String?   @db.Text
+  payload          Json
+  status           String    @default("pending_approval") @db.VarChar(30)
+  result           Json?
+  aiExplanation    String?   @map("ai_explanation") @db.Text
+  approvedBy       String?   @map("approved_by") @db.Uuid
+  approvedAt       DateTime? @map("approved_at") @db.Timestamptz
+  executedAt       DateTime? @map("executed_at") @db.Timestamptz
+  rejectedBy       String?   @map("rejected_by") @db.Uuid
+  rejectedAt       DateTime? @map("rejected_at") @db.Timestamptz
+  rejectionReason  String?   @map("rejection_reason") @db.Text
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  logs             AwltCommandLog[]
+  @@index([tenantId])
+  @@index([userId])
+  @@index([tenantId, tool])
+  @@index([tenantId, status])
+  @@map("awlt_proposals")
+}
+
+model AwltCommandLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  proposalId  String   @map("proposal_id") @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  tool        String   @db.VarChar(50)
+  input       Json
+  output      Json?
+  status      String   @db.VarChar(20)
+  durationMs  Int?     @map("duration_ms")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  proposal    AwltProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([proposalId])
+  @@map("awlt_command_logs")
+}
+
+model AwltProjectContext {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  type        String    @db.VarChar(50)
+  metadata    Json
+  lastSyncAt  DateTime? @map("last_sync_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@unique([tenantId, userId, name, type])
+  @@map("awlt_project_contexts")
 }
 

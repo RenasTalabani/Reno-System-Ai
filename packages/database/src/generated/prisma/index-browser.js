@@ -9580,6 +9580,52 @@ exports.Prisma.AiwSearchLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AwltProposalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  tool: 'tool',
+  title: 'title',
+  description: 'description',
+  payload: 'payload',
+  status: 'status',
+  result: 'result',
+  aiExplanation: 'aiExplanation',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  executedAt: 'executedAt',
+  rejectedBy: 'rejectedBy',
+  rejectedAt: 'rejectedAt',
+  rejectionReason: 'rejectionReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AwltCommandLogScalarFieldEnum = {
+  id: 'id',
+  proposalId: 'proposalId',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  tool: 'tool',
+  input: 'input',
+  output: 'output',
+  status: 'status',
+  durationMs: 'durationMs',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AwltProjectContextScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  type: 'type',
+  metadata: 'metadata',
+  lastSyncAt: 'lastSyncAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10198,7 +10244,10 @@ exports.Prisma.ModelName = {
   AiwMemory: 'AiwMemory',
   AiwTask: 'AiwTask',
   AiwDocument: 'AiwDocument',
-  AiwSearchLog: 'AiwSearchLog'
+  AiwSearchLog: 'AiwSearchLog',
+  AwltProposal: 'AwltProposal',
+  AwltCommandLog: 'AwltCommandLog',
+  AwltProjectContext: 'AwltProjectContext'
 };
 
 /**
