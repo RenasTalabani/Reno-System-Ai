@@ -9040,6 +9040,249 @@ exports.Prisma.AutoSaleScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MneSiteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  location: 'location',
+  mineral: 'mineral',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MneOperationScalarFieldEnum = {
+  id: 'id',
+  siteId: 'siteId',
+  operatorId: 'operatorId',
+  type: 'type',
+  quantity: 'quantity',
+  unit: 'unit',
+  operatedAt: 'operatedAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TxtCollectionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  season: 'season',
+  launchDate: 'launchDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TxtItemScalarFieldEnum = {
+  id: 'id',
+  collectionId: 'collectionId',
+  name: 'name',
+  sku: 'sku',
+  fabric: 'fabric',
+  color: 'color',
+  size: 'size',
+  stock: 'stock',
+  price: 'price',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ClnJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientName: 'clientName',
+  address: 'address',
+  type: 'type',
+  scheduledAt: 'scheduledAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ClnAssignmentScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  staffId: 'staffId',
+  assignedAt: 'assignedAt'
+};
+
+exports.Prisma.PctContractScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientName: 'clientName',
+  clientPhone: 'clientPhone',
+  address: 'address',
+  pestType: 'pestType',
+  contractType: 'contractType',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PctVisitScalarFieldEnum = {
+  id: 'id',
+  contractId: 'contractId',
+  technicianId: 'technicianId',
+  visitDate: 'visitDate',
+  treatment: 'treatment',
+  notes: 'notes',
+  outcome: 'outcome',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PhoSessionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientName: 'clientName',
+  clientEmail: 'clientEmail',
+  type: 'type',
+  scheduledAt: 'scheduledAt',
+  duration: 'duration',
+  status: 'status',
+  price: 'price',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PhoDeliverableScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  fileUrl: 'fileUrl',
+  type: 'type',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MscArtistScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  genre: 'genre',
+  bio: 'bio',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MscBookingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  artistId: 'artistId',
+  eventName: 'eventName',
+  venue: 'venue',
+  eventDate: 'eventDate',
+  fee: 'fee',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CwkSpaceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  capacity: 'capacity',
+  pricePerDay: 'pricePerDay',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CwkReservationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  spaceId: 'spaceId',
+  memberName: 'memberName',
+  memberEmail: 'memberEmail',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  totalPrice: 'totalPrice',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PbdPetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ownerName: 'ownerName',
+  ownerPhone: 'ownerPhone',
+  name: 'name',
+  species: 'species',
+  breed: 'breed',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PbdStayScalarFieldEnum = {
+  id: 'id',
+  petId: 'petId',
+  checkIn: 'checkIn',
+  checkOut: 'checkOut',
+  kennel: 'kennel',
+  dailyRate: 'dailyRate',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FdlRestaurantScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  cuisine: 'cuisine',
+  address: 'address',
+  isOpen: 'isOpen',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FdlMenuItemScalarFieldEnum = {
+  id: 'id',
+  restaurantId: 'restaurantId',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  price: 'price',
+  isAvailable: 'isAvailable',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FdlOrderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  restaurantId: 'restaurantId',
+  orderRef: 'orderRef',
+  customerName: 'customerName',
+  deliveryAddr: 'deliveryAddr',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  placedAt: 'placedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PhxDrugScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  genericName: 'genericName',
+  manufacturer: 'manufacturer',
+  category: 'category',
+  dosage: 'dosage',
+  stock: 'stock',
+  unitPrice: 'unitPrice',
+  reorderLevel: 'reorderLevel',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PhxPrescriptionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  patientName: 'patientName',
+  doctorName: 'doctorName',
+  drugId: 'drugId',
+  quantity: 'quantity',
+  dispensedAt: 'dispensedAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -9612,7 +9855,28 @@ exports.Prisma.ModelName = {
   TktOrder: 'TktOrder',
   AutoVehicle: 'AutoVehicle',
   AutoTestDrive: 'AutoTestDrive',
-  AutoSale: 'AutoSale'
+  AutoSale: 'AutoSale',
+  MneSite: 'MneSite',
+  MneOperation: 'MneOperation',
+  TxtCollection: 'TxtCollection',
+  TxtItem: 'TxtItem',
+  ClnJob: 'ClnJob',
+  ClnAssignment: 'ClnAssignment',
+  PctContract: 'PctContract',
+  PctVisit: 'PctVisit',
+  PhoSession: 'PhoSession',
+  PhoDeliverable: 'PhoDeliverable',
+  MscArtist: 'MscArtist',
+  MscBooking: 'MscBooking',
+  CwkSpace: 'CwkSpace',
+  CwkReservation: 'CwkReservation',
+  PbdPet: 'PbdPet',
+  PbdStay: 'PbdStay',
+  FdlRestaurant: 'FdlRestaurant',
+  FdlMenuItem: 'FdlMenuItem',
+  FdlOrder: 'FdlOrder',
+  PhxDrug: 'PhxDrug',
+  PhxPrescription: 'PhxPrescription'
 };
 
 /**

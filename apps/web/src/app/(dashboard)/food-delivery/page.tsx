@@ -1,0 +1,17 @@
+'use client'
+export default function FoodDeliveryPage() {
+  return (
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Food Delivery Platform</h1>
+      <p className="text-muted-foreground">Manage restaurants, menus, and delivery orders.</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {['Total Restaurants', 'Open Now', 'Today\'s Orders'].map((label) => (
+          <div key={label} className="rounded-lg border p-4">
+            <div className="text-sm text-muted-foreground">{label}</div>
+            <div className="text-3xl font-bold mt-1">—</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

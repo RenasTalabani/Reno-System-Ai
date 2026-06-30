@@ -137,6 +137,16 @@ import { wasteModuleRoutes } from './waste/index.js'
 import { cemeteryModuleRoutes } from './cemetery/index.js'
 import { ticketingModuleRoutes } from './ticketing/index.js'
 import { automotiveModuleRoutes } from './automotive/index.js'
+import { miningModuleRoutes } from './mining/index.js'
+import { textileModuleRoutes } from './textile/index.js'
+import { cleaningModuleRoutes } from './cleaning/index.js'
+import { pestControlModuleRoutes } from './pest-control/index.js'
+import { photographyModuleRoutes } from './photography/index.js'
+import { musicModuleRoutes } from './music/index.js'
+import { coworkingModuleRoutes } from './coworking/index.js'
+import { petBoardingModuleRoutes } from './pet-boarding/index.js'
+import { foodDeliveryModuleRoutes } from './food-delivery/index.js'
+import { pharmacyModuleRoutes } from './pharmacy/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -280,6 +290,16 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(cemeteryModuleRoutes, { prefix: '/cemetery' })
       await v1.register(ticketingModuleRoutes, { prefix: '/ticketing' })
       await v1.register(automotiveModuleRoutes, { prefix: '/automotive' })
+      await v1.register(miningModuleRoutes, { prefix: '/mining' })
+      await v1.register(textileModuleRoutes, { prefix: '/textile' })
+      await v1.register(cleaningModuleRoutes, { prefix: '/cleaning' })
+      await v1.register(pestControlModuleRoutes, { prefix: '/pest-control' })
+      await v1.register(photographyModuleRoutes, { prefix: '/photography' })
+      await v1.register(musicModuleRoutes, { prefix: '/music' })
+      await v1.register(coworkingModuleRoutes, { prefix: '/coworking' })
+      await v1.register(petBoardingModuleRoutes, { prefix: '/pet-boarding' })
+      await v1.register(foodDeliveryModuleRoutes, { prefix: '/food-delivery' })
+      await v1.register(pharmacyModuleRoutes, { prefix: '/pharmacy' })
     },
     { prefix: '/v1' },
   )
