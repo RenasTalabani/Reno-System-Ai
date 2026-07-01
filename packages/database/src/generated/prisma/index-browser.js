@@ -9770,6 +9770,63 @@ exports.Prisma.ApaWeeklyReviewScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AgeGoalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  parentId: 'parentId',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  category: 'category',
+  targetDate: 'targetDate',
+  status: 'status',
+  progress: 'progress',
+  priority: 'priority',
+  successProb: 'successProb',
+  aiInsight: 'aiInsight',
+  risks: 'risks',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgeKpiScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  goalId: 'goalId',
+  name: 'name',
+  unit: 'unit',
+  baseline: 'baseline',
+  target: 'target',
+  current: 'current',
+  frequency: 'frequency',
+  trend: 'trend',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgeMilestoneScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  goalId: 'goalId',
+  title: 'title',
+  dueDate: 'dueDate',
+  status: 'status',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgeRoadmapScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  horizon: 'horizon',
+  plan: 'plan',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10400,7 +10457,11 @@ exports.Prisma.ModelName = {
   ApaMemory: 'ApaMemory',
   ApaDailyBriefing: 'ApaDailyBriefing',
   ApaHabit: 'ApaHabit',
-  ApaWeeklyReview: 'ApaWeeklyReview'
+  ApaWeeklyReview: 'ApaWeeklyReview',
+  AgeGoal: 'AgeGoal',
+  AgeKpi: 'AgeKpi',
+  AgeMilestone: 'AgeMilestone',
+  AgeRoadmap: 'AgeRoadmap'
 };
 
 /**

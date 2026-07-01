@@ -395,6 +395,11 @@ model CoreTenant {
   apaDailyBriefings   ApaDailyBriefing[]
   apaHabits           ApaHabit[]
   apaWeeklyReviews    ApaWeeklyReview[]
+  // Phase 42
+  ageGoals            AgeGoal[]
+  ageKpis             AgeKpi[]
+  ageMilestones       AgeMilestone[]
+  ageRoadmaps         AgeRoadmap[]
 
   @@map("core_tenants")
 }
@@ -14366,4 +14371,92 @@ model ApaWeeklyReview {
   @@unique([tenantId, userId, weekStart])
   @@index([tenantId])
   @@map("apa_weekly_reviews")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PHASE 42 — AI Life & Business Goals Engine
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AgeGoal {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String         @map("tenant_id") @db.Uuid
+  userId      String         @map("user_id") @db.Uuid
+  parentId    String?        @map("parent_id") @db.Uuid
+  title       String         @db.VarChar(500)
+  description String?        @db.Text
+  type        String         @db.VarChar(50)
+  category    String         @db.VarChar(50)
+  targetDate  DateTime?      @map("target_date") @db.Timestamptz
+  status      String         @default("active") @db.VarChar(30)
+  progress    Float          @default(0)
+  priority    String         @default("medium") @db.VarChar(20)
+  successProb Float?         @map("success_prob")
+  aiInsight   String?        @map("ai_insight") @db.Text
+  risks       Json?
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent      AgeGoal?       @relation("GoalTree", fields: [parentId], references: [id])
+  children    AgeGoal[]      @relation("GoalTree")
+  kpis        AgeKpi[]
+  milestones  AgeMilestone[]
+
+  @@index([tenantId])
+  @@index([tenantId, userId])
+  @@index([tenantId, status])
+  @@map("age_goals")
+}
+
+model AgeKpi {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  goalId    String     @map("goal_id") @db.Uuid
+  name      String     @db.VarChar(255)
+  unit      String     @db.VarChar(50)
+  baseline  Float      @default(0)
+  target    Float
+  current   Float      @default(0)
+  frequency String     @default("weekly") @db.VarChar(20)
+  trend     String     @default("stable") @db.VarChar(20)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  goal      AgeGoal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([goalId])
+  @@map("age_kpis")
+}
+
+model AgeMilestone {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  goalId      String     @map("goal_id") @db.Uuid
+  title       String     @db.VarChar(500)
+  dueDate     DateTime?  @map("due_date") @db.Timestamptz
+  status      String     @default("pending") @db.VarChar(20)
+  completedAt DateTime?  @map("completed_at") @db.Timestamptz
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  goal        AgeGoal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([goalId])
+  @@map("age_milestones")
+}
+
+model AgeRoadmap {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  userId      String     @map("user_id") @db.Uuid
+  title       String     @db.VarChar(255)
+  horizon     String     @db.VarChar(20)
+  plan        Json
+  generatedAt DateTime   @default(now()) @map("generated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, horizon])
+  @@map("age_roadmaps")
 }

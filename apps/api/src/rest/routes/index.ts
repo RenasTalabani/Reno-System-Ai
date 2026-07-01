@@ -161,6 +161,7 @@ import { aiWorkspaceRoutes as aiWorkspacePhase38Routes } from './ai-workspace/ph
 import { liveToolsModuleRoutes } from './live-tools/index.js'
 import { aiAutonomousModuleRoutes } from './ai-autonomous/index.js'
 import { personalAssistantModuleRoutes } from './personal-assistant/index.js'
+import { goalsEngineModuleRoutes } from './goals-engine/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -328,6 +329,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(liveToolsModuleRoutes, { prefix: '' })
       await v1.register(aiAutonomousModuleRoutes, { prefix: '' })
       await v1.register(personalAssistantModuleRoutes, { prefix: '' })
+      await v1.register(goalsEngineModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )
