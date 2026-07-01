@@ -166,6 +166,7 @@ import { externalIntelligenceModuleRoutes } from './external-intelligence/index.
 import { predictiveSimModuleRoutes } from './predictive-sim/index.js'
 import { strategyOrchestratorModuleRoutes } from './strategy-orchestrator/index.js'
 import { integrationHubModuleRoutes } from './integration-hub/index.js'
+import { knowledgeGraphModuleRoutes } from './knowledge-graph/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -338,6 +339,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(predictiveSimModuleRoutes, { prefix: '' })
       await v1.register(strategyOrchestratorModuleRoutes, { prefix: '' })
       await v1.register(integrationHubModuleRoutes, { prefix: '' })
+      await v1.register(knowledgeGraphModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

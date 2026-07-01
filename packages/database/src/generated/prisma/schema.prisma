@@ -418,6 +418,11 @@ model CoreTenant {
   eihIntegrations     EihIntegration[]
   eihSyncLogs         EihSyncLog[]
   eihWebhookEvents    EihWebhookEvent[]
+  // Phase 47
+  kgEntities          KgEntity[]
+  kgRelations         KgRelation[]
+  kgFacts             KgFact[]
+  kgQueries           KgQuery[]
 
   @@map("core_tenants")
 }
@@ -14833,4 +14838,90 @@ model EihWebhookEvent {
   @@index([tenantId, processed])
   @@index([tenantId, source])
   @@map("eih_webhook_events")
+}
+
+// =============================================================================
+// Phase 47 — AI Enterprise Knowledge Graph & Semantic Memory
+// =============================================================================
+
+model KgEntity {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  type         String
+  name         String
+  externalId   String?  @map("external_id")
+  externalType String?  @map("external_type")
+  summary      String?  @db.Text
+  importance   Float    @default(0)
+  properties   Json?
+  tags         String[]
+  isDeleted    Boolean  @default(false) @map("is_deleted")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  outgoing KgRelation[] @relation("KgRelationFrom")
+  incoming KgRelation[] @relation("KgRelationTo")
+
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@index([tenantId, externalId])
+  @@map("kg_entities")
+}
+
+model KgRelation {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  fromId     String   @map("from_id") @db.Uuid
+  toId       String   @map("to_id") @db.Uuid
+  type       String
+  label      String?
+  weight     Float    @default(1.0)
+  properties Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  from   KgEntity   @relation("KgRelationFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to     KgEntity   @relation("KgRelationTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([fromId])
+  @@index([toId])
+  @@map("kg_relations")
+}
+
+model KgFact {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  content      String    @db.Text
+  importance   String    @default("medium")
+  source       String?
+  sourceModule String?   @map("source_module")
+  entityIds    String[]  @map("entity_ids")
+  verifiedAt   DateTime? @map("verified_at") @db.Timestamptz
+  expiresAt    DateTime? @map("expires_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, importance])
+  @@map("kg_facts")
+}
+
+model KgQuery {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String   @map("tenant_id") @db.Uuid
+  userId             String   @map("user_id") @db.Uuid
+  question           String   @db.Text
+  answer             String?  @db.Text
+  entitiesFound      Int      @default(0) @map("entities_found")
+  relationsTraversed Int      @default(0) @map("relations_traversed")
+  durationMs         Int?     @map("duration_ms")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("kg_queries")
 }

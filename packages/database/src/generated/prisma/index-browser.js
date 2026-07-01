@@ -10065,6 +10065,59 @@ exports.Prisma.EihWebhookEventScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.KgEntityScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  name: 'name',
+  externalId: 'externalId',
+  externalType: 'externalType',
+  summary: 'summary',
+  importance: 'importance',
+  properties: 'properties',
+  tags: 'tags',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KgRelationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fromId: 'fromId',
+  toId: 'toId',
+  type: 'type',
+  label: 'label',
+  weight: 'weight',
+  properties: 'properties',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.KgFactScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  content: 'content',
+  importance: 'importance',
+  source: 'source',
+  sourceModule: 'sourceModule',
+  entityIds: 'entityIds',
+  verifiedAt: 'verifiedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.KgQueryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  question: 'question',
+  answer: 'answer',
+  entitiesFound: 'entitiesFound',
+  relationsTraversed: 'relationsTraversed',
+  durationMs: 'durationMs',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10715,7 +10768,11 @@ exports.Prisma.ModelName = {
   EihConnector: 'EihConnector',
   EihIntegration: 'EihIntegration',
   EihSyncLog: 'EihSyncLog',
-  EihWebhookEvent: 'EihWebhookEvent'
+  EihWebhookEvent: 'EihWebhookEvent',
+  KgEntity: 'KgEntity',
+  KgRelation: 'KgRelation',
+  KgFact: 'KgFact',
+  KgQuery: 'KgQuery'
 };
 
 /**
