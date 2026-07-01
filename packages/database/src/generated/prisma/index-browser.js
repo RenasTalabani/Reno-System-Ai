@@ -9626,6 +9626,76 @@ exports.Prisma.AwltProjectContextScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AwsJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  objective: 'objective',
+  projectName: 'projectName',
+  status: 'status',
+  plan: 'plan',
+  currentStep: 'currentStep',
+  totalSteps: 'totalSteps',
+  canResume: 'canResume',
+  metadata: 'metadata',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  pausedAt: 'pausedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AwsJobStepScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  tenantId: 'tenantId',
+  stepNumber: 'stepNumber',
+  title: 'title',
+  description: 'description',
+  tool: 'tool',
+  payload: 'payload',
+  status: 'status',
+  result: 'result',
+  approvedBy: 'approvedBy',
+  approvedAt: 'approvedAt',
+  executedAt: 'executedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AwsProjectIndexScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectName: 'projectName',
+  filePath: 'filePath',
+  fileType: 'fileType',
+  summary: 'summary',
+  keywords: 'keywords',
+  dependencies: 'dependencies',
+  todos: 'todos',
+  lastSyncAt: 'lastSyncAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AwsDiscoveryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  jobId: 'jobId',
+  type: 'type',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  filePath: 'filePath',
+  lineNumber: 'lineNumber',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10247,7 +10317,11 @@ exports.Prisma.ModelName = {
   AiwSearchLog: 'AiwSearchLog',
   AwltProposal: 'AwltProposal',
   AwltCommandLog: 'AwltCommandLog',
-  AwltProjectContext: 'AwltProjectContext'
+  AwltProjectContext: 'AwltProjectContext',
+  AwsJob: 'AwsJob',
+  AwsJobStep: 'AwsJobStep',
+  AwsProjectIndex: 'AwsProjectIndex',
+  AwsDiscovery: 'AwsDiscovery'
 };
 
 /**

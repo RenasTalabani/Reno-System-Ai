@@ -385,6 +385,11 @@ model CoreTenant {
   awltProposals            AwltProposal[]
   awltCommandLogs          AwltCommandLog[]
   awltProjectContexts      AwltProjectContext[]
+  // Phase 40
+  awsJobs                  AwsJob[]
+  awsJobSteps              AwsJobStep[]
+  awsProjectIndex          AwsProjectIndex[]
+  awsDiscoveries           AwsDiscovery[]
   @@map("core_tenants")
 }
 
@@ -13820,3 +13825,100 @@ model AwltProjectContext {
   @@map("awlt_project_contexts")
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PHASE 40 — AI Autonomous Workspace
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AwsJob {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  title         String    @db.VarChar(500)
+  objective     String    @db.Text
+  projectName   String?   @map("project_name") @db.VarChar(255)
+  status        String    @default("planning") @db.VarChar(30)
+  plan          Json      @default("{}")
+  currentStep   Int       @default(0) @map("current_step")
+  totalSteps    Int       @default(0) @map("total_steps")
+  canResume     Boolean   @default(true) @map("can_resume")
+  metadata      Json?
+  startedAt     DateTime? @map("started_at") @db.Timestamptz
+  completedAt   DateTime? @map("completed_at") @db.Timestamptz
+  pausedAt      DateTime? @map("paused_at") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  steps         AwsJobStep[]
+  discoveries   AwsDiscovery[]
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("aws_jobs")
+}
+
+model AwsJobStep {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId       String    @map("job_id") @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  stepNumber  Int       @map("step_number")
+  title       String    @db.VarChar(500)
+  description String?   @db.Text
+  tool        String    @db.VarChar(50)
+  payload     Json      @default("{}")
+  status      String    @default("waiting") @db.VarChar(30)
+  result      Json?
+  approvedBy  String?   @map("approved_by") @db.Uuid
+  approvedAt  DateTime? @map("approved_at") @db.Timestamptz
+  executedAt  DateTime? @map("executed_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  job         AwsJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([jobId])
+  @@index([jobId, status])
+  @@map("aws_job_steps")
+}
+
+model AwsProjectIndex {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  projectName  String   @map("project_name") @db.VarChar(255)
+  filePath     String   @map("file_path") @db.VarChar(1000)
+  fileType     String   @map("file_type") @db.VarChar(50)
+  summary      String?  @db.Text
+  keywords     String[]
+  dependencies String[]
+  todos        Json?
+  lastSyncAt   DateTime @default(now()) @map("last_sync_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([tenantId, projectName])
+  @@unique([tenantId, userId, projectName, filePath])
+  @@map("aws_project_index")
+}
+
+model AwsDiscovery {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  jobId       String?  @map("job_id") @db.Uuid
+  type        String   @db.VarChar(50)
+  severity    String   @db.VarChar(20)
+  title       String   @db.VarChar(500)
+  description String?  @db.Text
+  filePath    String?  @map("file_path") @db.VarChar(1000)
+  lineNumber  Int?     @map("line_number")
+  status      String   @default("open") @db.VarChar(20)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job         AwsJob?  @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, type])
+  @@map("aws_discoveries")
+}
