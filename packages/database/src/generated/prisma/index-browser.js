@@ -10470,6 +10470,94 @@ exports.Prisma.AosHookScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PaeWorkflowScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  category: 'category',
+  status: 'status',
+  version: 'version',
+  config: 'config',
+  variables: 'variables',
+  totalRuns: 'totalRuns',
+  successfulRuns: 'successfulRuns',
+  failedRuns: 'failedRuns',
+  avgDurationMs: 'avgDurationMs',
+  lastRunAt: 'lastRunAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.PaeWorkflowStepScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  name: 'name',
+  stepType: 'stepType',
+  stepOrder: 'stepOrder',
+  config: 'config',
+  inputMapping: 'inputMapping',
+  outputMapping: 'outputMapping',
+  conditions: 'conditions',
+  retryPolicy: 'retryPolicy',
+  timeoutMs: 'timeoutMs',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaeWorkflowTriggerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  name: 'name',
+  triggerType: 'triggerType',
+  config: 'config',
+  isActive: 'isActive',
+  lastFiredAt: 'lastFiredAt',
+  totalFired: 'totalFired',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaeWorkflowExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  triggeredBy: 'triggeredBy',
+  triggerType: 'triggerType',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  currentStep: 'currentStep',
+  totalSteps: 'totalSteps',
+  durationMs: 'durationMs',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.PaeWorkflowStepExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  executionId: 'executionId',
+  stepId: 'stepId',
+  stepName: 'stepName',
+  stepOrder: 'stepOrder',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  attempt: 'attempt',
+  durationMs: 'durationMs',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11146,7 +11234,12 @@ exports.Prisma.ModelName = {
   AosJob: 'AosJob',
   AosJobExecution: 'AosJobExecution',
   AosResourceUsage: 'AosResourceUsage',
-  AosHook: 'AosHook'
+  AosHook: 'AosHook',
+  PaeWorkflow: 'PaeWorkflow',
+  PaeWorkflowStep: 'PaeWorkflowStep',
+  PaeWorkflowTrigger: 'PaeWorkflowTrigger',
+  PaeWorkflowExecution: 'PaeWorkflowExecution',
+  PaeWorkflowStepExecution: 'PaeWorkflowStepExecution'
 };
 
 /**

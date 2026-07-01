@@ -450,6 +450,12 @@ model CoreTenant {
   aosJobExecutions         AosJobExecution[]
   aosResourceUsages        AosResourceUsage[]
   aosHooks                 AosHook[]
+  // Phase 52
+  paeWorkflows             PaeWorkflow[]
+  paeWorkflowSteps         PaeWorkflowStep[]
+  paeWorkflowTriggers      PaeWorkflowTrigger[]
+  paeWorkflowExecutions    PaeWorkflowExecution[]
+  paeStepExecutions        PaeWorkflowStepExecution[]
   @@map("core_tenants")
 }
 
@@ -15121,4 +15127,137 @@ model AosHook {
   @@unique([tenantId, slug])
   @@index([tenantId])
   @@map("aos_hooks")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 52 — AI Process Automation Engine
+// ─────────────────────────────────────────────────────────────────────────────
+
+model PaeWorkflow {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  name           String
+  slug           String
+  description    String?
+  category       String    @default("general")
+  status         String    @default("draft")
+  version        Int       @default(1)
+  config         Json      @default("{}") @db.JsonB
+  variables      Json      @default("{}") @db.JsonB
+  totalRuns      Int       @default(0) @map("total_runs")
+  successfulRuns Int       @default(0) @map("successful_runs")
+  failedRuns     Int       @default(0) @map("failed_runs")
+  avgDurationMs  Int       @default(0) @map("avg_duration_ms")
+  lastRunAt      DateTime? @map("last_run_at") @db.Timestamptz
+  createdBy      String    @map("created_by") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz
+
+  tenant     CoreTenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  steps      PaeWorkflowStep[]
+  triggers   PaeWorkflowTrigger[]
+  executions PaeWorkflowExecution[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("pae_workflows")
+}
+
+model PaeWorkflowStep {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  workflowId    String   @map("workflow_id") @db.Uuid
+  name          String
+  stepType      String   @map("step_type")
+  stepOrder     Int      @map("step_order")
+  config        Json     @default("{}") @db.JsonB
+  inputMapping  Json     @default("{}") @map("input_mapping") @db.JsonB
+  outputMapping Json     @default("{}") @map("output_mapping") @db.JsonB
+  conditions    Json     @default("[]") @db.JsonB
+  retryPolicy   Json     @default("{}") @map("retry_policy") @db.JsonB
+  timeoutMs     Int?     @map("timeout_ms")
+  isEnabled     Boolean  @default(true) @map("is_enabled")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         CoreTenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflow       PaeWorkflow              @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  stepExecutions PaeWorkflowStepExecution[]
+
+  @@index([tenantId])
+  @@index([workflowId])
+  @@map("pae_workflow_steps")
+}
+
+model PaeWorkflowTrigger {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  workflowId  String    @map("workflow_id") @db.Uuid
+  name        String
+  triggerType String    @map("trigger_type")
+  config      Json      @default("{}") @db.JsonB
+  isActive    Boolean   @default(true) @map("is_active")
+  lastFiredAt DateTime? @map("last_fired_at") @db.Timestamptz
+  totalFired  Int       @default(0) @map("total_fired")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflow PaeWorkflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([workflowId])
+  @@map("pae_workflow_triggers")
+}
+
+model PaeWorkflowExecution {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  workflowId  String    @map("workflow_id") @db.Uuid
+  triggeredBy String    @map("triggered_by")
+  triggerType String    @map("trigger_type")
+  status      String    @default("running")
+  input       Json      @default("{}") @db.JsonB
+  output      Json      @default("{}") @db.JsonB
+  error       String?
+  currentStep Int       @default(0) @map("current_step")
+  totalSteps  Int       @default(0) @map("total_steps")
+  durationMs  Int?      @map("duration_ms")
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  tenant         CoreTenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflow       PaeWorkflow              @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  stepExecutions PaeWorkflowStepExecution[]
+
+  @@index([tenantId])
+  @@index([workflowId])
+  @@map("pae_workflow_executions")
+}
+
+model PaeWorkflowStepExecution {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  executionId String    @map("execution_id") @db.Uuid
+  stepId      String    @map("step_id") @db.Uuid
+  stepName    String    @map("step_name")
+  stepOrder   Int       @map("step_order")
+  status      String    @default("pending")
+  input       Json      @default("{}") @db.JsonB
+  output      Json      @default("{}") @db.JsonB
+  error       String?
+  attempt     Int       @default(1)
+  durationMs  Int?      @map("duration_ms")
+  startedAt   DateTime? @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  tenant    CoreTenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  execution PaeWorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  step      PaeWorkflowStep      @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([executionId])
+  @@index([stepId])
+  @@map("pae_workflow_step_executions")
 }

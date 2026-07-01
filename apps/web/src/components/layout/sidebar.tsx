@@ -63,6 +63,7 @@ const navigation: NavSection[] = [
       { label: 'Action Layer', href: '/action-layer', icon: Workflow },
       { label: 'Learning & Opt.', href: '/learning', icon: Brain },
       { label: 'AOS Runtime', href: '/aos', icon: Workflow },
+      { label: 'Process Automation', href: '/process-automation', icon: Workflow },
     ],
   },
   {
