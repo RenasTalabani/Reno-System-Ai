@@ -424,6 +424,13 @@ model CoreTenant {
   kgRelations              KgRelation[]
   kgFacts                  KgFact[]
   kgQueries                KgQuery[]
+  // Phase 48
+  eapAgents                EapAgent[]
+  eapAgentMemories         EapAgentMemory[]
+  eapAgentTasks            EapAgentTask[]
+  eapAgentKpis             EapAgentKpi[]
+  eapAgentCollabs          EapAgentCollaboration[]
+  eapAgentAuditLogs        EapAgentAuditLog[]
   @@map("core_tenants")
 }
 
@@ -14568,4 +14575,146 @@ model KgQuery {
 
   @@index([tenantId])
   @@map("kg_queries")
+}
+
+// =============================================================================
+// PHASE 48 — AI Enterprise Agents Platform
+// =============================================================================
+
+model EapAgent {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  slug        String
+  type        String   @default("custom")
+  description String?  @db.Text
+  personality String?  @db.Text
+  goals       Json     @default("[]") @db.JsonB
+  tools       String[]
+  permissions Json     @default("{}") @db.JsonB
+  status      String   @default("active")
+  version     Int      @default(1)
+  totalTasks  Int      @default(0) @map("total_tasks")
+  totalCost   Float    @default(0) @map("total_cost")
+  createdById String?  @map("created_by_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant          CoreTenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  memories        EapAgentMemory[]
+  tasks           EapAgentTask[]
+  kpis            EapAgentKpi[]
+  auditLogs       EapAgentAuditLog[]
+  sentCollabs     EapAgentCollaboration[] @relation("EapCollabFrom")
+  receivedCollabs EapAgentCollaboration[] @relation("EapCollabTo")
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("eap_agents")
+}
+
+model EapAgentMemory {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  agentId    String    @map("agent_id")
+  key        String
+  value      String    @db.Text
+  importance String    @default("medium")
+  expiresAt  DateTime? @map("expires_at") @db.Timestamptz
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agent  EapAgent   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, key])
+  @@index([tenantId])
+  @@map("eap_agent_memories")
+}
+
+model EapAgentTask {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  agentId      String    @map("agent_id")
+  title        String
+  description  String?   @db.Text
+  status       String    @default("pending")
+  priority     String    @default("medium")
+  input        Json      @default("{}") @db.JsonB
+  output       Json?     @db.JsonB
+  plan         Json?     @db.JsonB
+  errorMessage String?   @map("error_message") @db.Text
+  startedAt    DateTime? @map("started_at") @db.Timestamptz
+  completedAt  DateTime? @map("completed_at") @db.Timestamptz
+  durationMs   Int?      @map("duration_ms")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         CoreTenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agent          EapAgent                @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  collaborations EapAgentCollaboration[]
+
+  @@index([tenantId])
+  @@index([agentId])
+  @@map("eap_agent_tasks")
+}
+
+model EapAgentKpi {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  agentId   String   @map("agent_id")
+  name      String
+  value     Float
+  target    Float?
+  unit      String?
+  period    String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agent  EapAgent   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([agentId])
+  @@map("eap_agent_kpis")
+}
+
+model EapAgentCollaboration {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  fromAgentId String    @map("from_agent_id")
+  toAgentId   String    @map("to_agent_id")
+  taskId      String?   @map("task_id") @db.Uuid
+  message     String    @db.Text
+  type        String    @default("request")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant    CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  fromAgent EapAgent      @relation("EapCollabFrom", fields: [fromAgentId], references: [id], onDelete: Cascade)
+  toAgent   EapAgent      @relation("EapCollabTo", fields: [toAgentId], references: [id], onDelete: Cascade)
+  task      EapAgentTask? @relation(fields: [taskId], references: [id])
+
+  @@index([tenantId])
+  @@index([fromAgentId])
+  @@index([toAgentId])
+  @@map("eap_agent_collaborations")
+}
+
+model EapAgentAuditLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  agentId    String   @map("agent_id")
+  action     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  summary    String   @db.Text
+  cost       Float    @default(0)
+  metadata   Json     @default("{}") @db.JsonB
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agent  EapAgent   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([agentId])
+  @@map("eap_agent_audit_logs")
 }

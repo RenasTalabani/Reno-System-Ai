@@ -10118,6 +10118,93 @@ exports.Prisma.KgQueryScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.EapAgentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  type: 'type',
+  description: 'description',
+  personality: 'personality',
+  goals: 'goals',
+  tools: 'tools',
+  permissions: 'permissions',
+  status: 'status',
+  version: 'version',
+  totalTasks: 'totalTasks',
+  totalCost: 'totalCost',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EapAgentMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  key: 'key',
+  value: 'value',
+  importance: 'importance',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EapAgentTaskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  input: 'input',
+  output: 'output',
+  plan: 'plan',
+  errorMessage: 'errorMessage',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EapAgentKpiScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  name: 'name',
+  value: 'value',
+  target: 'target',
+  unit: 'unit',
+  period: 'period',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EapAgentCollaborationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  fromAgentId: 'fromAgentId',
+  toAgentId: 'toAgentId',
+  taskId: 'taskId',
+  message: 'message',
+  type: 'type',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EapAgentAuditLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  summary: 'summary',
+  cost: 'cost',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10772,7 +10859,13 @@ exports.Prisma.ModelName = {
   KgEntity: 'KgEntity',
   KgRelation: 'KgRelation',
   KgFact: 'KgFact',
-  KgQuery: 'KgQuery'
+  KgQuery: 'KgQuery',
+  EapAgent: 'EapAgent',
+  EapAgentMemory: 'EapAgentMemory',
+  EapAgentTask: 'EapAgentTask',
+  EapAgentKpi: 'EapAgentKpi',
+  EapAgentCollaboration: 'EapAgentCollaboration',
+  EapAgentAuditLog: 'EapAgentAuditLog'
 };
 
 /**
