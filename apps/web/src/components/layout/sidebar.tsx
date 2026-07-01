@@ -68,6 +68,7 @@ const navigation: NavSection[] = [
       { label: 'Comm Hub', href: '/comm-hub', icon: Workflow },
       { label: 'Command Center', href: '/command-center', icon: LayoutDashboard },
       { label: 'Predictive AI', href: '/predictive-analytics', icon: BarChart3 },
+      { label: 'Customer Success', href: '/customer-success', icon: UsersRound },
     ],
   },
   {

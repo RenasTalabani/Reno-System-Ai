@@ -10843,6 +10843,82 @@ exports.Prisma.ApaPredictionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CspCustomerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  externalId: 'externalId',
+  name: 'name',
+  email: 'email',
+  plan: 'plan',
+  mrr: 'mrr',
+  ltv: 'ltv',
+  npsScore: 'npsScore',
+  healthScore: 'healthScore',
+  churnRisk: 'churnRisk',
+  segment: 'segment',
+  tags: 'tags',
+  lastActivityAt: 'lastActivityAt',
+  onboardedAt: 'onboardedAt',
+  renewalAt: 'renewalAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CspHealthScoreScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  customerId: 'customerId',
+  overallScore: 'overallScore',
+  engagementScore: 'engagementScore',
+  adoptionScore: 'adoptionScore',
+  supportScore: 'supportScore',
+  paymentScore: 'paymentScore',
+  npsScore: 'npsScore',
+  signals: 'signals',
+  aiInsights: 'aiInsights',
+  scoredAt: 'scoredAt'
+};
+
+exports.Prisma.CspPlaybookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  trigger: 'trigger',
+  steps: 'steps',
+  isActive: 'isActive',
+  runCount: 'runCount',
+  successRate: 'successRate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CspPlaybookRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  playbookId: 'playbookId',
+  customerId: 'customerId',
+  status: 'status',
+  stepsRun: 'stepsRun',
+  stepResults: 'stepResults',
+  outcome: 'outcome',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CspChurnPredictionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  customerId: 'customerId',
+  churnProbability: 'churnProbability',
+  riskLevel: 'riskLevel',
+  factors: 'factors',
+  recommendation: 'recommendation',
+  predictedAt: 'predictedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11541,7 +11617,12 @@ exports.Prisma.ModelName = {
   ApaDataset: 'ApaDataset',
   ApaModel: 'ApaModel',
   ApaForecast: 'ApaForecast',
-  ApaPrediction: 'ApaPrediction'
+  ApaPrediction: 'ApaPrediction',
+  CspCustomer: 'CspCustomer',
+  CspHealthScore: 'CspHealthScore',
+  CspPlaybook: 'CspPlaybook',
+  CspPlaybookRun: 'CspPlaybookRun',
+  CspChurnPrediction: 'CspChurnPrediction'
 };
 
 /**

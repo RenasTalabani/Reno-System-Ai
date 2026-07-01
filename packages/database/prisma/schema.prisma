@@ -477,6 +477,12 @@ model CoreTenant {
   apaModels                ApaModel[]
   apaForecasts             ApaForecast[]
   apaPredictions           ApaPrediction[]
+  // Phase 57
+  cspCustomers             CspCustomer[]
+  cspHealthScores          CspHealthScore[]
+  cspPlaybooks             CspPlaybook[]
+  cspPlaybookRuns          CspPlaybookRun[]
+  cspChurnPredictions      CspChurnPrediction[]
   @@map("core_tenants")
 }
 
@@ -15695,4 +15701,118 @@ model ApaPrediction {
 
   @@index([tenantId])
   @@map("apa_predictions")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 57 — AI Customer Success & Churn Prevention
+// ─────────────────────────────────────────────────────────────────────────────
+
+model CspCustomer {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  externalId      String?   @map("external_id")
+  name            String
+  email           String?
+  plan            String    @default("starter") // starter | growth | pro | enterprise
+  mrr             Float     @default(0)
+  ltv             Float     @default(0)
+  npsScore        Int?      @map("nps_score")
+  healthScore     Float     @default(0) @map("health_score")
+  churnRisk       String    @default("low") @map("churn_risk") // low | medium | high | critical
+  segment         String    @default("standard")
+  tags            Json      @default("[]") @db.JsonB
+  lastActivityAt  DateTime? @map("last_activity_at") @db.Timestamptz
+  onboardedAt     DateTime? @map("onboarded_at") @db.Timestamptz
+  renewalAt       DateTime? @map("renewal_at") @db.Timestamptz
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant          CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  healthScores    CspHealthScore[]
+  churnPredictions CspChurnPrediction[]
+  playbookRuns    CspPlaybookRun[]
+
+  @@index([tenantId])
+  @@map("csp_customers")
+}
+
+model CspHealthScore {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  customerId     String   @map("customer_id") @db.Uuid
+  overallScore   Float    @map("overall_score")
+  engagementScore Float   @default(0) @map("engagement_score")
+  adoptionScore  Float    @default(0) @map("adoption_score")
+  supportScore   Float    @default(0) @map("support_score")
+  paymentScore   Float    @default(0) @map("payment_score")
+  npsScore       Float    @default(0) @map("nps_score_factor")
+  signals        Json     @default("[]") @db.JsonB
+  aiInsights     Json     @default("[]") @db.JsonB @map("ai_insights")
+  scoredAt       DateTime @default(now()) @map("scored_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer CspCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("csp_health_scores")
+}
+
+model CspPlaybook {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  slug        String
+  description String?
+  trigger     String   @default("manual") // manual | health_drop | churn_risk | renewal | nps_low | onboarding
+  steps       Json     @default("[]") @db.JsonB
+  isActive    Boolean  @default(true) @map("is_active")
+  runCount    Int      @default(0) @map("run_count")
+  successRate Float    @default(0) @map("success_rate")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runs   CspPlaybookRun[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("csp_playbooks")
+}
+
+model CspPlaybookRun {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  playbookId  String    @map("playbook_id") @db.Uuid
+  customerId  String    @map("customer_id") @db.Uuid
+  status      String    @default("running") // running | completed | failed
+  stepsRun    Int       @default(0) @map("steps_run")
+  stepResults Json      @default("[]") @db.JsonB @map("step_results")
+  outcome     String?
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  playbook CspPlaybook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  customer CspCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("csp_playbook_runs")
+}
+
+model CspChurnPrediction {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  customerId       String   @map("customer_id") @db.Uuid
+  churnProbability Float    @map("churn_probability")
+  riskLevel        String   @map("risk_level") // low | medium | high | critical
+  factors          Json     @default("[]") @db.JsonB
+  recommendation   String?
+  predictedAt      DateTime @default(now()) @map("predicted_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer CspCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("csp_churn_predictions")
 }

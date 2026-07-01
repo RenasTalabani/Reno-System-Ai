@@ -1,204 +1,344 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Heart, Plus, TrendingDown, RefreshCw, DollarSign, AlertTriangle, Search, ChevronRight } from 'lucide-react'
-import { useAuthStore } from '@/lib/auth-store'
+import { useState, useEffect, useCallback } from 'react'
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
+async function apiGet(path: string) {
+  const r = await fetch(`/api/proxy?path=${encodeURIComponent(path)}`)
+  return r.json()
+}
+async function apiPost(path: string, body?: unknown) {
+  const r = await fetch(`/api/proxy?path=${encodeURIComponent(path)}`, {
+    method: 'POST',
+    headers: body !== undefined ? { 'Content-Type': 'application/json' } : {},
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  })
+  return r.json()
+}
+async function apiDelete(path: string) {
+  const r = await fetch(`/api/proxy?path=${encodeURIComponent(path)}`, { method: 'DELETE' })
+  return r.json()
+}
 
-const HEALTH_COLOR = (score: number) => score >= 70 ? 'text-green-400' : score >= 40 ? 'text-amber-400' : 'text-red-400'
-const HEALTH_BG = (score: number) => score >= 70 ? 'bg-green-500' : score >= 40 ? 'bg-amber-500' : 'bg-red-500'
-const CHURN_COLORS: Record<string, string> = { low: 'bg-green-500/20 text-green-400', medium: 'bg-amber-500/20 text-amber-400', high: 'bg-red-500/20 text-red-400' }
+interface Customer { id: string; name: string; email?: string; plan: string; mrr: number; ltv: number; healthScore: number; churnRisk: string; npsScore?: number; segment: string; _count?: { healthScores: number; churnPredictions: number; playbookRuns: number } }
+interface Playbook { id: string; name: string; slug: string; trigger: string; isActive: boolean; runCount: number; successRate: number; _count?: { runs: number } }
+interface ChurnPrediction { id: string; churnProbability: number; riskLevel: string; factors: string[]; recommendation: string; predictedAt: string; customer: Customer }
+interface Stats { totalCustomers: number; atRiskCount: number; avgHealthScore: number; avgMrr: number; riskDistribution: Record<string, number> }
 
-interface Account { id: string; name: string; plan: string | null; mrr: number; healthScore: number; stage: string; churnRisk: string; renewalDate: string | null; npsScore: number | null; _count?: { touchpoints: number; successPlans: number } }
-interface Dashboard { totalAccounts: number; totalMrr: number; atRisk: number; renewalsDue: number; byChurnRisk: Record<string, number> }
+const TABS = ['Dashboard', 'Customers', 'Health', 'Churn AI', 'Playbooks', 'Runs'] as const
+type Tab = typeof TABS[number]
+
+const RISK_COLORS: Record<string, string> = {
+  low: 'bg-green-100 text-green-700', medium: 'bg-yellow-100 text-yellow-700',
+  high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700',
+}
+const PLAN_COLORS: Record<string, string> = {
+  starter: 'bg-gray-100 text-gray-600', growth: 'bg-blue-100 text-blue-700',
+  pro: 'bg-purple-100 text-purple-700', enterprise: 'bg-amber-100 text-amber-700',
+}
+const healthColor = (score: number) => score >= 75 ? 'text-green-600' : score >= 55 ? 'text-yellow-600' : score >= 35 ? 'text-orange-600' : 'text-red-600'
 
 export default function CustomerSuccessPage() {
-  const { token } = useAuthStore()
-  const [accounts, setAccounts] = useState<Account[]>([])
-  const [dashboard, setDashboard] = useState<Dashboard | null>(null)
-  const [search, setSearch] = useState('')
-  const [selected, setSelected] = useState<Account | null>(null)
-  const [showCreate, setShowCreate] = useState(false)
-  const [form, setForm] = useState<Record<string, string>>({})
-  const [tpForm, setTpForm] = useState<Record<string, string>>({})
-  const [showTp, setShowTp] = useState(false)
+  const [tab, setTab] = useState<Tab>('Dashboard')
+  const [stats, setStats] = useState<Stats | null>(null)
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [playbooks, setPlaybooks] = useState<Playbook[]>([])
+  const [predictions, setPredictions] = useState<ChurnPrediction[]>([])
+  const [runs, setRuns] = useState<{ id: string; status: string; stepsRun: number; outcome?: string; createdAt: string; playbook: Playbook; customer: Customer }[]>([])
+  const [atRisk, setAtRisk] = useState<Customer[]>([])
+  const [loading, setLoading] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [selectedCustomer, setSelectedCustomer] = useState('')
+  const [newCustomer, setNewCustomer] = useState({ name: '', email: '', plan: 'starter', mrr: '', ltv: '', npsScore: '', segment: 'standard' })
+  const [runPlaybookId, setRunPlaybookId] = useState('')
 
-  const h = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+  const flash = (m: string) => { setMsg(m); setTimeout(() => setMsg(''), 4000) }
 
-  const load = () => {
-    const q = new URLSearchParams()
-    if (search) q.set('search', search)
-    Promise.all([
-      fetch(`${API}/v1/customer-success/accounts?${q}`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch(`${API}/v1/customer-success/dashboard`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-    ]).then(([a, d]) => { setAccounts(a.data ?? []); setDashboard(d.data) })
+  const loadDashboard = useCallback(async () => { const d = await apiGet('/v1/csp/dashboard'); setStats(d.stats); setAtRisk(d.atRiskCustomers ?? []) }, [])
+  const loadCustomers = useCallback(async () => { const d = await apiGet('/v1/csp/customers'); setCustomers(d.customers ?? []) }, [])
+  const loadPlaybooks = useCallback(async () => { const d = await apiGet('/v1/csp/playbooks'); setPlaybooks(d.playbooks ?? []) }, [])
+  const loadPredictions = useCallback(async () => { const d = await apiGet('/v1/csp/churn-predictions'); setPredictions(d.predictions ?? []) }, [])
+  const loadRuns = useCallback(async () => { const d = await apiGet('/v1/csp/playbook-runs'); setRuns(d.runs ?? []) }, [])
+
+  useEffect(() => {
+    setLoading(true)
+    const loaders: Record<Tab, () => Promise<void>> = {
+      Dashboard: loadDashboard, Customers: loadCustomers, Health: loadCustomers,
+      'Churn AI': loadPredictions, Playbooks: loadPlaybooks, Runs: loadRuns,
+    }
+    loaders[tab]().finally(() => setLoading(false))
+  }, [tab, loadDashboard, loadCustomers, loadPlaybooks, loadPredictions, loadRuns])
+
+  const installPlaybooks = async () => {
+    const r = await apiPost('/v1/csp/playbook-templates/install', {})
+    flash(`${r.installed} playbook${r.installed !== 1 ? 's' : ''} installed`); await loadPlaybooks()
   }
 
-  useEffect(() => { load() }, [search, token])
-
-  const create = async () => {
-    const res = await fetch(`${API}/v1/customer-success/accounts`, { method: 'POST', headers: h, body: JSON.stringify({ ...form, mrr: parseFloat(form.mrr ?? '0') }) }).then(r => r.json())
-    if (res.data) { setAccounts(a => [res.data, ...a]); setShowCreate(false); setForm({}) }
+  const createCustomer = async () => {
+    if (!newCustomer.name) return flash('Name required')
+    const payload = { ...newCustomer, mrr: Number(newCustomer.mrr) || 0, ltv: Number(newCustomer.ltv) || 0, npsScore: newCustomer.npsScore ? Number(newCustomer.npsScore) : undefined }
+    const r = await apiPost('/v1/csp/customers', payload)
+    if (r.id) { flash('Customer created'); await loadCustomers(); setNewCustomer({ name: '', email: '', plan: 'starter', mrr: '', ltv: '', npsScore: '', segment: 'standard' }) }
   }
 
-  const logTouchpoint = async () => {
-    if (!selected) return
-    await fetch(`${API}/v1/customer-success/accounts/${selected.id}/touchpoints`, { method: 'POST', headers: h, body: JSON.stringify(tpForm) })
-    const newScore = selected.healthScore + (tpForm.sentiment === 'positive' ? 5 : tpForm.sentiment === 'negative' ? -5 : 0)
-    setAccounts(a => a.map(x => x.id === selected.id ? { ...x, healthScore: Math.max(0, Math.min(100, newScore)) } : x))
-    setSelected(s => s ? { ...s, healthScore: Math.max(0, Math.min(100, newScore)) } : null)
-    setShowTp(false); setTpForm({})
+  const scoreCustomer = async (id: string, name: string) => {
+    flash(`Scoring ${name}...`)
+    const r = await apiPost(`/v1/csp/customers/${id}/score`, {})
+    flash(`${name} scored: ${r.result?.overallScore}/100 — ${r.result?.churnRisk} risk`); await loadCustomers()
   }
+
+  const scoreAll = async () => {
+    flash('Scoring all customers...')
+    const r = await apiPost('/v1/csp/health/score-all', {})
+    flash(`${r.scored} customers scored`); await loadCustomers()
+  }
+
+  const predictChurn = async (id: string, name: string) => {
+    flash(`Predicting churn for ${name}...`)
+    const r = await apiPost(`/v1/csp/customers/${id}/predict-churn`, {})
+    flash(`${name}: ${(r.result?.probability * 100).toFixed(0)}% churn probability (${r.result?.riskLevel})`); await loadPredictions()
+  }
+
+  const runPlaybook = async () => {
+    if (!runPlaybookId || !selectedCustomer) return flash('Select playbook and customer')
+    const r = await apiPost(`/v1/csp/playbooks/${runPlaybookId}/run`, { customerId: selectedCustomer })
+    flash(`Playbook run: ${r.run?.status}`); await loadRuns(); await loadPlaybooks()
+  }
+
+  const deleteCustomer = async (id: string) => { await apiDelete(`/v1/csp/customers/${id}`); await loadCustomers() }
+  const deletePlaybook = async (id: string) => { await apiDelete(`/v1/csp/playbooks/${id}`); await loadPlaybooks() }
 
   return (
-    <div className="flex h-full gap-4">
-      <div className="flex-1 min-w-0 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Heart className="w-5 h-5 text-indigo-500" /> Customer Success
-          </h1>
-          <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-lg transition-colors">
-            <Plus className="w-4 h-4" /> Add Account
-          </button>
-        </div>
-
-        {dashboard && (
-          <div className="grid grid-cols-4 gap-3">
-            {[
-              { label: 'Total Accounts', value: dashboard.totalAccounts, icon: Heart, color: 'text-indigo-400' },
-              { label: 'Total MRR', value: `$${Number(dashboard.totalMrr).toLocaleString()}`, icon: DollarSign, color: 'text-green-400' },
-              { label: 'At Risk', value: dashboard.atRisk, icon: AlertTriangle, color: dashboard.atRisk > 0 ? 'text-red-400' : 'text-muted-foreground' },
-              { label: 'Renewals (30d)', value: dashboard.renewalsDue, icon: RefreshCw, color: dashboard.renewalsDue > 0 ? 'text-amber-400' : 'text-muted-foreground' },
-            ].map(s => (
-              <div key={s.label} className="bg-card border border-border rounded-xl p-4">
-                <s.icon className={`w-4 h-4 ${s.color} mb-1`} />
-                <p className="text-2xl font-bold text-foreground">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search accounts..."
-            className="w-full pl-9 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground" />
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
-          {accounts.map(a => (
-            <div key={a.id} onClick={() => setSelected(a)}
-              className={`bg-card border rounded-xl p-4 cursor-pointer hover:border-indigo-500/50 transition-colors flex items-center gap-4 ${selected?.id === a.id ? 'border-indigo-500' : 'border-border'}`}>
-              <div className="relative w-10 h-10 shrink-0">
-                <svg viewBox="0 0 36 36" className="w-10 h-10 -rotate-90">
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" />
-                  <circle cx="18" cy="18" r="15" fill="none" strokeWidth="3" strokeDasharray={`${(a.healthScore / 100) * 94.2} 94.2`}
-                    className={HEALTH_BG(a.healthScore).replace('bg-', 'stroke-').replace('/500', '')} strokeLinecap="round" />
-                </svg>
-                <span className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold ${HEALTH_COLOR(a.healthScore)}`}>{a.healthScore}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <p className="font-medium text-foreground text-sm truncate">{a.name}</p>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full shrink-0 ${CHURN_COLORS[a.churnRisk] ?? 'bg-muted text-muted-foreground'}`}>{a.churnRisk} risk</span>
-                </div>
-                <p className="text-xs text-muted-foreground">{a.plan ?? 'No plan'} · ${Number(a.mrr).toLocaleString()}/mo · {a.stage}</p>
-              </div>
-              {a.renewalDate && <p className="text-xs text-muted-foreground shrink-0">{new Date(a.renewalDate).toLocaleDateString()}</p>}
-              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-            </div>
-          ))}
-          {accounts.length === 0 && <p className="text-center py-12 text-muted-foreground text-sm">No accounts yet</p>}
-        </div>
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">AI Customer Success</h1>
+        <p className="text-gray-500 text-sm mt-1">Health scores · Churn prediction · Playbook automation · Retention intelligence</p>
       </div>
 
-      {selected && (
-        <div className="w-80 shrink-0 bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 overflow-y-auto">
-          <div>
-            <h2 className="font-semibold text-foreground">{selected.name}</h2>
-            <div className="flex gap-2 mt-1">
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${CHURN_COLORS[selected.churnRisk]}`}>{selected.churnRisk} churn risk</span>
-            </div>
-          </div>
-          <div className="space-y-2.5 text-sm">
+      {msg && <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg px-4 py-2 text-sm">{msg}</div>}
+
+      <div className="flex gap-1 border-b border-gray-200 flex-wrap">
+        {TABS.map(t => (
+          <button key={t} onClick={() => setTab(t)}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${tab === t ? 'bg-white border border-b-white border-gray-200 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}>
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {loading && <div className="text-center py-8 text-gray-400">Loading...</div>}
+
+      {!loading && tab === 'Dashboard' && stats && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Health Score', value: `${selected.healthScore}/100` },
-              { label: 'Plan', value: selected.plan },
-              { label: 'MRR', value: `$${Number(selected.mrr).toLocaleString()}` },
-              { label: 'Stage', value: selected.stage },
-              { label: 'NPS Score', value: selected.npsScore },
-              { label: 'Renewal Date', value: selected.renewalDate ? new Date(selected.renewalDate).toLocaleDateString() : null },
-              { label: 'Touchpoints', value: selected._count?.touchpoints ?? 0 },
-              { label: 'Success Plans', value: selected._count?.successPlans ?? 0 },
-            ].filter(r => r.value !== null && r.value !== undefined).map(row => (
-              <div key={row.label} className="flex justify-between items-center">
-                <span className="text-muted-foreground">{row.label}</span>
-                <span className="text-foreground font-medium">{String(row.value)}</span>
+              { label: 'Total Customers', value: stats.totalCustomers, color: 'text-blue-600' },
+              { label: 'At Risk', value: stats.atRiskCount, color: stats.atRiskCount > 0 ? 'text-red-600' : 'text-green-600' },
+              { label: 'Avg Health', value: `${stats.avgHealthScore}/100`, color: healthColor(stats.avgHealthScore) },
+              { label: 'Avg MRR', value: `$${stats.avgMrr.toFixed(0)}`, color: 'text-green-600' },
+            ].map(s => (
+              <div key={s.label} className="bg-white rounded-xl border p-4 text-center">
+                <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+                <div className="text-xs text-gray-500 mt-1">{s.label}</div>
               </div>
             ))}
           </div>
-          <button onClick={() => setShowTp(true)} className="w-full border border-border text-foreground text-sm py-2 rounded-lg hover:bg-muted transition-colors">
-            + Log Touchpoint
-          </button>
-          {showTp && (
-            <div className="space-y-2">
-              <select value={tpForm.type ?? 'call'} onChange={e => setTpForm(f => ({ ...f, type: e.target.value }))}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground">
-                {['call','email','meeting','qbr','support','other'].map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-              <select value={tpForm.sentiment ?? 'neutral'} onChange={e => setTpForm(f => ({ ...f, sentiment: e.target.value }))}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground">
-                {['positive','neutral','negative'].map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <textarea value={tpForm.notes ?? ''} onChange={e => setTpForm(f => ({ ...f, notes: e.target.value }))} placeholder="Notes..." rows={2}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground resize-none" />
-              <div className="flex gap-2">
-                <button onClick={() => { setShowTp(false); setTpForm({}) }} className="flex-1 border border-border text-foreground text-sm py-1.5 rounded-lg hover:bg-muted transition-colors">Cancel</button>
-                <button onClick={logTouchpoint} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-1.5 rounded-lg transition-colors">Log</button>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-white rounded-xl border p-4">
+              <h3 className="font-semibold text-gray-700 mb-3">Risk Distribution</h3>
+              <div className="space-y-2">
+                {(['critical', 'high', 'medium', 'low'] as const).map(r => (
+                  <div key={r} className="flex items-center gap-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs w-16 text-center ${RISK_COLORS[r]}`}>{r}</span>
+                    <div className="flex-1 bg-gray-100 rounded-full h-2">
+                      <div className={`h-2 rounded-full ${r === 'critical' ? 'bg-red-500' : r === 'high' ? 'bg-orange-500' : r === 'medium' ? 'bg-yellow-500' : 'bg-green-500'}`}
+                        style={{ width: `${Math.round(((stats.riskDistribution[r] ?? 0) / Math.max(stats.totalCustomers, 1)) * 100)}%` }} />
+                    </div>
+                    <span className="text-sm font-medium w-6 text-right">{stats.riskDistribution[r] ?? 0}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
+            <div className="bg-white rounded-xl border p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-gray-700">⚠️ At-Risk Customers</h3>
+                <button onClick={installPlaybooks} className="text-xs bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">Install Playbooks</button>
+              </div>
+              <div className="space-y-2">
+                {atRisk.map(c => (
+                  <div key={c.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50 border border-red-100">
+                    <div><div className="text-sm font-medium">{c.name}</div><div className="text-xs text-gray-400">{c.plan} · MRR ${c.mrr}</div></div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-bold ${healthColor(c.healthScore)}`}>{c.healthScore}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${RISK_COLORS[c.churnRisk]}`}>{c.churnRisk}</span>
+                    </div>
+                  </div>
+                ))}
+                {atRisk.length === 0 && <p className="text-sm text-gray-400">No at-risk customers yet.</p>}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {showCreate && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Add CS Account</h2>
-            <div className="space-y-3">
-              {[{ field: 'name', label: 'Company Name' }, { field: 'plan', label: 'Plan' }].map(({ field, label }) => (
-                <div key={field}>
-                  <label className="block text-sm text-muted-foreground mb-1">{label}</label>
-                  <input value={form[field] ?? ''} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
-                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-                </div>
-              ))}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm text-muted-foreground mb-1">MRR ($)</label>
-                  <input type="number" value={form.mrr ?? ''} onChange={e => setForm(f => ({ ...f, mrr: e.target.value }))}
-                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-                </div>
-                <div>
-                  <label className="block text-sm text-muted-foreground mb-1">Stage</label>
-                  <select value={form.stage ?? 'onboarding'} onChange={e => setForm(f => ({ ...f, stage: e.target.value }))}
-                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground">
-                    {['onboarding','adopted','expanded','at_risk','churned'].map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-                <div className="col-span-2">
-                  <label className="block text-sm text-muted-foreground mb-1">Renewal Date</label>
-                  <input type="date" value={form.renewalDate ?? ''} onChange={e => setForm(f => ({ ...f, renewalDate: e.target.value }))}
-                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-                </div>
-              </div>
+      {!loading && tab === 'Customers' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border p-4">
+            <h3 className="font-semibold text-gray-700 mb-3">Add Customer</h3>
+            <div className="grid md:grid-cols-4 gap-3 mb-3">
+              <input value={newCustomer.name} onChange={e => setNewCustomer(p => ({ ...p, name: e.target.value }))} placeholder="Customer name *" className="border rounded-lg px-3 py-2 text-sm" />
+              <input value={newCustomer.email} onChange={e => setNewCustomer(p => ({ ...p, email: e.target.value }))} placeholder="Email" className="border rounded-lg px-3 py-2 text-sm" />
+              <select title="Plan" value={newCustomer.plan} onChange={e => setNewCustomer(p => ({ ...p, plan: e.target.value }))} className="border rounded-lg px-3 py-2 text-sm">
+                {['starter', 'growth', 'pro', 'enterprise'].map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <input value={newCustomer.mrr} onChange={e => setNewCustomer(p => ({ ...p, mrr: e.target.value }))} placeholder="MRR ($)" type="number" className="border rounded-lg px-3 py-2 text-sm" />
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowCreate(false)} className="flex-1 border border-border text-foreground text-sm py-2 rounded-lg hover:bg-muted transition-colors">Cancel</button>
-              <button onClick={create} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-2 rounded-lg transition-colors">Add Account</button>
+            <div className="flex gap-3">
+              <input value={newCustomer.npsScore} onChange={e => setNewCustomer(p => ({ ...p, npsScore: e.target.value }))} placeholder="NPS (0-10)" type="number" className="w-40 border rounded-lg px-3 py-2 text-sm" min={0} max={10} />
+              <button onClick={createCustomer} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">Add Customer</button>
             </div>
           </div>
+          <div className="bg-white rounded-xl border overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50"><tr>{['Customer','Plan','MRR','Health','Churn Risk','NPS','Actions'].map(h => <th key={h} className="text-left px-4 py-3 font-medium text-gray-600">{h}</th>)}</tr></thead>
+              <tbody className="divide-y divide-gray-100">
+                {customers.map(c => (
+                  <tr key={c.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3"><div className="font-medium">{c.name}</div><div className="text-xs text-gray-400">{c.email}</div></td>
+                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs ${PLAN_COLORS[c.plan] ?? 'bg-gray-100'}`}>{c.plan}</span></td>
+                    <td className="px-4 py-3">${c.mrr}</td>
+                    <td className="px-4 py-3"><span className={`font-bold ${healthColor(c.healthScore)}`}>{c.healthScore}/100</span></td>
+                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs ${RISK_COLORS[c.churnRisk] ?? 'bg-gray-100'}`}>{c.churnRisk}</span></td>
+                    <td className="px-4 py-3">{c.npsScore != null ? c.npsScore : '—'}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1">
+                        <button onClick={() => scoreCustomer(c.id, c.name)} className="text-blue-600 hover:underline text-xs">Score</button>
+                        <button onClick={() => predictChurn(c.id, c.name)} className="text-purple-600 hover:underline text-xs">Churn</button>
+                        <button onClick={() => deleteCustomer(c.id)} className="text-red-500 hover:underline text-xs">Del</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {customers.length === 0 && <tr><td colSpan={7} className="text-center py-8 text-gray-400">No customers yet.</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {!loading && tab === 'Health' && (
+        <div className="space-y-4">
+          <div className="flex justify-between">
+            <p className="text-sm text-gray-500">{customers.length} customers</p>
+            <button onClick={scoreAll} className="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-800">🧠 Score All</button>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {customers.map(c => (
+              <div key={c.id} className={`bg-white rounded-xl border p-4 space-y-2 ${c.churnRisk === 'critical' ? 'border-red-300' : c.churnRisk === 'high' ? 'border-orange-200' : ''}`}>
+                <div className="flex justify-between items-start">
+                  <div className="font-medium">{c.name}</div>
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${RISK_COLORS[c.churnRisk] ?? 'bg-gray-100'}`}>{c.churnRisk}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 bg-gray-100 rounded-full h-2">
+                    <div className={`h-2 rounded-full ${c.healthScore >= 75 ? 'bg-green-500' : c.healthScore >= 55 ? 'bg-yellow-500' : c.healthScore >= 35 ? 'bg-orange-500' : 'bg-red-500'}`}
+                      style={{ width: `${c.healthScore}%` }} />
+                  </div>
+                  <span className={`font-bold text-sm ${healthColor(c.healthScore)}`}>{c.healthScore}</span>
+                </div>
+                <div className="text-xs text-gray-500">{c.plan} · MRR ${c.mrr} · NPS {c.npsScore ?? '—'}</div>
+                <button onClick={() => scoreCustomer(c.id, c.name)} className="text-xs text-blue-600 hover:underline">Re-score</button>
+              </div>
+            ))}
+            {customers.length === 0 && <div className="md:col-span-3 bg-white rounded-xl border p-8 text-center text-gray-400">Add customers first.</div>}
+          </div>
+        </div>
+      )}
+
+      {!loading && tab === 'Churn AI' && (
+        <div className="bg-white rounded-xl border overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50"><tr>{['Customer','Churn %','Risk','Top Factor','Recommendation','Date'].map(h => <th key={h} className="text-left px-4 py-3 font-medium text-gray-600">{h}</th>)}</tr></thead>
+            <tbody className="divide-y divide-gray-100">
+              {predictions.map(p => (
+                <tr key={p.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium">{p.customer?.name ?? '—'}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 bg-gray-100 rounded-full h-2">
+                        <div className={`h-2 rounded-full ${p.churnProbability >= 0.75 ? 'bg-red-500' : p.churnProbability >= 0.5 ? 'bg-orange-500' : 'bg-yellow-400'}`}
+                          style={{ width: `${p.churnProbability * 100}%` }} />
+                      </div>
+                      <span className="font-mono text-xs">{(p.churnProbability * 100).toFixed(0)}%</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs ${RISK_COLORS[p.riskLevel] ?? 'bg-gray-100'}`}>{p.riskLevel}</span></td>
+                  <td className="px-4 py-3 text-xs text-gray-600">{p.factors[0] ?? '—'}</td>
+                  <td className="px-4 py-3 text-xs text-gray-600 max-w-xs truncate">{p.recommendation}</td>
+                  <td className="px-4 py-3 text-xs text-gray-400">{new Date(p.predictedAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+              {predictions.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-gray-400">No predictions. Click "Churn" on a customer row.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {!loading && tab === 'Playbooks' && (
+        <div className="space-y-4">
+          <div className="flex justify-between">
+            <p className="text-sm text-gray-500">{playbooks.length} playbooks</p>
+            <button onClick={installPlaybooks} className="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-800">📚 Install Templates</button>
+          </div>
+          <div className="bg-white rounded-xl border p-4">
+            <h3 className="font-semibold text-gray-700 mb-3">Run Playbook</h3>
+            <div className="flex gap-3">
+              <select title="Playbook" value={runPlaybookId} onChange={e => setRunPlaybookId(e.target.value)} className="flex-1 border rounded-lg px-3 py-2 text-sm">
+                <option value="">Select playbook...</option>
+                {playbooks.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+              <select title="Customer" value={selectedCustomer} onChange={e => setSelectedCustomer(e.target.value)} className="flex-1 border rounded-lg px-3 py-2 text-sm">
+                <option value="">Select customer...</option>
+                {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+              <button onClick={runPlaybook} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">▶ Run</button>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            {playbooks.map(p => (
+              <div key={p.id} className="bg-white rounded-xl border p-4 space-y-2">
+                <div className="flex justify-between">
+                  <div><div className="font-semibold">{p.name}</div><div className="text-xs text-gray-400">trigger: {p.trigger}</div></div>
+                  <button onClick={() => deletePlaybook(p.id)} className="text-xs text-red-500 hover:underline">Del</button>
+                </div>
+                <div className="flex gap-4 text-xs text-gray-500">
+                  <span>▶ {p.runCount} runs</span><span>✓ {p.successRate.toFixed(0)}% success</span>
+                  <span className={p.isActive ? 'text-green-600' : 'text-gray-400'}>{p.isActive ? 'Active' : 'Inactive'}</span>
+                </div>
+              </div>
+            ))}
+            {playbooks.length === 0 && <div className="md:col-span-2 text-center py-8 text-gray-400">No playbooks. Click "Install Templates".</div>}
+          </div>
+        </div>
+      )}
+
+      {!loading && tab === 'Runs' && (
+        <div className="bg-white rounded-xl border overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50"><tr>{['Playbook','Customer','Status','Steps','Outcome','Date'].map(h => <th key={h} className="text-left px-4 py-3 font-medium text-gray-600">{h}</th>)}</tr></thead>
+            <tbody className="divide-y divide-gray-100">
+              {runs.map(r => (
+                <tr key={r.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium">{r.playbook?.name ?? '—'}</td>
+                  <td className="px-4 py-3">{r.customer?.name ?? '—'}</td>
+                  <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs ${r.status === 'completed' ? 'bg-green-100 text-green-700' : r.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>{r.status}</span></td>
+                  <td className="px-4 py-3">{r.stepsRun} steps</td>
+                  <td className="px-4 py-3 text-xs text-gray-600 max-w-xs truncate">{r.outcome}</td>
+                  <td className="px-4 py-3 text-xs text-gray-400">{new Date(r.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+              {runs.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-gray-400">No runs yet.</td></tr>}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
