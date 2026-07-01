@@ -9827,6 +9827,59 @@ exports.Prisma.AgeRoadmapScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.EieSourceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  category: 'category',
+  url: 'url',
+  enabled: 'enabled',
+  config: 'config',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EieSignalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sourceId: 'sourceId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  value: 'value',
+  unit: 'unit',
+  sentiment: 'sentiment',
+  relevance: 'relevance',
+  tags: 'tags',
+  externalUrl: 'externalUrl',
+  signalDate: 'signalDate',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EieAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  signalId: 'signalId',
+  severity: 'severity',
+  title: 'title',
+  message: 'message',
+  goalIds: 'goalIds',
+  dismissed: 'dismissed',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EieInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  content: 'content',
+  data: 'data',
+  goalIds: 'goalIds',
+  signalIds: 'signalIds',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10461,7 +10514,11 @@ exports.Prisma.ModelName = {
   AgeGoal: 'AgeGoal',
   AgeKpi: 'AgeKpi',
   AgeMilestone: 'AgeMilestone',
-  AgeRoadmap: 'AgeRoadmap'
+  AgeRoadmap: 'AgeRoadmap',
+  EieSource: 'EieSource',
+  EieSignal: 'EieSignal',
+  EieAlert: 'EieAlert',
+  EieInsight: 'EieInsight'
 };
 
 /**

@@ -401,6 +401,11 @@ model CoreTenant {
   ageKpis                  AgeKpi[]
   ageMilestones            AgeMilestone[]
   ageRoadmaps              AgeRoadmap[]
+  // Phase 43
+  eieSources               EieSource[]
+  eieSignals               EieSignal[]
+  eieAlerts                EieAlert[]
+  eieInsights              EieInsight[]
   @@map("core_tenants")
 }
 
@@ -14115,4 +14120,82 @@ model AgeRoadmap {
   @@index([tenantId])
   @@index([tenantId, horizon])
   @@map("age_roadmaps")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 43 — AI External Intelligence Engine
+// ─────────────────────────────────────────────────────────────────────────────
+
+model EieSource {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  name      String     @db.VarChar(255)
+  type      String     @db.VarChar(50)
+  category  String     @db.VarChar(50)
+  url       String?    @db.VarChar(1000)
+  enabled   Boolean    @default(true)
+  config    Json?
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  signals   EieSignal[]
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("eie_sources")
+}
+
+model EieSignal {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  sourceId    String?    @map("source_id") @db.Uuid
+  type        String     @db.VarChar(50)
+  title       String     @db.VarChar(500)
+  summary     String?    @db.Text
+  value       Float?
+  unit        String?    @db.VarChar(50)
+  sentiment   String?    @db.VarChar(20)
+  relevance   Float?
+  tags        String[]
+  externalUrl String?    @map("external_url") @db.VarChar(1000)
+  signalDate  DateTime   @map("signal_date") @db.Timestamptz
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  source      EieSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  alerts      EieAlert[]
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@index([tenantId, signalDate])
+  @@map("eie_signals")
+}
+
+model EieAlert {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  signalId  String     @map("signal_id") @db.Uuid
+  severity  String     @db.VarChar(20)
+  title     String     @db.VarChar(500)
+  message   String     @db.Text
+  goalIds   String[]   @map("goal_ids")
+  dismissed Boolean    @default(false)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  signal    EieSignal  @relation(fields: [signalId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([tenantId, dismissed])
+  @@map("eie_alerts")
+}
+
+model EieInsight {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  type        String     @db.VarChar(50)
+  title       String     @db.VarChar(500)
+  content     String     @db.Text
+  data        Json?
+  goalIds     String[]   @map("goal_ids")
+  signalIds   String[]   @map("signal_ids")
+  generatedAt DateTime   @default(now()) @map("generated_at") @db.Timestamptz
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("eie_insights")
 }
