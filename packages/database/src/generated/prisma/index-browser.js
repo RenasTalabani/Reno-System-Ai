@@ -10732,6 +10732,44 @@ exports.Prisma.MchTemplateScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PccAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  module: 'module',
+  alertType: 'alertType',
+  severity: 'severity',
+  title: 'title',
+  message: 'message',
+  metadata: 'metadata',
+  isRead: 'isRead',
+  isResolved: 'isResolved',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PccMetricSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  capturedAt: 'capturedAt',
+  metrics: 'metrics',
+  aiScore: 'aiScore',
+  trend: 'trend',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PccHealthCheckScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  module: 'module',
+  status: 'status',
+  responseMs: 'responseMs',
+  details: 'details',
+  checkedAt: 'checkedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11423,7 +11461,10 @@ exports.Prisma.ModelName = {
   MchConversation: 'MchConversation',
   MchMessage: 'MchMessage',
   MchCampaign: 'MchCampaign',
-  MchTemplate: 'MchTemplate'
+  MchTemplate: 'MchTemplate',
+  PccAlert: 'PccAlert',
+  PccMetricSnapshot: 'PccMetricSnapshot',
+  PccHealthCheck: 'PccHealthCheck'
 };
 
 /**

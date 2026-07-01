@@ -468,6 +468,10 @@ model CoreTenant {
   mchConversations         MchConversation[]
   mchCampaigns             MchCampaign[]
   mchTemplates             MchTemplate[]
+  // Phase 55
+  pccAlerts                PccAlert[]
+  pccMetricSnapshots       PccMetricSnapshot[]
+  pccHealthChecks          PccHealthCheck[]
   @@map("core_tenants")
 }
 
@@ -15522,4 +15526,62 @@ model MchTemplate {
   @@unique([tenantId, slug])
   @@index([tenantId])
   @@map("mch_templates")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 55 — AI Platform Command Center
+// ─────────────────────────────────────────────────────────────────────────────
+
+model PccAlert {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  module       String
+  alertType    String    @map("alert_type")
+  severity     String    @default("info")
+  title        String
+  message      String
+  metadata     Json      @default("{}") @db.JsonB
+  isRead       Boolean   @default(false) @map("is_read")
+  isResolved   Boolean   @default(false) @map("is_resolved")
+  resolvedAt   DateTime? @map("resolved_at") @db.Timestamptz
+  resolvedBy   String?   @map("resolved_by") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("pcc_alerts")
+}
+
+model PccMetricSnapshot {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  period    String   @default("hourly")
+  capturedAt DateTime @map("captured_at") @db.Timestamptz
+  metrics   Json     @default("{}") @db.JsonB
+  aiScore   Float    @default(0) @map("ai_score")
+  trend     String   @default("stable")
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, period, capturedAt])
+  @@index([tenantId])
+  @@map("pcc_metric_snapshots")
+}
+
+model PccHealthCheck {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  module      String
+  status      String   @default("healthy")
+  responseMs  Int      @default(0) @map("response_ms")
+  details     Json     @default("{}") @db.JsonB
+  checkedAt   DateTime @default(now()) @map("checked_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("pcc_health_checks")
 }
