@@ -406,6 +406,10 @@ model CoreTenant {
   eieSignals               EieSignal[]
   eieAlerts                EieAlert[]
   eieInsights              EieInsight[]
+  // Phase 44
+  apsScenarios             ApsScenario[]
+  apsSimulations           ApsSimulation[]
+  apsComparisons           ApsComparison[]
   @@map("core_tenants")
 }
 
@@ -14198,4 +14202,81 @@ model EieInsight {
   @@index([tenantId])
   @@index([tenantId, type])
   @@map("eie_insights")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 44 — AI Predictive Simulation Engine
+// ─────────────────────────────────────────────────────────────────────────────
+
+model ApsScenario {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String        @map("tenant_id") @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  name            String        @db.VarChar(255)
+  description     String?       @db.Text
+  type            String        @db.VarChar(50)
+  parameters      Json
+  baselineRevenue Float         @default(0) @map("baseline_revenue")
+  baselineCost    Float         @default(0) @map("baseline_cost")
+  baselineHeadcount Int         @default(0) @map("baseline_headcount")
+  timeHorizon     Int           @default(12) @map("time_horizon")
+  status          String        @default("draft") @db.VarChar(20)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  tenant          CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  simulations     ApsSimulation[]
+  comparisonItems ApsComparisonItem[]
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("aps_scenarios")
+}
+
+model ApsSimulation {
+  id                String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String      @map("tenant_id") @db.Uuid
+  scenarioId        String      @map("scenario_id") @db.Uuid
+  iterations        Int         @default(1000)
+  baseOutcome       Json        @map("base_outcome")
+  pessimisticOutcome Json       @map("pessimistic_outcome")
+  optimisticOutcome Json        @map("optimistic_outcome")
+  monteCarloP10     Json?       @map("monte_carlo_p10")
+  monteCarloP50     Json?       @map("monte_carlo_p50")
+  monteCarloP90     Json?       @map("monte_carlo_p90")
+  successRate       Float?      @map("success_rate")
+  sensitivityData   Json?       @map("sensitivity_data")
+  risks             Json?
+  opportunities     Json?
+  recommendation    String?     @db.Text
+  executiveSummary  String?     @map("executive_summary") @db.Text
+  breakEvenMonths   Int?        @map("break_even_months")
+  ranAt             DateTime    @default(now()) @map("ran_at") @db.Timestamptz
+  tenant            CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  scenario          ApsScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([scenarioId])
+  @@map("aps_simulations")
+}
+
+model ApsComparison {
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String              @map("tenant_id") @db.Uuid
+  userId      String              @map("user_id") @db.Uuid
+  name        String              @db.VarChar(255)
+  result      Json?
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  tenant      CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  items       ApsComparisonItem[]
+  @@index([tenantId])
+  @@map("aps_comparisons")
+}
+
+model ApsComparisonItem {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  comparisonId String        @map("comparison_id") @db.Uuid
+  scenarioId   String        @map("scenario_id") @db.Uuid
+  rank         Int?
+  notes        String?       @db.Text
+  comparison   ApsComparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+  scenario     ApsScenario   @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  @@map("aps_comparison_items")
 }

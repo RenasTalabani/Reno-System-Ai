@@ -9880,6 +9880,61 @@ exports.Prisma.EieInsightScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.ApsScenarioScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  parameters: 'parameters',
+  baselineRevenue: 'baselineRevenue',
+  baselineCost: 'baselineCost',
+  baselineHeadcount: 'baselineHeadcount',
+  timeHorizon: 'timeHorizon',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApsSimulationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  scenarioId: 'scenarioId',
+  iterations: 'iterations',
+  baseOutcome: 'baseOutcome',
+  pessimisticOutcome: 'pessimisticOutcome',
+  optimisticOutcome: 'optimisticOutcome',
+  monteCarloP10: 'monteCarloP10',
+  monteCarloP50: 'monteCarloP50',
+  monteCarloP90: 'monteCarloP90',
+  successRate: 'successRate',
+  sensitivityData: 'sensitivityData',
+  risks: 'risks',
+  opportunities: 'opportunities',
+  recommendation: 'recommendation',
+  executiveSummary: 'executiveSummary',
+  breakEvenMonths: 'breakEvenMonths',
+  ranAt: 'ranAt'
+};
+
+exports.Prisma.ApsComparisonScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  result: 'result',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ApsComparisonItemScalarFieldEnum = {
+  id: 'id',
+  comparisonId: 'comparisonId',
+  scenarioId: 'scenarioId',
+  rank: 'rank',
+  notes: 'notes'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10518,7 +10573,11 @@ exports.Prisma.ModelName = {
   EieSource: 'EieSource',
   EieSignal: 'EieSignal',
   EieAlert: 'EieAlert',
-  EieInsight: 'EieInsight'
+  EieInsight: 'EieInsight',
+  ApsScenario: 'ApsScenario',
+  ApsSimulation: 'ApsSimulation',
+  ApsComparison: 'ApsComparison',
+  ApsComparisonItem: 'ApsComparisonItem'
 };
 
 /**
