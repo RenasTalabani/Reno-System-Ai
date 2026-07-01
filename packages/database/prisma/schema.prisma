@@ -431,6 +431,11 @@ model CoreTenant {
   eapAgentKpis             EapAgentKpi[]
   eapAgentCollabs          EapAgentCollaboration[]
   eapAgentAuditLogs        EapAgentAuditLog[]
+  // Phase 49
+  ualTools                 UalTool[]
+  ualPolicies              UalExecutionPolicy[]
+  ualToolExecutions        UalToolExecution[]
+  ualMcpServers            UalMcpServer[]
   @@map("core_tenants")
 }
 
@@ -14717,4 +14722,111 @@ model EapAgentAuditLog {
   @@index([tenantId])
   @@index([agentId])
   @@map("eap_agent_audit_logs")
+}
+
+// =============================================================================
+// PHASE 49 — AI Universal Action Layer (MCP & Tool Ecosystem)
+// =============================================================================
+
+model UalTool {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  name          String
+  slug          String
+  version       String   @default("1.0.0")
+  description   String?  @db.Text
+  category      String   @default("custom")
+  provider      String   @default("local")
+  endpoint      String?
+  schema        Json     @default("{}") @db.JsonB
+  permissions   Json     @default("{}") @db.JsonB
+  status        String   @default("active")
+  isSystem      Boolean  @default(false) @map("is_system")
+  totalCalls    Int      @default(0) @map("total_calls")
+  totalCost     Float    @default(0) @map("total_cost")
+  avgDurationMs Int?     @map("avg_duration_ms")
+  createdById   String?  @map("created_by_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant     CoreTenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  executions UalToolExecution[]
+  policies   UalExecutionPolicy[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("ual_tools")
+}
+
+model UalExecutionPolicy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  toolId      String   @map("tool_id") @db.Uuid
+  name        String
+  subjectType String   @map("subject_type")
+  subjectId   String?  @map("subject_id")
+  action      String   @default("allow")
+  rateLimit   Int?     @map("rate_limit")
+  conditions  Json     @default("{}") @db.JsonB
+  priority    Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tool   UalTool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([toolId])
+  @@map("ual_execution_policies")
+}
+
+model UalToolExecution {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  toolId        String    @map("tool_id") @db.Uuid
+  agentId       String?   @map("agent_id")
+  userId        String?   @map("user_id") @db.Uuid
+  taskId        String?   @map("task_id") @db.Uuid
+  status        String    @default("pending")
+  input         Json      @default("{}") @db.JsonB
+  output        Json?     @db.JsonB
+  errorMessage  String?   @map("error_message") @db.Text
+  durationMs    Int?      @map("duration_ms")
+  cost          Float     @default(0)
+  policyAction  String?   @map("policy_action")
+  startedAt     DateTime? @map("started_at") @db.Timestamptz
+  completedAt   DateTime? @map("completed_at") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tool   UalTool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([toolId])
+  @@index([agentId])
+  @@map("ual_tool_executions")
+}
+
+model UalMcpServer {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  name           String
+  slug           String
+  description    String?   @db.Text
+  endpoint       String
+  protocol       String    @default("http")
+  authType       String    @default("none") @map("auth_type")
+  authConfig     Json      @default("{}") @db.JsonB @map("auth_config")
+  toolManifest   Json      @default("[]") @db.JsonB @map("tool_manifest")
+  status         String    @default("active")
+  lastCheckedAt  DateTime? @map("last_checked_at") @db.Timestamptz
+  healthScore    Int?      @map("health_score")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("ual_mcp_servers")
 }

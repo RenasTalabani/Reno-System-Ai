@@ -58,6 +58,9 @@ const navigation: NavSection[] = [
     items: [
       { label: 'Reno Brain', href: '/brain', icon: Brain },
       { label: 'Automation', href: '/automation', icon: Workflow },
+      { label: 'Knowledge Graph', href: '/knowledge-graph', icon: Brain },
+      { label: 'AI Agents', href: '/agents-platform', icon: Bot },
+      { label: 'Action Layer', href: '/action-layer', icon: Workflow },
     ],
   },
   {

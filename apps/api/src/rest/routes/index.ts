@@ -168,6 +168,7 @@ import { strategyOrchestratorModuleRoutes } from './strategy-orchestrator/index.
 import { integrationHubModuleRoutes } from './integration-hub/index.js'
 import { knowledgeGraphModuleRoutes } from './knowledge-graph/index.js'
 import { agentsPlatformModuleRoutes } from './agents-platform/index.js'
+import { actionLayerModuleRoutes } from './action-layer/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -342,6 +343,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(integrationHubModuleRoutes, { prefix: '' })
       await v1.register(knowledgeGraphModuleRoutes, { prefix: '' })
       await v1.register(agentsPlatformModuleRoutes, { prefix: '' })
+      await v1.register(actionLayerModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )
