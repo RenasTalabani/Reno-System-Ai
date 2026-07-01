@@ -472,6 +472,11 @@ model CoreTenant {
   pccAlerts                PccAlert[]
   pccMetricSnapshots       PccMetricSnapshot[]
   pccHealthChecks          PccHealthCheck[]
+  // Phase 56
+  apaDatasets              ApaDataset[]
+  apaModels                ApaModel[]
+  apaForecasts             ApaForecast[]
+  apaPredictions           ApaPrediction[]
   @@map("core_tenants")
 }
 
@@ -15584,4 +15589,110 @@ model PccHealthCheck {
 
   @@index([tenantId])
   @@map("pcc_health_checks")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 56 — AI Predictive Analytics & Forecasting Engine
+// ─────────────────────────────────────────────────────────────────────────────
+
+model ApaDataset {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  slug        String
+  description String?
+  dataType    String   @default("timeseries") @map("data_type") // timeseries | tabular | text
+  source      String   @default("manual") // manual | crm | finance | hr | custom
+  rowCount    Int      @default(0) @map("row_count")
+  columns     Json     @default("[]") @db.JsonB
+  sampleData  Json     @default("[]") @db.JsonB @map("sample_data")
+  status      String   @default("ready") // ready | processing | error
+  metadata    Json     @default("{}") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  models    ApaModel[]
+  forecasts ApaForecast[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("apa_datasets")
+}
+
+model ApaModel {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  datasetId       String    @map("dataset_id") @db.Uuid
+  name            String
+  algorithmType   String    @map("algorithm_type") // linear | arima | prophet | lstm | xgboost | ensemble
+  targetColumn    String    @map("target_column")
+  featureColumns  Json      @default("[]") @db.JsonB @map("feature_columns")
+  hyperparams     Json      @default("{}") @db.JsonB
+  status          String    @default("untrained") // untrained | training | trained | failed
+  accuracy        Float?
+  maeScore        Float?    @map("mae_score")
+  rmseScore       Float?    @map("rmse_score")
+  r2Score         Float?    @map("r2_score")
+  trainedAt       DateTime? @map("trained_at") @db.Timestamptz
+  trainingMs      Int?      @map("training_ms")
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dataset   ApaDataset    @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  forecasts ApaForecast[]
+
+  @@index([tenantId])
+  @@map("apa_models")
+}
+
+model ApaForecast {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  modelId       String   @map("model_id") @db.Uuid
+  datasetId     String   @map("dataset_id") @db.Uuid
+  name          String
+  horizon       Int      @default(30) // forecast periods ahead
+  granularity   String   @default("daily") // hourly | daily | weekly | monthly
+  status        String   @default("pending") // pending | running | completed | failed
+  predictions   Json     @default("[]") @db.JsonB
+  confidenceLow Json     @default("[]") @db.JsonB @map("confidence_low")
+  confidenceHigh Json    @default("[]") @db.JsonB @map("confidence_high")
+  insights      Json     @default("[]") @db.JsonB
+  aiSummary     String?  @map("ai_summary")
+  runAt         DateTime? @map("run_at") @db.Timestamptz
+  runMs         Int?     @map("run_ms")
+  metadata      Json     @default("{}") @db.JsonB
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant      CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  model       ApaModel      @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  dataset     ApaDataset    @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  predictions_ ApaPrediction[]
+
+  @@index([tenantId])
+  @@map("apa_forecasts")
+}
+
+model ApaPrediction {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  forecastId   String   @map("forecast_id") @db.Uuid
+  period       String
+  predictedAt  DateTime @map("predicted_at") @db.Timestamptz
+  value        Float
+  lowerBound   Float    @map("lower_bound")
+  upperBound   Float    @map("upper_bound")
+  confidence   Float    @default(0.95)
+  isAnomaly    Boolean  @default(false) @map("is_anomaly")
+  anomalyScore Float?   @map("anomaly_score")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  forecast ApaForecast @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("apa_predictions")
 }

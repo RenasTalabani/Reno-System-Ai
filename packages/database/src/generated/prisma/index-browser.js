@@ -10770,6 +10770,79 @@ exports.Prisma.PccHealthCheckScalarFieldEnum = {
   checkedAt: 'checkedAt'
 };
 
+exports.Prisma.ApaDatasetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  dataType: 'dataType',
+  source: 'source',
+  rowCount: 'rowCount',
+  columns: 'columns',
+  sampleData: 'sampleData',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApaModelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  name: 'name',
+  algorithmType: 'algorithmType',
+  targetColumn: 'targetColumn',
+  featureColumns: 'featureColumns',
+  hyperparams: 'hyperparams',
+  status: 'status',
+  accuracy: 'accuracy',
+  maeScore: 'maeScore',
+  rmseScore: 'rmseScore',
+  r2Score: 'r2Score',
+  trainedAt: 'trainedAt',
+  trainingMs: 'trainingMs',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApaForecastScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelId: 'modelId',
+  datasetId: 'datasetId',
+  name: 'name',
+  horizon: 'horizon',
+  granularity: 'granularity',
+  status: 'status',
+  predictions: 'predictions',
+  confidenceLow: 'confidenceLow',
+  confidenceHigh: 'confidenceHigh',
+  insights: 'insights',
+  aiSummary: 'aiSummary',
+  runAt: 'runAt',
+  runMs: 'runMs',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ApaPredictionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  forecastId: 'forecastId',
+  period: 'period',
+  predictedAt: 'predictedAt',
+  value: 'value',
+  lowerBound: 'lowerBound',
+  upperBound: 'upperBound',
+  confidence: 'confidence',
+  isAnomaly: 'isAnomaly',
+  anomalyScore: 'anomalyScore',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11464,7 +11537,11 @@ exports.Prisma.ModelName = {
   MchTemplate: 'MchTemplate',
   PccAlert: 'PccAlert',
   PccMetricSnapshot: 'PccMetricSnapshot',
-  PccHealthCheck: 'PccHealthCheck'
+  PccHealthCheck: 'PccHealthCheck',
+  ApaDataset: 'ApaDataset',
+  ApaModel: 'ApaModel',
+  ApaForecast: 'ApaForecast',
+  ApaPrediction: 'ApaPrediction'
 };
 
 /**

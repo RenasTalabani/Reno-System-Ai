@@ -67,6 +67,7 @@ const navigation: NavSection[] = [
       { label: 'Document AI', href: '/document-intelligence', icon: Brain },
       { label: 'Comm Hub', href: '/comm-hub', icon: Workflow },
       { label: 'Command Center', href: '/command-center', icon: LayoutDashboard },
+      { label: 'Predictive AI', href: '/predictive-analytics', icon: BarChart3 },
     ],
   },
   {
