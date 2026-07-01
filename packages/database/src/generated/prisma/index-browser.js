@@ -9935,6 +9935,75 @@ exports.Prisma.ApsComparisonItemScalarFieldEnum = {
   notes: 'notes'
 };
 
+exports.Prisma.AsoInitiativeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  department: 'department',
+  status: 'status',
+  priority: 'priority',
+  estimatedBudget: 'estimatedBudget',
+  estimatedRoi: 'estimatedRoi',
+  riskScore: 'riskScore',
+  urgencyScore: 'urgencyScore',
+  strategicScore: 'strategicScore',
+  portfolioScore: 'portfolioScore',
+  linkedGoalIds: 'linkedGoalIds',
+  linkedSignalIds: 'linkedSignalIds',
+  timeHorizon: 'timeHorizon',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  aiPlan: 'aiPlan',
+  kpiCascade: 'kpiCascade',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AsoPortfolioItemScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  initiativeId: 'initiativeId',
+  rank: 'rank',
+  roiScore: 'roiScore',
+  riskScore: 'riskScore',
+  urgencyScore: 'urgencyScore',
+  strategicScore: 'strategicScore',
+  totalScore: 'totalScore',
+  rationale: 'rationale',
+  scoredAt: 'scoredAt'
+};
+
+exports.Prisma.AsoConflictScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  initiativeAId: 'initiativeAId',
+  initiativeBId: 'initiativeBId',
+  type: 'type',
+  description: 'description',
+  severity: 'severity',
+  resolution: 'resolution',
+  resolved: 'resolved',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AsoStrategyReviewScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  weekOf: 'weekOf',
+  summary: 'summary',
+  onTrackCount: 'onTrackCount',
+  atRiskCount: 'atRiskCount',
+  completedCount: 'completedCount',
+  recommendations: 'recommendations',
+  initiativeUpdates: 'initiativeUpdates',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10577,7 +10646,11 @@ exports.Prisma.ModelName = {
   ApsScenario: 'ApsScenario',
   ApsSimulation: 'ApsSimulation',
   ApsComparison: 'ApsComparison',
-  ApsComparisonItem: 'ApsComparisonItem'
+  ApsComparisonItem: 'ApsComparisonItem',
+  AsoInitiative: 'AsoInitiative',
+  AsoPortfolioItem: 'AsoPortfolioItem',
+  AsoConflict: 'AsoConflict',
+  AsoStrategyReview: 'AsoStrategyReview'
 };
 
 /**

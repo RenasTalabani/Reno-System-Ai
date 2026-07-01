@@ -164,6 +164,7 @@ import { personalAssistantModuleRoutes } from './personal-assistant/index.js'
 import { goalsEngineModuleRoutes } from './goals-engine/index.js'
 import { externalIntelligenceModuleRoutes } from './external-intelligence/index.js'
 import { predictiveSimModuleRoutes } from './predictive-sim/index.js'
+import { strategyOrchestratorModuleRoutes } from './strategy-orchestrator/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -334,6 +335,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(goalsEngineModuleRoutes, { prefix: '' })
       await v1.register(externalIntelligenceModuleRoutes, { prefix: '' })
       await v1.register(predictiveSimModuleRoutes, { prefix: '' })
+      await v1.register(strategyOrchestratorModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

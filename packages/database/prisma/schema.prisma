@@ -410,6 +410,11 @@ model CoreTenant {
   apsScenarios             ApsScenario[]
   apsSimulations           ApsSimulation[]
   apsComparisons           ApsComparison[]
+  // Phase 45
+  asoInitiatives           AsoInitiative[]
+  asoPortfolioItems        AsoPortfolioItem[]
+  asoConflicts             AsoConflict[]
+  asoStrategyReviews       AsoStrategyReview[]
   @@map("core_tenants")
 }
 
@@ -14279,4 +14284,100 @@ model ApsComparisonItem {
   comparison   ApsComparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
   scenario     ApsScenario   @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
   @@map("aps_comparison_items")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 45 — AI Enterprise Strategy Orchestrator
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AsoInitiative {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  userId          String     @map("user_id") @db.Uuid
+  title           String     @db.VarChar(500)
+  description     String?    @db.Text
+  type            String     @db.VarChar(50)
+  department      String     @db.VarChar(50)
+  status          String     @default("draft") @db.VarChar(20)
+  priority        String     @default("medium") @db.VarChar(20)
+  estimatedBudget Float?     @map("estimated_budget")
+  estimatedRoi    Float?     @map("estimated_roi")
+  riskScore       Float?     @map("risk_score")
+  urgencyScore    Float?     @map("urgency_score")
+  strategicScore  Float?     @map("strategic_score")
+  portfolioScore  Float?     @map("portfolio_score")
+  linkedGoalIds   String[]   @map("linked_goal_ids")
+  linkedSignalIds String[]   @map("linked_signal_ids")
+  timeHorizon     String     @default("90d") @map("time_horizon") @db.VarChar(10)
+  startDate       DateTime?  @map("start_date") @db.Timestamptz
+  endDate         DateTime?  @map("end_date") @db.Timestamptz
+  aiPlan          Json?      @map("ai_plan")
+  kpiCascade      Json?      @map("kpi_cascade")
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  portfolioItems  AsoPortfolioItem[]
+  conflictsA      AsoConflict[] @relation("ConflictA")
+  conflictsB      AsoConflict[] @relation("ConflictB")
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, department])
+  @@map("aso_initiatives")
+}
+
+model AsoPortfolioItem {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String       @map("tenant_id") @db.Uuid
+  initiativeId   String       @map("initiative_id") @db.Uuid
+  rank           Int
+  roiScore       Float        @map("roi_score")
+  riskScore      Float        @map("risk_score")
+  urgencyScore   Float        @map("urgency_score")
+  strategicScore Float        @map("strategic_score")
+  totalScore     Float        @map("total_score")
+  rationale      String?      @db.Text
+  scoredAt       DateTime     @default(now()) @map("scored_at") @db.Timestamptz
+  tenant         CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative     AsoInitiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([tenantId, rank])
+  @@map("aso_portfolio_items")
+}
+
+model AsoConflict {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String        @map("tenant_id") @db.Uuid
+  initiativeAId   String        @map("initiative_a_id") @db.Uuid
+  initiativeBId   String        @map("initiative_b_id") @db.Uuid
+  type            String        @db.VarChar(50)
+  description     String        @db.Text
+  severity        String        @db.VarChar(20)
+  resolution      String?       @db.Text
+  resolved        Boolean       @default(false)
+  resolvedAt      DateTime?     @map("resolved_at") @db.Timestamptz
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  tenant          CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiativeA     AsoInitiative @relation("ConflictA", fields: [initiativeAId], references: [id], onDelete: Cascade)
+  initiativeB     AsoInitiative @relation("ConflictB", fields: [initiativeBId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([tenantId, resolved])
+  @@map("aso_conflicts")
+}
+
+model AsoStrategyReview {
+  id                 String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String     @map("tenant_id") @db.Uuid
+  userId             String     @map("user_id") @db.Uuid
+  weekOf             DateTime   @map("week_of") @db.Timestamptz
+  summary            String     @db.Text
+  onTrackCount       Int        @default(0) @map("on_track_count")
+  atRiskCount        Int        @default(0) @map("at_risk_count")
+  completedCount     Int        @default(0) @map("completed_count")
+  recommendations    Json
+  initiativeUpdates  Json       @map("initiative_updates")
+  generatedAt        DateTime   @default(now()) @map("generated_at") @db.Timestamptz
+  tenant             CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@index([tenantId, weekOf])
+  @@map("aso_strategy_reviews")
 }
