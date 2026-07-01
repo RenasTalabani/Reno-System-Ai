@@ -10205,6 +10205,271 @@ exports.Prisma.EapAgentAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.UalToolScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  version: 'version',
+  description: 'description',
+  category: 'category',
+  provider: 'provider',
+  endpoint: 'endpoint',
+  schema: 'schema',
+  permissions: 'permissions',
+  status: 'status',
+  isSystem: 'isSystem',
+  totalCalls: 'totalCalls',
+  totalCost: 'totalCost',
+  avgDurationMs: 'avgDurationMs',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UalExecutionPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  toolId: 'toolId',
+  name: 'name',
+  subjectType: 'subjectType',
+  subjectId: 'subjectId',
+  action: 'action',
+  rateLimit: 'rateLimit',
+  conditions: 'conditions',
+  priority: 'priority',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.UalToolExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  toolId: 'toolId',
+  agentId: 'agentId',
+  userId: 'userId',
+  taskId: 'taskId',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  errorMessage: 'errorMessage',
+  durationMs: 'durationMs',
+  cost: 'cost',
+  policyAction: 'policyAction',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.UalMcpServerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  endpoint: 'endpoint',
+  protocol: 'protocol',
+  authType: 'authType',
+  authConfig: 'authConfig',
+  toolManifest: 'toolManifest',
+  status: 'status',
+  lastCheckedAt: 'lastCheckedAt',
+  healthScore: 'healthScore',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AclLearningEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  eventType: 'eventType',
+  sourceModule: 'sourceModule',
+  sourceId: 'sourceId',
+  outcome: 'outcome',
+  inputContext: 'inputContext',
+  outputContext: 'outputContext',
+  metrics: 'metrics',
+  feedback: 'feedback',
+  learnedAt: 'learnedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AclToolInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  toolId: 'toolId',
+  insightType: 'insightType',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  suggestions: 'suggestions',
+  metrics: 'metrics',
+  status: 'status',
+  appliedAt: 'appliedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AclAgentInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  agentId: 'agentId',
+  insightType: 'insightType',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  suggestions: 'suggestions',
+  metrics: 'metrics',
+  status: 'status',
+  appliedAt: 'appliedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AclPolicyInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  insightType: 'insightType',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  affectedPolicies: 'affectedPolicies',
+  suggestion: 'suggestion',
+  status: 'status',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AclKgFeedbackScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  feedbackType: 'feedbackType',
+  sourceModule: 'sourceModule',
+  proposedData: 'proposedData',
+  confidence: 'confidence',
+  status: 'status',
+  reviewedBy: 'reviewedBy',
+  reviewNote: 'reviewNote',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AclEvolutionSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  snapshotDate: 'snapshotDate',
+  period: 'period',
+  toolMetrics: 'toolMetrics',
+  agentMetrics: 'agentMetrics',
+  kgMetrics: 'kgMetrics',
+  policyMetrics: 'policyMetrics',
+  overallScore: 'overallScore',
+  trend: 'trend',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AosRuntimeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  status: 'status',
+  config: 'config',
+  maxConcurrentAgents: 'maxConcurrentAgents',
+  maxTokensPerHour: 'maxTokensPerHour',
+  maxCostPerDay: 'maxCostPerDay',
+  totalEventsProcessed: 'totalEventsProcessed',
+  totalJobsRun: 'totalJobsRun',
+  uptimeSeconds: 'uptimeSeconds',
+  startedAt: 'startedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AosEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  runtimeId: 'runtimeId',
+  channel: 'channel',
+  sourceType: 'sourceType',
+  sourceId: 'sourceId',
+  payload: 'payload',
+  priority: 'priority',
+  status: 'status',
+  consumers: 'consumers',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AosJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  runtimeId: 'runtimeId',
+  name: 'name',
+  slug: 'slug',
+  jobType: 'jobType',
+  schedule: 'schedule',
+  handler: 'handler',
+  params: 'params',
+  priority: 'priority',
+  status: 'status',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  totalRuns: 'totalRuns',
+  failedRuns: 'failedRuns',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AosJobExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  jobId: 'jobId',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  durationMs: 'durationMs',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.AosResourceUsageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  periodAt: 'periodAt',
+  tokensUsed: 'tokensUsed',
+  toolCallsTotal: 'toolCallsTotal',
+  agentTasksTotal: 'agentTasksTotal',
+  eventsPublished: 'eventsPublished',
+  jobsExecuted: 'jobsExecuted',
+  totalCost: 'totalCost',
+  budgetUsedPct: 'budgetUsedPct',
+  alerts: 'alerts',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AosHookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  hookType: 'hookType',
+  handler: 'handler',
+  handlerType: 'handlerType',
+  conditions: 'conditions',
+  isActive: 'isActive',
+  priority: 'priority',
+  totalFired: 'totalFired',
+  lastFiredAt: 'lastFiredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10865,7 +11130,23 @@ exports.Prisma.ModelName = {
   EapAgentTask: 'EapAgentTask',
   EapAgentKpi: 'EapAgentKpi',
   EapAgentCollaboration: 'EapAgentCollaboration',
-  EapAgentAuditLog: 'EapAgentAuditLog'
+  EapAgentAuditLog: 'EapAgentAuditLog',
+  UalTool: 'UalTool',
+  UalExecutionPolicy: 'UalExecutionPolicy',
+  UalToolExecution: 'UalToolExecution',
+  UalMcpServer: 'UalMcpServer',
+  AclLearningEvent: 'AclLearningEvent',
+  AclToolInsight: 'AclToolInsight',
+  AclAgentInsight: 'AclAgentInsight',
+  AclPolicyInsight: 'AclPolicyInsight',
+  AclKgFeedback: 'AclKgFeedback',
+  AclEvolutionSnapshot: 'AclEvolutionSnapshot',
+  AosRuntime: 'AosRuntime',
+  AosEvent: 'AosEvent',
+  AosJob: 'AosJob',
+  AosJobExecution: 'AosJobExecution',
+  AosResourceUsage: 'AosResourceUsage',
+  AosHook: 'AosHook'
 };
 
 /**

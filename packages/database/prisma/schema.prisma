@@ -443,6 +443,13 @@ model CoreTenant {
   aclPolicyInsights        AclPolicyInsight[]
   aclKgFeedbacks           AclKgFeedback[]
   aclEvolutionSnapshots    AclEvolutionSnapshot[]
+  // Phase 51
+  aosRuntimes              AosRuntime[]
+  aosEvents                AosEvent[]
+  aosJobs                  AosJob[]
+  aosJobExecutions         AosJobExecution[]
+  aosResourceUsages        AosResourceUsage[]
+  aosHooks                 AosHook[]
   @@map("core_tenants")
 }
 
@@ -14967,4 +14974,151 @@ model AclEvolutionSnapshot {
   @@unique([tenantId, snapshotDate, period])
   @@index([tenantId])
   @@map("acl_evolution_snapshots")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 51 — AI Enterprise Operating System Runtime
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AosRuntime {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  name                String
+  slug                String
+  description         String?   @db.Text
+  status              String    @default("running")
+  config              Json      @default("{}") @db.JsonB
+  maxConcurrentAgents Int       @default(10) @map("max_concurrent_agents")
+  maxTokensPerHour    Int?      @map("max_tokens_per_hour")
+  maxCostPerDay       Float?    @map("max_cost_per_day")
+  totalEventsProcessed Int      @default(0) @map("total_events_processed")
+  totalJobsRun        Int       @default(0) @map("total_jobs_run")
+  uptimeSeconds       Int       @default(0) @map("uptime_seconds")
+  startedAt           DateTime? @map("started_at") @db.Timestamptz
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  events AosEvent[]
+  jobs   AosJob[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("aos_runtimes")
+}
+
+model AosEvent {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  runtimeId   String?   @map("runtime_id") @db.Uuid
+  channel     String
+  sourceType  String    @map("source_type")
+  sourceId    String?   @map("source_id")
+  payload     Json      @default("{}") @db.JsonB
+  priority    String    @default("normal")
+  status      String    @default("published")
+  consumers   Int       @default(0)
+  processedAt DateTime? @map("processed_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runtime AosRuntime? @relation(fields: [runtimeId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, channel])
+  @@index([tenantId, status])
+  @@map("aos_events")
+}
+
+model AosJob {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  runtimeId   String?   @map("runtime_id") @db.Uuid
+  name        String
+  slug        String
+  jobType     String    @map("job_type")
+  schedule    String?
+  handler     String
+  params      Json      @default("{}") @db.JsonB
+  priority    String    @default("normal")
+  status      String    @default("active")
+  lastRunAt   DateTime? @map("last_run_at") @db.Timestamptz
+  nextRunAt   DateTime? @map("next_run_at") @db.Timestamptz
+  totalRuns   Int       @default(0) @map("total_runs")
+  failedRuns  Int       @default(0) @map("failed_runs")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant     CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runtime    AosRuntime?      @relation(fields: [runtimeId], references: [id], onDelete: SetNull)
+  executions AosJobExecution[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("aos_jobs")
+}
+
+model AosJobExecution {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  jobId       String    @map("job_id") @db.Uuid
+  status      String    @default("running")
+  input       Json      @default("{}") @db.JsonB
+  output      Json?     @db.JsonB
+  error       String?   @db.Text
+  durationMs  Int?      @map("duration_ms")
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job    AosJob     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([jobId])
+  @@map("aos_job_executions")
+}
+
+model AosResourceUsage {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  period           String   @default("hourly")
+  periodAt         DateTime @map("period_at") @db.Timestamptz
+  tokensUsed       Int      @default(0) @map("tokens_used")
+  toolCallsTotal   Int      @default(0) @map("tool_calls_total")
+  agentTasksTotal  Int      @default(0) @map("agent_tasks_total")
+  eventsPublished  Int      @default(0) @map("events_published")
+  jobsExecuted     Int      @default(0) @map("jobs_executed")
+  totalCost        Float    @default(0) @map("total_cost")
+  budgetUsedPct    Float?   @map("budget_used_pct")
+  alerts           Json     @default("[]") @db.JsonB
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, period, periodAt])
+  @@index([tenantId])
+  @@map("aos_resource_usage")
+}
+
+model AosHook {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String
+  slug        String
+  hookType    String    @map("hook_type")
+  handler     String
+  handlerType String    @default("internal") @map("handler_type")
+  conditions  Json      @default("{}") @db.JsonB
+  isActive    Boolean   @default(true) @map("is_active")
+  priority    Int       @default(0)
+  totalFired  Int       @default(0) @map("total_fired")
+  lastFiredAt DateTime? @map("last_fired_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("aos_hooks")
 }

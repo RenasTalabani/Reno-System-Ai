@@ -170,6 +170,7 @@ import { knowledgeGraphModuleRoutes } from './knowledge-graph/index.js'
 import { agentsPlatformModuleRoutes } from './agents-platform/index.js'
 import { actionLayerModuleRoutes } from './action-layer/index.js'
 import { learningModuleRoutes } from './learning/index.js'
+import { aosModuleRoutes } from './aos/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -346,6 +347,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(agentsPlatformModuleRoutes, { prefix: '' })
       await v1.register(actionLayerModuleRoutes, { prefix: '' })
       await v1.register(learningModuleRoutes, { prefix: '' })
+      await v1.register(aosModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

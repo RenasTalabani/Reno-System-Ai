@@ -62,6 +62,7 @@ const navigation: NavSection[] = [
       { label: 'AI Agents', href: '/agents-platform', icon: Bot },
       { label: 'Action Layer', href: '/action-layer', icon: Workflow },
       { label: 'Learning & Opt.', href: '/learning', icon: Brain },
+      { label: 'AOS Runtime', href: '/aos', icon: Workflow },
     ],
   },
   {

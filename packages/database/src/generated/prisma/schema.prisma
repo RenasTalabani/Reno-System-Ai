@@ -274,162 +274,181 @@ model CoreTenant {
   riskItems          RiskItem[]
   sigRequests        SigRequest[]
 
-  attShifts           AttShift[]
-  attTimesheets       AttTimesheet[]
-  surSurveys          SurSurvey[]
-  pcCategories        PcCategory[]
-  pcProducts          PcProduct[]
-  expReports          ExpReport[]
-  atsJobs             AtsJob[]
-  atsCandidates       AtsCandidate[]
-  evtEvents           EvtEvent[]
-  ntfTemplates        NtfTemplate[]
-  ntfLogs             NtfLog[]
-  tskBoards           TskBoard[]
-  inv2Quotes          Inv2Quote[]
-  inv2PaymentLinks    Inv2PaymentLink[]
-  clm2Templates       Clm2Template[]
-  trsAccounts         TrsAccount[]
-  trsFxRates          TrsFxRate[]
-  ocrJobs             OcrJob[]
-  suplProfiles        SuplProfile[]
-  lty2Rewards         Lty2Reward[]
-  ccEvents            CcEvent[]
-  scimTokens          ScimToken[]
-  dirGroups           DirGroup[]
-  phltChecks          PhltCheck[]
-  phltSlos            PhltSlo[]
-  phltIncidents       PhltIncident[]
-  dmsfolders          DmsFolder[]
-  dmsDocs             DmsDoc[]
-  trvTrips            TrvTrip[]
-  grantGrants         GrantGrant[]
-  propProperties      PropProperty[]
-  iotDevices          IotDevice[]
-  csrPrograms         CsrProgram[]
-  innIdeas            InnIdea[]
-  sub2Plans           Sub2Plan[]
-  sub2Subs            Sub2Sub[]
-  chatChannels        ChatChannel[]
-  etlConnectors       EtlConnector[]
-  legalCases          LegalCase[]
-  lms2Courses         Lms2Course[]
-  hcPatients          HcPatient[]
-  posOrders           PosOrder[]
-  retailStores        RetailStore[]
-  printJobs           PrintJob[]
-  franchisees         Franchisee[]
-  npDonors            NpDonor[]
-  rdProjects          RdProject[]
-  rpt3Templates       Rpt3Template[]
-  engyMeters          EngyMeter[]
-  trpRoutes           TrpRoute[]
-  trpDrivers          TrpDriver[]
-  insPolicies         InsPolicy[]
-  reCrmLeads          ReCrmLead[]
-  conProjects         ConProject[]
-  agrFarms            AgrFarm[]
-  marVessels          MarVessel[]
-  govRegulations      GovRegulation[]
-  meetRooms           MeetRoom[]
-  damCollections      DamCollection[]
-  mbrChannels         MbrChannel[]
-  mbrContent          MbrContent[]
-  eduSchools          EduSchool[]
-  hotelProperties     HotelProperty[]
-  hotelReservations   HotelReservation[]
-  sptFacilities       SptFacility[]
-  sptMembers          SptMember[]
-  sptBookings         SptBooking[]
-  fpaClients          FpaClient[]
-  vetPets             VetPet[]
-  wstRoutes           WstRoute[]
-  cemPlots            CemPlot[]
-  tktEvents           TktEvent[]
-  tktOrders           TktOrder[]
-  autoVehicles        AutoVehicle[]
-  autoSales           AutoSale[]
-  mneSites            MneSite[]
-  txtCollections      TxtCollection[]
-  clnJobs             ClnJob[]
-  pctContracts        PctContract[]
-  phoSessions         PhoSession[]
-  mscArtists          MscArtist[]
-  mscBookings         MscBooking[]
-  cwkSpaces           CwkSpace[]
-  cwkReservations     CwkReservation[]
-  pbdPets             PbdPet[]
-  fdlRestaurants      FdlRestaurant[]
-  fdlOrders           FdlOrder[]
-  phxDrugs            PhxDrug[]
-  phxPrescriptions    PhxPrescription[]
-  avnAircraft         AvnAircraft[]
-  avnFlights          AvnFlight[]
-  crnVehicles         CrnVehicle[]
-  crnRentals          CrnRental[]
-  lndOrders           LndOrder[]
-  secContracts        SecContract[]
-  dntPatients         DntPatient[]
-  adfProjects         AdfProject[]
-  cnfHalls            CnfHall[]
-  cnfBookings         CnfBooking[]
-  pubTitles           PubTitle[]
-  fshSites            FshSite[]
-  slrInstallations    SlrInstallation[]
-  aiwSessions         AiwSession[]
-  aiwMemory           AiwMemory[]
-  aiwTasks            AiwTask[]
-  aiwDocuments        AiwDocument[]
-  aiwSearchLogs       AiwSearchLog[]
-  awltProposals       AwltProposal[]
-  awltCommandLogs     AwltCommandLog[]
-  awltProjectContexts AwltProjectContext[]
+  attShifts             AttShift[]
+  attTimesheets         AttTimesheet[]
+  surSurveys            SurSurvey[]
+  pcCategories          PcCategory[]
+  pcProducts            PcProduct[]
+  expReports            ExpReport[]
+  atsJobs               AtsJob[]
+  atsCandidates         AtsCandidate[]
+  evtEvents             EvtEvent[]
+  ntfTemplates          NtfTemplate[]
+  ntfLogs               NtfLog[]
+  tskBoards             TskBoard[]
+  inv2Quotes            Inv2Quote[]
+  inv2PaymentLinks      Inv2PaymentLink[]
+  clm2Templates         Clm2Template[]
+  trsAccounts           TrsAccount[]
+  trsFxRates            TrsFxRate[]
+  ocrJobs               OcrJob[]
+  suplProfiles          SuplProfile[]
+  lty2Rewards           Lty2Reward[]
+  ccEvents              CcEvent[]
+  scimTokens            ScimToken[]
+  dirGroups             DirGroup[]
+  phltChecks            PhltCheck[]
+  phltSlos              PhltSlo[]
+  phltIncidents         PhltIncident[]
+  dmsfolders            DmsFolder[]
+  dmsDocs               DmsDoc[]
+  trvTrips              TrvTrip[]
+  grantGrants           GrantGrant[]
+  propProperties        PropProperty[]
+  iotDevices            IotDevice[]
+  csrPrograms           CsrProgram[]
+  innIdeas              InnIdea[]
+  sub2Plans             Sub2Plan[]
+  sub2Subs              Sub2Sub[]
+  chatChannels          ChatChannel[]
+  etlConnectors         EtlConnector[]
+  legalCases            LegalCase[]
+  lms2Courses           Lms2Course[]
+  hcPatients            HcPatient[]
+  posOrders             PosOrder[]
+  retailStores          RetailStore[]
+  printJobs             PrintJob[]
+  franchisees           Franchisee[]
+  npDonors              NpDonor[]
+  rdProjects            RdProject[]
+  rpt3Templates         Rpt3Template[]
+  engyMeters            EngyMeter[]
+  trpRoutes             TrpRoute[]
+  trpDrivers            TrpDriver[]
+  insPolicies           InsPolicy[]
+  reCrmLeads            ReCrmLead[]
+  conProjects           ConProject[]
+  agrFarms              AgrFarm[]
+  marVessels            MarVessel[]
+  govRegulations        GovRegulation[]
+  meetRooms             MeetRoom[]
+  damCollections        DamCollection[]
+  mbrChannels           MbrChannel[]
+  mbrContent            MbrContent[]
+  eduSchools            EduSchool[]
+  hotelProperties       HotelProperty[]
+  hotelReservations     HotelReservation[]
+  sptFacilities         SptFacility[]
+  sptMembers            SptMember[]
+  sptBookings           SptBooking[]
+  fpaClients            FpaClient[]
+  vetPets               VetPet[]
+  wstRoutes             WstRoute[]
+  cemPlots              CemPlot[]
+  tktEvents             TktEvent[]
+  tktOrders             TktOrder[]
+  autoVehicles          AutoVehicle[]
+  autoSales             AutoSale[]
+  mneSites              MneSite[]
+  txtCollections        TxtCollection[]
+  clnJobs               ClnJob[]
+  pctContracts          PctContract[]
+  phoSessions           PhoSession[]
+  mscArtists            MscArtist[]
+  mscBookings           MscBooking[]
+  cwkSpaces             CwkSpace[]
+  cwkReservations       CwkReservation[]
+  pbdPets               PbdPet[]
+  fdlRestaurants        FdlRestaurant[]
+  fdlOrders             FdlOrder[]
+  phxDrugs              PhxDrug[]
+  phxPrescriptions      PhxPrescription[]
+  avnAircraft           AvnAircraft[]
+  avnFlights            AvnFlight[]
+  crnVehicles           CrnVehicle[]
+  crnRentals            CrnRental[]
+  lndOrders             LndOrder[]
+  secContracts          SecContract[]
+  dntPatients           DntPatient[]
+  adfProjects           AdfProject[]
+  cnfHalls              CnfHall[]
+  cnfBookings           CnfBooking[]
+  pubTitles             PubTitle[]
+  fshSites              FshSite[]
+  slrInstallations      SlrInstallation[]
+  aiwSessions           AiwSession[]
+  aiwMemory             AiwMemory[]
+  aiwTasks              AiwTask[]
+  aiwDocuments          AiwDocument[]
+  aiwSearchLogs         AiwSearchLog[]
+  awltProposals         AwltProposal[]
+  awltCommandLogs       AwltCommandLog[]
+  awltProjectContexts   AwltProjectContext[]
   // Phase 40
-  awsJobs             AwsJob[]
-  awsJobSteps         AwsJobStep[]
-  awsProjectIndex     AwsProjectIndex[]
-  awsDiscoveries      AwsDiscovery[]
+  awsJobs               AwsJob[]
+  awsJobSteps           AwsJobStep[]
+  awsProjectIndex       AwsProjectIndex[]
+  awsDiscoveries        AwsDiscovery[]
   // Phase 41
-  apaProfiles         ApaProfile[]
-  apaMemories         ApaMemory[]
-  apaDailyBriefings   ApaDailyBriefing[]
-  apaHabits           ApaHabit[]
-  apaWeeklyReviews    ApaWeeklyReview[]
+  apaProfiles           ApaProfile[]
+  apaMemories           ApaMemory[]
+  apaDailyBriefings     ApaDailyBriefing[]
+  apaHabits             ApaHabit[]
+  apaWeeklyReviews      ApaWeeklyReview[]
   // Phase 42
-  ageGoals            AgeGoal[]
-  ageKpis             AgeKpi[]
-  ageMilestones       AgeMilestone[]
-  ageRoadmaps         AgeRoadmap[]
+  ageGoals              AgeGoal[]
+  ageKpis               AgeKpi[]
+  ageMilestones         AgeMilestone[]
+  ageRoadmaps           AgeRoadmap[]
   // Phase 43
-  eieSources          EieSource[]
-  eieSignals          EieSignal[]
-  eieAlerts           EieAlert[]
-  eieInsights         EieInsight[]
+  eieSources            EieSource[]
+  eieSignals            EieSignal[]
+  eieAlerts             EieAlert[]
+  eieInsights           EieInsight[]
   // Phase 44
-  apsScenarios        ApsScenario[]
-  apsSimulations      ApsSimulation[]
-  apsComparisons      ApsComparison[]
+  apsScenarios          ApsScenario[]
+  apsSimulations        ApsSimulation[]
+  apsComparisons        ApsComparison[]
   // Phase 45
-  asoInitiatives      AsoInitiative[]
-  asoPortfolioItems   AsoPortfolioItem[]
-  asoConflicts        AsoConflict[]
-  asoStrategyReviews  AsoStrategyReview[]
+  asoInitiatives        AsoInitiative[]
+  asoPortfolioItems     AsoPortfolioItem[]
+  asoConflicts          AsoConflict[]
+  asoStrategyReviews    AsoStrategyReview[]
   // Phase 46
-  eihIntegrations     EihIntegration[]
-  eihSyncLogs         EihSyncLog[]
-  eihWebhookEvents    EihWebhookEvent[]
+  eihIntegrations       EihIntegration[]
+  eihSyncLogs           EihSyncLog[]
+  eihWebhookEvents      EihWebhookEvent[]
   // Phase 47
-  kgEntities          KgEntity[]
-  kgRelations         KgRelation[]
-  kgFacts             KgFact[]
-  kgQueries           KgQuery[]
+  kgEntities            KgEntity[]
+  kgRelations           KgRelation[]
+  kgFacts               KgFact[]
+  kgQueries             KgQuery[]
   // Phase 48
-  eapAgents           EapAgent[]
-  eapAgentMemories    EapAgentMemory[]
-  eapAgentTasks       EapAgentTask[]
-  eapAgentKpis        EapAgentKpi[]
-  eapAgentCollabs     EapAgentCollaboration[]
-  eapAgentAuditLogs   EapAgentAuditLog[]
+  eapAgents             EapAgent[]
+  eapAgentMemories      EapAgentMemory[]
+  eapAgentTasks         EapAgentTask[]
+  eapAgentKpis          EapAgentKpi[]
+  eapAgentCollabs       EapAgentCollaboration[]
+  eapAgentAuditLogs     EapAgentAuditLog[]
+  // Phase 49
+  ualTools              UalTool[]
+  ualPolicies           UalExecutionPolicy[]
+  ualToolExecutions     UalToolExecution[]
+  ualMcpServers         UalMcpServer[]
+  // Phase 50
+  aclLearningEvents     AclLearningEvent[]
+  aclToolInsights       AclToolInsight[]
+  aclAgentInsights      AclAgentInsight[]
+  aclPolicyInsights     AclPolicyInsight[]
+  aclKgFeedbacks        AclKgFeedback[]
+  aclEvolutionSnapshots AclEvolutionSnapshot[]
+  // Phase 51
+  aosRuntimes           AosRuntime[]
+  aosEvents             AosEvent[]
+  aosJobs               AosJob[]
+  aosJobExecutions      AosJobExecution[]
+  aosResourceUsages     AosResourceUsage[]
+  aosHooks              AosHook[]
 
   @@map("core_tenants")
 }
@@ -15073,4 +15092,389 @@ model EapAgentAuditLog {
   @@index([tenantId])
   @@index([agentId])
   @@map("eap_agent_audit_logs")
+}
+
+// =============================================================================
+// PHASE 49 — AI Universal Action Layer (MCP & Tool Ecosystem)
+// =============================================================================
+
+model UalTool {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  name          String
+  slug          String
+  version       String   @default("1.0.0")
+  description   String?  @db.Text
+  category      String   @default("custom")
+  provider      String   @default("local")
+  endpoint      String?
+  schema        Json     @default("{}") @db.JsonB
+  permissions   Json     @default("{}") @db.JsonB
+  status        String   @default("active")
+  isSystem      Boolean  @default(false) @map("is_system")
+  totalCalls    Int      @default(0) @map("total_calls")
+  totalCost     Float    @default(0) @map("total_cost")
+  avgDurationMs Int?     @map("avg_duration_ms")
+  createdById   String?  @map("created_by_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant     CoreTenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  executions UalToolExecution[]
+  policies   UalExecutionPolicy[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("ual_tools")
+}
+
+model UalExecutionPolicy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  toolId      String   @map("tool_id") @db.Uuid
+  name        String
+  subjectType String   @map("subject_type")
+  subjectId   String?  @map("subject_id")
+  action      String   @default("allow")
+  rateLimit   Int?     @map("rate_limit")
+  conditions  Json     @default("{}") @db.JsonB
+  priority    Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tool   UalTool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([toolId])
+  @@map("ual_execution_policies")
+}
+
+model UalToolExecution {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  toolId       String    @map("tool_id") @db.Uuid
+  agentId      String?   @map("agent_id")
+  userId       String?   @map("user_id") @db.Uuid
+  taskId       String?   @map("task_id") @db.Uuid
+  status       String    @default("pending")
+  input        Json      @default("{}") @db.JsonB
+  output       Json?     @db.JsonB
+  errorMessage String?   @map("error_message") @db.Text
+  durationMs   Int?      @map("duration_ms")
+  cost         Float     @default(0)
+  policyAction String?   @map("policy_action")
+  startedAt    DateTime? @map("started_at") @db.Timestamptz
+  completedAt  DateTime? @map("completed_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tool   UalTool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([toolId])
+  @@index([agentId])
+  @@map("ual_tool_executions")
+}
+
+model UalMcpServer {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  name          String
+  slug          String
+  description   String?   @db.Text
+  endpoint      String
+  protocol      String    @default("http")
+  authType      String    @default("none") @map("auth_type")
+  authConfig    Json      @default("{}") @map("auth_config") @db.JsonB
+  toolManifest  Json      @default("[]") @map("tool_manifest") @db.JsonB
+  status        String    @default("active")
+  lastCheckedAt DateTime? @map("last_checked_at") @db.Timestamptz
+  healthScore   Int?      @map("health_score")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("ual_mcp_servers")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 50 — AI Continuous Learning & Optimization Platform
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AclLearningEvent {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  eventType     String   @map("event_type")
+  sourceModule  String   @map("source_module")
+  sourceId      String?  @map("source_id")
+  outcome       String   @default("success")
+  inputContext  Json     @default("{}") @map("input_context") @db.JsonB
+  outputContext Json     @default("{}") @map("output_context") @db.JsonB
+  metrics       Json     @default("{}") @db.JsonB
+  feedback      String?
+  learnedAt     DateTime @default(now()) @map("learned_at") @db.Timestamptz
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, eventType])
+  @@index([tenantId, sourceModule])
+  @@map("acl_learning_events")
+}
+
+model AclToolInsight {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  toolId      String    @map("tool_id") @db.Uuid
+  insightType String    @map("insight_type")
+  severity    String    @default("info")
+  title       String
+  description String    @db.Text
+  suggestions Json      @default("[]") @db.JsonB
+  metrics     Json      @default("{}") @db.JsonB
+  status      String    @default("open")
+  appliedAt   DateTime? @map("applied_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, toolId])
+  @@map("acl_tool_insights")
+}
+
+model AclAgentInsight {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  agentId     String    @map("agent_id")
+  insightType String    @map("insight_type")
+  severity    String    @default("info")
+  title       String
+  description String    @db.Text
+  suggestions Json      @default("[]") @db.JsonB
+  metrics     Json      @default("{}") @db.JsonB
+  status      String    @default("open")
+  appliedAt   DateTime? @map("applied_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, agentId])
+  @@map("acl_agent_insights")
+}
+
+model AclPolicyInsight {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  insightType      String    @map("insight_type")
+  severity         String    @default("info")
+  title            String
+  description      String    @db.Text
+  affectedPolicies Json      @default("[]") @map("affected_policies") @db.JsonB
+  suggestion       String    @db.Text
+  status           String    @default("open")
+  resolvedAt       DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("acl_policy_insights")
+}
+
+model AclKgFeedback {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  feedbackType String    @map("feedback_type")
+  sourceModule String    @map("source_module")
+  proposedData Json      @default("{}") @map("proposed_data") @db.JsonB
+  confidence   Int       @default(0)
+  status       String    @default("pending")
+  reviewedBy   String?   @map("reviewed_by") @db.Uuid
+  reviewNote   String?   @map("review_note") @db.Text
+  reviewedAt   DateTime? @map("reviewed_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("acl_kg_feedback")
+}
+
+model AclEvolutionSnapshot {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  snapshotDate  DateTime @map("snapshot_date") @db.Date
+  period        String   @default("daily")
+  toolMetrics   Json     @default("{}") @map("tool_metrics") @db.JsonB
+  agentMetrics  Json     @default("{}") @map("agent_metrics") @db.JsonB
+  kgMetrics     Json     @default("{}") @map("kg_metrics") @db.JsonB
+  policyMetrics Json     @default("{}") @map("policy_metrics") @db.JsonB
+  overallScore  Int?     @map("overall_score")
+  trend         String?
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, snapshotDate, period])
+  @@index([tenantId])
+  @@map("acl_evolution_snapshots")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 51 — AI Enterprise Operating System Runtime
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AosRuntime {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String    @map("tenant_id") @db.Uuid
+  name                 String
+  slug                 String
+  description          String?   @db.Text
+  status               String    @default("running")
+  config               Json      @default("{}") @db.JsonB
+  maxConcurrentAgents  Int       @default(10) @map("max_concurrent_agents")
+  maxTokensPerHour     Int?      @map("max_tokens_per_hour")
+  maxCostPerDay        Float?    @map("max_cost_per_day")
+  totalEventsProcessed Int       @default(0) @map("total_events_processed")
+  totalJobsRun         Int       @default(0) @map("total_jobs_run")
+  uptimeSeconds        Int       @default(0) @map("uptime_seconds")
+  startedAt            DateTime? @map("started_at") @db.Timestamptz
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  events AosEvent[]
+  jobs   AosJob[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("aos_runtimes")
+}
+
+model AosEvent {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  runtimeId   String?   @map("runtime_id") @db.Uuid
+  channel     String
+  sourceType  String    @map("source_type")
+  sourceId    String?   @map("source_id")
+  payload     Json      @default("{}") @db.JsonB
+  priority    String    @default("normal")
+  status      String    @default("published")
+  consumers   Int       @default(0)
+  processedAt DateTime? @map("processed_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runtime AosRuntime? @relation(fields: [runtimeId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, channel])
+  @@index([tenantId, status])
+  @@map("aos_events")
+}
+
+model AosJob {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  runtimeId  String?   @map("runtime_id") @db.Uuid
+  name       String
+  slug       String
+  jobType    String    @map("job_type")
+  schedule   String?
+  handler    String
+  params     Json      @default("{}") @db.JsonB
+  priority   String    @default("normal")
+  status     String    @default("active")
+  lastRunAt  DateTime? @map("last_run_at") @db.Timestamptz
+  nextRunAt  DateTime? @map("next_run_at") @db.Timestamptz
+  totalRuns  Int       @default(0) @map("total_runs")
+  failedRuns Int       @default(0) @map("failed_runs")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant     CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runtime    AosRuntime?       @relation(fields: [runtimeId], references: [id], onDelete: SetNull)
+  executions AosJobExecution[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("aos_jobs")
+}
+
+model AosJobExecution {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  jobId       String    @map("job_id") @db.Uuid
+  status      String    @default("running")
+  input       Json      @default("{}") @db.JsonB
+  output      Json?     @db.JsonB
+  error       String?   @db.Text
+  durationMs  Int?      @map("duration_ms")
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job    AosJob     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([jobId])
+  @@map("aos_job_executions")
+}
+
+model AosResourceUsage {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  period          String   @default("hourly")
+  periodAt        DateTime @map("period_at") @db.Timestamptz
+  tokensUsed      Int      @default(0) @map("tokens_used")
+  toolCallsTotal  Int      @default(0) @map("tool_calls_total")
+  agentTasksTotal Int      @default(0) @map("agent_tasks_total")
+  eventsPublished Int      @default(0) @map("events_published")
+  jobsExecuted    Int      @default(0) @map("jobs_executed")
+  totalCost       Float    @default(0) @map("total_cost")
+  budgetUsedPct   Float?   @map("budget_used_pct")
+  alerts          Json     @default("[]") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, period, periodAt])
+  @@index([tenantId])
+  @@map("aos_resource_usage")
+}
+
+model AosHook {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String
+  slug        String
+  hookType    String    @map("hook_type")
+  handler     String
+  handlerType String    @default("internal") @map("handler_type")
+  conditions  Json      @default("{}") @db.JsonB
+  isActive    Boolean   @default(true) @map("is_active")
+  priority    Int       @default(0)
+  totalFired  Int       @default(0) @map("total_fired")
+  lastFiredAt DateTime? @map("last_fired_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("aos_hooks")
 }
