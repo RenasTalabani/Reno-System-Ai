@@ -61,6 +61,7 @@ const navigation: NavSection[] = [
       { label: 'Knowledge Graph', href: '/knowledge-graph', icon: Brain },
       { label: 'AI Agents', href: '/agents-platform', icon: Bot },
       { label: 'Action Layer', href: '/action-layer', icon: Workflow },
+      { label: 'Learning & Opt.', href: '/learning', icon: Brain },
     ],
   },
   {

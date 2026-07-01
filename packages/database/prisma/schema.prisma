@@ -436,6 +436,13 @@ model CoreTenant {
   ualPolicies              UalExecutionPolicy[]
   ualToolExecutions        UalToolExecution[]
   ualMcpServers            UalMcpServer[]
+  // Phase 50
+  aclLearningEvents        AclLearningEvent[]
+  aclToolInsights          AclToolInsight[]
+  aclAgentInsights         AclAgentInsight[]
+  aclPolicyInsights        AclPolicyInsight[]
+  aclKgFeedbacks           AclKgFeedback[]
+  aclEvolutionSnapshots    AclEvolutionSnapshot[]
   @@map("core_tenants")
 }
 
@@ -14829,4 +14836,135 @@ model UalMcpServer {
   @@unique([tenantId, slug])
   @@index([tenantId])
   @@map("ual_mcp_servers")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 50 — AI Continuous Learning & Optimization Platform
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AclLearningEvent {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  eventType     String   @map("event_type")
+  sourceModule  String   @map("source_module")
+  sourceId      String?  @map("source_id")
+  outcome       String   @default("success")
+  inputContext  Json     @default("{}") @db.JsonB @map("input_context")
+  outputContext Json     @default("{}") @db.JsonB @map("output_context")
+  metrics       Json     @default("{}") @db.JsonB
+  feedback      String?
+  learnedAt     DateTime @default(now()) @map("learned_at") @db.Timestamptz
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, eventType])
+  @@index([tenantId, sourceModule])
+  @@map("acl_learning_events")
+}
+
+model AclToolInsight {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  toolId       String    @map("tool_id") @db.Uuid
+  insightType  String    @map("insight_type")
+  severity     String    @default("info")
+  title        String
+  description  String    @db.Text
+  suggestions  Json      @default("[]") @db.JsonB
+  metrics      Json      @default("{}") @db.JsonB
+  status       String    @default("open")
+  appliedAt    DateTime? @map("applied_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, toolId])
+  @@map("acl_tool_insights")
+}
+
+model AclAgentInsight {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  agentId      String    @map("agent_id")
+  insightType  String    @map("insight_type")
+  severity     String    @default("info")
+  title        String
+  description  String    @db.Text
+  suggestions  Json      @default("[]") @db.JsonB
+  metrics      Json      @default("{}") @db.JsonB
+  status       String    @default("open")
+  appliedAt    DateTime? @map("applied_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, agentId])
+  @@map("acl_agent_insights")
+}
+
+model AclPolicyInsight {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  insightType      String    @map("insight_type")
+  severity         String    @default("info")
+  title            String
+  description      String    @db.Text
+  affectedPolicies Json      @default("[]") @db.JsonB @map("affected_policies")
+  suggestion       String    @db.Text
+  status           String    @default("open")
+  resolvedAt       DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("acl_policy_insights")
+}
+
+model AclKgFeedback {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  feedbackType String    @map("feedback_type")
+  sourceModule String    @map("source_module")
+  proposedData Json      @default("{}") @db.JsonB @map("proposed_data")
+  confidence   Int       @default(0)
+  status       String    @default("pending")
+  reviewedBy   String?   @map("reviewed_by") @db.Uuid
+  reviewNote   String?   @map("review_note") @db.Text
+  reviewedAt   DateTime? @map("reviewed_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("acl_kg_feedback")
+}
+
+model AclEvolutionSnapshot {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  snapshotDate   DateTime @map("snapshot_date") @db.Date
+  period         String   @default("daily")
+  toolMetrics    Json     @default("{}") @db.JsonB @map("tool_metrics")
+  agentMetrics   Json     @default("{}") @db.JsonB @map("agent_metrics")
+  kgMetrics      Json     @default("{}") @db.JsonB @map("kg_metrics")
+  policyMetrics  Json     @default("{}") @db.JsonB @map("policy_metrics")
+  overallScore   Int?     @map("overall_score")
+  trend          String?
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, snapshotDate, period])
+  @@index([tenantId])
+  @@map("acl_evolution_snapshots")
 }
