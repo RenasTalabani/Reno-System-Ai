@@ -389,6 +389,12 @@ model CoreTenant {
   awsJobSteps         AwsJobStep[]
   awsProjectIndex     AwsProjectIndex[]
   awsDiscoveries      AwsDiscovery[]
+  // Phase 41
+  apaProfiles         ApaProfile[]
+  apaMemories         ApaMemory[]
+  apaDailyBriefings   ApaDailyBriefing[]
+  apaHabits           ApaHabit[]
+  apaWeeklyReviews    ApaWeeklyReview[]
 
   @@map("core_tenants")
 }
@@ -14256,4 +14262,108 @@ model AwsDiscovery {
   @@index([tenantId, status])
   @@index([tenantId, type])
   @@map("aws_discoveries")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PHASE 41 — AI Personal Working Assistant
+// ─────────────────────────────────────────────────────────────────────────────
+
+model ApaProfile {
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String     @map("tenant_id") @db.Uuid
+  userId           String     @map("user_id") @db.Uuid
+  displayName      String?    @map("display_name") @db.VarChar(255)
+  timezone         String     @default("UTC") @db.VarChar(50)
+  workStartHour    Int        @default(9) @map("work_start_hour")
+  workEndHour      Int        @default(18) @map("work_end_hour")
+  reportingStyle   String     @default("brief") @map("reporting_style") @db.VarChar(30)
+  focusAreas       String[]   @map("focus_areas")
+  preferredModules String[]   @map("preferred_modules")
+  coachingEnabled  Boolean    @default(true) @map("coaching_enabled")
+  teamCoachEnabled Boolean    @default(false) @map("team_coach_enabled")
+  weeklyReviewDay  Int        @default(5) @map("weekly_review_day")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant           CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@map("apa_profiles")
+}
+
+model ApaMemory {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  userId     String     @map("user_id") @db.Uuid
+  category   String     @db.VarChar(50)
+  key        String     @db.VarChar(255)
+  value      Json
+  confidence Float      @default(1.0)
+  learnedAt  DateTime   @default(now()) @map("learned_at") @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, category, key])
+  @@index([tenantId])
+  @@index([tenantId, userId])
+  @@map("apa_memories")
+}
+
+model ApaDailyBriefing {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  userId    String     @map("user_id") @db.Uuid
+  date      String     @db.VarChar(10)
+  greeting  String     @db.Text
+  focusItem String?    @map("focus_item") @db.VarChar(500)
+  summary   Json
+  aiPlan    Json?      @map("ai_plan")
+  viewed    Boolean    @default(false)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, date])
+  @@index([tenantId])
+  @@map("apa_daily_briefings")
+}
+
+model ApaHabit {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  userId       String     @map("user_id") @db.Uuid
+  name         String     @db.VarChar(255)
+  description  String?    @db.Text
+  trigger      String     @db.VarChar(50)
+  triggerValue String?    @map("trigger_value") @db.VarChar(100)
+  module       String?    @db.VarChar(50)
+  action       String     @db.VarChar(500)
+  active       Boolean    @default(true)
+  triggerCount Int        @default(0) @map("trigger_count")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, userId])
+  @@map("apa_habits")
+}
+
+model ApaWeeklyReview {
+  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String     @map("tenant_id") @db.Uuid
+  userId            String     @map("user_id") @db.Uuid
+  weekStart         String     @map("week_start") @db.VarChar(10)
+  weekEnd           String     @map("week_end") @db.VarChar(10)
+  accomplished      Json
+  delayed           Json
+  improvements      Json
+  highlights        String[]
+  nextWeekFocus     String?    @map("next_week_focus") @db.Text
+  productivityScore Int?       @map("productivity_score")
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  tenant            CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, weekStart])
+  @@index([tenantId])
+  @@map("apa_weekly_reviews")
 }

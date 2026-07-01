@@ -9696,6 +9696,80 @@ exports.Prisma.AwsDiscoveryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ApaProfileScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  displayName: 'displayName',
+  timezone: 'timezone',
+  workStartHour: 'workStartHour',
+  workEndHour: 'workEndHour',
+  reportingStyle: 'reportingStyle',
+  focusAreas: 'focusAreas',
+  preferredModules: 'preferredModules',
+  coachingEnabled: 'coachingEnabled',
+  teamCoachEnabled: 'teamCoachEnabled',
+  weeklyReviewDay: 'weeklyReviewDay',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApaMemoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  category: 'category',
+  key: 'key',
+  value: 'value',
+  confidence: 'confidence',
+  learnedAt: 'learnedAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApaDailyBriefingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  date: 'date',
+  greeting: 'greeting',
+  focusItem: 'focusItem',
+  summary: 'summary',
+  aiPlan: 'aiPlan',
+  viewed: 'viewed',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ApaHabitScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+  trigger: 'trigger',
+  triggerValue: 'triggerValue',
+  module: 'module',
+  action: 'action',
+  active: 'active',
+  triggerCount: 'triggerCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApaWeeklyReviewScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  weekStart: 'weekStart',
+  weekEnd: 'weekEnd',
+  accomplished: 'accomplished',
+  delayed: 'delayed',
+  improvements: 'improvements',
+  highlights: 'highlights',
+  nextWeekFocus: 'nextWeekFocus',
+  productivityScore: 'productivityScore',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10321,7 +10395,12 @@ exports.Prisma.ModelName = {
   AwsJob: 'AwsJob',
   AwsJobStep: 'AwsJobStep',
   AwsProjectIndex: 'AwsProjectIndex',
-  AwsDiscovery: 'AwsDiscovery'
+  AwsDiscovery: 'AwsDiscovery',
+  ApaProfile: 'ApaProfile',
+  ApaMemory: 'ApaMemory',
+  ApaDailyBriefing: 'ApaDailyBriefing',
+  ApaHabit: 'ApaHabit',
+  ApaWeeklyReview: 'ApaWeeklyReview'
 };
 
 /**

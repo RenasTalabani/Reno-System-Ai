@@ -160,6 +160,7 @@ import { solarModuleRoutes } from './solar/index.js'
 import { aiWorkspaceRoutes as aiWorkspacePhase38Routes } from './ai-workspace/phase38.js'
 import { liveToolsModuleRoutes } from './live-tools/index.js'
 import { aiAutonomousModuleRoutes } from './ai-autonomous/index.js'
+import { personalAssistantModuleRoutes } from './personal-assistant/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -326,6 +327,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(aiWorkspacePhase38Routes, { prefix: '/ai-workspace' })
       await v1.register(liveToolsModuleRoutes, { prefix: '' })
       await v1.register(aiAutonomousModuleRoutes, { prefix: '' })
+      await v1.register(personalAssistantModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )
