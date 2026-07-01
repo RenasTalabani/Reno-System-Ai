@@ -173,6 +173,7 @@ import { learningModuleRoutes } from './learning/index.js'
 import { aosModuleRoutes } from './aos/index.js'
 import { paeModuleRoutes } from './pae/index.js'
 import { adiModuleRoutes } from './adi/index.js'
+import { mchModuleRoutes } from './mch/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -352,6 +353,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(aosModuleRoutes, { prefix: '' })
       await v1.register(paeModuleRoutes, { prefix: '' })
       await v1.register(adiModuleRoutes, { prefix: '' })
+      await v1.register(mchModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

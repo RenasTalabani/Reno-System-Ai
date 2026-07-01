@@ -65,6 +65,7 @@ const navigation: NavSection[] = [
       { label: 'AOS Runtime', href: '/aos', icon: Workflow },
       { label: 'Process Automation', href: '/process-automation', icon: Workflow },
       { label: 'Document AI', href: '/document-intelligence', icon: Brain },
+      { label: 'Comm Hub', href: '/comm-hub', icon: Workflow },
     ],
   },
   {

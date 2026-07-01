@@ -10638,6 +10638,100 @@ exports.Prisma.AdiPipelineRunScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.MchChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  channelType: 'channelType',
+  config: 'config',
+  isActive: 'isActive',
+  totalSent: 'totalSent',
+  totalFailed: 'totalFailed',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MchConversationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  channelType: 'channelType',
+  externalRef: 'externalRef',
+  participantRef: 'participantRef',
+  status: 'status',
+  subject: 'subject',
+  lastMessageAt: 'lastMessageAt',
+  messageCount: 'messageCount',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MchMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  channelId: 'channelId',
+  conversationId: 'conversationId',
+  campaignId: 'campaignId',
+  direction: 'direction',
+  channelType: 'channelType',
+  fromAddress: 'fromAddress',
+  toAddress: 'toAddress',
+  subject: 'subject',
+  body: 'body',
+  bodyHtml: 'bodyHtml',
+  status: 'status',
+  deliveredAt: 'deliveredAt',
+  openedAt: 'openedAt',
+  clickedAt: 'clickedAt',
+  failureReason: 'failureReason',
+  aiGenerated: 'aiGenerated',
+  templateId: 'templateId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MchCampaignScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  channelType: 'channelType',
+  status: 'status',
+  subject: 'subject',
+  bodyTemplate: 'bodyTemplate',
+  audience: 'audience',
+  scheduledAt: 'scheduledAt',
+  sentAt: 'sentAt',
+  totalRecipients: 'totalRecipients',
+  totalSent: 'totalSent',
+  totalDelivered: 'totalDelivered',
+  totalOpened: 'totalOpened',
+  totalClicked: 'totalClicked',
+  totalFailed: 'totalFailed',
+  aiOptimized: 'aiOptimized',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MchTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  channelType: 'channelType',
+  category: 'category',
+  subject: 'subject',
+  body: 'body',
+  bodyHtml: 'bodyHtml',
+  variables: 'variables',
+  isActive: 'isActive',
+  timesUsed: 'timesUsed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11324,7 +11418,12 @@ exports.Prisma.ModelName = {
   AdiExtraction: 'AdiExtraction',
   AdiClassification: 'AdiClassification',
   AdiPipeline: 'AdiPipeline',
-  AdiPipelineRun: 'AdiPipelineRun'
+  AdiPipelineRun: 'AdiPipelineRun',
+  MchChannel: 'MchChannel',
+  MchConversation: 'MchConversation',
+  MchMessage: 'MchMessage',
+  MchCampaign: 'MchCampaign',
+  MchTemplate: 'MchTemplate'
 };
 
 /**
