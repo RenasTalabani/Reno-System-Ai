@@ -10558,6 +10558,86 @@ exports.Prisma.PaeWorkflowStepExecutionScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.AdiDocumentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  originalName: 'originalName',
+  mimeType: 'mimeType',
+  fileSize: 'fileSize',
+  storagePath: 'storagePath',
+  status: 'status',
+  language: 'language',
+  pageCount: 'pageCount',
+  wordCount: 'wordCount',
+  confidence: 'confidence',
+  rawText: 'rawText',
+  metadata: 'metadata',
+  tags: 'tags',
+  uploadedBy: 'uploadedBy',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.AdiExtractionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  documentId: 'documentId',
+  extractionType: 'extractionType',
+  fieldName: 'fieldName',
+  fieldValue: 'fieldValue',
+  confidence: 'confidence',
+  pageNumber: 'pageNumber',
+  boundingBox: 'boundingBox',
+  isVerified: 'isVerified',
+  verifiedBy: 'verifiedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AdiClassificationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  documentId: 'documentId',
+  category: 'category',
+  subcategory: 'subcategory',
+  confidence: 'confidence',
+  labels: 'labels',
+  sentiment: 'sentiment',
+  language: 'language',
+  isVerified: 'isVerified',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AdiPipelineScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  steps: 'steps',
+  inputTypes: 'inputTypes',
+  isActive: 'isActive',
+  totalRuns: 'totalRuns',
+  lastRunAt: 'lastRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AdiPipelineRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pipelineId: 'pipelineId',
+  documentId: 'documentId',
+  status: 'status',
+  output: 'output',
+  error: 'error',
+  durationMs: 'durationMs',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11239,7 +11319,12 @@ exports.Prisma.ModelName = {
   PaeWorkflowStep: 'PaeWorkflowStep',
   PaeWorkflowTrigger: 'PaeWorkflowTrigger',
   PaeWorkflowExecution: 'PaeWorkflowExecution',
-  PaeWorkflowStepExecution: 'PaeWorkflowStepExecution'
+  PaeWorkflowStepExecution: 'PaeWorkflowStepExecution',
+  AdiDocument: 'AdiDocument',
+  AdiExtraction: 'AdiExtraction',
+  AdiClassification: 'AdiClassification',
+  AdiPipeline: 'AdiPipeline',
+  AdiPipelineRun: 'AdiPipelineRun'
 };
 
 /**

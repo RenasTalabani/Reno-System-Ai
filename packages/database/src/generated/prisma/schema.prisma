@@ -455,6 +455,12 @@ model CoreTenant {
   paeWorkflowTriggers   PaeWorkflowTrigger[]
   paeWorkflowExecutions PaeWorkflowExecution[]
   paeStepExecutions     PaeWorkflowStepExecution[]
+  // Phase 53
+  adiDocuments          AdiDocument[]
+  adiExtractions        AdiExtraction[]
+  adiClassifications    AdiClassification[]
+  adiPipelines          AdiPipeline[]
+  adiPipelineRuns       AdiPipelineRun[]
 
   @@map("core_tenants")
 }
@@ -15616,4 +15622,123 @@ model PaeWorkflowStepExecution {
   @@index([executionId])
   @@index([stepId])
   @@map("pae_workflow_step_executions")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 53 — AI Document Intelligence
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AdiDocument {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  name         String
+  originalName String    @map("original_name")
+  mimeType     String    @map("mime_type")
+  fileSize     Int       @map("file_size")
+  storagePath  String    @map("storage_path")
+  status       String    @default("uploaded")
+  language     String    @default("en")
+  pageCount    Int       @default(0) @map("page_count")
+  wordCount    Int       @default(0) @map("word_count")
+  confidence   Float     @default(0)
+  rawText      String?   @map("raw_text")
+  metadata     Json      @default("{}") @db.JsonB
+  tags         Json      @default("[]") @db.JsonB
+  uploadedBy   String    @map("uploaded_by") @db.Uuid
+  processedAt  DateTime? @map("processed_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz
+
+  tenant          CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extractions     AdiExtraction[]
+  classifications AdiClassification[]
+
+  @@index([tenantId])
+  @@map("adi_documents")
+}
+
+model AdiExtraction {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  documentId     String   @map("document_id") @db.Uuid
+  extractionType String   @map("extraction_type")
+  fieldName      String   @map("field_name")
+  fieldValue     String   @map("field_value")
+  confidence     Float    @default(0)
+  pageNumber     Int?     @map("page_number")
+  boundingBox    Json?    @map("bounding_box") @db.JsonB
+  isVerified     Boolean  @default(false) @map("is_verified")
+  verifiedBy     String?  @map("verified_by") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  document AdiDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([documentId])
+  @@map("adi_extractions")
+}
+
+model AdiClassification {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  documentId  String   @map("document_id") @db.Uuid
+  category    String
+  subcategory String?
+  confidence  Float    @default(0)
+  labels      Json     @default("[]") @db.JsonB
+  sentiment   String?
+  language    String?
+  isVerified  Boolean  @default(false) @map("is_verified")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  document AdiDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([documentId])
+  @@map("adi_classifications")
+}
+
+model AdiPipeline {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  name        String
+  slug        String
+  description String?
+  steps       Json      @default("[]") @db.JsonB
+  inputTypes  Json      @default("[]") @map("input_types") @db.JsonB
+  isActive    Boolean   @default(true) @map("is_active")
+  totalRuns   Int       @default(0) @map("total_runs")
+  lastRunAt   DateTime? @map("last_run_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runs   AdiPipelineRun[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("adi_pipelines")
+}
+
+model AdiPipelineRun {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  pipelineId  String    @map("pipeline_id") @db.Uuid
+  documentId  String?   @map("document_id") @db.Uuid
+  status      String    @default("running")
+  output      Json      @default("{}") @db.JsonB
+  error       String?
+  durationMs  Int?      @map("duration_ms")
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  pipeline AdiPipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([pipelineId])
+  @@map("adi_pipeline_runs")
 }
