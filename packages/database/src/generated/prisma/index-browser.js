@@ -10004,6 +10004,67 @@ exports.Prisma.AsoStrategyReviewScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.EihConnectorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  category: 'category',
+  authType: 'authType',
+  description: 'description',
+  logoEmoji: 'logoEmoji',
+  capabilities: 'capabilities',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EihIntegrationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  connectorId: 'connectorId',
+  name: 'name',
+  status: 'status',
+  config: 'config',
+  credentials: 'credentials',
+  oauthTokens: 'oauthTokens',
+  lastSyncAt: 'lastSyncAt',
+  lastSyncStatus: 'lastSyncStatus',
+  syncCount: 'syncCount',
+  errorCount: 'errorCount',
+  webhookSecret: 'webhookSecret',
+  fieldMappings: 'fieldMappings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EihSyncLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  integrationId: 'integrationId',
+  direction: 'direction',
+  status: 'status',
+  recordsTotal: 'recordsTotal',
+  recordsSynced: 'recordsSynced',
+  recordsFailed: 'recordsFailed',
+  errorMessage: 'errorMessage',
+  duration: 'duration',
+  triggeredBy: 'triggeredBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EihWebhookEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  integrationId: 'integrationId',
+  source: 'source',
+  eventType: 'eventType',
+  payload: 'payload',
+  processed: 'processed',
+  processedAt: 'processedAt',
+  aiAnalysis: 'aiAnalysis',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10650,7 +10711,11 @@ exports.Prisma.ModelName = {
   AsoInitiative: 'AsoInitiative',
   AsoPortfolioItem: 'AsoPortfolioItem',
   AsoConflict: 'AsoConflict',
-  AsoStrategyReview: 'AsoStrategyReview'
+  AsoStrategyReview: 'AsoStrategyReview',
+  EihConnector: 'EihConnector',
+  EihIntegration: 'EihIntegration',
+  EihSyncLog: 'EihSyncLog',
+  EihWebhookEvent: 'EihWebhookEvent'
 };
 
 /**

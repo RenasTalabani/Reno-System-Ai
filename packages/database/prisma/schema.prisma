@@ -415,6 +415,10 @@ model CoreTenant {
   asoPortfolioItems        AsoPortfolioItem[]
   asoConflicts             AsoConflict[]
   asoStrategyReviews       AsoStrategyReview[]
+  // Phase 46
+  eihIntegrations          EihIntegration[]
+  eihSyncLogs              EihSyncLog[]
+  eihWebhookEvents         EihWebhookEvent[]
   @@map("core_tenants")
 }
 
@@ -14380,4 +14384,97 @@ model AsoStrategyReview {
   @@index([tenantId])
   @@index([tenantId, weekOf])
   @@map("aso_strategy_reviews")
+}
+
+// =============================================================================
+// Phase 46 — AI Enterprise Integration Hub
+// =============================================================================
+
+model EihConnector {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  category     String
+  authType     String
+  description  String?
+  logoEmoji    String?  @map("logo_emoji")
+  capabilities String[]
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  integrations EihIntegration[]
+
+  @@map("eih_connectors")
+}
+
+model EihIntegration {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  userId          String     @map("user_id") @db.Uuid
+  connectorId     String     @map("connector_id")
+  name            String
+  status          String     @default("pending")
+  config          Json?
+  credentials     Json?
+  oauthTokens     Json?      @map("oauth_tokens")
+  lastSyncAt      DateTime?  @map("last_sync_at") @db.Timestamptz
+  lastSyncStatus  String?    @map("last_sync_status")
+  syncCount       Int        @default(0) @map("sync_count")
+  errorCount      Int        @default(0) @map("error_count")
+  webhookSecret   String?    @map("webhook_secret")
+  fieldMappings   Json?      @map("field_mappings")
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant          CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  connector       EihConnector @relation(fields: [connectorId], references: [id])
+  syncLogs        EihSyncLog[]
+  webhookEvents   EihWebhookEvent[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("eih_integrations")
+}
+
+model EihSyncLog {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String         @map("tenant_id") @db.Uuid
+  integrationId String         @map("integration_id") @db.Uuid
+  direction     String
+  status        String
+  recordsTotal  Int            @default(0) @map("records_total")
+  recordsSynced Int            @default(0) @map("records_synced")
+  recordsFailed Int            @default(0) @map("records_failed")
+  errorMessage  String?        @map("error_message")
+  duration      Int?
+  triggeredBy   String?        @map("triggered_by")
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant        CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  integration   EihIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([integrationId])
+  @@map("eih_sync_logs")
+}
+
+model EihWebhookEvent {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String          @map("tenant_id") @db.Uuid
+  integrationId String?         @map("integration_id") @db.Uuid
+  source        String
+  eventType     String          @map("event_type")
+  payload       Json
+  processed     Boolean         @default(false)
+  processedAt   DateTime?       @map("processed_at") @db.Timestamptz
+  aiAnalysis    Json?           @map("ai_analysis")
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  integration   EihIntegration? @relation(fields: [integrationId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, processed])
+  @@index([tenantId, source])
+  @@map("eih_webhook_events")
 }
