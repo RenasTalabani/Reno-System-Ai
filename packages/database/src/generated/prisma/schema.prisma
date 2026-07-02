@@ -517,6 +517,11 @@ model CoreTenant {
   lciClauses            LciClause[]
   lciComplianceItems    LciComplianceItem[]
   lciLegalInsights      LciLegalInsight[]
+  // Phase 65
+  eiStrategicGoals      EiStrategicGoal[]
+  eiBoardMetrics        EiBoardMetric[]
+  eiExecutiveInsights   EiExecutiveInsight[]
+  eiCompetitorSignals   EiCompetitorSignal[]
 
   @@map("core_tenants")
 }
@@ -16836,4 +16841,90 @@ model LciLegalInsight {
 
   @@index([tenantId])
   @@map("lci_legal_insights")
+}
+
+// =============================================================================
+// PHASE 65 — AI Executive Intelligence & Strategy (FINAL PHASE)
+// =============================================================================
+
+model EiStrategicGoal {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  title           String
+  category        String    @default("growth") // growth|profitability|market|innovation|people|sustainability
+  owner           String?
+  targetDate      DateTime? @map("target_date") @db.Timestamptz
+  targetValue     Float?    @map("target_value")
+  currentValue    Float     @default(0) @map("current_value")
+  progress        Float     @default(0) // 0-100
+  status          String    @default("on_track") // on_track|at_risk|behind|achieved|cancelled
+  aiProbability   Float     @default(0.5) @map("ai_probability")
+  aiProjectedDate DateTime? @map("ai_projected_date") @db.Timestamptz
+  aiInsights      Json      @default("[]") @map("ai_insights") @db.JsonB
+  keyResults      Json      @default("[]") @map("key_results") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ei_strategic_goals")
+}
+
+model EiBoardMetric {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  metricCode  String   @map("metric_code")
+  metricName  String   @map("metric_name")
+  period      String
+  actual      Float    @default(0)
+  target      Float    @default(0)
+  benchmark   Float?
+  aiPredicted Float    @default(0) @map("ai_predicted")
+  aiTrend     String   @default("stable") @map("ai_trend")
+  aiComment   String?  @map("ai_comment")
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, metricCode, period])
+  @@index([tenantId])
+  @@map("ei_board_metrics")
+}
+
+model EiExecutiveInsight {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  type        String // strategic|financial|market|people|risk|opportunity
+  title       String
+  summary     String?
+  urgency     String   @default("medium") // low|medium|high|critical
+  impact      String   @default("medium") // low|medium|high|transformative
+  confidence  Float    @default(0.8)
+  actionItems Json     @default("[]") @map("action_items") @db.JsonB
+  data        Json     @default("{}") @db.JsonB
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ei_executive_insights")
+}
+
+model EiCompetitorSignal {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  competitor String
+  signalType String   @map("signal_type") // product|pricing|talent|market|partnership|funding
+  summary    String
+  impact     String   @default("medium")
+  aiResponse String?  @map("ai_response")
+  source     String?
+  signalDate DateTime @default(now()) @map("signal_date") @db.Timestamptz
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ei_competitor_signals")
 }

@@ -11366,6 +11366,67 @@ exports.Prisma.LciLegalInsightScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.EiStrategicGoalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  category: 'category',
+  owner: 'owner',
+  targetDate: 'targetDate',
+  targetValue: 'targetValue',
+  currentValue: 'currentValue',
+  progress: 'progress',
+  status: 'status',
+  aiProbability: 'aiProbability',
+  aiProjectedDate: 'aiProjectedDate',
+  aiInsights: 'aiInsights',
+  keyResults: 'keyResults',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EiBoardMetricScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  metricCode: 'metricCode',
+  metricName: 'metricName',
+  period: 'period',
+  actual: 'actual',
+  target: 'target',
+  benchmark: 'benchmark',
+  aiPredicted: 'aiPredicted',
+  aiTrend: 'aiTrend',
+  aiComment: 'aiComment',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EiExecutiveInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  urgency: 'urgency',
+  impact: 'impact',
+  confidence: 'confidence',
+  actionItems: 'actionItems',
+  data: 'data',
+  generatedAt: 'generatedAt'
+};
+
+exports.Prisma.EiCompetitorSignalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  competitor: 'competitor',
+  signalType: 'signalType',
+  summary: 'summary',
+  impact: 'impact',
+  aiResponse: 'aiResponse',
+  source: 'source',
+  signalDate: 'signalDate',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12097,7 +12158,11 @@ exports.Prisma.ModelName = {
   LciContract: 'LciContract',
   LciClause: 'LciClause',
   LciComplianceItem: 'LciComplianceItem',
-  LciLegalInsight: 'LciLegalInsight'
+  LciLegalInsight: 'LciLegalInsight',
+  EiStrategicGoal: 'EiStrategicGoal',
+  EiBoardMetric: 'EiBoardMetric',
+  EiExecutiveInsight: 'EiExecutiveInsight',
+  EiCompetitorSignal: 'EiCompetitorSignal'
 };
 
 /**
