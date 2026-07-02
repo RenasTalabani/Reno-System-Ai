@@ -11114,6 +11114,73 @@ exports.Prisma.FiFinancialInsightScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.SciSupplierScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  country: 'country',
+  category: 'category',
+  leadTimeDays: 'leadTimeDays',
+  onTimeDelivery: 'onTimeDelivery',
+  qualityScore: 'qualityScore',
+  aiRiskScore: 'aiRiskScore',
+  aiRiskLevel: 'aiRiskLevel',
+  aiInsights: 'aiInsights',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SciShipmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  supplierId: 'supplierId',
+  trackingNumber: 'trackingNumber',
+  origin: 'origin',
+  destination: 'destination',
+  carrier: 'carrier',
+  status: 'status',
+  scheduledDate: 'scheduledDate',
+  actualDate: 'actualDate',
+  aiDelayRisk: 'aiDelayRisk',
+  aiEta: 'aiEta',
+  aiInsights: 'aiInsights',
+  items: 'items',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SciDemandForecastScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  skuCode: 'skuCode',
+  skuName: 'skuName',
+  period: 'period',
+  actualDemand: 'actualDemand',
+  aiDemand: 'aiDemand',
+  aiConfidence: 'aiConfidence',
+  reorderPoint: 'reorderPoint',
+  safetyStock: 'safetyStock',
+  aiSummary: 'aiSummary',
+  generatedAt: 'generatedAt'
+};
+
+exports.Prisma.SciInventoryAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  skuCode: 'skuCode',
+  skuName: 'skuName',
+  alertType: 'alertType',
+  severity: 'severity',
+  currentQty: 'currentQty',
+  threshold: 'threshold',
+  aiSuggestion: 'aiSuggestion',
+  resolved: 'resolved',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11829,7 +11896,11 @@ exports.Prisma.ModelName = {
   FiLedger: 'FiLedger',
   FiBudgetAlert: 'FiBudgetAlert',
   FiCashForecast: 'FiCashForecast',
-  FiFinancialInsight: 'FiFinancialInsight'
+  FiFinancialInsight: 'FiFinancialInsight',
+  SciSupplier: 'SciSupplier',
+  SciShipment: 'SciShipment',
+  SciDemandForecast: 'SciDemandForecast',
+  SciInventoryAlert: 'SciInventoryAlert'
 };
 
 /**

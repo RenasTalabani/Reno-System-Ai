@@ -497,6 +497,11 @@ model CoreTenant {
   fiBudgetAlerts        FiBudgetAlert[]
   fiCashForecasts       FiCashForecast[]
   fiFinancialInsights   FiFinancialInsight[]
+  // Phase 61
+  sciSuppliers          SciSupplier[]
+  sciShipments          SciShipment[]
+  sciDemandForecasts    SciDemandForecast[]
+  sciInventoryAlerts    SciInventoryAlert[]
 
   @@map("core_tenants")
 }
@@ -16460,4 +16465,98 @@ model FiFinancialInsight {
 
   @@index([tenantId])
   @@map("fi_financial_insights")
+}
+
+// =============================================================================
+// PHASE 61 — AI Supply Chain Intelligence & Demand Forecasting
+// =============================================================================
+
+model SciSupplier {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  name           String
+  country        String?
+  category       String?
+  leadTimeDays   Int      @default(7) @map("lead_time_days")
+  onTimeDelivery Float    @default(0) @map("on_time_delivery")
+  qualityScore   Float    @default(0) @map("quality_score")
+  aiRiskScore    Float    @default(0) @map("ai_risk_score")
+  aiRiskLevel    String   @default("low") @map("ai_risk_level")
+  aiInsights     Json     @default("[]") @map("ai_insights") @db.JsonB
+  status         String   @default("active")
+  metadata       Json     @default("{}") @db.JsonB
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  shipments SciShipment[]
+  tenant    CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("sci_suppliers")
+}
+
+model SciShipment {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  supplierId     String    @map("supplier_id") @db.Uuid
+  trackingNumber String?   @map("tracking_number")
+  origin         String?
+  destination    String?
+  carrier        String?
+  status         String    @default("pending")
+  scheduledDate  DateTime  @map("scheduled_date") @db.Timestamptz
+  actualDate     DateTime? @map("actual_date") @db.Timestamptz
+  aiDelayRisk    Float     @default(0) @map("ai_delay_risk")
+  aiEta          DateTime? @map("ai_eta") @db.Timestamptz
+  aiInsights     Json      @default("[]") @map("ai_insights") @db.JsonB
+  items          Json      @default("[]") @db.JsonB
+  metadata       Json      @default("{}") @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  supplier SciSupplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("sci_shipments")
+}
+
+model SciDemandForecast {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  skuCode      String   @map("sku_code")
+  skuName      String   @map("sku_name")
+  period       String
+  actualDemand Float?   @map("actual_demand")
+  aiDemand     Float    @default(0) @map("ai_demand")
+  aiConfidence Float    @default(0.8) @map("ai_confidence")
+  reorderPoint Float?   @map("reorder_point")
+  safetyStock  Float?   @map("safety_stock")
+  aiSummary    String?  @map("ai_summary")
+  generatedAt  DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, skuCode, period])
+  @@index([tenantId])
+  @@map("sci_demand_forecasts")
+}
+
+model SciInventoryAlert {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  skuCode      String   @map("sku_code")
+  skuName      String   @map("sku_name")
+  alertType    String   @map("alert_type")
+  severity     String   @default("warning")
+  currentQty   Float    @default(0) @map("current_qty")
+  threshold    Float    @default(0)
+  aiSuggestion String?  @map("ai_suggestion")
+  resolved     Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("sci_inventory_alerts")
 }
