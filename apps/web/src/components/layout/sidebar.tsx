@@ -74,6 +74,7 @@ const navigation: NavSection[] = [
       { label: 'Financial AI', href: '/financial-intelligence', icon: BarChart3 },
       { label: 'Supply Chain AI', href: '/supply-chain-ai', icon: Package },
       { label: 'Marketing AI', href: '/marketing-ai', icon: BarChart3 },
+      { label: 'Operations AI', href: '/operations-ai', icon: Workflow },
     ],
   },
   {

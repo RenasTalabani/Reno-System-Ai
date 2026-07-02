@@ -507,6 +507,11 @@ model CoreTenant {
   mkiAudiences          MkiAudience[]
   mkiContentScores      MkiContentScore[]
   mkiMarketingInsights  MkiMarketingInsight[]
+  // Phase 63
+  opiProcesses          OpiProcess[]
+  opiBottlenecks        OpiBottleneck[]
+  opiKpis               OpiKpi[]
+  opiEfficiencyInsights OpiEfficiencyInsight[]
 
   @@map("core_tenants")
 }
@@ -16655,4 +16660,89 @@ model MkiMarketingInsight {
 
   @@index([tenantId])
   @@map("mki_marketing_insights")
+}
+
+// =============================================================================
+// PHASE 63 — AI Operations Intelligence & Process Mining
+// =============================================================================
+
+model OpiProcess {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  name              String
+  department        String?
+  owner             String?
+  cycleDays         Float    @default(0) @map("cycle_days")
+  automationPct     Float    @default(0) @map("automation_pct")
+  errorRate         Float    @default(0) @map("error_rate")
+  throughput        Float    @default(0)
+  aiEfficiencyScore Float    @default(0) @map("ai_efficiency_score")
+  aiMaturityLevel   String   @default("manual") @map("ai_maturity_level") // manual|basic|intermediate|advanced|optimized
+  aiRecommendations Json     @default("[]") @map("ai_recommendations") @db.JsonB
+  status            String   @default("active")
+  metadata          Json     @default("{}") @db.JsonB
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  bottlenecks OpiBottleneck[]
+  tenant      CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("opi_processes")
+}
+
+model OpiBottleneck {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  processId   String   @map("process_id") @db.Uuid
+  step        String
+  severity    String   @default("medium")
+  impact      String?
+  aiRootCause String?  @map("ai_root_cause")
+  aiSolution  String?  @map("ai_solution")
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  process OpiProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("opi_bottlenecks")
+}
+
+model OpiKpi {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  kpiCode     String   @map("kpi_code")
+  kpiName     String   @map("kpi_name")
+  period      String
+  actual      Float    @default(0)
+  target      Float    @default(0)
+  aiPredicted Float    @default(0) @map("ai_predicted")
+  trend       String   @default("stable") // improving|stable|declining
+  aiSummary   String?  @map("ai_summary")
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, kpiCode, period])
+  @@index([tenantId])
+  @@map("opi_kpis")
+}
+
+model OpiEfficiencyInsight {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  type        String // process|automation|bottleneck|kpi|workforce
+  title       String
+  summary     String?
+  savingsEst  Float    @default(0) @map("savings_est")
+  priority    String   @default("medium")
+  actionItems Json     @default("[]") @map("action_items") @db.JsonB
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("opi_efficiency_insights")
 }

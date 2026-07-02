@@ -11248,6 +11248,64 @@ exports.Prisma.MkiMarketingInsightScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.OpiProcessScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  department: 'department',
+  owner: 'owner',
+  cycleDays: 'cycleDays',
+  automationPct: 'automationPct',
+  errorRate: 'errorRate',
+  throughput: 'throughput',
+  aiEfficiencyScore: 'aiEfficiencyScore',
+  aiMaturityLevel: 'aiMaturityLevel',
+  aiRecommendations: 'aiRecommendations',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OpiBottleneckScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  processId: 'processId',
+  step: 'step',
+  severity: 'severity',
+  impact: 'impact',
+  aiRootCause: 'aiRootCause',
+  aiSolution: 'aiSolution',
+  resolved: 'resolved',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.OpiKpiScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  kpiCode: 'kpiCode',
+  kpiName: 'kpiName',
+  period: 'period',
+  actual: 'actual',
+  target: 'target',
+  aiPredicted: 'aiPredicted',
+  trend: 'trend',
+  aiSummary: 'aiSummary',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OpiEfficiencyInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  savingsEst: 'savingsEst',
+  priority: 'priority',
+  actionItems: 'actionItems',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11971,7 +12029,11 @@ exports.Prisma.ModelName = {
   MkiCampaign: 'MkiCampaign',
   MkiAudience: 'MkiAudience',
   MkiContentScore: 'MkiContentScore',
-  MkiMarketingInsight: 'MkiMarketingInsight'
+  MkiMarketingInsight: 'MkiMarketingInsight',
+  OpiProcess: 'OpiProcess',
+  OpiBottleneck: 'OpiBottleneck',
+  OpiKpi: 'OpiKpi',
+  OpiEfficiencyInsight: 'OpiEfficiencyInsight'
 };
 
 /**
