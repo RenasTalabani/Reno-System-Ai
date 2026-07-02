@@ -493,6 +493,11 @@ model CoreTenant {
   hriPerformances          HriPerformance[]
   hriSuccessionPlans       HriSuccessionPlan[]
   hriWorkforceInsights     HriWorkforceInsight[]
+  // Phase 60
+  fiLedgers                FiLedger[]
+  fiBudgetAlerts           FiBudgetAlert[]
+  fiCashForecasts          FiCashForecast[]
+  fiFinancialInsights      FiFinancialInsight[]
   @@map("core_tenants")
 }
 
@@ -16013,4 +16018,90 @@ model HriWorkforceInsight {
 
   @@index([tenantId])
   @@map("hri_workforce_insights")
+}
+
+// =============================================================================
+// Phase 60 — AI Financial Intelligence & Cash Flow Optimizer
+// =============================================================================
+
+model FiLedger {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  period      String   // YYYY-MM
+  category    String   // revenue | cogs | opex | capex | other
+  subcategory String?
+  description String?
+  amount      Float
+  budgeted    Float?
+  currency    String   @default("USD")
+  type        String   @default("actual") // actual | budget | forecast
+  tags        Json     @default("[]") @db.JsonB
+  metadata    Json     @default("{}") @db.JsonB
+  entryDate   DateTime @default(now()) @map("entry_date") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, period])
+  @@map("fi_ledgers")
+}
+
+model FiBudgetAlert {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  category     String
+  period       String
+  budgeted     Float
+  actual       Float
+  variance     Float    @default(0)
+  variancePct  Float    @default(0) @map("variance_pct")
+  severity     String   @default("info") // info | warning | critical
+  aiSuggestion String?  @map("ai_suggestion")
+  resolved     Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("fi_budget_alerts")
+}
+
+model FiCashForecast {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  period          String   // YYYY-MM
+  forecastType    String   @default("monthly") @map("forecast_type")
+  inflows         Float    @default(0)
+  outflows        Float    @default(0)
+  netCashFlow     Float    @default(0) @map("net_cash_flow")
+  openingBalance  Float    @default(0) @map("opening_balance")
+  closingBalance  Float    @default(0) @map("closing_balance")
+  aiAdjusted      Float    @default(0) @map("ai_adjusted")
+  aiConfidence    Float    @default(0.8) @map("ai_confidence")
+  aiSummary       String?  @map("ai_summary")
+  generatedAt     DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, period, forecastType])
+  @@index([tenantId])
+  @@map("fi_cash_forecasts")
+}
+
+model FiFinancialInsight {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  type        String   // pnl | cash_flow | budget_variance | anomaly | opportunity
+  title       String
+  summary     String?
+  impact      Float?   // financial impact amount
+  severity    String   @default("info")
+  data        Json     @default("{}") @db.JsonB
+  actionItems Json     @default("[]") @db.JsonB @map("action_items")
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("fi_financial_insights")
 }

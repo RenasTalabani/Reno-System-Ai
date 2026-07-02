@@ -11053,6 +11053,67 @@ exports.Prisma.HriWorkforceInsightScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.FiLedgerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  category: 'category',
+  subcategory: 'subcategory',
+  description: 'description',
+  amount: 'amount',
+  budgeted: 'budgeted',
+  currency: 'currency',
+  type: 'type',
+  tags: 'tags',
+  metadata: 'metadata',
+  entryDate: 'entryDate',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FiBudgetAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  category: 'category',
+  period: 'period',
+  budgeted: 'budgeted',
+  actual: 'actual',
+  variance: 'variance',
+  variancePct: 'variancePct',
+  severity: 'severity',
+  aiSuggestion: 'aiSuggestion',
+  resolved: 'resolved',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FiCashForecastScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  forecastType: 'forecastType',
+  inflows: 'inflows',
+  outflows: 'outflows',
+  netCashFlow: 'netCashFlow',
+  openingBalance: 'openingBalance',
+  closingBalance: 'closingBalance',
+  aiAdjusted: 'aiAdjusted',
+  aiConfidence: 'aiConfidence',
+  aiSummary: 'aiSummary',
+  generatedAt: 'generatedAt'
+};
+
+exports.Prisma.FiFinancialInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  impact: 'impact',
+  severity: 'severity',
+  data: 'data',
+  actionItems: 'actionItems',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11764,7 +11825,11 @@ exports.Prisma.ModelName = {
   HriEmployee: 'HriEmployee',
   HriPerformance: 'HriPerformance',
   HriSuccessionPlan: 'HriSuccessionPlan',
-  HriWorkforceInsight: 'HriWorkforceInsight'
+  HriWorkforceInsight: 'HriWorkforceInsight',
+  FiLedger: 'FiLedger',
+  FiBudgetAlert: 'FiBudgetAlert',
+  FiCashForecast: 'FiCashForecast',
+  FiFinancialInsight: 'FiFinancialInsight'
 };
 
 /**
