@@ -482,6 +482,11 @@ model CoreTenant {
   cspPlaybooks          CspPlaybook[]
   cspPlaybookRuns       CspPlaybookRun[]
   cspChurnPredictions   CspChurnPrediction[]
+  // Phase 58
+  siDeals               SiDeal[]
+  siOpportunities       SiOpportunity[]
+  siLeadScores          SiLeadScore[]
+  siSalesForecasts      SiSalesForecast[]
 
   @@map("core_tenants")
 }
@@ -16171,4 +16176,100 @@ model CspChurnPrediction {
 
   @@index([tenantId])
   @@map("csp_churn_predictions")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 58 — AI Sales Intelligence & Pipeline Optimizer
+// ─────────────────────────────────────────────────────────────────────────────
+
+model SiDeal {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  title           String
+  contactName     String    @map("contact_name")
+  company         String?
+  stage           String    @default("prospecting") // prospecting | qualification | proposal | negotiation | closed_won | closed_lost
+  value           Float     @default(0)
+  probability     Float     @default(0)
+  aiProbability   Float?    @map("ai_probability")
+  expectedCloseAt DateTime? @map("expected_close_at") @db.Timestamptz
+  closedAt        DateTime? @map("closed_at") @db.Timestamptz
+  ownerId         String?   @map("owner_id") @db.Uuid
+  source          String    @default("inbound") // inbound | outbound | referral | partner
+  lostReason      String?   @map("lost_reason")
+  aiInsights      Json      @default("[]") @map("ai_insights") @db.JsonB
+  nextBestAction  String?   @map("next_best_action")
+  tags            Json      @default("[]") @db.JsonB
+  metadata        Json      @default("{}") @db.JsonB
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  opportunities SiOpportunity[]
+
+  @@index([tenantId])
+  @@map("si_deals")
+}
+
+model SiOpportunity {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  dealId      String   @map("deal_id") @db.Uuid
+  type        String   @default("upsell") // upsell | cross_sell | renewal | expansion | new_logo
+  title       String
+  value       Float    @default(0)
+  confidence  Float    @default(0.5)
+  status      String   @default("identified") // identified | pursuing | converted | dismissed
+  aiGenerated Boolean  @default(false) @map("ai_generated")
+  reasoning   String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deal   SiDeal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("si_opportunities")
+}
+
+model SiLeadScore {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  contactId       String?  @map("contact_id") @db.Uuid
+  contactName     String   @map("contact_name")
+  contactEmail    String?  @map("contact_email")
+  company         String?
+  overallScore    Int      @default(0) @map("overall_score")
+  fitScore        Int      @default(0) @map("fit_score")
+  intentScore     Int      @default(0) @map("intent_score")
+  engagementScore Int      @default(0) @map("engagement_score")
+  grade           String   @default("C")
+  signals         Json     @default("[]") @db.JsonB
+  recommendation  String?
+  scoredAt        DateTime @default(now()) @map("scored_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("si_lead_scores")
+}
+
+model SiSalesForecast {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  period       String
+  forecastType String   @default("monthly") @map("forecast_type")
+  committed    Float    @default(0)
+  bestCase     Float    @default(0) @map("best_case")
+  pipeline     Float    @default(0)
+  aiAdjusted   Float    @default(0) @map("ai_adjusted")
+  aiConfidence Float    @default(0) @map("ai_confidence")
+  aiSummary    String?  @map("ai_summary")
+  dealCount    Int      @default(0) @map("deal_count")
+  generatedAt  DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, period, forecastType])
+  @@index([tenantId])
+  @@map("si_sales_forecasts")
 }

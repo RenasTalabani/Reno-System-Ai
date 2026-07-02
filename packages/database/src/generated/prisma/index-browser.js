@@ -10919,6 +10919,75 @@ exports.Prisma.CspChurnPredictionScalarFieldEnum = {
   predictedAt: 'predictedAt'
 };
 
+exports.Prisma.SiDealScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  contactName: 'contactName',
+  company: 'company',
+  stage: 'stage',
+  value: 'value',
+  probability: 'probability',
+  aiProbability: 'aiProbability',
+  expectedCloseAt: 'expectedCloseAt',
+  closedAt: 'closedAt',
+  ownerId: 'ownerId',
+  source: 'source',
+  lostReason: 'lostReason',
+  aiInsights: 'aiInsights',
+  nextBestAction: 'nextBestAction',
+  tags: 'tags',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiOpportunityScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dealId: 'dealId',
+  type: 'type',
+  title: 'title',
+  value: 'value',
+  confidence: 'confidence',
+  status: 'status',
+  aiGenerated: 'aiGenerated',
+  reasoning: 'reasoning',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SiLeadScoreScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  contactId: 'contactId',
+  contactName: 'contactName',
+  contactEmail: 'contactEmail',
+  company: 'company',
+  overallScore: 'overallScore',
+  fitScore: 'fitScore',
+  intentScore: 'intentScore',
+  engagementScore: 'engagementScore',
+  grade: 'grade',
+  signals: 'signals',
+  recommendation: 'recommendation',
+  scoredAt: 'scoredAt'
+};
+
+exports.Prisma.SiSalesForecastScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  period: 'period',
+  forecastType: 'forecastType',
+  committed: 'committed',
+  bestCase: 'bestCase',
+  pipeline: 'pipeline',
+  aiAdjusted: 'aiAdjusted',
+  aiConfidence: 'aiConfidence',
+  aiSummary: 'aiSummary',
+  dealCount: 'dealCount',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11622,7 +11691,11 @@ exports.Prisma.ModelName = {
   CspHealthScore: 'CspHealthScore',
   CspPlaybook: 'CspPlaybook',
   CspPlaybookRun: 'CspPlaybookRun',
-  CspChurnPrediction: 'CspChurnPrediction'
+  CspChurnPrediction: 'CspChurnPrediction',
+  SiDeal: 'SiDeal',
+  SiOpportunity: 'SiOpportunity',
+  SiLeadScore: 'SiLeadScore',
+  SiSalesForecast: 'SiSalesForecast'
 };
 
 /**

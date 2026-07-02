@@ -69,6 +69,7 @@ const navigation: NavSection[] = [
       { label: 'Command Center', href: '/command-center', icon: LayoutDashboard },
       { label: 'Predictive AI', href: '/predictive-analytics', icon: BarChart3 },
       { label: 'Customer Success', href: '/customer-success', icon: UsersRound },
+      { label: 'Sales Intelligence', href: '/sales-intelligence', icon: BarChart3 },
     ],
   },
   {
