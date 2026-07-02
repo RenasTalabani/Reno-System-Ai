@@ -513,6 +513,11 @@ model CoreTenant {
   opiBottlenecks           OpiBottleneck[]
   opiKpis                  OpiKpi[]
   opiEfficiencyInsights    OpiEfficiencyInsight[]
+  // Phase 64
+  lciContracts             LciContract[]
+  lciClauses               LciClause[]
+  lciComplianceItems       LciComplianceItem[]
+  lciLegalInsights         LciLegalInsight[]
   @@map("core_tenants")
 }
 
@@ -16389,4 +16394,90 @@ model OpiEfficiencyInsight {
 
   @@index([tenantId])
   @@map("opi_efficiency_insights")
+}
+
+// =============================================================================
+// PHASE 64 — AI Legal & Contract Intelligence
+// =============================================================================
+
+model LciContract {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  title           String
+  counterparty    String?
+  contractType    String   @default("nda") @map("contract_type") // nda|msa|sow|lease|employment|vendor|other
+  status          String   @default("draft") // draft|review|active|expired|terminated
+  value           Float?
+  startDate       DateTime? @map("start_date") @db.Timestamptz
+  endDate         DateTime? @map("end_date") @db.Timestamptz
+  aiRiskScore     Float    @default(0) @map("ai_risk_score")
+  aiRiskLevel     String   @default("low") @map("ai_risk_level")
+  aiSummary       String?  @map("ai_summary")
+  keyObligations  Json     @default("[]") @db.JsonB @map("key_obligations")
+  redFlags        Json     @default("[]") @db.JsonB @map("red_flags")
+  metadata        Json     @default("{}") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  clauses LciClause[]
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("lci_contracts")
+}
+
+model LciClause {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  contractId   String   @map("contract_id") @db.Uuid
+  clauseType   String   @map("clause_type") // liability|indemnity|termination|ip|payment|confidentiality|dispute|other
+  title        String
+  content      String?
+  aiRiskScore  Float    @default(0) @map("ai_risk_score")
+  aiRiskLevel  String   @default("low") @map("ai_risk_level")
+  aiAnnotation String?  @map("ai_annotation")
+  flagged      Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  contract LciContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("lci_clauses")
+}
+
+model LciComplianceItem {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  framework    String   // gdpr|hipaa|sox|iso27001|pci_dss|ccpa|other
+  requirement  String
+  status       String   @default("pending") // compliant|non_compliant|pending|na
+  dueDate      DateTime? @map("due_date") @db.Timestamptz
+  aiRiskScore  Float    @default(0) @map("ai_risk_score")
+  aiGuidance   String?  @map("ai_guidance")
+  evidenceUrl  String?  @map("evidence_url")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("lci_compliance_items")
+}
+
+model LciLegalInsight {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  type        String   // contract_risk|compliance_gap|expiry_alert|obligation|opportunity
+  title       String
+  summary     String?
+  severity    String   @default("info")
+  actionItems Json     @default("[]") @db.JsonB @map("action_items")
+  relatedId   String?  @map("related_id")
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("lci_legal_insights")
 }

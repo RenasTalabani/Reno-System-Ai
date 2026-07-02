@@ -183,6 +183,7 @@ import { fiModuleRoutes } from './fi/index.js'
 import { sciModuleRoutes } from './sci/index.js'
 import { mkiModuleRoutes } from './mki/index.js'
 import { opiModuleRoutes } from './opi/index.js'
+import { lciModuleRoutes } from './lci/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -372,6 +373,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(sciModuleRoutes, { prefix: '' })
       await v1.register(mkiModuleRoutes, { prefix: '' })
       await v1.register(opiModuleRoutes, { prefix: '' })
+      await v1.register(lciModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

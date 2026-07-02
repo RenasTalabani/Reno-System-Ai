@@ -11306,6 +11306,66 @@ exports.Prisma.OpiEfficiencyInsightScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.LciContractScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  counterparty: 'counterparty',
+  contractType: 'contractType',
+  status: 'status',
+  value: 'value',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  aiRiskScore: 'aiRiskScore',
+  aiRiskLevel: 'aiRiskLevel',
+  aiSummary: 'aiSummary',
+  keyObligations: 'keyObligations',
+  redFlags: 'redFlags',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LciClauseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  contractId: 'contractId',
+  clauseType: 'clauseType',
+  title: 'title',
+  content: 'content',
+  aiRiskScore: 'aiRiskScore',
+  aiRiskLevel: 'aiRiskLevel',
+  aiAnnotation: 'aiAnnotation',
+  flagged: 'flagged',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LciComplianceItemScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  framework: 'framework',
+  requirement: 'requirement',
+  status: 'status',
+  dueDate: 'dueDate',
+  aiRiskScore: 'aiRiskScore',
+  aiGuidance: 'aiGuidance',
+  evidenceUrl: 'evidenceUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LciLegalInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  severity: 'severity',
+  actionItems: 'actionItems',
+  relatedId: 'relatedId',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12033,7 +12093,11 @@ exports.Prisma.ModelName = {
   OpiProcess: 'OpiProcess',
   OpiBottleneck: 'OpiBottleneck',
   OpiKpi: 'OpiKpi',
-  OpiEfficiencyInsight: 'OpiEfficiencyInsight'
+  OpiEfficiencyInsight: 'OpiEfficiencyInsight',
+  LciContract: 'LciContract',
+  LciClause: 'LciClause',
+  LciComplianceItem: 'LciComplianceItem',
+  LciLegalInsight: 'LciLegalInsight'
 };
 
 /**
