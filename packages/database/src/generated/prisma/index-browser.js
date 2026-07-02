@@ -11181,6 +11181,73 @@ exports.Prisma.SciInventoryAlertScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MkiCampaignScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  channel: 'channel',
+  status: 'status',
+  budget: 'budget',
+  spent: 'spent',
+  impressions: 'impressions',
+  clicks: 'clicks',
+  conversions: 'conversions',
+  revenue: 'revenue',
+  aiRoiScore: 'aiRoiScore',
+  aiPerformance: 'aiPerformance',
+  aiRecommendations: 'aiRecommendations',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MkiAudienceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  segmentType: 'segmentType',
+  size: 'size',
+  engagementRate: 'engagementRate',
+  conversionRate: 'conversionRate',
+  aiScore: 'aiScore',
+  aiInsights: 'aiInsights',
+  criteria: 'criteria',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MkiContentScoreScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  contentType: 'contentType',
+  channel: 'channel',
+  wordCount: 'wordCount',
+  seoScore: 'seoScore',
+  readabilityScore: 'readabilityScore',
+  engagementScore: 'engagementScore',
+  aiOverallScore: 'aiOverallScore',
+  aiGrade: 'aiGrade',
+  aiSuggestions: 'aiSuggestions',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MkiMarketingInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  impact: 'impact',
+  actionItems: 'actionItems',
+  data: 'data',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11900,7 +11967,11 @@ exports.Prisma.ModelName = {
   SciSupplier: 'SciSupplier',
   SciShipment: 'SciShipment',
   SciDemandForecast: 'SciDemandForecast',
-  SciInventoryAlert: 'SciInventoryAlert'
+  SciInventoryAlert: 'SciInventoryAlert',
+  MkiCampaign: 'MkiCampaign',
+  MkiAudience: 'MkiAudience',
+  MkiContentScore: 'MkiContentScore',
+  MkiMarketingInsight: 'MkiMarketingInsight'
 };
 
 /**

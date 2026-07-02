@@ -503,6 +503,11 @@ model CoreTenant {
   sciShipments             SciShipment[]
   sciDemandForecasts       SciDemandForecast[]
   sciInventoryAlerts       SciInventoryAlert[]
+  // Phase 62
+  mkiCampaigns             MkiCampaign[]
+  mkiAudiences             MkiAudience[]
+  mkiContentScores         MkiContentScore[]
+  mkiMarketingInsights     MkiMarketingInsight[]
   @@map("core_tenants")
 }
 
@@ -16203,4 +16208,95 @@ model SciInventoryAlert {
 
   @@index([tenantId])
   @@map("sci_inventory_alerts")
+}
+
+// =============================================================================
+// PHASE 62 — AI Marketing Intelligence & Campaign Optimizer
+// =============================================================================
+
+model MkiCampaign {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  name             String
+  channel          String   @default("email") // email|social|paid|seo|content
+  status           String   @default("draft") // draft|active|paused|completed
+  budget           Float    @default(0)
+  spent            Float    @default(0)
+  impressions      Int      @default(0)
+  clicks           Int      @default(0)
+  conversions      Int      @default(0)
+  revenue          Float    @default(0)
+  aiRoiScore       Float    @default(0) @map("ai_roi_score")
+  aiPerformance    String   @default("unknown") @map("ai_performance") // poor|below_avg|average|good|excellent
+  aiRecommendations Json    @default("[]") @db.JsonB @map("ai_recommendations")
+  startDate        DateTime? @map("start_date") @db.Timestamptz
+  endDate          DateTime? @map("end_date") @db.Timestamptz
+  metadata         Json     @default("{}") @db.JsonB
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mki_campaigns")
+}
+
+model MkiAudience {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  name            String
+  segmentType     String   @default("behavioral") @map("segment_type")
+  size            Int      @default(0)
+  engagementRate  Float    @default(0) @map("engagement_rate")
+  conversionRate  Float    @default(0) @map("conversion_rate")
+  aiScore         Float    @default(0) @map("ai_score")
+  aiInsights      Json     @default("[]") @db.JsonB @map("ai_insights")
+  criteria        Json     @default("{}") @db.JsonB
+  metadata        Json     @default("{}") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mki_audiences")
+}
+
+model MkiContentScore {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  title           String
+  contentType     String   @default("blog") @map("content_type") // blog|email|social|video|ad
+  channel         String   @default("web")
+  wordCount       Int      @default(0) @map("word_count")
+  seoScore        Float    @default(0) @map("seo_score")
+  readabilityScore Float   @default(0) @map("readability_score")
+  engagementScore Float    @default(0) @map("engagement_score")
+  aiOverallScore  Float    @default(0) @map("ai_overall_score")
+  aiGrade         String   @default("C") @map("ai_grade") // A+|A|B|C|D|F
+  aiSuggestions   Json     @default("[]") @db.JsonB @map("ai_suggestions")
+  metadata        Json     @default("{}") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mki_content_scores")
+}
+
+model MkiMarketingInsight {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  type        String   // campaign_performance|audience|content|channel|budget
+  title       String
+  summary     String?
+  impact      String   @default("medium") // low|medium|high
+  actionItems Json     @default("[]") @db.JsonB @map("action_items")
+  data        Json     @default("{}") @db.JsonB
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mki_marketing_insights")
 }
