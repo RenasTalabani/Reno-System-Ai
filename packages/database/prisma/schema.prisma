@@ -488,6 +488,11 @@ model CoreTenant {
   siOpportunities          SiOpportunity[]
   siLeadScores             SiLeadScore[]
   siSalesForecasts         SiSalesForecast[]
+  // Phase 59
+  hriEmployees             HriEmployee[]
+  hriPerformances          HriPerformance[]
+  hriSuccessionPlans       HriSuccessionPlan[]
+  hriWorkforceInsights     HriWorkforceInsight[]
   @@map("core_tenants")
 }
 
@@ -15916,4 +15921,96 @@ model SiSalesForecast {
   @@unique([tenantId, period, forecastType])
   @@index([tenantId])
   @@map("si_sales_forecasts")
+}
+
+// =============================================================================
+// Phase 59 — AI HR Intelligence & Workforce Analytics
+// =============================================================================
+
+model HriEmployee {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  employeeId      String?  @map("employee_id")
+  fullName        String   @map("full_name")
+  email           String?
+  department      String?
+  role            String?
+  level           String?  @default("mid") // junior | mid | senior | lead | exec
+  hireDate        DateTime? @map("hire_date") @db.Timestamptz
+  salary          Float?
+  location        String?
+  managerId       String?  @map("manager_id") @db.Uuid
+  status          String   @default("active") // active | on_leave | terminated
+  aiProfileScore  Int?     @map("ai_profile_score")
+  retentionRisk   String?  @map("retention_risk") // low | medium | high | critical
+  potentialLevel  String?  @map("potential_level") // low | medium | high | exceptional
+  aiInsights      Json     @default("[]") @db.JsonB @map("ai_insights")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  performances HriPerformance[]
+
+  @@index([tenantId])
+  @@map("hri_employees")
+}
+
+model HriPerformance {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  employeeId       String   @map("employee_id") @db.Uuid
+  period           String   // e.g. 2026-Q1
+  performanceScore Int      @default(70) @map("performance_score")
+  goalsScore       Int      @default(70) @map("goals_score")
+  skillsScore      Int      @default(70) @map("skills_score")
+  cultureScore     Int      @default(70) @map("culture_score")
+  overallRating    String   @default("meets") @map("overall_rating") // exceptional | exceeds | meets | below | critical
+  aiPrediction     String?  @map("ai_prediction")
+  managerNotes     String?  @map("manager_notes")
+  reviewedAt       DateTime? @map("reviewed_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee HriEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, employeeId, period])
+  @@index([tenantId])
+  @@map("hri_performances")
+}
+
+model HriSuccessionPlan {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @map("tenant_id") @db.Uuid
+  roleTitle      String   @map("role_title")
+  department     String?
+  criticality    String   @default("medium") // low | medium | high | critical
+  readinessGap   Int      @default(0) @map("readiness_gap") // 0-100 gap score
+  candidateIds   Json     @default("[]") @db.JsonB @map("candidate_ids")
+  aiRecommended  Json     @default("[]") @db.JsonB @map("ai_recommended")
+  timeline       String?  // e.g. 0-6m | 6-12m | 12-18m | 18m+
+  aiSummary      String?  @map("ai_summary")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hri_succession_plans")
+}
+
+model HriWorkforceInsight {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  type        String   // attrition | headcount | skills | diversity | compensation
+  title       String
+  summary     String?
+  data        Json     @default("{}") @db.JsonB
+  severity    String   @default("info") // info | warning | critical
+  actionItems Json     @default("[]") @db.JsonB @map("action_items")
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hri_workforce_insights")
 }

@@ -10988,6 +10988,71 @@ exports.Prisma.SiSalesForecastScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.HriEmployeeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  fullName: 'fullName',
+  email: 'email',
+  department: 'department',
+  role: 'role',
+  level: 'level',
+  hireDate: 'hireDate',
+  salary: 'salary',
+  location: 'location',
+  managerId: 'managerId',
+  status: 'status',
+  aiProfileScore: 'aiProfileScore',
+  retentionRisk: 'retentionRisk',
+  potentialLevel: 'potentialLevel',
+  aiInsights: 'aiInsights',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HriPerformanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  period: 'period',
+  performanceScore: 'performanceScore',
+  goalsScore: 'goalsScore',
+  skillsScore: 'skillsScore',
+  cultureScore: 'cultureScore',
+  overallRating: 'overallRating',
+  aiPrediction: 'aiPrediction',
+  managerNotes: 'managerNotes',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HriSuccessionPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  roleTitle: 'roleTitle',
+  department: 'department',
+  criticality: 'criticality',
+  readinessGap: 'readinessGap',
+  candidateIds: 'candidateIds',
+  aiRecommended: 'aiRecommended',
+  timeline: 'timeline',
+  aiSummary: 'aiSummary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HriWorkforceInsightScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  data: 'data',
+  severity: 'severity',
+  actionItems: 'actionItems',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11695,7 +11760,11 @@ exports.Prisma.ModelName = {
   SiDeal: 'SiDeal',
   SiOpportunity: 'SiOpportunity',
   SiLeadScore: 'SiLeadScore',
-  SiSalesForecast: 'SiSalesForecast'
+  SiSalesForecast: 'SiSalesForecast',
+  HriEmployee: 'HriEmployee',
+  HriPerformance: 'HriPerformance',
+  HriSuccessionPlan: 'HriSuccessionPlan',
+  HriWorkforceInsight: 'HriWorkforceInsight'
 };
 
 /**

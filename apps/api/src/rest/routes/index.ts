@@ -178,6 +178,7 @@ import { pccModuleRoutes } from './pcc/index.js'
 import { apaModuleRoutes } from './apa/index.js'
 import { cspModuleRoutes } from './csp/index.js'
 import { siModuleRoutes } from './si/index.js'
+import { hriModuleRoutes } from './hri/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -362,6 +363,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(apaModuleRoutes, { prefix: '' })
       await v1.register(cspModuleRoutes, { prefix: '' })
       await v1.register(siModuleRoutes, { prefix: '' })
+      await v1.register(hriModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )
