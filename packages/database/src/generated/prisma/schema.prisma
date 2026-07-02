@@ -522,6 +522,12 @@ model CoreTenant {
   eiBoardMetrics        EiBoardMetric[]
   eiExecutiveInsights   EiExecutiveInsight[]
   eiCompetitorSignals   EiCompetitorSignal[]
+  // Phase 66
+  llmProviders          LlmProvider[]
+  llmRequests           LlmRequest[]
+  llmPolicies           LlmPolicy[]
+  llmPromptVersions     LlmPromptVersion[]
+  llmExperiments        LlmExperiment[]
 
   @@map("core_tenants")
 }
@@ -16927,4 +16933,139 @@ model EiCompetitorSignal {
 
   @@index([tenantId])
   @@map("ei_competitor_signals")
+}
+
+// ─── Phase 66: LLMOps & AI Orchestration Platform ─────────────────────────────
+
+model LlmProvider {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  name         String
+  providerType String    @default("custom") @map("provider_type") // reno_brain|claude|openai|gemini|azure_openai|ollama|custom
+  baseUrl      String?   @map("base_url")
+  defaultModel String?   @map("default_model")
+  isEnabled    Boolean   @default(true) @map("is_enabled")
+  isPrimary    Boolean   @default(false) @map("is_primary")
+  status       String    @default("unknown") // healthy|degraded|down|unknown
+  lastCheck    DateTime? @map("last_check") @db.Timestamptz
+  lastError    String?   @map("last_error")
+  requestCount Int       @default(0) @map("request_count")
+  successCount Int       @default(0) @map("success_count")
+  totalTokens  Int       @default(0) @map("total_tokens")
+  totalCostUsd Float     @default(0) @map("total_cost_usd")
+  avgLatencyMs Float     @default(0) @map("avg_latency_ms")
+  metadata     Json      @default("{}") @db.JsonB
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requests LlmRequest[]
+
+  @@index([tenantId])
+  @@map("llm_providers")
+}
+
+model LlmRequest {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  providerId       String   @map("provider_id") @db.Uuid
+  module           String   @default("unknown")
+  taskType         String   @default("generate") @map("task_type") // generate|analyze|summarize|classify|code_review|translate
+  model            String?
+  promptTokens     Int      @default(0) @map("prompt_tokens")
+  completionTokens Int      @default(0) @map("completion_tokens")
+  totalTokens      Int      @default(0) @map("total_tokens")
+  costUsd          Float    @default(0) @map("cost_usd")
+  latencyMs        Int      @default(0) @map("latency_ms")
+  success          Boolean  @default(true)
+  errorCode        String?  @map("error_code")
+  fallbackFrom     String?  @map("fallback_from")
+  requestedAt      DateTime @default(now()) @map("requested_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  provider LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, requestedAt])
+  @@map("llm_requests")
+}
+
+model LlmPolicy {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  module            String // finance|legal|hr|marketing|*
+  allowedProviders  Json     @default("[]") @map("allowed_providers") @db.JsonB
+  preferredProvider String?  @map("preferred_provider")
+  fallbackOrder     Json     @default("[]") @map("fallback_order") @db.JsonB
+  maxCostPerRequest Float?   @map("max_cost_per_request")
+  requiresApproval  Boolean  @default(false) @map("requires_approval")
+  isActive          Boolean  @default(true) @map("is_active")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, module])
+  @@index([tenantId])
+  @@map("llm_policies")
+}
+
+model LlmPromptVersion {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  promptKey String   @map("prompt_key")
+  version   Int      @default(1)
+  title     String
+  content   String
+  variables Json     @default("[]") @db.JsonB
+  isActive  Boolean  @default(true) @map("is_active")
+  createdBy String   @map("created_by") @db.Uuid
+  changelog String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, promptKey, version])
+  @@index([tenantId])
+  @@map("llm_prompt_versions")
+}
+
+model LlmExperiment {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  name           String
+  description    String?
+  taskType       String    @map("task_type")
+  samplePrompt   String    @map("sample_prompt")
+  sampleCount    Int       @default(10) @map("sample_count")
+  providers      Json      @default("[]") @db.JsonB
+  status         String    @default("pending") // pending|running|completed|failed
+  startedAt      DateTime? @map("started_at") @db.Timestamptz
+  completedAt    DateTime? @map("completed_at") @db.Timestamptz
+  recommendation String?
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  results LlmExperimentResult[]
+
+  @@index([tenantId])
+  @@map("llm_experiments")
+}
+
+model LlmExperimentResult {
+  id               String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  experimentId     String  @map("experiment_id") @db.Uuid
+  provider         String
+  avgLatencyMs     Float   @map("avg_latency_ms")
+  avgCostUsd       Float   @map("avg_cost_usd")
+  successRate      Float   @map("success_rate")
+  accuracyScore    Float?  @map("accuracy_score")
+  totalRuns        Int     @map("total_runs")
+  rank             Int     @default(1)
+  aiRecommendation String? @map("ai_recommendation")
+
+  experiment LlmExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+
+  @@index([experimentId])
+  @@map("llm_experiment_results")
 }

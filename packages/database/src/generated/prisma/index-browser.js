@@ -11427,6 +11427,103 @@ exports.Prisma.EiCompetitorSignalScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.LlmProviderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  providerType: 'providerType',
+  baseUrl: 'baseUrl',
+  defaultModel: 'defaultModel',
+  isEnabled: 'isEnabled',
+  isPrimary: 'isPrimary',
+  status: 'status',
+  lastCheck: 'lastCheck',
+  lastError: 'lastError',
+  requestCount: 'requestCount',
+  successCount: 'successCount',
+  totalTokens: 'totalTokens',
+  totalCostUsd: 'totalCostUsd',
+  avgLatencyMs: 'avgLatencyMs',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LlmRequestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  providerId: 'providerId',
+  module: 'module',
+  taskType: 'taskType',
+  model: 'model',
+  promptTokens: 'promptTokens',
+  completionTokens: 'completionTokens',
+  totalTokens: 'totalTokens',
+  costUsd: 'costUsd',
+  latencyMs: 'latencyMs',
+  success: 'success',
+  errorCode: 'errorCode',
+  fallbackFrom: 'fallbackFrom',
+  requestedAt: 'requestedAt'
+};
+
+exports.Prisma.LlmPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  module: 'module',
+  allowedProviders: 'allowedProviders',
+  preferredProvider: 'preferredProvider',
+  fallbackOrder: 'fallbackOrder',
+  maxCostPerRequest: 'maxCostPerRequest',
+  requiresApproval: 'requiresApproval',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LlmPromptVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  promptKey: 'promptKey',
+  version: 'version',
+  title: 'title',
+  content: 'content',
+  variables: 'variables',
+  isActive: 'isActive',
+  createdBy: 'createdBy',
+  changelog: 'changelog',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LlmExperimentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  taskType: 'taskType',
+  samplePrompt: 'samplePrompt',
+  sampleCount: 'sampleCount',
+  providers: 'providers',
+  status: 'status',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  recommendation: 'recommendation',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LlmExperimentResultScalarFieldEnum = {
+  id: 'id',
+  experimentId: 'experimentId',
+  provider: 'provider',
+  avgLatencyMs: 'avgLatencyMs',
+  avgCostUsd: 'avgCostUsd',
+  successRate: 'successRate',
+  accuracyScore: 'accuracyScore',
+  totalRuns: 'totalRuns',
+  rank: 'rank',
+  aiRecommendation: 'aiRecommendation'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12162,7 +12259,13 @@ exports.Prisma.ModelName = {
   EiStrategicGoal: 'EiStrategicGoal',
   EiBoardMetric: 'EiBoardMetric',
   EiExecutiveInsight: 'EiExecutiveInsight',
-  EiCompetitorSignal: 'EiCompetitorSignal'
+  EiCompetitorSignal: 'EiCompetitorSignal',
+  LlmProvider: 'LlmProvider',
+  LlmRequest: 'LlmRequest',
+  LlmPolicy: 'LlmPolicy',
+  LlmPromptVersion: 'LlmPromptVersion',
+  LlmExperiment: 'LlmExperiment',
+  LlmExperimentResult: 'LlmExperimentResult'
 };
 
 /**

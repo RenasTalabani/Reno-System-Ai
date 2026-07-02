@@ -77,6 +77,7 @@ const navigation: NavSection[] = [
       { label: 'Operations AI', href: '/operations-ai', icon: Workflow },
       { label: 'Legal AI', href: '/legal-ai', icon: FileText },
       { label: 'Executive AI', href: '/executive-ai', icon: BarChart3 },
+      { label: 'LLMOps', href: '/llmops', icon: Brain },
     ],
   },
   {
