@@ -11893,6 +11893,83 @@ exports.Prisma.EbrMetricsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.XpdExportJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  requestedBy: 'requestedBy',
+  format: 'format',
+  status: 'status',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  fileSizeKb: 'fileSizeKb',
+  mimeType: 'mimeType',
+  errorMsg: 'errorMsg',
+  retryCount: 'retryCount',
+  maxRetries: 'maxRetries',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  expiresAt: 'expiresAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.XpdDownloadTokenScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  jobId: 'jobId',
+  token: 'token',
+  usedAt: 'usedAt',
+  usedCount: 'usedCount',
+  maxUses: 'maxUses',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.XpdDeliveryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  jobId: 'jobId',
+  recipient: 'recipient',
+  subject: 'subject',
+  status: 'status',
+  sentAt: 'sentAt',
+  errorMsg: 'errorMsg',
+  retryCount: 'retryCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.XpdExportScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  createdBy: 'createdBy',
+  name: 'name',
+  frequency: 'frequency',
+  format: 'format',
+  recipients: 'recipients',
+  isActive: 'isActive',
+  nextRunAt: 'nextRunAt',
+  lastRunAt: 'lastRunAt',
+  runCount: 'runCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.XpdExportPermissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  userId: 'userId',
+  roleId: 'roleId',
+  canExport: 'canExport',
+  canDeliver: 'canDeliver',
+  formats: 'formats',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12660,7 +12737,12 @@ exports.Prisma.ModelName = {
   EbrExportJob: 'EbrExportJob',
   EbrSubscription: 'EbrSubscription',
   EbrAiNarrative: 'EbrAiNarrative',
-  EbrMetrics: 'EbrMetrics'
+  EbrMetrics: 'EbrMetrics',
+  XpdExportJob: 'XpdExportJob',
+  XpdDownloadToken: 'XpdDownloadToken',
+  XpdDelivery: 'XpdDelivery',
+  XpdExportSchedule: 'XpdExportSchedule',
+  XpdExportPermission: 'XpdExportPermission'
 };
 
 /**

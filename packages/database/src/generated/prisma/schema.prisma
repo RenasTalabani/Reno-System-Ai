@@ -537,6 +537,12 @@ model CoreTenant {
   cdbDashboardShares        CdbDashboardShare[]
   cdbDashboardTemplates     CdbDashboardTemplate[]
   cdbAiRecommendations      CdbAiRecommendation[]
+  // Phase 70
+  xpdExportJobs             XpdExportJob[]
+  xpdDownloadTokens         XpdDownloadToken[]
+  xpdDeliveries             XpdDelivery[]
+  xpdExportSchedules        XpdExportSchedule[]
+  xpdExportPermissions      XpdExportPermission[]
   // Phase 69
   ebrReports                EbrReport[]
   ebrTemplates              EbrTemplate[]
@@ -17627,4 +17633,117 @@ model EbrMetrics {
   report EbrReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
   @@map("ebr_metrics")
+}
+
+// ─── Phase 70: Enterprise Export & Document Delivery Engine ───────────────────
+
+model XpdExportJob {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  reportId    String?   @map("report_id") @db.Uuid
+  requestedBy String    @map("requested_by") @db.Uuid
+  format      String    @db.VarChar(20)
+  status      String    @default("pending") @db.VarChar(20)
+  filePath    String?   @map("file_path")
+  fileName    String?   @map("file_name")
+  fileSizeKb  Int?      @map("file_size_kb")
+  mimeType    String?   @map("mime_type") @db.VarChar(100)
+  errorMsg    String?   @map("error_msg")
+  retryCount  Int       @default(0) @map("retry_count")
+  maxRetries  Int       @default(3) @map("max_retries")
+  startedAt   DateTime? @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz
+  metadata    Json      @default("{}") @db.JsonB
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant     CoreTenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tokens     XpdDownloadToken[]
+  deliveries XpdDelivery[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, reportId])
+  @@map("xpd_export_jobs")
+}
+
+model XpdDownloadToken {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  jobId     String    @map("job_id") @db.Uuid
+  token     String    @unique @db.VarChar(128)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz
+  usedCount Int       @default(0) @map("used_count")
+  maxUses   Int       @default(10) @map("max_uses")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job    XpdExportJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([tenantId])
+  @@map("xpd_download_tokens")
+}
+
+model XpdDelivery {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  jobId      String    @map("job_id") @db.Uuid
+  recipient  String    @db.VarChar(255)
+  subject    String    @db.VarChar(500)
+  status     String    @default("pending") @db.VarChar(20)
+  sentAt     DateTime? @map("sent_at") @db.Timestamptz
+  errorMsg   String?   @map("error_msg")
+  retryCount Int       @default(0) @map("retry_count")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job    XpdExportJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, jobId])
+  @@map("xpd_deliveries")
+}
+
+model XpdExportSchedule {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  reportId   String    @map("report_id") @db.Uuid
+  createdBy  String    @map("created_by") @db.Uuid
+  name       String    @db.VarChar(255)
+  frequency  String    @db.VarChar(20)
+  format     String    @db.VarChar(20)
+  recipients Json      @default("[]") @db.JsonB
+  isActive   Boolean   @default(true) @map("is_active")
+  nextRunAt  DateTime? @map("next_run_at") @db.Timestamptz
+  lastRunAt  DateTime? @map("last_run_at") @db.Timestamptz
+  runCount   Int       @default(0) @map("run_count")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, reportId])
+  @@map("xpd_export_schedules")
+}
+
+model XpdExportPermission {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  reportId   String   @map("report_id") @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  roleId     String?  @map("role_id") @db.Uuid
+  canExport  Boolean  @default(true) @map("can_export")
+  canDeliver Boolean  @default(false) @map("can_deliver")
+  formats    Json     @default("[\"pdf\",\"excel\",\"csv\"]") @db.JsonB
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, reportId])
+  @@map("xpd_export_permissions")
 }
