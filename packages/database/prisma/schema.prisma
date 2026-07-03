@@ -657,6 +657,13 @@ model CoreTenant {
   sdkSnippets               SdkSnippet[]
   sdkChangelogs             SdkChangelog[]
   sdkDownloads              SdkDownload[]
+  // Phase 88
+  extExtensions             ExtExtension[]
+  extVersionsRel            ExtVersion[]
+  extInstalls               ExtInstall[]
+  extThemes                 ExtTheme[]
+  extWidgets                ExtWidget[]
+  extRatings                ExtRating[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18396,6 +18403,115 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 88 — EXTENSION STORE
+// =============================================================================
+
+model ExtExtension {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  slug        String   @db.VarChar(100)
+  extType     String   @default("widget") @map("ext_type") @db.VarChar(30)
+  description String?  @db.Text
+  author      String?  @db.VarChar(100)
+  status      String   @default("draft") @db.VarChar(30)
+  latestVersion String @default("0.1.0") @map("latest_version") @db.VarChar(30)
+  installCount Int     @default(0) @map("install_count")
+  avgRating   Float    @default(0) @map("avg_rating")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  versions    ExtVersion[]
+  installs    ExtInstall[]
+  ratings     ExtRating[]
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("ext_extensions")
+}
+
+model ExtVersion {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  extensionId String   @map("extension_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  changelog   String?  @db.Text
+  bundle      Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extension   ExtExtension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+  @@unique([extensionId, version])
+  @@index([tenantId, extensionId])
+  @@map("ext_versions")
+}
+
+model ExtInstall {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  extensionId String   @map("extension_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  placement   String   @default("dashboard") @db.VarChar(50)
+  isEnabled   Boolean  @default(true) @map("is_enabled")
+  settings    Json?
+  installedBy String?  @map("installed_by") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extension   ExtExtension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, extensionId, placement])
+  @@index([tenantId])
+  @@map("ext_installs")
+}
+
+model ExtTheme {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  colors      Json
+  typography  Json?
+  isDark      Boolean  @default(false) @map("is_dark")
+  isActive    Boolean  @default(false) @map("is_active")
+  author      String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("ext_themes")
+}
+
+model ExtWidget {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  widgetType  String   @default("chart") @map("widget_type") @db.VarChar(30)
+  dataSource  String?  @map("data_source") @db.VarChar(255)
+  config      Json?
+  placement   String   @default("dashboard") @db.VarChar(50)
+  position    Int      @default(0)
+  isVisible   Boolean  @default(true) @map("is_visible")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, placement])
+  @@map("ext_widgets")
+}
+
+model ExtRating {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  extensionId String   @map("extension_id") @db.Uuid
+  rating      Int      @default(5)
+  comment     String?  @db.Text
+  rater       String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extension   ExtExtension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, extensionId])
+  @@map("ext_ratings")
 }
 
 // =============================================================================
