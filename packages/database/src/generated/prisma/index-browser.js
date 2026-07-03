@@ -12059,6 +12059,98 @@ exports.Prisma.NtcDigestScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.WfaWorkflowScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  createdBy: 'createdBy',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  triggerType: 'triggerType',
+  triggerConfig: 'triggerConfig',
+  canvas: 'canvas',
+  variables: 'variables',
+  isActive: 'isActive',
+  version: 'version',
+  runCount: 'runCount',
+  lastRunAt: 'lastRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WfaStepScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  name: 'name',
+  stepType: 'stepType',
+  config: 'config',
+  position: 'position',
+  order: 'order',
+  nextSteps: 'nextSteps',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WfaExecutionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  triggeredBy: 'triggeredBy',
+  triggerData: 'triggerData',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  stepsTotal: 'stepsTotal',
+  stepsDone: 'stepsDone',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs'
+};
+
+exports.Prisma.WfaStepLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  executionId: 'executionId',
+  stepId: 'stepId',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  durationMs: 'durationMs',
+  executedAt: 'executedAt'
+};
+
+exports.Prisma.WfaWebhookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  name: 'name',
+  token: 'token',
+  method: 'method',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  hitCount: 'hitCount',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WfaScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  workflowId: 'workflowId',
+  name: 'name',
+  cronExpr: 'cronExpr',
+  timezone: 'timezone',
+  isActive: 'isActive',
+  nextRunAt: 'nextRunAt',
+  lastRunAt: 'lastRunAt',
+  runCount: 'runCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12837,7 +12929,13 @@ exports.Prisma.ModelName = {
   NtcPreference: 'NtcPreference',
   NtcBroadcast: 'NtcBroadcast',
   NtcChannel: 'NtcChannel',
-  NtcDigest: 'NtcDigest'
+  NtcDigest: 'NtcDigest',
+  WfaWorkflow: 'WfaWorkflow',
+  WfaStep: 'WfaStep',
+  WfaExecution: 'WfaExecution',
+  WfaStepLog: 'WfaStepLog',
+  WfaWebhook: 'WfaWebhook',
+  WfaSchedule: 'WfaSchedule'
 };
 
 /**

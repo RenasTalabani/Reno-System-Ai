@@ -544,6 +544,13 @@ model CoreTenant {
   ntcBroadcasts             NtcBroadcast[]
   ntcChannels               NtcChannel[]
   ntcDigests                NtcDigest[]
+  // Phase 72
+  wfaWorkflows              WfaWorkflow[]
+  wfaSteps                  WfaStep[]
+  wfaExecutions             WfaExecution[]
+  wfaStepLogs               WfaStepLog[]
+  wfaWebhooks               WfaWebhook[]
+  wfaSchedules              WfaSchedule[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -17880,4 +17887,143 @@ model NtcDigest {
   @@index([tenantId, userId])
   @@index([tenantId, status])
   @@map("ntc_digests")
+}
+
+// ─── Phase 72: Workflow Automation Designer ───────────────────────────────────
+
+model WfaWorkflow {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  createdBy     String    @map("created_by") @db.Uuid
+  name          String    @db.VarChar(255)
+  description   String?
+  category      String    @default("general") @db.VarChar(100)
+  triggerType   String    @map("trigger_type") @db.VarChar(100)
+  triggerConfig Json      @default("{}") @map("trigger_config") @db.JsonB
+  canvas        Json      @default("{}") @db.JsonB
+  variables     Json      @default("[]") @db.JsonB
+  isActive      Boolean   @default(true) @map("is_active")
+  version       Int       @default(1)
+  runCount      Int       @default(0) @map("run_count")
+  lastRunAt     DateTime? @map("last_run_at") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant     CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  steps      WfaStep[]
+  executions WfaExecution[]
+
+  @@index([tenantId])
+  @@index([tenantId, triggerType])
+  @@map("wfa_workflows")
+}
+
+model WfaStep {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  workflowId String   @map("workflow_id") @db.Uuid
+  name       String   @db.VarChar(255)
+  stepType   String   @map("step_type") @db.VarChar(100)
+  config     Json     @default("{}") @db.JsonB
+  position   Json     @default("{\"x\":0,\"y\":0}") @db.JsonB
+  order      Int      @default(0)
+  nextSteps  Json     @default("[]") @map("next_steps") @db.JsonB
+  isEnabled  Boolean  @default(true) @map("is_enabled")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflow WfaWorkflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  logs     WfaStepLog[]
+
+  @@index([tenantId])
+  @@index([workflowId])
+  @@map("wfa_steps")
+}
+
+model WfaExecution {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  workflowId  String    @map("workflow_id") @db.Uuid
+  triggeredBy String?   @map("triggered_by") @db.Uuid
+  triggerData Json      @default("{}") @map("trigger_data") @db.JsonB
+  status      String    @default("running") @db.VarChar(20)
+  input       Json      @default("{}") @db.JsonB
+  output      Json      @default("{}") @db.JsonB
+  error       String?
+  stepsTotal  Int       @default(0) @map("steps_total")
+  stepsDone   Int       @default(0) @map("steps_done")
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  durationMs  Int?      @map("duration_ms")
+
+  tenant   CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflow WfaWorkflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  stepLogs WfaStepLog[]
+
+  @@index([tenantId])
+  @@index([tenantId, workflowId])
+  @@index([tenantId, status])
+  @@map("wfa_executions")
+}
+
+model WfaStepLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  executionId String   @map("execution_id") @db.Uuid
+  stepId      String   @map("step_id") @db.Uuid
+  status      String   @db.VarChar(20)
+  input       Json     @default("{}") @db.JsonB
+  output      Json     @default("{}") @db.JsonB
+  error       String?
+  durationMs  Int?     @map("duration_ms")
+  executedAt  DateTime @default(now()) @map("executed_at") @db.Timestamptz
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  execution WfaExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  step      WfaStep      @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([executionId])
+  @@map("wfa_step_logs")
+}
+
+model WfaWebhook {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  workflowId String    @map("workflow_id") @db.Uuid
+  name       String    @db.VarChar(255)
+  token      String    @unique @db.VarChar(128)
+  method     String    @default("POST") @db.VarChar(10)
+  isActive   Boolean   @default(true) @map("is_active")
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz
+  hitCount   Int       @default(0) @map("hit_count")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([token])
+  @@map("wfa_webhooks")
+}
+
+model WfaSchedule {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  workflowId String    @map("workflow_id") @db.Uuid
+  name       String    @db.VarChar(255)
+  cronExpr   String    @map("cron_expr") @db.VarChar(100)
+  timezone   String    @default("UTC") @db.VarChar(50)
+  isActive   Boolean   @default(true) @map("is_active")
+  nextRunAt  DateTime? @map("next_run_at") @db.Timestamptz
+  lastRunAt  DateTime? @map("last_run_at") @db.Timestamptz
+  runCount   Int       @default(0) @map("run_count")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, workflowId])
+  @@map("wfa_schedules")
 }
