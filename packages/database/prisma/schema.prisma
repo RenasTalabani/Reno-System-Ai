@@ -601,6 +601,13 @@ model CoreTenant {
   qcMessages                QcMessage[]
   qcConsumers               QcConsumer[]
   qcAlerts                  QcAlert[]
+  // Phase 80
+  cdnZones                  CdnZone[]
+  cdnOrigins                CdnOrigin[]
+  cdnCacheRules             CdnCacheRule[]
+  cdnEdgeLocations          CdnEdgeLocation[]
+  cdnPurgeRequests          CdnPurgeRequest[]
+  cdnAnalytics              CdnAnalytic[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18340,6 +18347,120 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 80 — CDN & EDGE CONFIGURATION
+// =============================================================================
+
+model CdnZone {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  domain      String   @db.VarChar(255)
+  status      String   @default("active") @db.VarChar(30)
+  sslMode     String   @default("full") @map("ssl_mode") @db.VarChar(30)
+  cacheLevel  String   @default("standard") @map("cache_level") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  origins     CdnOrigin[]
+  cacheRules  CdnCacheRule[]
+  purgeRequests CdnPurgeRequest[]
+  analytics   CdnAnalytic[]
+  @@unique([tenantId, domain])
+  @@index([tenantId])
+  @@map("cdn_zones")
+}
+
+model CdnOrigin {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  zoneId      String   @map("zone_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  originUrl   String   @map("origin_url") @db.VarChar(500)
+  weight      Int      @default(100)
+  isBackup    Boolean  @default(false) @map("is_backup")
+  status      String   @default("healthy") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  @@index([tenantId, zoneId])
+  @@map("cdn_origins")
+}
+
+model CdnCacheRule {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  zoneId      String   @map("zone_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  pathPattern String   @map("path_pattern") @db.VarChar(255)
+  ttlSeconds  Int      @default(3600) @map("ttl_seconds")
+  cacheable   Boolean  @default(true)
+  priority    Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  @@index([tenantId, zoneId])
+  @@map("cdn_cache_rules")
+}
+
+model CdnEdgeLocation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  code        String   @db.VarChar(30)
+  city        String   @db.VarChar(100)
+  country     String   @db.VarChar(100)
+  status      String   @default("online") @db.VarChar(30)
+  capacityGbps Float   @default(100) @map("capacity_gbps")
+  hitRate     Float    @default(0) @map("hit_rate")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("cdn_edge_locations")
+}
+
+model CdnPurgeRequest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  zoneId      String   @map("zone_id") @db.Uuid
+  purgeType   String   @default("url") @map("purge_type") @db.VarChar(30)
+  paths       Json
+  status      String   @default("completed") @db.VarChar(30)
+  requestedBy String?  @map("requested_by") @db.VarChar(100)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  @@index([tenantId, zoneId])
+  @@map("cdn_purge_requests")
+}
+
+model CdnAnalytic {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  zoneId      String   @map("zone_id") @db.Uuid
+  requests    Int      @default(0)
+  bandwidth   Float    @default(0)
+  cacheHits   Int      @default(0) @map("cache_hits")
+  cacheMisses Int      @default(0) @map("cache_misses")
+  errors4xx   Int      @default(0) @map("errors_4xx")
+  errors5xx   Int      @default(0) @map("errors_5xx")
+  recordedAt  DateTime @default(now()) @map("recorded_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  @@index([tenantId, zoneId])
+  @@map("cdn_analytics")
 }
 
 // =============================================================================

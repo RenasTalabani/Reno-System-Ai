@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
   Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
-  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio, Server, TrendingUp, Layers,
+  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio, Server, TrendingUp, Layers, Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -91,6 +91,7 @@ const navigation: NavSection[] = [
       { label: 'Multi-Region', href: '/multi-region', icon: Globe },
       { label: 'Auto Scaling', href: '/auto-scaling', icon: TrendingUp },
       { label: 'Queue Cluster', href: '/queue-cluster', icon: Layers },
+      { label: 'CDN & Edge', href: '/cdn-edge', icon: Zap },
     ],
   },
   {
