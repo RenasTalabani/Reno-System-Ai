@@ -622,6 +622,13 @@ model CoreTenant {
   socPlaybooks              SocPlaybook[]
   socPlaybookRuns           SocPlaybookRun[]
   socShifts                 SocShift[]
+  // Phase 83
+  siemLogSources            SiemLogSource[]
+  siemEvents                SiemEvent[]
+  siemCorrelationRules      SiemCorrelationRule[]
+  siemDetections            SiemDetection[]
+  siemSavedQueries          SiemSavedQuery[]
+  siemRetentionPolicies     SiemRetentionPolicy[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18361,6 +18368,116 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 83 — SIEM & LOG INTELLIGENCE
+// =============================================================================
+
+model SiemLogSource {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  sourceType  String   @default("application") @map("source_type") @db.VarChar(30)
+  format      String   @default("json") @db.VarChar(30)
+  status      String   @default("active") @db.VarChar(30)
+  eventsPerDay Int     @default(0) @map("events_per_day")
+  lastEventAt DateTime? @map("last_event_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  events      SiemEvent[]
+  @@index([tenantId])
+  @@map("siem_log_sources")
+}
+
+model SiemEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  sourceId    String   @map("source_id") @db.Uuid
+  eventType   String   @map("event_type") @db.VarChar(50)
+  severity    String   @default("info") @db.VarChar(20)
+  message     String   @db.Text
+  actor       String?  @db.VarChar(100)
+  targetRes   String?  @map("target_res") @db.VarChar(255)
+  sourceIp    String?  @map("source_ip") @db.VarChar(50)
+  raw         Json?
+  occurredAt  DateTime @default(now()) @map("occurred_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  source      SiemLogSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  @@index([tenantId, sourceId, eventType])
+  @@index([tenantId, occurredAt])
+  @@map("siem_events")
+}
+
+model SiemCorrelationRule {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  eventType   String   @map("event_type") @db.VarChar(50)
+  threshold   Int      @default(5)
+  windowMinutes Int    @default(10) @map("window_minutes")
+  severity    String   @default("high") @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  detections  SiemDetection[]
+  @@index([tenantId])
+  @@map("siem_correlation_rules")
+}
+
+model SiemDetection {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  ruleId      String   @map("rule_id") @db.Uuid
+  matchCount  Int      @default(0) @map("match_count")
+  severity    String   @default("high") @db.VarChar(20)
+  status      String   @default("new") @db.VarChar(30)
+  summary     String   @db.Text
+  evidence    Json?
+  detectedAt  DateTime @default(now()) @map("detected_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rule        SiemCorrelationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  @@index([tenantId, ruleId])
+  @@map("siem_detections")
+}
+
+model SiemSavedQuery {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  query       Json
+  createdBy   String?  @map("created_by") @db.VarChar(100)
+  runCount    Int      @default(0) @map("run_count")
+  lastRunAt   DateTime? @map("last_run_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("siem_saved_queries")
+}
+
+model SiemRetentionPolicy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  sourceType  String   @default("all") @map("source_type") @db.VarChar(30)
+  retentionDays Int    @default(90) @map("retention_days")
+  archiveEnabled Boolean @default(false) @map("archive_enabled")
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("siem_retention_policies")
 }
 
 // =============================================================================

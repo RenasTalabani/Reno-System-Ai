@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
   Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
-  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio, Server, TrendingUp, Layers, Zap, Siren,
+  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio, Server, TrendingUp, Layers, Zap, Siren, ScanSearch,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -94,6 +94,7 @@ const navigation: NavSection[] = [
       { label: 'CDN & Edge', href: '/cdn-edge', icon: Zap },
       { label: 'Zero Trust', href: '/zero-trust', icon: Shield },
       { label: 'SOC', href: '/soc', icon: Siren },
+      { label: 'SIEM', href: '/siem', icon: ScanSearch },
     ],
   },
   {
