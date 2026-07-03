@@ -580,6 +580,13 @@ model CoreTenant {
   k8sPods                   K8sPod[]
   k8sServices               K8sService[]
   k8sEvents                 K8sEvent[]
+  // Phase 77
+  mrRegions                 MrRegion[]
+  mrEndpoints               MrEndpoint[]
+  mrRoutingPolicies         MrRoutingPolicy[]
+  mrHealthChecks            MrHealthCheck[]
+  mrFailoverEvents          MrFailoverEvent[]
+  mrReplicationConfigs      MrReplicationConfig[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18207,6 +18214,118 @@ model K8sService {
 
   @@index([tenantId, clusterId])
   @@map("k8s_services")
+}
+
+// =============================================================================
+// PHASE 77 — MULTI-REGION CONFIGURATION
+// =============================================================================
+
+model MrRegion {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  code         String   @db.VarChar(30)
+  provider     String   @default("aws") @db.VarChar(50)
+  status       String   @default("active") @db.VarChar(30)
+  isPrimary    Boolean  @default(false) @map("is_primary")
+  latencyMs    Int?     @map("latency_ms")
+  capacity     Int      @default(100)
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  endpoints    MrEndpoint[]
+  healthChecks MrHealthCheck[]
+  failoverEvents MrFailoverEvent[]
+  replicationConfigs MrReplicationConfig[]
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("mr_regions")
+}
+
+model MrEndpoint {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  regionId   String   @map("region_id") @db.Uuid
+  name       String   @db.VarChar(100)
+  url        String   @db.VarChar(500)
+  endpointType String @default("api") @map("endpoint_type") @db.VarChar(30)
+  status     String   @default("healthy") @db.VarChar(30)
+  weight     Int      @default(100)
+  latencyMs  Int?     @map("latency_ms")
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region     MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, regionId])
+  @@map("mr_endpoints")
+}
+
+model MrRoutingPolicy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  policyType  String   @default("latency") @map("policy_type") @db.VarChar(30)
+  isActive    Boolean  @default(true) @map("is_active")
+  rules       Json?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("mr_routing_policies")
+}
+
+model MrHealthCheck {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  regionId    String   @map("region_id") @db.Uuid
+  status      String   @default("healthy") @db.VarChar(30)
+  latencyMs   Int?     @map("latency_ms")
+  checkedAt   DateTime @default(now()) @map("checked_at")
+  details     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region      MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, regionId])
+  @@map("mr_health_checks")
+}
+
+model MrFailoverEvent {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  regionId      String   @map("region_id") @db.Uuid
+  fromRegion    String?  @map("from_region") @db.VarChar(50)
+  toRegion      String?  @map("to_region") @db.VarChar(50)
+  reason        String?  @db.VarChar(255)
+  status        String   @default("completed") @db.VarChar(30)
+  triggeredBy   String?  @map("triggered_by") @db.VarChar(50)
+  durationMs    Int?     @map("duration_ms")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region        MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("mr_failover_events")
+}
+
+model MrReplicationConfig {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  regionId     String   @map("region_id") @db.Uuid
+  sourceRegion String   @map("source_region") @db.VarChar(50)
+  targetRegion String   @map("target_region") @db.VarChar(50)
+  replicationType String @default("async") @map("replication_type") @db.VarChar(30)
+  lagMs        Int?     @map("lag_ms")
+  isActive     Boolean  @default(true) @map("is_active")
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, regionId])
+  @@map("mr_replication_configs")
 }
 
 model K8sEvent {

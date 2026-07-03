@@ -88,6 +88,7 @@ const navigation: NavSection[] = [
       { label: 'Webhooks', href: '/webhooks', icon: Webhook },
       { label: 'Event Bus', href: '/event-bus', icon: Radio },
       { label: 'Kubernetes', href: '/kubernetes', icon: Server },
+      { label: 'Multi-Region', href: '/multi-region', icon: Globe },
     ],
   },
   {
