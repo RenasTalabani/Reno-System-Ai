@@ -551,6 +551,13 @@ model CoreTenant {
   wfaStepLogs               WfaStepLog[]
   wfaWebhooks               WfaWebhook[]
   wfaSchedules              WfaSchedule[]
+  // Phase 73
+  agwApis                   AgwApi[]
+  agwRoutes                 AgwRoute[]
+  agwConsumers              AgwConsumer[]
+  agwKeys                   AgwKey[]
+  agwLogs                   AgwLog[]
+  agwPolicies               AgwPolicy[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18026,4 +18033,143 @@ model WfaSchedule {
   @@index([tenantId])
   @@index([tenantId, workflowId])
   @@map("wfa_schedules")
+}
+
+// ─── Phase 73: API Gateway & Management ──────────────────────────────────────
+
+model AgwApi {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  createdBy   String   @map("created_by") @db.Uuid
+  name        String   @db.VarChar(255)
+  description String?
+  basePath    String   @map("base_path") @db.VarChar(255)
+  version     String   @default("v1") @db.VarChar(20)
+  upstreamUrl String   @map("upstream_url") @db.VarChar(500)
+  authType    String   @default("api_key") @map("auth_type") @db.VarChar(50)
+  rateLimit   Int      @default(1000) @map("rate_limit")
+  ratePeriod  String   @default("hour") @map("rate_period") @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+  tags        Json     @default("[]") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  routes    AgwRoute[]
+  consumers AgwConsumer[]
+  policies  AgwPolicy[]
+
+  @@index([tenantId])
+  @@map("agw_apis")
+}
+
+model AgwRoute {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  apiId        String   @map("api_id") @db.Uuid
+  method       String   @db.VarChar(10)
+  path         String   @db.VarChar(500)
+  upstream     String   @db.VarChar(500)
+  stripPath    Boolean  @default(false) @map("strip_path")
+  cacheEnabled Boolean  @default(false) @map("cache_enabled")
+  cacheTtl     Int      @default(300) @map("cache_ttl")
+  timeout      Int      @default(30000)
+  isActive     Boolean  @default(true) @map("is_active")
+  hitCount     Int      @default(0) @map("hit_count")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  api    AgwApi     @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([apiId])
+  @@map("agw_routes")
+}
+
+model AgwConsumer {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  apiId       String    @map("api_id") @db.Uuid
+  name        String    @db.VarChar(255)
+  description String?
+  quota       Int       @default(10000)
+  quotaPeriod String    @default("month") @map("quota_period") @db.VarChar(20)
+  usageCount  Int       @default(0) @map("usage_count")
+  isActive    Boolean   @default(true) @map("is_active")
+  lastUsedAt  DateTime? @map("last_used_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  api    AgwApi     @relation(fields: [apiId], references: [id], onDelete: Cascade)
+  keys   AgwKey[]
+
+  @@index([tenantId])
+  @@index([apiId])
+  @@map("agw_consumers")
+}
+
+model AgwKey {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  consumerId String    @map("consumer_id") @db.Uuid
+  keyHash    String    @unique @map("key_hash") @db.VarChar(128)
+  keyPrefix  String    @map("key_prefix") @db.VarChar(12)
+  name       String    @db.VarChar(255)
+  scopes     Json      @default("[]") @db.JsonB
+  expiresAt  DateTime? @map("expires_at") @db.Timestamptz
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz
+  hitCount   Int       @default(0) @map("hit_count")
+  isActive   Boolean   @default(true) @map("is_active")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  consumer AgwConsumer @relation(fields: [consumerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([keyHash])
+  @@map("agw_keys")
+}
+
+model AgwLog {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  apiId        String   @map("api_id") @db.Uuid
+  consumerId   String?  @map("consumer_id") @db.Uuid
+  method       String   @db.VarChar(10)
+  path         String   @db.VarChar(500)
+  statusCode   Int      @map("status_code")
+  durationMs   Int      @map("duration_ms")
+  requestSize  Int      @default(0) @map("request_size")
+  responseSize Int      @default(0) @map("response_size")
+  ip           String?  @db.VarChar(45)
+  userAgent    String?  @map("user_agent")
+  error        String?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, apiId])
+  @@map("agw_logs")
+}
+
+model AgwPolicy {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  apiId      String   @map("api_id") @db.Uuid
+  name       String   @db.VarChar(255)
+  policyType String   @map("policy_type") @db.VarChar(50)
+  config     Json     @default("{}") @db.JsonB
+  order      Int      @default(0)
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  api    AgwApi     @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([apiId])
+  @@map("agw_policies")
 }

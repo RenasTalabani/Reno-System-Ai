@@ -1,200 +1,282 @@
 'use client'
+import { useState, useEffect, useCallback } from 'react'
+import { Globe, Plus, Trash2, RefreshCw, Key, Activity } from 'lucide-react'
 
-import { useState, useEffect } from 'react'
-import { Key, Webhook, Plus, Copy, Trash2, Check, AlertCircle, BarChart3, Power } from 'lucide-react'
-import { useAuthStore } from '@/lib/auth-store'
+const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/v1'
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
+function useApi() {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
+  const hj = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+  const hd = { Authorization: 'Bearer ' + token }
+  const get = (url: string) => fetch(API + url, { headers: hd as any }).then(r => r.json())
+  const post = (url: string, body: unknown) => fetch(API + url, { method: 'POST', headers: hj as any, body: JSON.stringify(body) }).then(r => r.json())
+  const remove = (url: string) => fetch(API + url, { method: 'DELETE', headers: hd as any }).then(r => r.json())
+  return { get, post, remove }
+}
 
-interface ApiKey { id: string; name: string; keyPrefix: string; status: string; scopes: string[]; rateLimit: number; rateWindow: string; totalCalls: number; lastUsedAt: string | null; expiresAt: string | null; rawKey?: string }
-interface Webhook { id: string; name: string; url: string; events: string[]; status: string; lastFired: string | null; lastStatus: number | null }
-interface Dashboard { activeKeys: number; activeWebhooks: number; totalCalls: number }
-
-type Tab = 'keys' | 'webhooks' | 'usage'
+const TABS = ['APIs', 'Routes', 'Consumers', 'Logs', 'Stats']
 
 export default function ApiGatewayPage() {
-  const { token } = useAuthStore()
-  const [tab, setTab] = useState<Tab>('keys')
-  const [keys, setKeys] = useState<ApiKey[]>([])
-  const [webhooks, setWebhooks] = useState<Webhook[]>([])
-  const [dashboard, setDashboard] = useState<Dashboard | null>(null)
-  const [newKey, setNewKey] = useState<ApiKey | null>(null)
-  const [copied, setCopied] = useState(false)
+  const api = useApi()
+  const [tab, setTab] = useState('APIs')
+  const [apis, setApis] = useState<any[]>([])
+  const [selectedApi, setSelectedApi] = useState<any>(null)
+  const [routes, setRoutes] = useState<any[]>([])
+  const [consumers, setConsumers] = useState<any[]>([])
+  const [logs, setLogs] = useState<any[]>([])
+  const [stats, setStats] = useState<any>(null)
+  const [registry, setRegistry] = useState<any>(null)
+  const [msg, setMsg] = useState('')
   const [showCreate, setShowCreate] = useState(false)
-  const [form, setForm] = useState<Record<string, string>>({})
+  const [loading, setLoading] = useState(false)
+  const [newKey, setNewKey] = useState<string | null>(null)
+  const [apiForm, setApiForm] = useState({ name: '', basePath: '/api/v1', upstreamUrl: 'https://api.example.com', version: 'v1', authType: 'api_key', rateLimit: 1000 })
+  const [routeForm, setRouteForm] = useState({ method: 'GET', path: '/users' })
+  const [consumerForm, setConsumerForm] = useState({ name: '', quota: 10000 })
 
-  const h = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+  const notify = (m: string) => { setMsg(m); setTimeout(() => setMsg(''), 3500) }
 
-  const load = () => {
-    fetch(`${API}/v1/api-gateway/dashboard`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => setDashboard(d.data))
-    if (tab === 'keys') fetch(`${API}/v1/api-gateway/keys`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => setKeys(d.data ?? []))
-    if (tab === 'webhooks') fetch(`${API}/v1/api-gateway/webhooks`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => setWebhooks(d.data ?? []))
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      if (tab === 'APIs') { const data = await api.get('/api-gateway/apis'); setApis(data.apis ?? []) }
+      if (tab === 'Routes' && selectedApi) { const data = await api.get('/api-gateway/apis/' + selectedApi.id + '/routes'); setRoutes(data.routes ?? []) }
+      if (tab === 'Consumers' && selectedApi) { const data = await api.get('/api-gateway/apis/' + selectedApi.id + '/consumers'); setConsumers(data.consumers ?? []) }
+      if (tab === 'Logs') { const data = await api.get('/api-gateway/logs?limit=50'); setLogs(data.logs ?? []) }
+      if (tab === 'Stats') { const data = await api.get('/api-gateway/stats'); setStats(data) }
+    } finally { setLoading(false) }
+  }, [tab, selectedApi])
+
+  useEffect(() => { load() }, [load])
+  useEffect(() => { api.get('/api-gateway/registry').then((data: any) => setRegistry(data)) }, [])
+
+  async function createApi() {
+    const res = await api.post('/api-gateway/apis', apiForm)
+    if (res.id) { notify('API registered'); setShowCreate(false); setSelectedApi(res); load() }
+    else notify(res.message ?? 'Error')
   }
 
-  useEffect(() => { load() }, [tab, token])
-
-  const createKey = async () => {
-    const res = await fetch(`${API}/v1/api-gateway/keys`, { method: 'POST', headers: h, body: JSON.stringify({ ...form, rateLimit: parseInt(form.rateLimit ?? '1000') }) }).then(r => r.json())
-    if (res.data) { setNewKey(res.data); setKeys(k => [res.data, ...k]); setShowCreate(false); setForm({}) }
+  async function addRoute() {
+    if (!selectedApi) return
+    const res = await api.post('/api-gateway/apis/' + selectedApi.id + '/routes', routeForm)
+    if (res.id) { notify('Route added'); load() } else notify(res.message ?? 'Error')
   }
 
-  const revokeKey = async (id: string) => {
-    await fetch(`${API}/v1/api-gateway/keys/${id}/revoke`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } })
-    setKeys(k => k.map(x => x.id === id ? { ...x, status: 'revoked' } : x))
+  async function createConsumer() {
+    if (!selectedApi) return
+    const res = await api.post('/api-gateway/apis/' + selectedApi.id + '/consumers', consumerForm)
+    if (res.id) { notify('Consumer created'); load() } else notify(res.message ?? 'Error')
   }
 
-  const createWebhook = async () => {
-    const res = await fetch(`${API}/v1/api-gateway/webhooks`, { method: 'POST', headers: h, body: JSON.stringify({ ...form, events: form.events ? form.events.split(',').map(e => e.trim()) : [] }) }).then(r => r.json())
-    if (res.data) { setWebhooks(w => [res.data, ...w]); setShowCreate(false); setForm({}) }
+  async function issueKey(consumerId: string) {
+    const res = await api.post('/api-gateway/consumers/' + consumerId + '/keys', { name: 'API Key', scopes: ['read', 'write'] })
+    if (res.rawKey) { setNewKey(res.rawKey); notify('Key generated') } else notify(res.message ?? 'Error')
   }
 
-  const deleteWebhook = async (id: string) => {
-    await fetch(`${API}/v1/api-gateway/webhooks/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
-    setWebhooks(w => w.filter(x => x.id !== id))
+  async function simulateRequest() {
+    if (!selectedApi) return
+    await api.post('/api-gateway/apis/' + selectedApi.id + '/simulate', { method: 'GET', path: '/test', statusCode: 200 })
+    notify('Request simulated')
   }
 
-  const testWebhook = async (id: string) => {
-    await fetch(`${API}/v1/api-gateway/webhooks/${id}/test`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+  async function deleteApi(apiId: string) {
+    if (!confirm('Delete?')) return
+    await api.remove('/api-gateway/apis/' + apiId)
+    notify('Deleted'); if (selectedApi?.id === apiId) setSelectedApi(null); load()
   }
 
-  const copyKey = (key: string) => {
-    navigator.clipboard.writeText(key).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
+  async function deleteRoute(routeId: string) {
+    await api.remove('/api-gateway/apis/' + (selectedApi?.id ?? '') + '/routes/' + routeId)
+    notify('Route deleted'); load()
+  }
+
+  async function deleteConsumer(consumerId: string) {
+    await api.remove('/api-gateway/consumers/' + consumerId)
+    notify('Consumer deleted'); load()
   }
 
   return (
-    <div className="flex flex-col h-full gap-4">
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Key className="w-5 h-5 text-indigo-500" /> API Gateway
-        </h1>
-        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-lg transition-colors">
-          <Plus className="w-4 h-4" /> {tab === 'keys' ? 'New API Key' : 'New Webhook'}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+            <Globe className="w-5 h-5 text-teal-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">API Gateway</h1>
+            <p className="text-sm text-gray-500">Register APIs, manage routes, consumers, and keys</p>
+          </div>
+        </div>
+        <button onClick={load} className="flex items-center gap-2 px-3 py-2 text-sm bg-white border rounded-lg hover:bg-gray-50">
+          <RefreshCw className="w-4 h-4" /> Refresh
         </button>
       </div>
 
-      {dashboard && (
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'Active API Keys', value: dashboard.activeKeys },
-            { label: 'Active Webhooks', value: dashboard.activeWebhooks },
-            { label: 'Total API Calls', value: dashboard.totalCalls.toLocaleString() },
-          ].map(s => (
-            <div key={s.label} className="bg-card border border-border rounded-xl p-4">
-              <p className="text-2xl font-bold text-foreground">{s.value}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-            </div>
-          ))}
+      {msg && <div className="bg-teal-50 border border-teal-200 text-teal-800 rounded-lg px-4 py-3 text-sm">{msg}</div>}
+
+      {newKey && (
+        <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-yellow-800">New API Key — copy now, it won't be shown again:</p>
+          <code className="text-xs bg-yellow-100 px-3 py-2 rounded-lg block break-all">{newKey}</code>
+          <button onClick={() => setNewKey(null)} className="text-xs text-yellow-600">Dismiss</button>
         </div>
       )}
 
-      {newKey?.rawKey && (
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
-          <p className="text-sm font-medium text-amber-400 mb-2">Save this key — it will only be shown once</p>
-          <div className="flex items-center gap-2 bg-background rounded-lg px-3 py-2 font-mono text-xs text-foreground">
-            <span className="flex-1 truncate">{newKey.rawKey}</span>
-            <button onClick={() => copyKey(newKey.rawKey!)} className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
-              {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+        {TABS.map(t => (
+          <button key={t} onClick={() => setTab(t)}
+            className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg ${tab === t ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-600'}`}>{t}</button>
+        ))}
+      </div>
+
+      {selectedApi && (
+        <div className="bg-teal-50 border border-teal-200 rounded-xl px-4 py-2 flex items-center justify-between">
+          <span className="text-sm text-teal-800">Selected: <strong>{selectedApi.name}</strong></span>
+          <button onClick={simulateRequest} className="text-xs bg-teal-600 text-white px-3 py-1 rounded-lg">Simulate Request</button>
+        </div>
+      )}
+
+      {tab === 'APIs' && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold">APIs ({apis.length})</h2>
+            <button onClick={() => setShowCreate(!showCreate)} className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm">
+              <Plus className="w-4 h-4" /> Register API
             </button>
           </div>
-          <button onClick={() => setNewKey(null)} className="text-xs text-muted-foreground hover:text-foreground mt-2">Dismiss</button>
+          {showCreate && (
+            <div className="bg-white border rounded-xl p-5 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <input placeholder="Name" value={apiForm.name} onChange={e => setApiForm(f => ({...f, name: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm col-span-2" />
+                <input placeholder="Base path" value={apiForm.basePath} onChange={e => setApiForm(f => ({...f, basePath: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm" />
+                <input placeholder="Upstream URL" value={apiForm.upstreamUrl} onChange={e => setApiForm(f => ({...f, upstreamUrl: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm" />
+                <select value={apiForm.authType} onChange={e => setApiForm(f => ({...f, authType: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm">
+                  {(registry?.authTypes ?? ['api_key', 'jwt', 'none']).map((t: string) => <option key={t}>{t}</option>)}
+                </select>
+                <input type="number" value={apiForm.rateLimit} onChange={e => setApiForm(f => ({...f, rateLimit: +e.target.value}))} className="border rounded-lg px-3 py-2 text-sm" />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={createApi} disabled={!apiForm.name} className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm disabled:opacity-50">Register</button>
+                <button onClick={() => setShowCreate(false)} className="px-4 py-2 bg-gray-100 rounded-lg text-sm">Cancel</button>
+              </div>
+            </div>
+          )}
+          <div className="grid gap-3">
+            {apis.map((a: any) => (
+              <div key={a.id} onClick={() => setSelectedApi(a)}
+                className={`bg-white border rounded-xl p-4 cursor-pointer ${selectedApi?.id === a.id ? 'border-teal-400 bg-teal-50' : 'hover:border-teal-200'}`}>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">{a.name}</span>
+                      <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">{a.version}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${a.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100'}`}>{a.isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                    <p className="text-xs text-gray-500 font-mono">{a.basePath} -&gt; {a.upstreamUrl}</p>
+                    <p className="text-xs text-gray-400">{a._count?.routes ?? 0} routes / {a._count?.consumers ?? 0} consumers / {a.rateLimit}/{a.ratePeriod}</p>
+                  </div>
+                  <button onClick={ev => { ev.stopPropagation(); deleteApi(a.id) }} className="text-red-400 p-1"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+            ))}
+            {apis.length === 0 && !loading && <div className="text-center py-12 text-gray-400">No APIs registered</div>}
+          </div>
         </div>
       )}
 
-      <div className="flex gap-1 border-b border-border">
-        {(['keys', 'webhooks'] as Tab[]).map(t => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 text-sm capitalize transition-colors border-b-2 -mb-px ${tab === t ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
-            {t === 'keys' ? 'API Keys' : 'Webhooks'}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
-        {tab === 'keys' && keys.map(k => (
-          <div key={k.id} className={`bg-card border rounded-xl p-4 flex items-center gap-4 ${k.status === 'revoked' ? 'opacity-50' : 'border-border'}`}>
-            <Key className="w-4 h-4 text-muted-foreground shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <p className="font-medium text-foreground text-sm">{k.name}</p>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${k.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{k.status}</span>
+      {tab === 'Routes' && (
+        <div className="space-y-4">
+          {!selectedApi ? <div className="text-center py-12 text-gray-400">Select an API first</div> : (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Routes — {selectedApi.name}</h2>
+              <div className="bg-white border rounded-xl p-4 flex gap-3">
+                <select value={routeForm.method} onChange={e => setRouteForm(f => ({...f, method: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm w-28">
+                  {['GET', 'POST', 'PUT', 'PATCH', 'DELETE', '*'].map(m => <option key={m}>{m}</option>)}
+                </select>
+                <input placeholder="Path" value={routeForm.path} onChange={e => setRouteForm(f => ({...f, path: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm flex-1" />
+                <button onClick={addRoute} className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm">Add Route</button>
               </div>
-              <p className="text-xs text-muted-foreground font-mono">{k.keyPrefix}... · {Number(k.totalCalls).toLocaleString()} calls · {k.rateLimit}/{k.rateWindow}</p>
+              <div className="grid gap-2">
+                {routes.map((r: any) => (
+                  <div key={r.id} className="bg-white border rounded-xl p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-bold px-2 py-1 rounded ${r.method === 'GET' ? 'bg-green-100 text-green-700' : r.method === 'POST' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>{r.method}</span>
+                      <code className="text-sm">{r.path}</code>
+                    </div>
+                    <button onClick={() => deleteRoute(r.id)} className="text-red-400 p-1"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+                {routes.length === 0 && <div className="text-center py-8 text-gray-400">No routes</div>}
+              </div>
             </div>
-            {k.status === 'active' && (
-              <button onClick={() => revokeKey(k.id)} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1.5 rounded-lg transition-colors">Revoke</button>
-            )}
+          )}
+        </div>
+      )}
+
+      {tab === 'Consumers' && (
+        <div className="space-y-4">
+          {!selectedApi ? <div className="text-center py-12 text-gray-400">Select an API first</div> : (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Consumers — {selectedApi.name}</h2>
+              <div className="bg-white border rounded-xl p-4 flex gap-3">
+                <input placeholder="Name" value={consumerForm.name} onChange={e => setConsumerForm(f => ({...f, name: e.target.value}))} className="border rounded-lg px-3 py-2 text-sm flex-1" />
+                <input type="number" value={consumerForm.quota} onChange={e => setConsumerForm(f => ({...f, quota: +e.target.value}))} className="border rounded-lg px-3 py-2 text-sm w-28" />
+                <button onClick={createConsumer} disabled={!consumerForm.name} className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm disabled:opacity-50">Add</button>
+              </div>
+              <div className="grid gap-3">
+                {consumers.map((c: any) => (
+                  <div key={c.id} className="bg-white border rounded-xl p-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold">{c.name}</p>
+                      <p className="text-xs text-gray-500">{c.usageCount}/{c.quota} {c.quotaPeriod}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => issueKey(c.id)} className="flex items-center gap-1 px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-lg"><Key className="w-3 h-3" /> Issue Key</button>
+                      <button onClick={() => deleteConsumer(c.id)} className="text-red-400 p-1"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  </div>
+                ))}
+                {consumers.length === 0 && <div className="text-center py-8 text-gray-400">No consumers</div>}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'Logs' && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold flex items-center gap-2"><Activity className="w-5 h-5" /> Request Logs</h2>
+          <div className="overflow-x-auto bg-white border rounded-xl">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b">
+                <tr>{['Method', 'Path', 'Status', 'Duration', 'Time'].map(h => <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600">{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {logs.map((l: any) => (
+                  <tr key={l.id} className="border-b hover:bg-gray-50">
+                    <td className="px-3 py-2 text-xs font-bold text-green-600">{l.method}</td>
+                    <td className="px-3 py-2 font-mono text-xs">{l.path}</td>
+                    <td className="px-3 py-2"><span className={`text-xs px-2 py-0.5 rounded-full ${l.statusCode < 400 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{l.statusCode}</span></td>
+                    <td className="px-3 py-2 text-xs">{l.durationMs}ms</td>
+                    <td className="px-3 py-2 text-xs text-gray-400">{new Date(l.createdAt).toLocaleTimeString()}</td>
+                  </tr>
+                ))}
+                {logs.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-gray-400">No logs</td></tr>}
+              </tbody>
+            </table>
           </div>
-        ))}
+        </div>
+      )}
 
-        {tab === 'webhooks' && webhooks.map(w => (
-          <div key={w.id} className="bg-card border border-border rounded-xl p-4 flex items-center gap-4">
-            <Webhook className="w-4 h-4 text-muted-foreground shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <p className="font-medium text-foreground text-sm">{w.name}</p>
-                {w.lastStatus && <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${w.lastStatus < 300 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{w.lastStatus}</span>}
+      {tab === 'Stats' && stats && (
+        <div className="space-y-6">
+          <h2 className="text-lg font-semibold">Gateway Statistics</h2>
+          <div className="grid grid-cols-3 lg:grid-cols-6 gap-4">
+            {[['APIs', stats.apis], ['Routes', stats.routes], ['Consumers', stats.consumers], ['Keys', stats.keys], ['Requests', stats.logs], ['Policies', stats.policies]].map(([label, value]) => (
+              <div key={String(label)} className="bg-white border rounded-xl p-4 text-center">
+                <p className="text-xl font-bold">{value}</p><p className="text-xs text-gray-500 mt-1">{label}</p>
               </div>
-              <p className="text-xs text-muted-foreground truncate">{w.url}</p>
-              <p className="text-xs text-muted-foreground">{(w.events as string[]).join(', ') || 'No events'}</p>
-            </div>
-            <div className="flex gap-2 shrink-0">
-              <button onClick={() => testWebhook(w.id)} className="text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-3 py-1.5 rounded-lg transition-colors">Test</button>
-              <button onClick={() => deleteWebhook(w.id)} className="p-1.5 hover:bg-red-500/20 text-muted-foreground hover:text-red-400 rounded-lg transition-colors">
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
-
-        {((tab === 'keys' && !keys.length) || (tab === 'webhooks' && !webhooks.length)) && (
-          <p className="text-center py-12 text-muted-foreground text-sm">No {tab === 'keys' ? 'API keys' : 'webhooks'} yet</p>
-        )}
-      </div>
-
-      {showCreate && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{tab === 'keys' ? 'Create API Key' : 'Add Webhook'}</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm text-muted-foreground mb-1">Name</label>
-                <input value={form.name ?? ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-              </div>
-              {tab === 'keys' ? (
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm text-muted-foreground mb-1">Rate Limit</label>
-                    <input type="number" value={form.rateLimit ?? '1000'} onChange={e => setForm(f => ({ ...f, rateLimit: e.target.value }))}
-                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-muted-foreground mb-1">Window</label>
-                    <select value={form.rateWindow ?? '1h'} onChange={e => setForm(f => ({ ...f, rateWindow: e.target.value }))}
-                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground">
-                      {['1m','15m','1h','24h'].map(w => <option key={w} value={w}>{w}</option>)}
-                    </select>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div>
-                    <label className="block text-sm text-muted-foreground mb-1">URL</label>
-                    <input value={form.url ?? ''} onChange={e => setForm(f => ({ ...f, url: e.target.value }))} placeholder="https://..."
-                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-muted-foreground mb-1">Events (comma-separated)</label>
-                    <input value={form.events ?? ''} onChange={e => setForm(f => ({ ...f, events: e.target.value }))} placeholder="invoice.created, payment.received"
-                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => { setShowCreate(false); setForm({}) }} className="flex-1 border border-border text-foreground text-sm py-2 rounded-lg hover:bg-muted transition-colors">Cancel</button>
-              <button onClick={tab === 'keys' ? createKey : createWebhook} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-2 rounded-lg transition-colors">Create</button>
-            </div>
+            ))}
           </div>
         </div>
       )}

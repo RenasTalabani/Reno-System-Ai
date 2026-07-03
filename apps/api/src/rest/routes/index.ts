@@ -45,6 +45,7 @@ import { reportsModuleRoutes } from './reports/index.js'
 import { exportEngineModuleRoutes } from './export-engine/index.js'
 import { notificationCenterModuleRoutes } from './notification-center/index.js'
 import { workflowAutomationModuleRoutes } from './workflow-automation/index.js'
+import { apiGatewayModuleRoutes } from './api-gateway/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -242,6 +243,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(exportEngineModuleRoutes, { prefix: '' })
       await v1.register(notificationCenterModuleRoutes, { prefix: '' })
       await v1.register(workflowAutomationModuleRoutes, { prefix: '' })
+      await v1.register(apiGatewayModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })

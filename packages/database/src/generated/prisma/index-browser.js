@@ -12151,6 +12151,100 @@ exports.Prisma.WfaScheduleScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AgwApiScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  createdBy: 'createdBy',
+  name: 'name',
+  description: 'description',
+  basePath: 'basePath',
+  version: 'version',
+  upstreamUrl: 'upstreamUrl',
+  authType: 'authType',
+  rateLimit: 'rateLimit',
+  ratePeriod: 'ratePeriod',
+  isActive: 'isActive',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgwRouteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  apiId: 'apiId',
+  method: 'method',
+  path: 'path',
+  upstream: 'upstream',
+  stripPath: 'stripPath',
+  cacheEnabled: 'cacheEnabled',
+  cacheTtl: 'cacheTtl',
+  timeout: 'timeout',
+  isActive: 'isActive',
+  hitCount: 'hitCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgwConsumerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  apiId: 'apiId',
+  name: 'name',
+  description: 'description',
+  quota: 'quota',
+  quotaPeriod: 'quotaPeriod',
+  usageCount: 'usageCount',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AgwKeyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  consumerId: 'consumerId',
+  keyHash: 'keyHash',
+  keyPrefix: 'keyPrefix',
+  name: 'name',
+  scopes: 'scopes',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
+  hitCount: 'hitCount',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AgwLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  apiId: 'apiId',
+  consumerId: 'consumerId',
+  method: 'method',
+  path: 'path',
+  statusCode: 'statusCode',
+  durationMs: 'durationMs',
+  requestSize: 'requestSize',
+  responseSize: 'responseSize',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  error: 'error',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AgwPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  apiId: 'apiId',
+  name: 'name',
+  policyType: 'policyType',
+  config: 'config',
+  order: 'order',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12935,7 +13029,13 @@ exports.Prisma.ModelName = {
   WfaExecution: 'WfaExecution',
   WfaStepLog: 'WfaStepLog',
   WfaWebhook: 'WfaWebhook',
-  WfaSchedule: 'WfaSchedule'
+  WfaSchedule: 'WfaSchedule',
+  AgwApi: 'AgwApi',
+  AgwRoute: 'AgwRoute',
+  AgwConsumer: 'AgwConsumer',
+  AgwKey: 'AgwKey',
+  AgwLog: 'AgwLog',
+  AgwPolicy: 'AgwPolicy'
 };
 
 /**
