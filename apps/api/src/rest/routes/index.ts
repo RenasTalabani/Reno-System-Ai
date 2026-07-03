@@ -62,6 +62,7 @@ import { pluginsModuleRoutes } from './plugins/index.js'
 import { sdkModuleRoutes } from './sdk/index.js'
 import { extensionsModuleRoutes } from './extensions/index.js'
 import { publicApiModuleRoutes } from './public-api/index.js'
+import { devConsoleModuleRoutes } from './dev-console/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -276,6 +277,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(sdkModuleRoutes, { prefix: '' })
       await v1.register(extensionsModuleRoutes, { prefix: '' })
       await v1.register(publicApiModuleRoutes, { prefix: '' })
+      await v1.register(devConsoleModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })

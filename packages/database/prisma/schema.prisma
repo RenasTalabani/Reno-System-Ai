@@ -671,6 +671,13 @@ model CoreTenant {
   pubQuotas                 PubQuota[]
   pubDocPages               PubDocPage[]
   pubStatusIncidents        PubStatusIncident[]
+  // Phase 90
+  devApps                   DevApp[]
+  devSandboxes              DevSandbox[]
+  devLogEntries             DevLogEntry[]
+  devTestRuns               DevTestRun[]
+  devEnvVars                DevEnvVar[]
+  devActivities             DevActivity[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18410,6 +18417,111 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 90 — DEVELOPER CONSOLE
+// =============================================================================
+
+model DevApp {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  appType     String   @default("api-integration") @map("app_type") @db.VarChar(30)
+  description String?  @db.Text
+  status      String   @default("development") @db.VarChar(30)
+  ownerRef    String?  @map("owner_ref") @db.VarChar(100)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sandboxes   DevSandbox[]
+  logEntries  DevLogEntry[]
+  testRuns    DevTestRun[]
+  envVars     DevEnvVar[]
+  @@index([tenantId])
+  @@map("dev_apps")
+}
+
+model DevSandbox {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  appId       String   @map("app_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  status      String   @default("stopped") @db.VarChar(30)
+  seedData    Boolean  @default(true) @map("seed_data")
+  expiresAt   DateTime? @map("expires_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app         DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+  @@index([tenantId, appId])
+  @@map("dev_sandboxes")
+}
+
+model DevLogEntry {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  appId       String   @map("app_id") @db.Uuid
+  level       String   @default("info") @db.VarChar(20)
+  message     String   @db.Text
+  context     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app         DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+  @@index([tenantId, appId, level])
+  @@map("dev_log_entries")
+}
+
+model DevTestRun {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  appId       String   @map("app_id") @db.Uuid
+  suiteName   String   @map("suite_name") @db.VarChar(100)
+  status      String   @default("running") @db.VarChar(30)
+  totalTests  Int      @default(0) @map("total_tests")
+  passedTests Int      @default(0) @map("passed_tests")
+  failedTests Int      @default(0) @map("failed_tests")
+  durationMs  Int?     @map("duration_ms")
+  results     Json?
+  startedAt   DateTime @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app         DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+  @@index([tenantId, appId])
+  @@map("dev_test_runs")
+}
+
+model DevEnvVar {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  appId       String   @map("app_id") @db.Uuid
+  key         String   @db.VarChar(100)
+  valueSealed String   @map("value_sealed") @db.Text
+  isSecret    Boolean  @default(false) @map("is_secret")
+  environment String   @default("development") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app         DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+  @@unique([appId, environment, key])
+  @@index([tenantId, appId])
+  @@map("dev_env_vars")
+}
+
+model DevActivity {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  appRef      String   @map("app_ref") @db.VarChar(100)
+  actor       String   @db.VarChar(100)
+  action      String   @db.VarChar(50)
+  detail      String?  @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, appRef])
+  @@map("dev_activities")
 }
 
 // =============================================================================

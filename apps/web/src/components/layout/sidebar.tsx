@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
   Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
-  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio, Server, TrendingUp, Layers, Zap, Siren, ScanSearch, KeyRound, Puzzle, Code2, Blocks, Braces,
+  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio, Server, TrendingUp, Layers, Zap, Siren, ScanSearch, KeyRound, Puzzle, Code2, Blocks, Braces, Terminal,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -101,6 +101,7 @@ const navigation: NavSection[] = [
       { label: 'SDK Generator', href: '/sdk', icon: Code2 },
       { label: 'Extension Store', href: '/extensions-store', icon: Blocks },
       { label: 'Public API', href: '/public-api', icon: Braces },
+      { label: 'Dev Console', href: '/dev-console', icon: Terminal },
     ],
   },
   {
