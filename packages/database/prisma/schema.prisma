@@ -587,6 +587,13 @@ model CoreTenant {
   mrHealthChecks            MrHealthCheck[]
   mrFailoverEvents          MrFailoverEvent[]
   mrReplicationConfigs      MrReplicationConfig[]
+  // Phase 78
+  asTargets                 AsTarget[]
+  asPolicies                AsPolicy[]
+  asMetricSamples           AsMetricSample[]
+  asScalingEvents           AsScalingEvent[]
+  asSchedules               AsSchedule[]
+  asRecommendations         AsRecommendation[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18326,6 +18333,128 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 78 — AUTO SCALING ENGINE
+// =============================================================================
+
+model AsTarget {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  targetType   String   @default("deployment") @map("target_type") @db.VarChar(30)
+  resourceRef  String   @map("resource_ref") @db.VarChar(255)
+  minReplicas  Int      @default(1) @map("min_replicas")
+  maxReplicas  Int      @default(10) @map("max_replicas")
+  currentReplicas Int   @default(1) @map("current_replicas")
+  desiredReplicas Int   @default(1) @map("desired_replicas")
+  status       String   @default("active") @db.VarChar(30)
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policies     AsPolicy[]
+  metricSamples AsMetricSample[]
+  scalingEvents AsScalingEvent[]
+  schedules    AsSchedule[]
+  recommendations AsRecommendation[]
+  @@index([tenantId])
+  @@map("as_targets")
+}
+
+model AsPolicy {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  targetId     String   @map("target_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  metricType   String   @default("cpu") @map("metric_type") @db.VarChar(30)
+  threshold    Float    @default(70)
+  comparison   String   @default("gt") @db.VarChar(10)
+  scaleDirection String @default("up") @map("scale_direction") @db.VarChar(10)
+  stepSize     Int      @default(1) @map("step_size")
+  cooldownSec  Int      @default(300) @map("cooldown_sec")
+  isActive     Boolean  @default(true) @map("is_active")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target       AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  @@index([tenantId, targetId])
+  @@map("as_policies")
+}
+
+model AsMetricSample {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  targetId   String   @map("target_id") @db.Uuid
+  metricType String   @map("metric_type") @db.VarChar(30)
+  value      Float
+  recordedAt DateTime @default(now()) @map("recorded_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target     AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  @@index([tenantId, targetId, metricType])
+  @@map("as_metric_samples")
+}
+
+model AsScalingEvent {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  targetId     String   @map("target_id") @db.Uuid
+  policyId     String?  @map("policy_id") @db.Uuid
+  eventType    String   @default("scale-up") @map("event_type") @db.VarChar(30)
+  fromReplicas Int      @map("from_replicas")
+  toReplicas   Int      @map("to_replicas")
+  reason       String?  @db.VarChar(255)
+  triggeredBy  String   @default("policy") @map("triggered_by") @db.VarChar(30)
+  status       String   @default("completed") @db.VarChar(30)
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target       AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  @@index([tenantId, targetId])
+  @@map("as_scaling_events")
+}
+
+model AsSchedule {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  targetId     String   @map("target_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  cronExpr     String   @map("cron_expr") @db.VarChar(100)
+  targetReplicas Int    @map("target_replicas")
+  timezone     String   @default("UTC") @db.VarChar(50)
+  isActive     Boolean  @default(true) @map("is_active")
+  lastRunAt    DateTime? @map("last_run_at")
+  nextRunAt    DateTime? @map("next_run_at")
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target       AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  @@index([tenantId, targetId])
+  @@map("as_schedules")
+}
+
+model AsRecommendation {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  targetId     String   @map("target_id") @db.Uuid
+  recommendationType String @default("rightsize") @map("recommendation_type") @db.VarChar(30)
+  currentValue Int      @map("current_value")
+  recommendedValue Int  @map("recommended_value")
+  confidence   Float    @default(0.8)
+  rationale    String?  @db.Text
+  status       String   @default("pending") @db.VarChar(30)
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target       AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  @@index([tenantId, targetId])
+  @@map("as_recommendations")
 }
 
 model K8sEvent {

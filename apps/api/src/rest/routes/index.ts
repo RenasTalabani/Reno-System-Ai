@@ -50,6 +50,7 @@ import { webhooksModuleRoutes } from './webhooks/index.js'
 import { eventBusModuleRoutes } from './event-bus/index.js'
 import { kubernetesModuleRoutes } from './kubernetes/index.js'
 import { multiRegionModuleRoutes } from './multi-region/index.js'
+import { autoScalingModuleRoutes } from './auto-scaling/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -252,6 +253,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(eventBusModuleRoutes, { prefix: '' })
       await v1.register(kubernetesModuleRoutes, { prefix: '' })
       await v1.register(multiRegionModuleRoutes, { prefix: '' })
+      await v1.register(autoScalingModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })
