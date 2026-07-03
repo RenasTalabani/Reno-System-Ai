@@ -643,6 +643,13 @@ model CoreTenant {
   smAccessGrants            SmAccessGrant[]
   smRotationPolicies        SmRotationPolicy[]
   smAccessLogs              SmAccessLog[]
+  // Phase 86
+  plgPlugins                PlgPlugin[]
+  plgVersions               PlgVersion[]
+  plgInstallations          PlgInstallation[]
+  plgReviews                PlgReview[]
+  plgPermissions            PlgPermission[]
+  plgWebhookEvents          PlgWebhookEvent[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18382,6 +18389,112 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 86 — PLUGIN MARKETPLACE
+// =============================================================================
+
+model PlgPlugin {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  slug        String   @db.VarChar(100)
+  description String?  @db.Text
+  category    String   @default("integration") @db.VarChar(50)
+  author      String?  @db.VarChar(100)
+  status      String   @default("draft") @db.VarChar(30)
+  installCount Int     @default(0) @map("install_count")
+  avgRating   Float    @default(0) @map("avg_rating")
+  latestVersion String @default("0.1.0") @map("latest_version") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  versions    PlgVersion[]
+  installations PlgInstallation[]
+  reviews     PlgReview[]
+  permissions PlgPermission[]
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("plg_plugins")
+}
+
+model PlgVersion {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  pluginId    String   @map("plugin_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  changelog   String?  @db.Text
+  manifest    Json?
+  status      String   @default("published") @db.VarChar(30)
+  downloads   Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin      PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, version])
+  @@index([tenantId, pluginId])
+  @@map("plg_versions")
+}
+
+model PlgInstallation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  pluginId    String   @map("plugin_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  status      String   @default("active") @db.VarChar(30)
+  config      Json?
+  installedBy String?  @map("installed_by") @db.VarChar(100)
+  installedAt DateTime @default(now()) @map("installed_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin      PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, pluginId])
+  @@index([tenantId])
+  @@map("plg_installations")
+}
+
+model PlgReview {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  pluginId    String   @map("plugin_id") @db.Uuid
+  rating      Int      @default(5)
+  comment     String?  @db.Text
+  reviewer    String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin      PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@index([tenantId, pluginId])
+  @@map("plg_reviews")
+}
+
+model PlgPermission {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  pluginId    String   @map("plugin_id") @db.Uuid
+  scope       String   @db.VarChar(100)
+  reason      String?  @db.VarChar(255)
+  isGranted   Boolean  @default(false) @map("is_granted")
+  grantedBy   String?  @map("granted_by") @db.VarChar(100)
+  grantedAt   DateTime? @map("granted_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin      PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@index([tenantId, pluginId])
+  @@map("plg_permissions")
+}
+
+model PlgWebhookEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  pluginRef   String   @map("plugin_ref") @db.VarChar(100)
+  eventType   String   @map("event_type") @db.VarChar(50)
+  payload     Json?
+  status      String   @default("delivered") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, pluginRef])
+  @@map("plg_webhook_events")
 }
 
 // =============================================================================
