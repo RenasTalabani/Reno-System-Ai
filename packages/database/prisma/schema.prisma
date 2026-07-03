@@ -608,6 +608,13 @@ model CoreTenant {
   cdnEdgeLocations          CdnEdgeLocation[]
   cdnPurgeRequests          CdnPurgeRequest[]
   cdnAnalytics              CdnAnalytic[]
+  // Phase 81
+  ztPolicies                ZtPolicy[]
+  ztDevices                 ZtDevice[]
+  ztAccessRequests          ZtAccessRequest[]
+  ztSegments                ZtSegment[]
+  ztSessionRisks            ZtSessionRisk[]
+  ztViolations              ZtViolation[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18347,6 +18354,116 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 81 — ZERO TRUST SECURITY
+// =============================================================================
+
+model ZtPolicy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  policyType  String   @default("access") @map("policy_type") @db.VarChar(30)
+  resource    String   @db.VarChar(255)
+  conditions  Json?
+  action      String   @default("allow") @db.VarChar(20)
+  priority    Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  accessRequests ZtAccessRequest[]
+  @@index([tenantId])
+  @@map("zt_policies")
+}
+
+model ZtDevice {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  userId        String?  @map("user_id") @db.Uuid
+  name          String   @db.VarChar(100)
+  deviceType    String   @default("laptop") @map("device_type") @db.VarChar(30)
+  os            String?  @db.VarChar(50)
+  trustLevel    String   @default("unverified") @map("trust_level") @db.VarChar(30)
+  isCompliant   Boolean  @default(false) @map("is_compliant")
+  lastCheckAt   DateTime? @map("last_check_at")
+  fingerprint   String?  @db.VarChar(255)
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  accessRequests ZtAccessRequest[]
+  @@index([tenantId])
+  @@map("zt_devices")
+}
+
+model ZtAccessRequest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  deviceId    String?  @map("device_id") @db.Uuid
+  policyId    String?  @map("policy_id") @db.Uuid
+  resource    String   @db.VarChar(255)
+  decision    String   @default("pending") @db.VarChar(20)
+  riskScore   Float    @default(0) @map("risk_score")
+  reason      String?  @db.VarChar(500)
+  context     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  device      ZtDevice?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  policy      ZtPolicy?  @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  @@index([tenantId])
+  @@map("zt_access_requests")
+}
+
+model ZtSegment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  segmentType String   @default("network") @map("segment_type") @db.VarChar(30)
+  cidr        String?  @db.VarChar(50)
+  services    Json?
+  isolation   String   @default("strict") @db.VarChar(30)
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("zt_segments")
+}
+
+model ZtSessionRisk {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  sessionRef  String?  @map("session_ref") @db.VarChar(255)
+  riskScore   Float    @default(0) @map("risk_score")
+  riskLevel   String   @default("low") @map("risk_level") @db.VarChar(20)
+  factors     Json?
+  action      String   @default("none") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("zt_session_risks")
+}
+
+model ZtViolation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  violationType String @map("violation_type") @db.VarChar(50)
+  severity    String   @default("medium") @db.VarChar(20)
+  description String   @db.Text
+  isResolved  Boolean  @default(false) @map("is_resolved")
+  resolvedAt  DateTime? @map("resolved_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("zt_violations")
 }
 
 // =============================================================================

@@ -92,6 +92,7 @@ const navigation: NavSection[] = [
       { label: 'Auto Scaling', href: '/auto-scaling', icon: TrendingUp },
       { label: 'Queue Cluster', href: '/queue-cluster', icon: Layers },
       { label: 'CDN & Edge', href: '/cdn-edge', icon: Zap },
+      { label: 'Zero Trust', href: '/zero-trust', icon: Shield },
     ],
   },
   {
