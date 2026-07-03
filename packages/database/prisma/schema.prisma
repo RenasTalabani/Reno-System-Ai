@@ -531,6 +531,13 @@ model CoreTenant {
   llmExperiments           LlmExperiment[]
   // Phase 67
   hrspCircuitBreakers       HrspCircuitBreaker[]
+  // Phase 68
+  cdbDashboards             CdbDashboard[]
+  cdbWidgets                CdbWidget[]
+  cdbDashboardVersions      CdbDashboardVersion[]
+  cdbDashboardShares        CdbDashboardShare[]
+  cdbDashboardTemplates     CdbDashboardTemplate[]
+  cdbAiRecommendations      CdbAiRecommendation[]
   hrspHealthSnapshots       HrspHealthSnapshot[]
   hrspComponentAlerts       HrspComponentAlert[]
   hrspFailoverPlans         HrspFailoverPlan[]
@@ -16940,4 +16947,161 @@ model HrspResilienceReport {
 
   @@index([tenantId])
   @@map("hrsp_resilience_reports")
+}
+
+// ─── Phase 68: Custom Dashboards Platform ────────────────────────────────────
+
+model CdbDashboard {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  description String?
+  ownerId     String   @map("owner_id") @db.Uuid
+  icon        String?
+  theme       String   @default("default")
+  columns     Int      @default(12)
+  layout      Json     @default("[]") @db.JsonB
+  tags        Json     @default("[]") @db.JsonB
+  isPublic    Boolean  @default(false) @map("is_public")
+  isDefault   Boolean  @default(false) @map("is_default")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      CoreTenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  widgets     CdbWidget[]
+  versions    CdbDashboardVersion[]
+  shares      CdbDashboardShare[]
+  metrics     CdbDashboardMetrics?
+  aiRecs      CdbAiRecommendation[]
+
+  @@index([tenantId])
+  @@index([tenantId, ownerId])
+  @@map("cdb_dashboards")
+}
+
+model CdbWidget {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  dashboardId   String    @map("dashboard_id") @db.Uuid
+  definitionKey String    @map("definition_key")
+  title         String
+  x             Int       @default(0)
+  y             Int       @default(0)
+  w             Int       @default(4)
+  h             Int       @default(3)
+  config        Json      @default("{}") @db.JsonB
+  dataCache     Json      @default("{}") @db.JsonB @map("data_cache")
+  lastDataFetch DateTime? @map("last_data_fetch") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dashboard CdbDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([dashboardId])
+  @@map("cdb_widgets")
+}
+
+model CdbWidgetDefinition {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key           String   @unique
+  name          String
+  description   String?
+  category      String   @default("kpi")
+  chartType     String   @default("number") @map("chart_type")
+  dataSource    String   @map("data_source")
+  defaultConfig Json     @default("{}") @db.JsonB @map("default_config")
+  schema        Json     @default("{}") @db.JsonB
+  isBuiltIn     Boolean  @default(true) @map("is_built_in")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("cdb_widget_definitions")
+}
+
+model CdbDashboardVersion {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  dashboardId String   @map("dashboard_id") @db.Uuid
+  version     Int
+  label       String?
+  snapshot    Json     @default("{}") @db.JsonB
+  createdBy   String   @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dashboard CdbDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@unique([dashboardId, version])
+  @@index([tenantId])
+  @@map("cdb_dashboard_versions")
+}
+
+model CdbDashboardShare {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  dashboardId      String   @map("dashboard_id") @db.Uuid
+  sharedWithUserId String?  @map("shared_with_user_id") @db.Uuid
+  sharedWithRole   String?  @map("shared_with_role")
+  canEdit          Boolean  @default(false) @map("can_edit")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dashboard CdbDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("cdb_dashboard_shares")
+}
+
+model CdbDashboardTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  description String?
+  department  String
+  icon        String?
+  layout      Json     @default("[]") @db.JsonB
+  widgets     Json     @default("[]") @db.JsonB
+  isBuiltIn   Boolean  @default(true) @map("is_built_in")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("cdb_dashboard_templates")
+}
+
+model CdbDashboardMetrics {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  dashboardId  String    @unique @map("dashboard_id") @db.Uuid
+  viewCount    Int       @default(0) @map("view_count")
+  avgLoadMs    Float     @default(0) @map("avg_load_ms")
+  lastViewedAt DateTime? @map("last_viewed_at") @db.Timestamptz
+  viewerCount  Int       @default(0) @map("viewer_count")
+  widgetCount  Int       @default(0) @map("widget_count")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  dashboard CdbDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@map("cdb_dashboard_metrics")
+}
+
+model CdbAiRecommendation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  dashboardId String   @map("dashboard_id") @db.Uuid
+  type        String   @default("widget")
+  title       String
+  description String
+  confidence  Float    @default(0.8)
+  isApplied   Boolean  @default(false) @map("is_applied")
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant    CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dashboard CdbDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("cdb_ai_recommendations")
 }

@@ -11524,6 +11524,271 @@ exports.Prisma.LlmExperimentResultScalarFieldEnum = {
   aiRecommendation: 'aiRecommendation'
 };
 
+exports.Prisma.HrspCircuitBreakerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  serviceName: 'serviceName',
+  state: 'state',
+  failureCount: 'failureCount',
+  successCount: 'successCount',
+  failureThreshold: 'failureThreshold',
+  lastFailureAt: 'lastFailureAt',
+  lastFailureReason: 'lastFailureReason',
+  recoveryTimeoutSec: 'recoveryTimeoutSec',
+  nextRetryAt: 'nextRetryAt',
+  openedAt: 'openedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HrspHealthSnapshotScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  component: 'component',
+  status: 'status',
+  latencyMs: 'latencyMs',
+  errorRate: 'errorRate',
+  details: 'details',
+  resilienceScore: 'resilienceScore',
+  checkedAt: 'checkedAt'
+};
+
+exports.Prisma.HrspComponentAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  snapshotId: 'snapshotId',
+  component: 'component',
+  severity: 'severity',
+  title: 'title',
+  message: 'message',
+  isResolved: 'isResolved',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HrspFailoverPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  planName: 'planName',
+  targetService: 'targetService',
+  strategy: 'strategy',
+  primaryTarget: 'primaryTarget',
+  secondaryTarget: 'secondaryTarget',
+  steps: 'steps',
+  estimatedRtoSec: 'estimatedRtoSec',
+  estimatedRpoSec: 'estimatedRpoSec',
+  isActive: 'isActive',
+  lastSimulatedAt: 'lastSimulatedAt',
+  lastScore: 'lastScore',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HrspDrScenarioScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  scenarioType: 'scenarioType',
+  description: 'description',
+  severity: 'severity',
+  estimatedRtoSec: 'estimatedRtoSec',
+  estimatedRpoSec: 'estimatedRpoSec',
+  recoverySteps: 'recoverySteps',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HrspDrSimulationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  scenarioId: 'scenarioId',
+  status: 'status',
+  actualRtoSec: 'actualRtoSec',
+  actualRpoSec: 'actualRpoSec',
+  rtoMet: 'rtoMet',
+  rpoMet: 'rpoMet',
+  resilienceScore: 'resilienceScore',
+  findings: 'findings',
+  recommendations: 'recommendations',
+  report: 'report',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HrspCacheStrategyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  strategyKey: 'strategyKey',
+  cacheLayer: 'cacheLayer',
+  ttlSeconds: 'ttlSeconds',
+  invalidationPolicy: 'invalidationPolicy',
+  fallbackMode: 'fallbackMode',
+  isEnabled: 'isEnabled',
+  hitCount: 'hitCount',
+  missCount: 'missCount',
+  degradedModeHits: 'degradedModeHits',
+  cacheHealth: 'cacheHealth',
+  lastHealthCheck: 'lastHealthCheck',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HrspDeploymentSimulationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  strategy: 'strategy',
+  version: 'version',
+  targetEnvironment: 'targetEnvironment',
+  status: 'status',
+  readinessScore: 'readinessScore',
+  healthGates: 'healthGates',
+  rollbackRecommended: 'rollbackRecommended',
+  rollbackReason: 'rollbackReason',
+  simulationSteps: 'simulationSteps',
+  findings: 'findings',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HrspChaosExperimentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  experimentType: 'experimentType',
+  targetComponent: 'targetComponent',
+  intensity: 'intensity',
+  durationSeconds: 'durationSeconds',
+  status: 'status',
+  isSafeMode: 'isSafeMode',
+  systemResponse: 'systemResponse',
+  recommendations: 'recommendations',
+  resilienceScore: 'resilienceScore',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HrspResilienceReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportType: 'reportType',
+  overallScore: 'overallScore',
+  components: 'components',
+  findings: 'findings',
+  recommendations: 'recommendations',
+  executiveSummary: 'executiveSummary',
+  generatedAt: 'generatedAt'
+};
+
+exports.Prisma.CdbDashboardScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  ownerId: 'ownerId',
+  icon: 'icon',
+  theme: 'theme',
+  columns: 'columns',
+  layout: 'layout',
+  tags: 'tags',
+  isPublic: 'isPublic',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdbWidgetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dashboardId: 'dashboardId',
+  definitionKey: 'definitionKey',
+  title: 'title',
+  x: 'x',
+  y: 'y',
+  w: 'w',
+  h: 'h',
+  config: 'config',
+  dataCache: 'dataCache',
+  lastDataFetch: 'lastDataFetch',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdbWidgetDefinitionScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  chartType: 'chartType',
+  dataSource: 'dataSource',
+  defaultConfig: 'defaultConfig',
+  schema: 'schema',
+  isBuiltIn: 'isBuiltIn',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdbDashboardVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dashboardId: 'dashboardId',
+  version: 'version',
+  label: 'label',
+  snapshot: 'snapshot',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdbDashboardShareScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dashboardId: 'dashboardId',
+  sharedWithUserId: 'sharedWithUserId',
+  sharedWithRole: 'sharedWithRole',
+  canEdit: 'canEdit',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdbDashboardTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  department: 'department',
+  icon: 'icon',
+  layout: 'layout',
+  widgets: 'widgets',
+  isBuiltIn: 'isBuiltIn',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdbDashboardMetricsScalarFieldEnum = {
+  id: 'id',
+  dashboardId: 'dashboardId',
+  viewCount: 'viewCount',
+  avgLoadMs: 'avgLoadMs',
+  lastViewedAt: 'lastViewedAt',
+  viewerCount: 'viewerCount',
+  widgetCount: 'widgetCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdbAiRecommendationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  dashboardId: 'dashboardId',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  confidence: 'confidence',
+  isApplied: 'isApplied',
+  generatedAt: 'generatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12265,7 +12530,25 @@ exports.Prisma.ModelName = {
   LlmPolicy: 'LlmPolicy',
   LlmPromptVersion: 'LlmPromptVersion',
   LlmExperiment: 'LlmExperiment',
-  LlmExperimentResult: 'LlmExperimentResult'
+  LlmExperimentResult: 'LlmExperimentResult',
+  HrspCircuitBreaker: 'HrspCircuitBreaker',
+  HrspHealthSnapshot: 'HrspHealthSnapshot',
+  HrspComponentAlert: 'HrspComponentAlert',
+  HrspFailoverPlan: 'HrspFailoverPlan',
+  HrspDrScenario: 'HrspDrScenario',
+  HrspDrSimulation: 'HrspDrSimulation',
+  HrspCacheStrategy: 'HrspCacheStrategy',
+  HrspDeploymentSimulation: 'HrspDeploymentSimulation',
+  HrspChaosExperiment: 'HrspChaosExperiment',
+  HrspResilienceReport: 'HrspResilienceReport',
+  CdbDashboard: 'CdbDashboard',
+  CdbWidget: 'CdbWidget',
+  CdbWidgetDefinition: 'CdbWidgetDefinition',
+  CdbDashboardVersion: 'CdbDashboardVersion',
+  CdbDashboardShare: 'CdbDashboardShare',
+  CdbDashboardTemplate: 'CdbDashboardTemplate',
+  CdbDashboardMetrics: 'CdbDashboardMetrics',
+  CdbAiRecommendation: 'CdbAiRecommendation'
 };
 
 /**

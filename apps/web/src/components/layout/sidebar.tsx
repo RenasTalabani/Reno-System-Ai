@@ -79,6 +79,7 @@ const navigation: NavSection[] = [
       { label: 'Executive AI', href: '/executive-ai', icon: BarChart3 },
       { label: 'LLMOps', href: '/llmops', icon: Brain },
       { label: 'Resilience', href: '/resilience', icon: Shield },
+      { label: 'Dashboards', href: '/dashboards', icon: LayoutDashboard },
     ],
   },
   {
