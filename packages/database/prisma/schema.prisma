@@ -538,6 +538,13 @@ model CoreTenant {
   cdbDashboardShares        CdbDashboardShare[]
   cdbDashboardTemplates     CdbDashboardTemplate[]
   cdbAiRecommendations      CdbAiRecommendation[]
+  // Phase 71
+  ntcTemplates              NtcTemplate[]
+  ntcRules                  NtcRule[]
+  ntcPreferences            NtcPreference[]
+  ntcBroadcasts             NtcBroadcast[]
+  ntcChannels               NtcChannel[]
+  ntcDigests                NtcDigest[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -17390,4 +17397,131 @@ model XpdExportPermission {
 
   @@index([tenantId, reportId])
   @@map("xpd_export_permissions")
+}
+
+// ─── Phase 71: Advanced Notification Center ──────────────────────────────────
+
+model NtcTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  description String?
+  eventType   String   @map("event_type") @db.VarChar(100)
+  channels    Json     @default("[\"in_app\"]") @db.JsonB
+  titleTpl    String   @map("title_tpl") @db.VarChar(500)
+  bodyTpl     String   @map("body_tpl") @db.Text
+  variables   Json     @default("[]") @db.JsonB
+  priority    String   @default("normal") @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rules  NtcRule[]
+
+  @@index([tenantId])
+  @@index([tenantId, eventType])
+  @@map("ntc_templates")
+}
+
+model NtcRule {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  templateId  String   @map("template_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  triggerType String   @map("trigger_type") @db.VarChar(100)
+  conditions  Json     @default("{}") @db.JsonB
+  targetType  String   @map("target_type") @db.VarChar(50)
+  targetIds   Json     @default("[]") @map("target_ids") @db.JsonB
+  isActive    Boolean  @default(true) @map("is_active")
+  runCount    Int      @default(0) @map("run_count")
+  lastTriggeredAt DateTime? @map("last_triggered_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template NtcTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, triggerType])
+  @@map("ntc_rules")
+}
+
+model NtcPreference {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  inApp           Boolean  @default(true) @map("in_app")
+  email           Boolean  @default(true)
+  push            Boolean  @default(false)
+  sms             Boolean  @default(false)
+  digestMode      Boolean  @default(false) @map("digest_mode")
+  digestFrequency String   @default("daily") @map("digest_frequency") @db.VarChar(20)
+  quietHoursStart Int?     @map("quiet_hours_start")
+  quietHoursEnd   Int?     @map("quiet_hours_end")
+  mutedTypes      Json     @default("[]") @map("muted_types") @db.JsonB
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@map("ntc_preferences")
+}
+
+model NtcBroadcast {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  createdBy   String    @map("created_by") @db.Uuid
+  title       String    @db.VarChar(500)
+  body        String    @db.Text
+  priority    String    @default("normal") @db.VarChar(20)
+  channels    Json      @default("[\"in_app\"]") @db.JsonB
+  targetType  String    @default("all") @map("target_type") @db.VarChar(50)
+  targetIds   Json      @default("[]") @map("target_ids") @db.JsonB
+  sentCount   Int       @default(0) @map("sent_count")
+  scheduledAt DateTime? @map("scheduled_at") @db.Timestamptz
+  sentAt      DateTime? @map("sent_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ntc_broadcasts")
+}
+
+model NtcChannel {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  channelType String   @map("channel_type") @db.VarChar(50)
+  name        String   @db.VarChar(255)
+  config      Json     @default("{}") @db.JsonB
+  isActive    Boolean  @default(true) @map("is_active")
+  testSentAt  DateTime? @map("test_sent_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ntc_channels")
+}
+
+model NtcDigest {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  frequency   String    @db.VarChar(20)
+  items       Json      @default("[]") @db.JsonB
+  status      String    @default("pending") @db.VarChar(20)
+  scheduledAt DateTime  @map("scheduled_at") @db.Timestamptz
+  sentAt      DateTime? @map("sent_at") @db.Timestamptz
+  itemCount   Int       @default(0) @map("item_count")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+  @@index([tenantId, status])
+  @@map("ntc_digests")
 }

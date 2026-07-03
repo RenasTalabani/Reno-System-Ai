@@ -82,6 +82,7 @@ const navigation: NavSection[] = [
       { label: 'Dashboards', href: '/dashboards', icon: LayoutDashboard },
       { label: 'Reports & BI', href: '/reports', icon: FileText },
       { label: 'Export Engine', href: '/export-engine', icon: FileText },
+      { label: 'Notification Center', href: '/notification-center', icon: Bell },
     ],
   },
   {

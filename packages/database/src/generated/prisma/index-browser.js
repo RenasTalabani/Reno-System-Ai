@@ -11970,6 +11970,95 @@ exports.Prisma.XpdExportPermissionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.NtcTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  eventType: 'eventType',
+  channels: 'channels',
+  titleTpl: 'titleTpl',
+  bodyTpl: 'bodyTpl',
+  variables: 'variables',
+  priority: 'priority',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NtcRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  templateId: 'templateId',
+  name: 'name',
+  triggerType: 'triggerType',
+  conditions: 'conditions',
+  targetType: 'targetType',
+  targetIds: 'targetIds',
+  isActive: 'isActive',
+  runCount: 'runCount',
+  lastTriggeredAt: 'lastTriggeredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NtcPreferenceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  inApp: 'inApp',
+  email: 'email',
+  push: 'push',
+  sms: 'sms',
+  digestMode: 'digestMode',
+  digestFrequency: 'digestFrequency',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  mutedTypes: 'mutedTypes',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NtcBroadcastScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  createdBy: 'createdBy',
+  title: 'title',
+  body: 'body',
+  priority: 'priority',
+  channels: 'channels',
+  targetType: 'targetType',
+  targetIds: 'targetIds',
+  sentCount: 'sentCount',
+  scheduledAt: 'scheduledAt',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.NtcChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  channelType: 'channelType',
+  name: 'name',
+  config: 'config',
+  isActive: 'isActive',
+  testSentAt: 'testSentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NtcDigestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  frequency: 'frequency',
+  items: 'items',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  sentAt: 'sentAt',
+  itemCount: 'itemCount',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12742,7 +12831,13 @@ exports.Prisma.ModelName = {
   XpdDownloadToken: 'XpdDownloadToken',
   XpdDelivery: 'XpdDelivery',
   XpdExportSchedule: 'XpdExportSchedule',
-  XpdExportPermission: 'XpdExportPermission'
+  XpdExportPermission: 'XpdExportPermission',
+  NtcTemplate: 'NtcTemplate',
+  NtcRule: 'NtcRule',
+  NtcPreference: 'NtcPreference',
+  NtcBroadcast: 'NtcBroadcast',
+  NtcChannel: 'NtcChannel',
+  NtcDigest: 'NtcDigest'
 };
 
 /**
