@@ -95,6 +95,7 @@ const navigation: NavSection[] = [
       { label: 'Zero Trust', href: '/zero-trust', icon: Shield },
       { label: 'SOC', href: '/soc', icon: Siren },
       { label: 'SIEM', href: '/siem', icon: ScanSearch },
+      { label: 'Compliance Auto', href: '/compliance-auto', icon: ClipboardList },
     ],
   },
   {

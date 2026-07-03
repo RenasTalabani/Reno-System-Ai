@@ -629,6 +629,13 @@ model CoreTenant {
   siemDetections            SiemDetection[]
   siemSavedQueries          SiemSavedQuery[]
   siemRetentionPolicies     SiemRetentionPolicy[]
+  // Phase 84
+  caFrameworks              CaFramework[]
+  caControls                CaControl[]
+  caAssessments             CaAssessment[]
+  caEvidences               CaEvidence[]
+  caFindings                CaFinding[]
+  caTasks                   CaTask[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18368,6 +18375,125 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 84 — COMPLIANCE AUTOMATION
+// =============================================================================
+
+model CaFramework {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  code        String   @db.VarChar(30)
+  version     String   @default("1.0") @db.VarChar(20)
+  description String?  @db.Text
+  status      String   @default("active") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  controls    CaControl[]
+  assessments CaAssessment[]
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("ca_frameworks")
+}
+
+model CaControl {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  frameworkId String   @map("framework_id") @db.Uuid
+  code        String   @db.VarChar(30)
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  category    String   @default("technical") @db.VarChar(50)
+  status      String   @default("not-implemented") @db.VarChar(30)
+  automated   Boolean  @default(false)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  framework   CaFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  evidences   CaEvidence[]
+  findings    CaFinding[]
+  @@index([tenantId, frameworkId])
+  @@map("ca_controls")
+}
+
+model CaAssessment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  frameworkId String   @map("framework_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  status      String   @default("in-progress") @db.VarChar(30)
+  score       Float?
+  totalControls Int    @default(0) @map("total_controls")
+  passedControls Int   @default(0) @map("passed_controls")
+  startedAt   DateTime @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  framework   CaFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  @@index([tenantId, frameworkId])
+  @@map("ca_assessments")
+}
+
+model CaEvidence {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  controlId   String   @map("control_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  evidenceType String  @default("document") @map("evidence_type") @db.VarChar(30)
+  content     String?  @db.Text
+  collectedBy String?  @map("collected_by") @db.VarChar(100)
+  validUntil  DateTime? @map("valid_until")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  control     CaControl @relation(fields: [controlId], references: [id], onDelete: Cascade)
+  @@index([tenantId, controlId])
+  @@map("ca_evidences")
+}
+
+model CaFinding {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  controlId   String   @map("control_id") @db.Uuid
+  severity    String   @default("medium") @db.VarChar(20)
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  status      String   @default("open") @db.VarChar(30)
+  remediation String?  @db.Text
+  dueDate     DateTime? @map("due_date")
+  resolvedAt  DateTime? @map("resolved_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  control     CaControl @relation(fields: [controlId], references: [id], onDelete: Cascade)
+  @@index([tenantId, controlId])
+  @@map("ca_findings")
+}
+
+model CaTask {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  taskType    String   @default("remediation") @map("task_type") @db.VarChar(30)
+  assignee    String?  @db.VarChar(100)
+  status      String   @default("todo") @db.VarChar(30)
+  priority    String   @default("medium") @db.VarChar(20)
+  dueDate     DateTime? @map("due_date")
+  completedAt DateTime? @map("completed_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("ca_tasks")
 }
 
 // =============================================================================
