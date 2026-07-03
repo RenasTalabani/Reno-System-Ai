@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Building2, GitBranch, FolderOpen,
   Shield, Settings, ClipboardList, Bell, LogOut, ChevronDown,
   Building, UsersRound, Boxes, Brain, BarChart3, Workflow, Package, ShoppingCart, Factory, PieChart,
-  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook,
+  FileText, BookOpen, Globe, Headphones, MessageSquare, Store, Bot, Webhook, Radio,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/lib/auth-store'
@@ -86,6 +86,7 @@ const navigation: NavSection[] = [
       { label: 'Workflow Automation', href: '/workflow-automation', icon: Workflow },
       { label: 'API Gateway', href: '/api-gateway', icon: Globe },
       { label: 'Webhooks', href: '/webhooks', icon: Webhook },
+      { label: 'Event Bus', href: '/event-bus', icon: Radio },
     ],
   },
   {

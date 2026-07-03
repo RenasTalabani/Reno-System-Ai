@@ -566,6 +566,13 @@ model CoreTenant {
   wbhSubscriptions          WbhSubscription[]
   wbhSecrets                WbhSecret[]
   wbhLogs                   WbhLog[]
+  // Phase 75
+  ebStreams                 EbStream[]
+  ebMessages                EbMessage[]
+  ebConsumerGroups          EbConsumerGroup[]
+  ebConsumers               EbConsumer[]
+  ebConsumerOffsets         EbConsumerOffset[]
+  ebDeadLetters             EbDeadLetter[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -17946,4 +17953,128 @@ model WbhLog {
 
   @@index([tenantId])
   @@map("wbh_logs")
+}
+
+// =============================================================================
+// PHASE 75 — EVENT BUS
+// =============================================================================
+
+model EbStream {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  description String?  @db.Text
+  partitions  Int      @default(1)
+  retentionMs BigInt   @default(86400000) @map("retention_ms")
+  maxMsgSize  Int      @default(1048576) @map("max_msg_size")
+  isActive    Boolean  @default(true) @map("is_active")
+  messageCount BigInt  @default(0) @map("message_count")
+  createdBy   String   @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  messages       EbMessage[]
+  consumerGroups EbConsumerGroup[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("eb_streams")
+}
+
+model EbMessage {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  streamId     String   @map("stream_id") @db.Uuid
+  partitionKey String?  @map("partition_key") @db.VarChar(200)
+  payload      Json     @db.JsonB
+  headers      Json     @default("{}") @db.JsonB
+  offset       BigInt   @default(0)
+  status       String   @default("pending") @db.VarChar(20)
+  attempts     Int      @default(0)
+  publishedBy  String   @map("published_by") @db.Uuid
+  processedAt  DateTime? @map("processed_at") @db.Timestamptz
+  expiresAt    DateTime? @map("expires_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stream     EbStream     @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  deadLetter EbDeadLetter?
+
+  @@index([tenantId, streamId])
+  @@index([tenantId, status])
+  @@map("eb_messages")
+}
+
+model EbConsumerGroup {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  streamId    String   @map("stream_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  maxRetries  Int      @default(3) @map("max_retries")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stream    EbStream        @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  consumers EbConsumer[]
+  offsets   EbConsumerOffset[]
+
+  @@unique([tenantId, streamId, name])
+  @@index([tenantId])
+  @@map("eb_consumer_groups")
+}
+
+model EbConsumer {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  consumerGroupId String   @map("consumer_group_id") @db.Uuid
+  name            String   @db.VarChar(200)
+  callbackUrl     String?  @map("callback_url") @db.Text
+  isActive        Boolean  @default(true) @map("is_active")
+  lastPollAt      DateTime? @map("last_poll_at") @db.Timestamptz
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  consumerGroup EbConsumerGroup @relation(fields: [consumerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, consumerGroupId])
+  @@map("eb_consumers")
+}
+
+model EbConsumerOffset {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  consumerGroupId String   @map("consumer_group_id") @db.Uuid
+  partition       Int      @default(0)
+  offset          BigInt   @default(0)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  consumerGroup EbConsumerGroup @relation(fields: [consumerGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([consumerGroupId, partition])
+  @@index([tenantId])
+  @@map("eb_consumer_offsets")
+}
+
+model EbDeadLetter {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  messageId   String   @unique @map("message_id") @db.Uuid
+  streamId    String   @map("stream_id") @db.Uuid
+  reason      String   @db.Text
+  attempts    Int      @default(0)
+  payload     Json     @db.JsonB
+  headers     Json     @default("{}") @db.JsonB
+  replayedAt  DateTime? @map("replayed_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  message EbMessage  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, streamId])
+  @@map("eb_dead_letters")
 }
