@@ -186,6 +186,7 @@ import { opiModuleRoutes } from './opi/index.js'
 import { lciModuleRoutes } from './lci/index.js'
 import { eiModuleRoutes } from './ei/index.js'
 import { llmopsModuleRoutes } from './llmops/index.js'
+import { resilienceModuleRoutes } from './resilience/index.js'
 
 export async function registerRoutes(app: FastifyInstance) {
   // All REST routes are under /v1
@@ -378,6 +379,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(lciModuleRoutes, { prefix: '' })
       await v1.register(eiModuleRoutes, { prefix: '' })
       await v1.register(llmopsModuleRoutes, { prefix: '' })
+      await v1.register(resilienceModuleRoutes, { prefix: '' })
     },
     { prefix: '/v1' },
   )

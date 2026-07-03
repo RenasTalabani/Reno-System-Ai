@@ -529,6 +529,17 @@ model CoreTenant {
   llmPolicies              LlmPolicy[]
   llmPromptVersions        LlmPromptVersion[]
   llmExperiments           LlmExperiment[]
+  // Phase 67
+  hrspCircuitBreakers       HrspCircuitBreaker[]
+  hrspHealthSnapshots       HrspHealthSnapshot[]
+  hrspComponentAlerts       HrspComponentAlert[]
+  hrspFailoverPlans         HrspFailoverPlan[]
+  hrspDrScenarios           HrspDrScenario[]
+  hrspDrSimulations         HrspDrSimulation[]
+  hrspCacheStrategies       HrspCacheStrategy[]
+  hrspDeploymentSimulations HrspDeploymentSimulation[]
+  hrspChaosExperiments      HrspChaosExperiment[]
+  hrspResilienceReports     HrspResilienceReport[]
   @@map("core_tenants")
 }
 
@@ -16712,4 +16723,221 @@ model LlmExperimentResult {
 
   @@index([experimentId])
   @@map("llm_experiment_results")
+}
+
+// ─── Phase 67: High Availability & Resilience Platform ───────────────────────
+
+model HrspCircuitBreaker {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  serviceName         String    @map("service_name")
+  state               String    @default("closed")
+  failureCount        Int       @default(0) @map("failure_count")
+  successCount        Int       @default(0) @map("success_count")
+  failureThreshold    Int       @default(5) @map("failure_threshold")
+  lastFailureAt       DateTime? @map("last_failure_at") @db.Timestamptz
+  lastFailureReason   String?   @map("last_failure_reason")
+  recoveryTimeoutSec  Int       @default(60) @map("recovery_timeout_sec")
+  nextRetryAt         DateTime? @map("next_retry_at") @db.Timestamptz
+  openedAt            DateTime? @map("opened_at") @db.Timestamptz
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, serviceName])
+  @@index([tenantId])
+  @@map("hrsp_circuit_breakers")
+}
+
+model HrspHealthSnapshot {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  component       String
+  status          String   @default("unknown")
+  latencyMs       Int?     @map("latency_ms")
+  errorRate       Float?   @map("error_rate")
+  details         Json     @default("{}") @db.JsonB
+  resilienceScore Float?   @map("resilience_score")
+  checkedAt       DateTime @default(now()) @map("checked_at") @db.Timestamptz
+
+  tenant CoreTenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  alerts HrspComponentAlert[]
+
+  @@index([tenantId])
+  @@index([tenantId, checkedAt])
+  @@map("hrsp_health_snapshots")
+}
+
+model HrspComponentAlert {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  snapshotId  String?   @map("snapshot_id") @db.Uuid
+  component   String
+  severity    String    @default("warning")
+  title       String
+  message     String
+  isResolved  Boolean   @default(false) @map("is_resolved")
+  resolvedAt  DateTime? @map("resolved_at") @db.Timestamptz
+  resolvedBy  String?   @map("resolved_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  snapshot HrspHealthSnapshot? @relation(fields: [snapshotId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@map("hrsp_component_alerts")
+}
+
+model HrspFailoverPlan {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  planName        String    @map("plan_name")
+  targetService   String    @map("target_service")
+  strategy        String    @default("manual")
+  primaryTarget   String    @map("primary_target")
+  secondaryTarget String?   @map("secondary_target")
+  steps           Json      @default("[]") @db.JsonB
+  estimatedRtoSec Int       @default(300) @map("estimated_rto_sec")
+  estimatedRpoSec Int       @default(60) @map("estimated_rpo_sec")
+  isActive        Boolean   @default(true) @map("is_active")
+  lastSimulatedAt DateTime? @map("last_simulated_at") @db.Timestamptz
+  lastScore       Float?    @map("last_score")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hrsp_failover_plans")
+}
+
+model HrspDrScenario {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  name            String
+  scenarioType    String   @map("scenario_type")
+  description     String?
+  severity        String   @default("high")
+  estimatedRtoSec Int      @default(3600) @map("estimated_rto_sec")
+  estimatedRpoSec Int      @default(900) @map("estimated_rpo_sec")
+  recoverySteps   Json     @default("[]") @db.JsonB @map("recovery_steps")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant      CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  simulations HrspDrSimulation[]
+
+  @@index([tenantId])
+  @@map("hrsp_dr_scenarios")
+}
+
+model HrspDrSimulation {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  scenarioId      String    @map("scenario_id") @db.Uuid
+  status          String    @default("pending")
+  actualRtoSec    Int?      @map("actual_rto_sec")
+  actualRpoSec    Int?      @map("actual_rpo_sec")
+  rtoMet          Boolean?  @map("rto_met")
+  rpoMet          Boolean?  @map("rpo_met")
+  resilienceScore Float?    @map("resilience_score")
+  findings        Json      @default("[]") @db.JsonB
+  recommendations Json      @default("[]") @db.JsonB
+  report          Json      @default("{}") @db.JsonB
+  startedAt       DateTime? @map("started_at") @db.Timestamptz
+  completedAt     DateTime? @map("completed_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  scenario HrspDrScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hrsp_dr_simulations")
+}
+
+model HrspCacheStrategy {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @map("tenant_id") @db.Uuid
+  strategyKey        String    @map("strategy_key")
+  cacheLayer         String    @default("redis") @map("cache_layer")
+  ttlSeconds         Int       @default(300) @map("ttl_seconds")
+  invalidationPolicy String    @default("ttl") @map("invalidation_policy")
+  fallbackMode       String    @default("database") @map("fallback_mode")
+  isEnabled          Boolean   @default(true) @map("is_enabled")
+  hitCount           Int       @default(0) @map("hit_count")
+  missCount          Int       @default(0) @map("miss_count")
+  degradedModeHits   Int       @default(0) @map("degraded_mode_hits")
+  cacheHealth        String    @default("unknown") @map("cache_health")
+  lastHealthCheck    DateTime? @map("last_health_check") @db.Timestamptz
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, strategyKey])
+  @@index([tenantId])
+  @@map("hrsp_cache_strategies")
+}
+
+model HrspDeploymentSimulation {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String    @map("tenant_id") @db.Uuid
+  strategy            String
+  version             String
+  targetEnvironment   String    @default("production") @map("target_environment")
+  status              String    @default("pending")
+  readinessScore      Float?    @map("readiness_score")
+  healthGates         Json      @default("[]") @db.JsonB @map("health_gates")
+  rollbackRecommended Boolean   @default(false) @map("rollback_recommended")
+  rollbackReason      String?   @map("rollback_reason")
+  simulationSteps     Json      @default("[]") @db.JsonB @map("simulation_steps")
+  findings            Json      @default("[]") @db.JsonB
+  startedAt           DateTime? @map("started_at") @db.Timestamptz
+  completedAt         DateTime? @map("completed_at") @db.Timestamptz
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hrsp_deployment_simulations")
+}
+
+model HrspChaosExperiment {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  experimentType  String    @map("experiment_type")
+  targetComponent String    @map("target_component")
+  intensity       String    @default("low")
+  durationSeconds Int       @default(30) @map("duration_seconds")
+  status          String    @default("pending")
+  isSafeMode      Boolean   @default(true) @map("is_safe_mode")
+  systemResponse  Json      @default("{}") @db.JsonB @map("system_response")
+  recommendations Json      @default("[]") @db.JsonB
+  resilienceScore Float?    @map("resilience_score")
+  startedAt       DateTime? @map("started_at") @db.Timestamptz
+  completedAt     DateTime? @map("completed_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hrsp_chaos_experiments")
+}
+
+model HrspResilienceReport {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  reportType       String   @default("on_demand") @map("report_type")
+  overallScore     Float    @map("overall_score")
+  components       Json     @default("{}") @db.JsonB
+  findings         Json     @default("[]") @db.JsonB
+  recommendations  Json     @default("[]") @db.JsonB
+  executiveSummary String?  @map("executive_summary")
+  generatedAt      DateTime @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("hrsp_resilience_reports")
 }
