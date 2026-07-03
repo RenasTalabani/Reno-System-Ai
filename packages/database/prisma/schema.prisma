@@ -664,6 +664,13 @@ model CoreTenant {
   extThemes                 ExtTheme[]
   extWidgets                ExtWidget[]
   extRatings                ExtRating[]
+  // Phase 89
+  pubApiClients             PubApiClient[]
+  pubApiKeys                PubApiKey[]
+  pubUsageRecords           PubUsageRecord[]
+  pubQuotas                 PubQuota[]
+  pubDocPages               PubDocPage[]
+  pubStatusIncidents        PubStatusIncident[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18403,6 +18410,115 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 89 — PUBLIC API PORTAL
+// =============================================================================
+
+model PubApiClient {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  clientType  String   @default("server") @map("client_type") @db.VarChar(30)
+  contactEmail String? @map("contact_email") @db.VarChar(255)
+  status      String   @default("active") @db.VarChar(30)
+  tier        String   @default("free") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  keys        PubApiKey[]
+  usageRecords PubUsageRecord[]
+  quotas      PubQuota[]
+  @@index([tenantId])
+  @@map("pub_api_clients")
+}
+
+model PubApiKey {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clientId    String   @map("client_id") @db.Uuid
+  keyPrefix   String   @map("key_prefix") @db.VarChar(20)
+  keyHash     String   @map("key_hash") @db.VarChar(128)
+  label       String?  @db.VarChar(100)
+  scopes      Json?
+  isActive    Boolean  @default(true) @map("is_active")
+  lastUsedAt  DateTime? @map("last_used_at")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client      PubApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  @@index([tenantId, clientId])
+  @@index([keyPrefix])
+  @@map("pub_api_keys")
+}
+
+model PubUsageRecord {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clientId    String   @map("client_id") @db.Uuid
+  endpoint    String   @db.VarChar(255)
+  method      String   @default("GET") @db.VarChar(10)
+  statusCode  Int      @default(200) @map("status_code")
+  latencyMs   Int      @default(0) @map("latency_ms")
+  recordedAt  DateTime @default(now()) @map("recorded_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client      PubApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  @@index([tenantId, clientId, recordedAt])
+  @@map("pub_usage_records")
+}
+
+model PubQuota {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clientId    String   @map("client_id") @db.Uuid
+  quotaType   String   @default("requests-per-day") @map("quota_type") @db.VarChar(30)
+  limitValue  Int      @map("limit_value")
+  usedValue   Int      @default(0) @map("used_value")
+  resetsAt    DateTime? @map("resets_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client      PubApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  @@unique([clientId, quotaType])
+  @@index([tenantId])
+  @@map("pub_quotas")
+}
+
+model PubDocPage {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(200)
+  slug        String   @db.VarChar(200)
+  content     String   @db.Text
+  category    String   @default("guides") @db.VarChar(50)
+  position    Int      @default(0)
+  isPublished Boolean  @default(false) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("pub_doc_pages")
+}
+
+model PubStatusIncident {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  severity    String   @default("minor") @db.VarChar(20)
+  status      String   @default("investigating") @db.VarChar(30)
+  affectedApis Json?   @map("affected_apis")
+  updates     Json?
+  startedAt   DateTime @default(now()) @map("started_at")
+  resolvedAt  DateTime? @map("resolved_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("pub_status_incidents")
 }
 
 // =============================================================================
