@@ -650,6 +650,13 @@ model CoreTenant {
   plgReviews                PlgReview[]
   plgPermissions            PlgPermission[]
   plgWebhookEvents          PlgWebhookEvent[]
+  // Phase 87
+  sdkApiSpecs               SdkApiSpec[]
+  sdkTargets                SdkTarget[]
+  sdkBuilds                 SdkBuild[]
+  sdkSnippets               SdkSnippet[]
+  sdkChangelogs             SdkChangelog[]
+  sdkDownloads              SdkDownload[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18389,6 +18396,108 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 87 — SDK GENERATOR
+// =============================================================================
+
+model SdkApiSpec {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  version     String   @default("1.0.0") @db.VarChar(30)
+  specFormat  String   @default("openapi-3.0") @map("spec_format") @db.VarChar(30)
+  spec        Json
+  status      String   @default("draft") @db.VarChar(30)
+  endpointCount Int    @default(0) @map("endpoint_count")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  builds      SdkBuild[]
+  @@unique([tenantId, name, version])
+  @@index([tenantId])
+  @@map("sdk_api_specs")
+}
+
+model SdkTarget {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  language    String   @db.VarChar(30)
+  packageName String   @map("package_name") @db.VarChar(100)
+  isEnabled   Boolean  @default(true) @map("is_enabled")
+  config      Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  builds      SdkBuild[]
+  @@unique([tenantId, language])
+  @@index([tenantId])
+  @@map("sdk_targets")
+}
+
+model SdkBuild {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  specId      String   @map("spec_id") @db.Uuid
+  targetId    String   @map("target_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  status      String   @default("queued") @db.VarChar(30)
+  artifactRef String?  @map("artifact_ref") @db.VarChar(500)
+  sizeKb      Int?     @map("size_kb")
+  buildLog    Json?    @map("build_log")
+  startedAt   DateTime @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  spec        SdkApiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+  target      SdkTarget  @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  @@index([tenantId, specId])
+  @@map("sdk_builds")
+}
+
+model SdkSnippet {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(200)
+  language    String   @db.VarChar(30)
+  endpoint    String   @db.VarChar(255)
+  code        String   @db.Text
+  description String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, language])
+  @@map("sdk_snippets")
+}
+
+model SdkChangelog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  changeType  String   @default("added") @map("change_type") @db.VarChar(30)
+  summary     String   @db.VarChar(500)
+  details     String?  @db.Text
+  isBreaking  Boolean  @default(false) @map("is_breaking")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, version])
+  @@map("sdk_changelogs")
+}
+
+model SdkDownload {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  buildRef    String   @map("build_ref") @db.VarChar(255)
+  language    String   @db.VarChar(30)
+  version     String   @db.VarChar(30)
+  downloadedBy String? @map("downloaded_by") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, language])
+  @@map("sdk_downloads")
 }
 
 // =============================================================================

@@ -59,6 +59,7 @@ import { siemModuleRoutes } from './siem/index.js'
 import { complianceAutoModuleRoutes } from './compliance-auto/index.js'
 import { secretsMgmtModuleRoutes } from './secrets-mgmt/index.js'
 import { pluginsModuleRoutes } from './plugins/index.js'
+import { sdkModuleRoutes } from './sdk/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -270,6 +271,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(complianceAutoModuleRoutes, { prefix: '' })
       await v1.register(secretsMgmtModuleRoutes, { prefix: '' })
       await v1.register(pluginsModuleRoutes, { prefix: '' })
+      await v1.register(sdkModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })
