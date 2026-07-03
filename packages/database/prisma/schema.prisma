@@ -615,6 +615,13 @@ model CoreTenant {
   ztSegments                ZtSegment[]
   ztSessionRisks            ZtSessionRisk[]
   ztViolations              ZtViolation[]
+  // Phase 82
+  socIncidents              SocIncident[]
+  socAlertRules             SocAlertRule[]
+  socThreatIntel            SocThreatIntel[]
+  socPlaybooks              SocPlaybook[]
+  socPlaybookRuns           SocPlaybookRun[]
+  socShifts                 SocShift[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18354,6 +18361,118 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 82 — SOC DASHBOARD
+// =============================================================================
+
+model SocIncident {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  severity    String   @default("medium") @db.VarChar(20)
+  status      String   @default("open") @db.VarChar(30)
+  category    String   @default("intrusion") @db.VarChar(50)
+  assignee    String?  @db.VarChar(100)
+  description String?  @db.Text
+  mttrMinutes Int?     @map("mttr_minutes")
+  detectedAt  DateTime @default(now()) @map("detected_at")
+  resolvedAt  DateTime? @map("resolved_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  playbookRuns SocPlaybookRun[]
+  @@index([tenantId, status])
+  @@map("soc_incidents")
+}
+
+model SocAlertRule {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  source      String   @default("logs") @db.VarChar(50)
+  condition   String   @db.VarChar(500)
+  severity    String   @default("medium") @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+  triggerCount Int     @default(0) @map("trigger_count")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("soc_alert_rules")
+}
+
+model SocThreatIntel {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  indicator   String   @db.VarChar(500)
+  indicatorType String @map("indicator_type") @db.VarChar(30)
+  threatType  String   @map("threat_type") @db.VarChar(50)
+  confidence  Float    @default(0.5)
+  source      String?  @db.VarChar(100)
+  isActive    Boolean  @default(true) @map("is_active")
+  expiresAt   DateTime? @map("expires_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, indicatorType])
+  @@map("soc_threat_intel")
+}
+
+model SocPlaybook {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  triggerType String   @default("manual") @map("trigger_type") @db.VarChar(30)
+  steps       Json
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runs        SocPlaybookRun[]
+  @@index([tenantId])
+  @@map("soc_playbooks")
+}
+
+model SocPlaybookRun {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  playbookId  String   @map("playbook_id") @db.Uuid
+  incidentId  String?  @map("incident_id") @db.Uuid
+  status      String   @default("running") @db.VarChar(30)
+  stepsTotal  Int      @default(0) @map("steps_total")
+  stepsDone   Int      @default(0) @map("steps_done")
+  log         Json?
+  startedAt   DateTime @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  playbook    SocPlaybook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  incident    SocIncident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+  @@index([tenantId, playbookId])
+  @@map("soc_playbook_runs")
+}
+
+model SocShift {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  analystName String   @map("analyst_name") @db.VarChar(100)
+  shiftType   String   @default("day") @map("shift_type") @db.VarChar(20)
+  startsAt    DateTime @map("starts_at")
+  endsAt      DateTime @map("ends_at")
+  status      String   @default("scheduled") @db.VarChar(30)
+  handoffNotes String? @map("handoff_notes") @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("soc_shifts")
 }
 
 // =============================================================================

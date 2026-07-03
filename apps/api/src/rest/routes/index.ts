@@ -54,6 +54,7 @@ import { autoScalingModuleRoutes } from './auto-scaling/index.js'
 import { queueClusterModuleRoutes } from './queue-cluster/index.js'
 import { cdnModuleRoutes } from './cdn/index.js'
 import { zeroTrustModuleRoutes } from './zero-trust/index.js'
+import { socModuleRoutes } from './soc/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -260,6 +261,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(queueClusterModuleRoutes, { prefix: '' })
       await v1.register(cdnModuleRoutes, { prefix: '' })
       await v1.register(zeroTrustModuleRoutes, { prefix: '' })
+      await v1.register(socModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })
