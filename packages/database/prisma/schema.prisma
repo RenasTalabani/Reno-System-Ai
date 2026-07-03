@@ -573,6 +573,13 @@ model CoreTenant {
   ebConsumers               EbConsumer[]
   ebConsumerOffsets         EbConsumerOffset[]
   ebDeadLetters             EbDeadLetter[]
+  // Phase 76
+  k8sClusters               K8sCluster[]
+  k8sNamespaces             K8sNamespace[]
+  k8sDeployments            K8sDeployment[]
+  k8sPods                   K8sPod[]
+  k8sServices               K8sService[]
+  k8sEvents                 K8sEvent[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18077,4 +18084,147 @@ model EbDeadLetter {
 
   @@index([tenantId, streamId])
   @@map("eb_dead_letters")
+}
+
+// =============================================================================
+// PHASE 76 — KUBERNETES DEPLOYMENT MANAGER
+// =============================================================================
+
+model K8sCluster {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(200)
+  description  String?  @db.Text
+  provider     String   @default("kubernetes") @db.VarChar(50)
+  region       String?  @db.VarChar(100)
+  apiEndpoint  String?  @map("api_endpoint") @db.Text
+  kubeVersion  String?  @map("kube_version") @db.VarChar(50)
+  status       String   @default("unknown") @db.VarChar(30)
+  nodeCount    Int      @default(0) @map("node_count")
+  cpuCapacity  String?  @map("cpu_capacity") @db.VarChar(50)
+  memCapacity  String?  @map("mem_capacity") @db.VarChar(50)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdBy    String   @map("created_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  namespaces  K8sNamespace[]
+  deployments K8sDeployment[]
+  pods        K8sPod[]
+  services    K8sService[]
+  events      K8sEvent[]
+
+  @@index([tenantId])
+  @@map("k8s_clusters")
+}
+
+model K8sNamespace {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  status      String   @default("active") @db.VarChar(30)
+  labels      Json     @default("{}") @db.JsonB
+  annotations Json     @default("{}") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@unique([clusterId, name])
+  @@index([tenantId])
+  @@map("k8s_namespaces")
+}
+
+model K8sDeployment {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  clusterId     String   @map("cluster_id") @db.Uuid
+  namespace     String   @db.VarChar(200)
+  name          String   @db.VarChar(200)
+  image         String   @db.Text
+  replicas      Int      @default(1)
+  readyReplicas Int      @default(0) @map("ready_replicas")
+  strategy      String   @default("RollingUpdate") @db.VarChar(50)
+  status        String   @default("pending") @db.VarChar(30)
+  labels        Json     @default("{}") @db.JsonB
+  envVars       Json     @default("{}") @db.JsonB @map("env_vars")
+  resources     Json     @default("{}") @db.JsonB
+  healthCheck   Json     @default("{}") @db.JsonB @map("health_check")
+  lastRolloutAt DateTime? @map("last_rollout_at") @db.Timestamptz
+  createdBy     String   @map("created_by") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  pods    K8sPod[]
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_deployments")
+}
+
+model K8sPod {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  clusterId    String   @map("cluster_id") @db.Uuid
+  deploymentId String?  @map("deployment_id") @db.Uuid
+  namespace    String   @db.VarChar(200)
+  name         String   @db.VarChar(300)
+  nodeName     String?  @map("node_name") @db.VarChar(200)
+  status       String   @default("pending") @db.VarChar(30)
+  phase        String   @default("Pending") @db.VarChar(50)
+  cpuUsage     String?  @map("cpu_usage") @db.VarChar(50)
+  memUsage     String?  @map("mem_usage") @db.VarChar(50)
+  restartCount Int      @default(0) @map("restart_count")
+  startedAt    DateTime? @map("started_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster    K8sCluster    @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  deployment K8sDeployment? @relation(fields: [deploymentId], references: [id])
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_pods")
+}
+
+model K8sService {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  namespace   String   @db.VarChar(200)
+  name        String   @db.VarChar(200)
+  serviceType String   @default("ClusterIP") @map("service_type") @db.VarChar(50)
+  clusterIp   String?  @map("cluster_ip") @db.VarChar(50)
+  externalIp  String?  @map("external_ip") @db.VarChar(50)
+  ports       Json     @default("[]") @db.JsonB
+  selector    Json     @default("{}") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_services")
+}
+
+model K8sEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  namespace   String?  @db.VarChar(200)
+  eventType   String   @map("event_type") @db.VarChar(30)
+  reason      String   @db.VarChar(200)
+  message     String   @db.Text
+  objectKind  String   @map("object_kind") @db.VarChar(50)
+  objectName  String   @map("object_name") @db.VarChar(300)
+  count       Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_events")
 }
