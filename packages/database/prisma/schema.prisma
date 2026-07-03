@@ -594,6 +594,13 @@ model CoreTenant {
   asScalingEvents           AsScalingEvent[]
   asSchedules               AsSchedule[]
   asRecommendations         AsRecommendation[]
+  // Phase 79
+  qcClusters                QcCluster[]
+  qcNodes                   QcNode[]
+  qcQueues                  QcQueue[]
+  qcMessages                QcMessage[]
+  qcConsumers               QcConsumer[]
+  qcAlerts                  QcAlert[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18333,6 +18340,124 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 79 — MESSAGE QUEUE CLUSTER
+// =============================================================================
+
+model QcCluster {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  engine      String   @default("rabbitmq") @db.VarChar(30)
+  status      String   @default("provisioning") @db.VarChar(30)
+  nodeCount   Int      @default(3) @map("node_count")
+  version     String   @default("3.13") @db.VarChar(30)
+  haMode      String   @default("mirrored") @map("ha_mode") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  nodes       QcNode[]
+  queues      QcQueue[]
+  alerts      QcAlert[]
+  @@index([tenantId])
+  @@map("qc_clusters")
+}
+
+model QcNode {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  role        String   @default("follower") @db.VarChar(30)
+  status      String   @default("running") @db.VarChar(30)
+  cpuUsage    Float    @default(0) @map("cpu_usage")
+  memUsage    Float    @default(0) @map("mem_usage")
+  diskUsage   Float    @default(0) @map("disk_usage")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster     QcCluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  @@index([tenantId, clusterId])
+  @@map("qc_nodes")
+}
+
+model QcQueue {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  clusterId     String   @map("cluster_id") @db.Uuid
+  name          String   @db.VarChar(200)
+  queueType     String   @default("classic") @map("queue_type") @db.VarChar(30)
+  durable       Boolean  @default(true)
+  maxLength     Int?     @map("max_length")
+  messageCount  Int      @default(0) @map("message_count")
+  consumerCount Int      @default(0) @map("consumer_count")
+  status        String   @default("active") @db.VarChar(30)
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster       QcCluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  messages      QcMessage[]
+  consumers     QcConsumer[]
+  @@unique([tenantId, clusterId, name])
+  @@index([tenantId, clusterId])
+  @@map("qc_queues")
+}
+
+model QcMessage {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  queueId     String   @map("queue_id") @db.Uuid
+  payload     Json
+  priority    Int      @default(0)
+  status      String   @default("ready") @db.VarChar(30)
+  deliveredAt DateTime? @map("delivered_at")
+  ackedAt     DateTime? @map("acked_at")
+  attempts    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  queue       QcQueue    @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  @@index([tenantId, queueId, status])
+  @@map("qc_messages")
+}
+
+model QcConsumer {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  queueId     String   @map("queue_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  status      String   @default("active") @db.VarChar(30)
+  prefetch    Int      @default(10)
+  ackedCount  Int      @default(0) @map("acked_count")
+  lastSeenAt  DateTime @default(now()) @map("last_seen_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  queue       QcQueue    @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  @@index([tenantId, queueId])
+  @@map("qc_consumers")
+}
+
+model QcAlert {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  alertType   String   @map("alert_type") @db.VarChar(50)
+  severity    String   @default("warning") @db.VarChar(20)
+  message     String   @db.Text
+  isResolved  Boolean  @default(false) @map("is_resolved")
+  resolvedAt  DateTime? @map("resolved_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster     QcCluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  @@index([tenantId, clusterId])
+  @@map("qc_alerts")
 }
 
 // =============================================================================
