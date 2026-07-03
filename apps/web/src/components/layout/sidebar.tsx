@@ -80,6 +80,7 @@ const navigation: NavSection[] = [
       { label: 'LLMOps', href: '/llmops', icon: Brain },
       { label: 'Resilience', href: '/resilience', icon: Shield },
       { label: 'Dashboards', href: '/dashboards', icon: LayoutDashboard },
+      { label: 'Reports & BI', href: '/reports', icon: FileText },
     ],
   },
   {

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
-import { reportsRoutes } from './reports.routes.js'
+import { reportRoutes } from './routes.js'
 
-export async function reportBuilderRoutes(app: FastifyInstance) {
-  await app.register(reportsRoutes, { prefix: '' })
+export async function reportsModuleRoutes(app: FastifyInstance) {
+  await app.register(reportRoutes, { prefix: '/reports' })
 }

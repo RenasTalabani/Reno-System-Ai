@@ -41,7 +41,7 @@ import { aiWorkspaceRoutes } from './ai-workspace/index.js'
 import { realtimeRoutes } from './events/index.js'
 import { globalSearchRoutes } from './search/index.js'
 import { ssoModuleRoutes } from './sso/index.js'
-import { reportBuilderRoutes } from './reports/index.js'
+import { reportsModuleRoutes } from './reports/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -235,7 +235,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(realtimeRoutes, { prefix: '/events' })
       await v1.register(globalSearchRoutes, { prefix: '/search' })
       await v1.register(ssoModuleRoutes, { prefix: '/sso' })
-      await v1.register(reportBuilderRoutes, { prefix: '/reports' })
+      await v1.register(reportsModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })

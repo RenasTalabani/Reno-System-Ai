@@ -11789,6 +11789,110 @@ exports.Prisma.CdbAiRecommendationScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
+exports.Prisma.EbrReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ownerId: 'ownerId',
+  name: 'name',
+  description: 'description',
+  reportType: 'reportType',
+  status: 'status',
+  isPublic: 'isPublic',
+  config: 'config',
+  lastRunAt: 'lastRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbrSectionScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  sectionType: 'sectionType',
+  sortOrder: 'sortOrder',
+  title: 'title',
+  dataSource: 'dataSource',
+  config: 'config',
+  cachedData: 'cachedData',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbrTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  isBuiltIn: 'isBuiltIn',
+  sections: 'sections',
+  config: 'config',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EbrScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  frequency: 'frequency',
+  cronExpr: 'cronExpr',
+  recipients: 'recipients',
+  outputFormat: 'outputFormat',
+  isActive: 'isActive',
+  nextRunAt: 'nextRunAt',
+  lastRunAt: 'lastRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbrExportJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  requestedBy: 'requestedBy',
+  format: 'format',
+  status: 'status',
+  fileSizeKb: 'fileSizeKb',
+  errorMsg: 'errorMsg',
+  exportedAt: 'exportedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbrSubscriptionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  userId: 'userId',
+  frequency: 'frequency',
+  isActive: 'isActive',
+  lastDeliveredAt: 'lastDeliveredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbrAiNarrativeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reportId: 'reportId',
+  narrative: 'narrative',
+  keyInsights: 'keyInsights',
+  confidence: 'confidence',
+  generatedAt: 'generatedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EbrMetricsScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  runCount: 'runCount',
+  avgRunMs: 'avgRunMs',
+  totalExports: 'totalExports',
+  viewCount: 'viewCount',
+  lastRunAt: 'lastRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -12548,7 +12652,15 @@ exports.Prisma.ModelName = {
   CdbDashboardShare: 'CdbDashboardShare',
   CdbDashboardTemplate: 'CdbDashboardTemplate',
   CdbDashboardMetrics: 'CdbDashboardMetrics',
-  CdbAiRecommendation: 'CdbAiRecommendation'
+  CdbAiRecommendation: 'CdbAiRecommendation',
+  EbrReport: 'EbrReport',
+  EbrSection: 'EbrSection',
+  EbrTemplate: 'EbrTemplate',
+  EbrSchedule: 'EbrSchedule',
+  EbrExportJob: 'EbrExportJob',
+  EbrSubscription: 'EbrSubscription',
+  EbrAiNarrative: 'EbrAiNarrative',
+  EbrMetrics: 'EbrMetrics'
 };
 
 /**

@@ -537,6 +537,13 @@ model CoreTenant {
   cdbDashboardShares        CdbDashboardShare[]
   cdbDashboardTemplates     CdbDashboardTemplate[]
   cdbAiRecommendations      CdbAiRecommendation[]
+  // Phase 69
+  ebrReports                EbrReport[]
+  ebrTemplates              EbrTemplate[]
+  ebrSchedules              EbrSchedule[]
+  ebrExportJobs             EbrExportJob[]
+  ebrSubscriptions          EbrSubscription[]
+  ebrAiNarratives           EbrAiNarrative[]
   hrspHealthSnapshots       HrspHealthSnapshot[]
   hrspComponentAlerts       HrspComponentAlert[]
   hrspFailoverPlans         HrspFailoverPlan[]
@@ -17460,4 +17467,164 @@ model CdbAiRecommendation {
 
   @@index([tenantId])
   @@map("cdb_ai_recommendations")
+}
+
+// =============================================================================
+// PHASE 69 — Enterprise Reporting & BI Engine
+// =============================================================================
+
+model EbrReport {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  ownerId     String    @map("owner_id") @db.Uuid
+  name        String
+  description String?
+  reportType  String    @default("custom") @map("report_type")
+  status      String    @default("draft")
+  isPublic    Boolean   @default(false) @map("is_public")
+  config      Json      @default("{}") @db.JsonB
+  lastRunAt   DateTime? @map("last_run_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sections      EbrSection[]
+  schedule      EbrSchedule?
+  exportJobs    EbrExportJob[]
+  subscriptions EbrSubscription[]
+  narratives    EbrAiNarrative[]
+  metrics       EbrMetrics?
+
+  @@index([tenantId])
+  @@index([tenantId, ownerId])
+  @@map("ebr_reports")
+}
+
+model EbrSection {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportId    String   @map("report_id") @db.Uuid
+  sectionType String   @map("section_type")
+  sortOrder   Int      @default(0) @map("sort_order")
+  title       String?
+  dataSource  String?  @map("data_source")
+  config      Json     @default("{}") @db.JsonB
+  cachedData  Json?    @map("cached_data") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  report EbrReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
+  @@map("ebr_sections")
+}
+
+model EbrTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  description String?
+  category    String
+  isBuiltIn   Boolean  @default(false) @map("is_built_in")
+  sections    Json     @default("[]") @db.JsonB
+  config      Json     @default("{}") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ebr_templates")
+}
+
+model EbrSchedule {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  reportId     String    @unique @map("report_id") @db.Uuid
+  frequency    String    @default("weekly")
+  cronExpr     String?   @map("cron_expr")
+  recipients   Json      @default("[]") @db.JsonB
+  outputFormat String    @default("pdf") @map("output_format")
+  isActive     Boolean   @default(true) @map("is_active")
+  nextRunAt    DateTime? @map("next_run_at") @db.Timestamptz
+  lastRunAt    DateTime? @map("last_run_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  report EbrReport  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ebr_schedules")
+}
+
+model EbrExportJob {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  reportId    String?   @map("report_id") @db.Uuid
+  requestedBy String    @map("requested_by") @db.Uuid
+  format      String    @default("pdf")
+  status      String    @default("done")
+  fileSizeKb  Int?      @map("file_size_kb")
+  errorMsg    String?   @map("error_msg")
+  exportedAt  DateTime? @map("exported_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  report EbrReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([reportId])
+  @@map("ebr_export_jobs")
+}
+
+model EbrSubscription {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  reportId        String    @map("report_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  frequency       String    @default("weekly")
+  isActive        Boolean   @default(true) @map("is_active")
+  lastDeliveredAt DateTime? @map("last_delivered_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  report EbrReport  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@unique([reportId, userId])
+  @@index([tenantId])
+  @@map("ebr_subscriptions")
+}
+
+model EbrAiNarrative {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  reportId    String   @map("report_id") @db.Uuid
+  narrative   String
+  keyInsights Json     @default("[]") @map("key_insights") @db.JsonB
+  confidence  Float    @default(0.85)
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  report EbrReport  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, reportId])
+  @@map("ebr_ai_narratives")
+}
+
+model EbrMetrics {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportId     String    @unique @map("report_id") @db.Uuid
+  runCount     Int       @default(0) @map("run_count")
+  avgRunMs     Int       @default(0) @map("avg_run_ms")
+  totalExports Int       @default(0) @map("total_exports")
+  viewCount    Int       @default(0) @map("view_count")
+  lastRunAt    DateTime? @map("last_run_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  report EbrReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("ebr_metrics")
 }
