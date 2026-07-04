@@ -706,6 +706,13 @@ model CoreTenant {
   acDataProcessings         AcDataProcessing[]
   acConsents                AcConsent[]
   acAuditTrails             AcAuditTrail[]
+  // Phase 95
+  bnSuites                  BnSuite[]
+  bnCases                   BnCase[]
+  bnRuns                    BnRun[]
+  bnResults                 BnResult[]
+  bnBaselines               BnBaseline[]
+  bnRegressions             BnRegression[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18445,6 +18452,116 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 95 — AI BENCHMARKING
+// =============================================================================
+
+model BnSuite {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  category    String   @default("quality") @db.VarChar(30)
+  description String?  @db.Text
+  metricType  String   @default("accuracy") @map("metric_type") @db.VarChar(30)
+  higherIsBetter Boolean @default(true) @map("higher_is_better")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cases       BnCase[]
+  runs        BnRun[]
+  baselines   BnBaseline[]
+  @@index([tenantId])
+  @@map("bn_suites")
+}
+
+model BnCase {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  suiteId     String   @map("suite_id") @db.Uuid
+  name        String   @db.VarChar(150)
+  input       Json
+  expected    Json?
+  weight      Float    @default(1)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  suite       BnSuite    @relation(fields: [suiteId], references: [id], onDelete: Cascade)
+  results     BnResult[]
+  @@index([tenantId, suiteId])
+  @@map("bn_cases")
+}
+
+model BnRun {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  suiteId     String   @map("suite_id") @db.Uuid
+  modelRef    String   @map("model_ref") @db.VarChar(100)
+  status      String   @default("running") @db.VarChar(30)
+  score       Float?
+  passRate    Float?   @map("pass_rate")
+  latencyMsAvg Int?    @map("latency_ms_avg")
+  totalCases  Int      @default(0) @map("total_cases")
+  startedAt   DateTime @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  suite       BnSuite    @relation(fields: [suiteId], references: [id], onDelete: Cascade)
+  results     BnResult[]
+  regressions BnRegression[]
+  @@index([tenantId, suiteId, modelRef])
+  @@map("bn_runs")
+}
+
+model BnResult {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  runId       String   @map("run_id") @db.Uuid
+  caseId      String   @map("case_id") @db.Uuid
+  passed      Boolean  @default(false)
+  score       Float    @default(0)
+  latencyMs   Int      @default(0) @map("latency_ms")
+  output      Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  run         BnRun      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  case        BnCase     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  @@index([tenantId, runId])
+  @@map("bn_results")
+}
+
+model BnBaseline {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  suiteId     String   @map("suite_id") @db.Uuid
+  modelRef    String   @map("model_ref") @db.VarChar(100)
+  score       Float
+  passRate    Float    @map("pass_rate")
+  setBy       String?  @map("set_by") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  suite       BnSuite    @relation(fields: [suiteId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, suiteId, modelRef])
+  @@index([tenantId, suiteId])
+  @@map("bn_baselines")
+}
+
+model BnRegression {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  runId       String   @map("run_id") @db.Uuid
+  suiteRef    String   @map("suite_ref") @db.VarChar(100)
+  baselineScore Float  @map("baseline_score")
+  currentScore Float   @map("current_score")
+  deltaPct    Float    @map("delta_pct")
+  severity    String   @default("minor") @db.VarChar(20)
+  acknowledged Boolean @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  run         BnRun      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("bn_regressions")
 }
 
 // =============================================================================
