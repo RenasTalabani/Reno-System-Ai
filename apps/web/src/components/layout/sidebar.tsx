@@ -108,6 +108,7 @@ const navigation: NavSection[] = [
       { label: 'AI Compliance', href: '/ai-compliance', icon: Gavel },
       { label: 'AI Benchmarking', href: '/ai-benchmarking', icon: Gauge },
       { label: 'Licensing', href: '/licensing', icon: KeyRound },
+      { label: 'Customer Portal', href: '/customer-portal', icon: Building2 },
     ],
   },
   {

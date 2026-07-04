@@ -720,6 +720,13 @@ model CoreTenant {
   licEntitlements           LicEntitlement[]
   licMeters                 LicMeter[]
   licRenewals               LicRenewal[]
+  // Phase 97
+  cpAccounts                CpAccount[]
+  cpContacts                CpContact[]
+  cpSubscriptions           CpSubscription[]
+  cpInvoiceDocs             CpInvoiceDoc[]
+  cpAnnouncements           CpAnnouncement[]
+  cpSupportRequests         CpSupportRequest[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18459,6 +18466,120 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 97 — COMMERCIAL CUSTOMER PORTAL
+// =============================================================================
+
+model CpAccount {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  companyName String   @map("company_name") @db.VarChar(150)
+  slug        String   @db.VarChar(100)
+  industry    String?  @db.VarChar(100)
+  status      String   @default("trial") @db.VarChar(30)
+  healthScore Float    @default(70) @map("health_score")
+  mrr         Float    @default(0)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  contacts    CpContact[]
+  subscriptions CpSubscription[]
+  invoiceDocs CpInvoiceDoc[]
+  supportRequests CpSupportRequest[]
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("cp_accounts")
+}
+
+model CpContact {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  accountId   String   @map("account_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  email       String   @db.VarChar(255)
+  role        String   @default("member") @db.VarChar(30)
+  isPrimary   Boolean  @default(false) @map("is_primary")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account     CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([tenantId, accountId])
+  @@map("cp_contacts")
+}
+
+model CpSubscription {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  accountId   String   @map("account_id") @db.Uuid
+  planRef     String   @map("plan_ref") @db.VarChar(100)
+  billingCycle String  @default("monthly") @map("billing_cycle") @db.VarChar(20)
+  amount      Float    @default(0)
+  status      String   @default("active") @db.VarChar(30)
+  startedAt   DateTime @default(now()) @map("started_at")
+  renewsAt    DateTime? @map("renews_at")
+  cancelledAt DateTime? @map("cancelled_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account     CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([tenantId, accountId])
+  @@map("cp_subscriptions")
+}
+
+model CpInvoiceDoc {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  accountId   String   @map("account_id") @db.Uuid
+  invoiceNo   String   @map("invoice_no") @db.VarChar(50)
+  amount      Float
+  currency    String   @default("USD") @db.VarChar(10)
+  status      String   @default("open") @db.VarChar(30)
+  dueDate     DateTime? @map("due_date")
+  paidAt      DateTime? @map("paid_at")
+  lineItems   Json?    @map("line_items")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account     CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, invoiceNo])
+  @@index([tenantId, accountId])
+  @@map("cp_invoice_docs")
+}
+
+model CpAnnouncement {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  title       String   @db.VarChar(200)
+  body        String   @db.Text
+  audience    String   @default("all") @db.VarChar(30)
+  isPublished Boolean  @default(false) @map("is_published")
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("cp_announcements")
+}
+
+model CpSupportRequest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  accountId   String   @map("account_id") @db.Uuid
+  subject     String   @db.VarChar(255)
+  body        String?  @db.Text
+  priority    String   @default("normal") @db.VarChar(20)
+  status      String   @default("open") @db.VarChar(30)
+  replies     Json?
+  resolvedAt  DateTime? @map("resolved_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account     CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([tenantId, accountId])
+  @@map("cp_support_requests")
 }
 
 // =============================================================================
