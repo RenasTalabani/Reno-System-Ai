@@ -734,6 +734,13 @@ model CoreTenant {
   relInstallations          RelInstallation[]
   relDeployPlans            RelDeployPlan[]
   relChecklistItems         RelChecklistItem[]
+  // Phase 99
+  dhSpaces                  DhSpace[]
+  dhArticles                DhArticle[]
+  dhArticleVersions         DhArticleVersion[]
+  dhFeedbacks               DhFeedback[]
+  dhGlossaryTerms           DhGlossaryTerm[]
+  dhSearchLogs              DhSearchLog[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18476,8 +18483,104 @@ model MrReplicationConfig {
 }
 
 // =============================================================================
-// PHASE 98 — RELEASE PACKAGING & INSTALLER (simulated — no real deploys)
+// PHASE 99 — DOCUMENTATION HUB
 // =============================================================================
+
+model DhSpace {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  slug        String   @db.VarChar(100)
+  description String?  @db.Text
+  audience    String   @default("all") @db.VarChar(30)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  articles    DhArticle[]
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("dh_spaces")
+}
+
+model DhArticle {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  spaceId     String   @map("space_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  slug        String   @db.VarChar(255)
+  content     String   @db.Text
+  status      String   @default("draft") @db.VarChar(30)
+  currentVersion Int   @default(1) @map("current_version")
+  viewCount   Int      @default(0) @map("view_count")
+  helpfulYes  Int      @default(0) @map("helpful_yes")
+  helpfulNo   Int      @default(0) @map("helpful_no")
+  tags        Json?
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  space       DhSpace    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  versions    DhArticleVersion[]
+  feedbacks   DhFeedback[]
+  @@unique([tenantId, spaceId, slug])
+  @@index([tenantId, spaceId])
+  @@map("dh_articles")
+}
+
+model DhArticleVersion {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  articleId   String   @map("article_id") @db.Uuid
+  version     Int
+  title       String   @db.VarChar(255)
+  content     String   @db.Text
+  editedBy    String?  @map("edited_by") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  article     DhArticle  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  @@unique([articleId, version])
+  @@index([tenantId, articleId])
+  @@map("dh_article_versions")
+}
+
+model DhFeedback {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  articleId   String   @map("article_id") @db.Uuid
+  helpful     Boolean
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  article     DhArticle  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  @@index([tenantId, articleId])
+  @@map("dh_feedbacks")
+}
+
+model DhGlossaryTerm {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  term        String   @db.VarChar(100)
+  definition  String   @db.Text
+  category    String?  @db.VarChar(50)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, term])
+  @@index([tenantId])
+  @@map("dh_glossary_terms")
+}
+
+model DhSearchLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  query       String   @db.VarChar(255)
+  resultCount Int      @default(0) @map("result_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("dh_search_logs")
+}
 
 model RelRelease {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
