@@ -727,6 +727,13 @@ model CoreTenant {
   cpInvoiceDocs             CpInvoiceDoc[]
   cpAnnouncements           CpAnnouncement[]
   cpSupportRequests         CpSupportRequest[]
+  // Phase 98
+  relReleases               RelRelease[]
+  relArtifacts              RelArtifact[]
+  relChannels               RelChannel[]
+  relInstallations          RelInstallation[]
+  relDeployPlans            RelDeployPlan[]
+  relChecklistItems         RelChecklistItem[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18466,6 +18473,114 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 98 — RELEASE PACKAGING & INSTALLER (simulated — no real deploys)
+// =============================================================================
+
+model RelRelease {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  version     String   @db.VarChar(30)
+  codename    String?  @db.VarChar(100)
+  releaseNotes String? @map("release_notes") @db.Text
+  status      String   @default("draft") @db.VarChar(30)
+  gaAt        DateTime? @map("ga_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  artifacts   RelArtifact[]
+  deployPlans RelDeployPlan[]
+  checklistItems RelChecklistItem[]
+  @@unique([tenantId, version])
+  @@index([tenantId])
+  @@map("rel_releases")
+}
+
+model RelArtifact {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  releaseId   String   @map("release_id") @db.Uuid
+  platform    String   @default("docker") @db.VarChar(30)
+  artifactRef String   @map("artifact_ref") @db.VarChar(500)
+  sizeMb      Int      @default(0) @map("size_mb")
+  checksum    String?  @db.VarChar(128)
+  status      String   @default("built") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  release     RelRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  @@index([tenantId, releaseId])
+  @@map("rel_artifacts")
+}
+
+model RelChannel {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(50)
+  currentVersion String? @map("current_version") @db.VarChar(30)
+  autoUpdate  Boolean  @default(false) @map("auto_update")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("rel_channels")
+}
+
+model RelInstallation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  siteName    String   @map("site_name") @db.VarChar(150)
+  installType String   @default("docker-compose") @map("install_type") @db.VarChar(30)
+  version     String   @db.VarChar(30)
+  channel     String   @default("stable") @db.VarChar(50)
+  status      String   @default("installing") @db.VarChar(30)
+  steps       Json?
+  healthCheck Json?    @map("health_check")
+  installedAt DateTime? @map("installed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("rel_installations")
+}
+
+model RelDeployPlan {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  releaseId   String   @map("release_id") @db.Uuid
+  environment String   @default("staging") @db.VarChar(30)
+  strategy    String   @default("blue-green") @db.VarChar(30)
+  status      String   @default("planned") @db.VarChar(30)
+  isDryRun    Boolean  @default(true) @map("is_dry_run")
+  approvedBy  String?  @map("approved_by") @db.VarChar(100)
+  planSteps   Json?    @map("plan_steps")
+  executedAt  DateTime? @map("executed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  release     RelRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  @@index([tenantId, releaseId])
+  @@map("rel_deploy_plans")
+}
+
+model RelChecklistItem {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  releaseId   String   @map("release_id") @db.Uuid
+  title       String   @db.VarChar(255)
+  category    String   @default("quality") @db.VarChar(30)
+  isRequired  Boolean  @default(true) @map("is_required")
+  isDone      Boolean  @default(false) @map("is_done")
+  doneBy      String?  @map("done_by") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  release     RelRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  @@index([tenantId, releaseId])
+  @@map("rel_checklist_items")
 }
 
 // =============================================================================
