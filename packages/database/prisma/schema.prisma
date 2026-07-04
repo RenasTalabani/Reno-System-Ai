@@ -692,6 +692,13 @@ model CoreTenant {
   aigUsageLimits            AigUsageLimit[]
   aigIncidents              AigIncident[]
   aigReviews                AigReview[]
+  // Phase 93
+  xaiDecisions              XaiDecision[]
+  xaiFactors                XaiFactor[]
+  xaiTraces                 XaiTrace[]
+  xaiCounterfactuals        XaiCounterfactual[]
+  xaiFeatureImportances     XaiFeatureImportance[]
+  xaiReports                XaiReport[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18431,6 +18438,101 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 93 — AI EXPLAINABILITY
+// =============================================================================
+
+model XaiDecision {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelRef    String   @map("model_ref") @db.VarChar(100)
+  decisionType String  @default("classification") @map("decision_type") @db.VarChar(30)
+  inputSummary String  @map("input_summary") @db.Text
+  outcome     String   @db.VarChar(255)
+  confidence  Float    @default(0)
+  subjectRef  String?  @map("subject_ref") @db.VarChar(100)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  factors     XaiFactor[]
+  traces      XaiTrace[]
+  counterfactuals XaiCounterfactual[]
+  @@index([tenantId, modelRef])
+  @@map("xai_decisions")
+}
+
+model XaiFactor {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  decisionId  String   @map("decision_id") @db.Uuid
+  featureName String   @map("feature_name") @db.VarChar(100)
+  contribution Float
+  direction   String   @default("positive") @db.VarChar(20)
+  value       String?  @db.VarChar(255)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  decision    XaiDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, decisionId])
+  @@map("xai_factors")
+}
+
+model XaiTrace {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  decisionId  String   @map("decision_id") @db.Uuid
+  stepOrder   Int      @map("step_order")
+  stepName    String   @map("step_name") @db.VarChar(100)
+  detail      String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  decision    XaiDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, decisionId])
+  @@map("xai_traces")
+}
+
+model XaiCounterfactual {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  decisionId  String   @map("decision_id") @db.Uuid
+  change      String   @db.VarChar(255)
+  wouldChangeOutcome Boolean @default(false) @map("would_change_outcome")
+  newOutcome  String?  @map("new_outcome") @db.VarChar(255)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  decision    XaiDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  @@index([tenantId, decisionId])
+  @@map("xai_counterfactuals")
+}
+
+model XaiFeatureImportance {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelRef    String   @map("model_ref") @db.VarChar(100)
+  featureName String   @map("feature_name") @db.VarChar(100)
+  importance  Float
+  rank        Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, modelRef, featureName])
+  @@index([tenantId, modelRef])
+  @@map("xai_feature_importances")
+}
+
+model XaiReport {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelRef    String   @map("model_ref") @db.VarChar(100)
+  reportType  String   @default("transparency") @map("report_type") @db.VarChar(30)
+  content     Json
+  status      String   @default("draft") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, modelRef])
+  @@map("xai_reports")
 }
 
 // =============================================================================
