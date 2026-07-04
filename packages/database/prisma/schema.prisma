@@ -685,6 +685,13 @@ model CoreTenant {
   ftEvaluations             FtEvaluation[]
   ftDeployments             FtDeployment[]
   ftFeedbacks               FtFeedback[]
+  // Phase 92
+  aigPolicies               AigPolicy[]
+  aigModelRegistry          AigModelEntry[]
+  aigApprovals              AigApproval[]
+  aigUsageLimits            AigUsageLimit[]
+  aigIncidents              AigIncident[]
+  aigReviews                AigReview[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18424,6 +18431,115 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 92 — AI GOVERNANCE
+// =============================================================================
+
+model AigPolicy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  policyArea  String   @default("usage") @map("policy_area") @db.VarChar(30)
+  rules       Json
+  enforcement String   @default("advisory") @db.VarChar(30)
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("aig_policies")
+}
+
+model AigModelEntry {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelName   String   @map("model_name") @db.VarChar(100)
+  provider    String   @default("reno-brain") @db.VarChar(30)
+  riskTier    String   @default("low") @map("risk_tier") @db.VarChar(20)
+  approvalStatus String @default("pending") @map("approval_status") @db.VarChar(30)
+  allowedUses Json?    @map("allowed_uses")
+  prohibitedUses Json? @map("prohibited_uses")
+  approvedBy  String?  @map("approved_by") @db.VarChar(100)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, modelName, provider])
+  @@index([tenantId])
+  @@map("aig_model_registry")
+}
+
+model AigApproval {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  requestType String   @map("request_type") @db.VarChar(30)
+  subject     String   @db.VarChar(255)
+  justification String? @db.Text
+  requestedBy String   @map("requested_by") @db.VarChar(100)
+  status      String   @default("pending") @db.VarChar(30)
+  decidedBy   String?  @map("decided_by") @db.VarChar(100)
+  decisionNote String? @map("decision_note") @db.Text
+  decidedAt   DateTime? @map("decided_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, status])
+  @@map("aig_approvals")
+}
+
+model AigUsageLimit {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  scope       String   @default("tenant") @db.VarChar(30)
+  scopeRef    String?  @map("scope_ref") @db.VarChar(100)
+  limitType   String   @default("tokens-per-day") @map("limit_type") @db.VarChar(30)
+  limitValue  Int      @map("limit_value")
+  usedValue   Int      @default(0) @map("used_value")
+  action      String   @default("warn") @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("aig_usage_limits")
+}
+
+model AigIncident {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  incidentType String  @map("incident_type") @db.VarChar(50)
+  severity    String   @default("medium") @db.VarChar(20)
+  description String   @db.Text
+  modelRef    String?  @map("model_ref") @db.VarChar(100)
+  status      String   @default("open") @db.VarChar(30)
+  resolution  String?  @db.Text
+  resolvedAt  DateTime? @map("resolved_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, status])
+  @@map("aig_incidents")
+}
+
+model AigReview {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  reviewType  String   @default("quarterly") @map("review_type") @db.VarChar(30)
+  scope       String   @db.VarChar(255)
+  findings    Json?
+  score       Float?
+  reviewer    String?  @db.VarChar(100)
+  status      String   @default("in-progress") @db.VarChar(30)
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("aig_reviews")
 }
 
 // =============================================================================
