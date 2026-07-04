@@ -102,6 +102,7 @@ const navigation: NavSection[] = [
       { label: 'Extension Store', href: '/extensions-store', icon: Blocks },
       { label: 'Public API', href: '/public-api', icon: Braces },
       { label: 'Dev Console', href: '/dev-console', icon: Terminal },
+      { label: 'Fine-Tuning', href: '/fine-tuning', icon: Brain },
     ],
   },
   {

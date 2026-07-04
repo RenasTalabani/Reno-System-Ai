@@ -678,6 +678,13 @@ model CoreTenant {
   devTestRuns               DevTestRun[]
   devEnvVars                DevEnvVar[]
   devActivities             DevActivity[]
+  // Phase 91
+  ftDatasets                FtDataset[]
+  ftJobs                    FtJob[]
+  ftModels                  FtModel[]
+  ftEvaluations             FtEvaluation[]
+  ftDeployments             FtDeployment[]
+  ftFeedbacks               FtFeedback[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18417,6 +18424,117 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 91 — FINE-TUNING STUDIO
+// =============================================================================
+
+model FtDataset {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  taskType    String   @default("chat") @map("task_type") @db.VarChar(30)
+  sampleCount Int      @default(0) @map("sample_count")
+  status      String   @default("draft") @db.VarChar(30)
+  samples     Json?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  jobs        FtJob[]
+  @@index([tenantId])
+  @@map("ft_datasets")
+}
+
+model FtJob {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  datasetId   String   @map("dataset_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  baseModel   String   @default("reno-brain-base") @map("base_model") @db.VarChar(100)
+  provider    String   @default("reno-brain") @db.VarChar(30)
+  status      String   @default("queued") @db.VarChar(30)
+  epochs      Int      @default(3)
+  learningRate Float   @default(0.0001) @map("learning_rate")
+  progress    Float    @default(0)
+  trainLoss   Float?   @map("train_loss")
+  metrics     Json?
+  startedAt   DateTime? @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dataset     FtDataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  models      FtModel[]
+  @@index([tenantId, datasetId])
+  @@map("ft_jobs")
+}
+
+model FtModel {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  jobId       String   @map("job_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  version     String   @default("1") @db.VarChar(20)
+  provider    String   @default("reno-brain") @db.VarChar(30)
+  status      String   @default("ready") @db.VarChar(30)
+  sizeMb      Int?     @map("size_mb")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job         FtJob      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  evaluations FtEvaluation[]
+  deployments FtDeployment[]
+  @@index([tenantId, jobId])
+  @@map("ft_models")
+}
+
+model FtEvaluation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelId     String   @map("model_id") @db.Uuid
+  evalType    String   @default("accuracy") @map("eval_type") @db.VarChar(30)
+  score       Float
+  baselineScore Float? @map("baseline_score")
+  details     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  model       FtModel    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  @@index([tenantId, modelId])
+  @@map("ft_evaluations")
+}
+
+model FtDeployment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelId     String   @map("model_id") @db.Uuid
+  environment String   @default("staging") @db.VarChar(30)
+  status      String   @default("pending-approval") @db.VarChar(30)
+  approvedBy  String?  @map("approved_by") @db.VarChar(100)
+  trafficPct  Int      @default(0) @map("traffic_pct")
+  deployedAt  DateTime? @map("deployed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  model       FtModel    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  @@index([tenantId, modelId])
+  @@map("ft_deployments")
+}
+
+model FtFeedback {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  modelRef    String   @map("model_ref") @db.VarChar(100)
+  prompt      String   @db.Text
+  completion  String   @db.Text
+  rating      Int      @default(0)
+  correction  String?  @db.Text
+  addedToDataset Boolean @default(false) @map("added_to_dataset")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, modelRef])
+  @@map("ft_feedbacks")
 }
 
 // =============================================================================
