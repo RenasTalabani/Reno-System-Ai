@@ -66,6 +66,7 @@ import { devConsoleModuleRoutes } from './dev-console/index.js'
 import { fineTuningModuleRoutes } from './fine-tuning/index.js'
 import { aiGovernanceModuleRoutes } from './ai-governance/index.js'
 import { explainabilityModuleRoutes } from './explainability/index.js'
+import { aiComplianceModuleRoutes } from './ai-compliance/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -284,6 +285,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(fineTuningModuleRoutes, { prefix: '' })
       await v1.register(aiGovernanceModuleRoutes, { prefix: '' })
       await v1.register(explainabilityModuleRoutes, { prefix: '' })
+      await v1.register(aiComplianceModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })

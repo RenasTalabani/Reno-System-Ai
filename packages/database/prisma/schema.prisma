@@ -699,6 +699,13 @@ model CoreTenant {
   xaiCounterfactuals        XaiCounterfactual[]
   xaiFeatureImportances     XaiFeatureImportance[]
   xaiReports                XaiReport[]
+  // Phase 94
+  acRegulations             AcRegulation[]
+  acRequirements            AcRequirement[]
+  acAssessments             AcAssessment[]
+  acDataProcessings         AcDataProcessing[]
+  acConsents                AcConsent[]
+  acAuditTrails             AcAuditTrail[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18438,6 +18445,111 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 94 — AI COMPLIANCE (EU AI Act / regulatory)
+// =============================================================================
+
+model AcRegulation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  code        String   @db.VarChar(30)
+  jurisdiction String  @default("EU") @db.VarChar(50)
+  riskCategory String  @default("limited") @map("risk_category") @db.VarChar(30)
+  description String?  @db.Text
+  status      String   @default("active") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requirements AcRequirement[]
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("ac_regulations")
+}
+
+model AcRequirement {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  regulationId String  @map("regulation_id") @db.Uuid
+  code        String   @db.VarChar(30)
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  complianceStatus String @default("not-assessed") @map("compliance_status") @db.VarChar(30)
+  evidence    String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  regulation  AcRegulation @relation(fields: [regulationId], references: [id], onDelete: Cascade)
+  @@index([tenantId, regulationId])
+  @@map("ac_requirements")
+}
+
+model AcAssessment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  systemName  String   @map("system_name") @db.VarChar(100)
+  assessmentType String @default("conformity") @map("assessment_type") @db.VarChar(30)
+  riskLevel   String   @default("limited") @map("risk_level") @db.VarChar(30)
+  score       Float?
+  status      String   @default("in-progress") @db.VarChar(30)
+  findings    Json?
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("ac_assessments")
+}
+
+model AcDataProcessing {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  activityName String  @map("activity_name") @db.VarChar(150)
+  purpose     String   @db.Text
+  legalBasis  String   @default("consent") @map("legal_basis") @db.VarChar(50)
+  dataCategories Json?  @map("data_categories")
+  retentionDays Int    @default(365) @map("retention_days")
+  isHighRisk  Boolean  @default(false) @map("is_high_risk")
+  dpiaCompleted Boolean @default(false) @map("dpia_completed")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("ac_data_processings")
+}
+
+model AcConsent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  subjectRef  String   @map("subject_ref") @db.VarChar(100)
+  purpose     String   @db.VarChar(255)
+  granted     Boolean  @default(true)
+  grantedAt   DateTime @default(now()) @map("granted_at")
+  revokedAt   DateTime? @map("revoked_at")
+  expiresAt   DateTime? @map("expires_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, subjectRef])
+  @@map("ac_consents")
+}
+
+model AcAuditTrail {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  eventType   String   @map("event_type") @db.VarChar(50)
+  systemRef   String?  @map("system_ref") @db.VarChar(100)
+  actor       String   @db.VarChar(100)
+  detail      String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, eventType])
+  @@map("ac_audit_trails")
 }
 
 // =============================================================================
