@@ -741,6 +741,13 @@ model CoreTenant {
   dhFeedbacks               DhFeedback[]
   dhGlossaryTerms           DhGlossaryTerm[]
   dhSearchLogs              DhSearchLog[]
+  // Phase 100
+  certPrograms              CertProgram[]
+  certCriteria              CertCriterion[]
+  certAssessments           CertAssessment[]
+  certCertificates          CertCertificate[]
+  certBadges                CertBadge[]
+  certAuditTrails           CertAuditTrail[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18480,6 +18487,105 @@ model MrReplicationConfig {
   region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
   @@index([tenantId, regionId])
   @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 100 — PLATFORM CERTIFICATION (capstone: aggregates enterprise readiness)
+// =============================================================================
+
+model CertProgram {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(150)
+  level       String   @default("bronze") @db.VarChar(30)
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  criteria    CertCriterion[]
+  assessments CertAssessment[]
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("cert_programs")
+}
+
+model CertCriterion {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  programId   String   @map("program_id") @db.Uuid
+  domain      String   @db.VarChar(50)
+  title       String   @db.VarChar(255)
+  weight      Int      @default(10)
+  autoCheck   String?  @map("auto_check") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  program     CertProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  @@index([tenantId, programId])
+  @@map("cert_criteria")
+}
+
+model CertAssessment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  programId   String   @map("program_id") @db.Uuid
+  status      String   @default("in-progress") @db.VarChar(30)
+  overallScore Float?  @map("overall_score")
+  domainScores Json?   @map("domain_scores")
+  passed      Boolean  @default(false)
+  runBy       String?  @map("run_by") @db.VarChar(100)
+  startedAt   DateTime @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  program     CertProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  certificates CertCertificate[]
+  @@index([tenantId, programId])
+  @@map("cert_assessments")
+}
+
+model CertCertificate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  assessmentId String  @map("assessment_id") @db.Uuid
+  certNumber  String   @map("cert_number") @db.VarChar(50)
+  level       String   @db.VarChar(30)
+  issuedTo    String   @map("issued_to") @db.VarChar(150)
+  status      String   @default("active") @db.VarChar(30)
+  issuedAt    DateTime @default(now()) @map("issued_at")
+  expiresAt   DateTime? @map("expires_at")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment  CertAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, certNumber])
+  @@index([tenantId])
+  @@map("cert_certificates")
+}
+
+model CertBadge {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(100)
+  domain      String   @db.VarChar(50)
+  earnedAt    DateTime @default(now()) @map("earned_at")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("cert_badges")
+}
+
+model CertAuditTrail {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  action      String   @db.VarChar(50)
+  actor       String   @db.VarChar(100)
+  detail      String?  @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  @@map("cert_audit_trails")
 }
 
 // =============================================================================

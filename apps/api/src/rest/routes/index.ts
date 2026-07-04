@@ -72,6 +72,7 @@ import { licensingModuleRoutes } from './licensing/index.js'
 import { customerPortalModuleRoutes } from './customer-portal/index.js'
 import { releaseModuleRoutes } from './release/index.js'
 import { docsHubModuleRoutes } from './docs-hub/index.js'
+import { certificationModuleRoutes } from './certification/index.js'
 import { wlRoutes } from './whitelabel/index.js'
 import { cdpModuleRoutes } from './cdp/index.js'
 import { mktRoutes } from './marketing/index.js'
@@ -296,6 +297,7 @@ export async function registerRoutes(app: FastifyInstance) {
       await v1.register(customerPortalModuleRoutes, { prefix: '' })
       await v1.register(releaseModuleRoutes, { prefix: '' })
       await v1.register(docsHubModuleRoutes, { prefix: '' })
+      await v1.register(certificationModuleRoutes, { prefix: '' })
       await v1.register(wlRoutes, { prefix: '/white-label' })
       await v1.register(cdpModuleRoutes, { prefix: '/cdp' })
       await v1.register(mktRoutes, { prefix: '/marketing' })
