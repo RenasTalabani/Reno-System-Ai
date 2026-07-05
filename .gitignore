@@ -39,8 +39,13 @@ desktop.ini
 # IDE
 .vscode/
 .idea/
+.vs/
 *.swp
 *.swo
+
+# Local backups / snapshots (runtime-generated, not for distribution)
+.backups/
+.snapshots/
 
 # Testing
 coverage/
