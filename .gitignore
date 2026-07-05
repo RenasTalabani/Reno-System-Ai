@@ -54,6 +54,7 @@ coverage/
 
 # Generated
 packages/ui/src/components/ui/
+packages/database/src/generated/
 
 # workflow files require PAT workflow scope
 .github/workflows/
