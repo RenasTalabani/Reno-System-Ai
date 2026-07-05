@@ -1,6 +1,6 @@
 # Reno System
 
-![Node](https://img.shields.io/badge/node-%E2%89%A520-339933?logo=node.js&logoColor=white)
+![Node](https://img.shields.io/badge/node-%E2%89%A522.13-339933?logo=node.js&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A59-F69220?logo=pnpm&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js&logoColor=white)
 ![Fastify](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)
@@ -118,7 +118,7 @@ Connects to the API at `http://10.0.2.2:4000` (Android emulator) or your machine
 
 | Tool | Version |
 |---|---|
-| Node.js | ≥ 20 |
+| Node.js | ≥ 22.13 |
 | pnpm | ≥ 9 |
 | Docker Desktop | latest |
 | Flutter (optional, for mobile) | 3.x |
