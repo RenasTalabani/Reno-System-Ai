@@ -20,6 +20,8 @@ import 'features/documents/documents_screen.dart';
 import 'features/notifications/notifications_screen.dart';
 import 'features/scanner/barcode_scanner_screen.dart';
 import 'features/attendance/attendance_screen.dart';
+import 'features/admin/module_config.dart';
+import 'features/admin/module_list_screen.dart';
 
 final _routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -77,6 +79,17 @@ final _routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: 'documents', builder: (_, __) => const DocumentsScreen()),
           GoRoute(path: 'notifications', builder: (_, __) => const NotificationsScreen()),
           GoRoute(path: 'scanner', builder: (_, __) => const BarcodeScannerScreen()),
+          ...[
+            ...identityModules,
+            ...businessModules,
+            ...workspaceModules,
+            ...intelligenceModules,
+            ...platformModules,
+            ...systemModules,
+          ].map((cfg) => GoRoute(
+                path: cfg.key,
+                builder: (_, __) => ModuleListScreen(config: cfg),
+              )),
         ],
       ),
     ],

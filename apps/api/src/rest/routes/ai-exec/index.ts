@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { aiExecExecutivesRoutes } from './executives.routes.js'
 import { aiDigitalTwinRoutes } from './digital-twin.routes.js'
 import { aiExecReportsRoutes } from './reports.routes.js'
@@ -12,6 +13,8 @@ import { aiExecDashboardRoutes } from './dashboard.routes.js'
 import { aiExecKnowledgeRoutes } from './knowledge.routes.js'
 
 export async function aiExecRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   await app.register(aiExecDashboardRoutes, { prefix: '/dashboard' })
   await app.register(aiExecExecutivesRoutes, { prefix: '/executives' })
   await app.register(aiDigitalTwinRoutes, { prefix: '/digital-twin' })

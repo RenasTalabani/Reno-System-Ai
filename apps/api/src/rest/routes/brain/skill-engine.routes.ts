@@ -2,8 +2,11 @@ import type { FastifyInstance } from 'fastify'
 import { listTools, getToolById, getToolCategories } from '../../../brain/skill/tool-registry.service.js'
 import { listCapabilities, getCapabilityById } from '../../../brain/skill/capability-registry.js'
 import { getSkillExecutionStats } from '../../../brain/skill/index.js'
+import { requireAuth } from '../../middleware/auth.js'
 
 export async function brainSkillEngineRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   // GET /brain/tools — list all tools with optional filters
   app.get('/tools', async (req, reply) => {
     const { category, module: mod } = req.query as { category?: string; module?: string }

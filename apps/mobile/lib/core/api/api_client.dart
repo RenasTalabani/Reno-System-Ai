@@ -15,10 +15,13 @@ class ApiClient {
     _dio = Dio(BaseOptions(
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 20),
-      // Request gzip-compressed responses for smaller payloads
+      // Request gzip-compressed responses for smaller payloads. Deliberately
+      // omit 'br' (Brotli) — Dio's dart:io HttpClient auto-decompresses gzip
+      // transparently but does not decode Brotli, so a server that picks br
+      // for larger bodies would hand back undecodable bytes here.
       headers: {
         'Content-Type': 'application/json',
-        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Encoding': 'gzip, deflate',
       },
     ));
 
@@ -34,24 +37,15 @@ class ApiClient {
     _dio.options.baseUrl = baseUrl;
   }
 
-  // Deduplicates identical concurrent GET requests to the same URL+params.
-  final Map<String, Future<Response<dynamic>>> _inflightGets = {};
-
   Future<ApiResponse<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     T Function(dynamic)? fromJson,
   }) async {
-    final key = '$path?${queryParameters?.entries.map((e) => '${e.key}=${e.value}').join('&') ?? ''}';
     try {
-      final future = _inflightGets.putIfAbsent(
-        key,
-        () => _dio.get(path, queryParameters: queryParameters).whenComplete(() => _inflightGets.remove(key)),
-      );
-      final res = await future;
+      final res = await _dio.get(path, queryParameters: queryParameters);
       return ApiResponse.success(res.data, fromJson);
     } on DioException catch (e) {
-      _inflightGets.remove(key);
       return ApiResponse.error(_handleError(e));
     }
   }

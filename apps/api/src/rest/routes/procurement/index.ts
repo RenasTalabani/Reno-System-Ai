@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { requireAuth } from '../../middleware/auth.js'
 import { procDashboardRoutes } from './dashboard.routes.js'
 import { procSupplierRoutes } from './suppliers.routes.js'
 import { procRequisitionRoutes } from './requisitions.routes.js'
@@ -7,6 +8,8 @@ import { procQuotationRoutes } from './quotations.routes.js'
 import { procOrderRoutes } from './orders.routes.js'
 
 export async function procurementRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   await app.register(procDashboardRoutes, { prefix: '/dashboard' })
   await app.register(procSupplierRoutes, { prefix: '/suppliers' })
   await app.register(procRequisitionRoutes, { prefix: '/requisitions' })

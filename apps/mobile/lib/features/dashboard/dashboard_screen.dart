@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/api_client.dart';
+import '../../core/app_info/app_version_provider.dart';
 import '../../core/auth/auth_provider.dart';
 import '../../core/cache/cache_service.dart';
 import '../../core/theme/branding_provider.dart';
+import '../admin/module_config.dart';
+import '../../shared/utils/time_ago.dart';
 import '../../shared/widgets/loading_widget.dart';
 import '../../shared/widgets/reno_app_bar.dart';
 
@@ -65,6 +68,7 @@ class DashboardScreen extends ConsumerWidget {
 
   Widget _buildDrawer(BuildContext context, WidgetRef ref, AuthUser? user) {
     final branding = ref.read(brandingProvider);
+    final version = ref.watch(appVersionProvider).value;
     return Drawer(
       child: SafeArea(
         child: Column(children: [
@@ -75,27 +79,77 @@ class DashboardScreen extends ConsumerWidget {
               children: [
                 const Icon(Icons.business_rounded, color: Colors.white, size: 36),
                 const SizedBox(height: 8),
-                Text(branding.appName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                Text(user?.email ?? '', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
+                Row(children: [
+                  Text(branding.appName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  if (version != null) ...[
+                    const SizedBox(width: 8),
+                    Text(version, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12)),
+                  ],
+                ]),
+                Text(user?.email ?? '', style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12)),
               ],
             ),
           ),
-          _DrawerTile(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
-          _DrawerTile(icon: Icons.person_outlined, label: 'Employee Portal', route: '/dashboard/portal/employee'),
-          _DrawerTile(icon: Icons.support_agent_outlined, label: 'My Tickets', route: '/dashboard/tickets'),
-          _DrawerTile(icon: Icons.message_outlined, label: 'Communication', route: '/dashboard/comm'),
-          _DrawerTile(icon: Icons.description_outlined, label: 'Documents', route: '/dashboard/documents'),
-          _DrawerTile(icon: Icons.smart_toy_outlined, label: 'Reno Brain', route: '/dashboard/brain'),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Sign Out'),
-            onTap: () async {
-              await ref.read(authServiceProvider).logout();
-              if (context.mounted) context.go('/auth/login');
-            },
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const _SectionHeader('CORE'),
+                _DrawerTile(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
+                _DrawerTile(icon: Icons.notifications_outlined, label: 'Notifications', route: '/dashboard/notifications'),
+                const _SectionHeader('IDENTITY'),
+                for (final cfg in identityModules)
+                  _DrawerTile(icon: cfg.icon, label: cfg.title, route: '/dashboard/${cfg.key}'),
+                const _SectionHeader('BUSINESS'),
+                for (final cfg in businessModules)
+                  _DrawerTile(icon: cfg.icon, label: cfg.title, route: '/dashboard/${cfg.key}'),
+                const _SectionHeader('WORKSPACE'),
+                _DrawerTile(icon: Icons.message_outlined, label: 'Communication', route: '/dashboard/comm'),
+                _DrawerTile(icon: Icons.description_outlined, label: 'Documents', route: '/dashboard/documents'),
+                for (final cfg in workspaceModules)
+                  _DrawerTile(icon: cfg.icon, label: cfg.title, route: '/dashboard/${cfg.key}'),
+                const _SectionHeader('INTELLIGENCE'),
+                _DrawerTile(icon: Icons.smart_toy_outlined, label: 'Reno Brain', route: '/dashboard/brain'),
+                for (final cfg in intelligenceModules)
+                  _DrawerTile(icon: cfg.icon, label: cfg.title, route: '/dashboard/${cfg.key}'),
+                const _SectionHeader('PLATFORM'),
+                for (final cfg in platformModules)
+                  _DrawerTile(icon: cfg.icon, label: cfg.title, route: '/dashboard/${cfg.key}'),
+                const _SectionHeader('SYSTEM'),
+                for (final cfg in systemModules)
+                  _DrawerTile(icon: cfg.icon, label: cfg.title, route: '/dashboard/${cfg.key}'),
+                const _SectionHeader('SELF-SERVICE'),
+                _DrawerTile(icon: Icons.person_outlined, label: 'Employee Portal', route: '/dashboard/portal/employee'),
+                _DrawerTile(icon: Icons.support_agent_outlined, label: 'My Tickets', route: '/dashboard/tickets'),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Sign Out'),
+                  onTap: () async {
+                    await ref.read(authServiceProvider).logout();
+                    if (context.mounted) context.go('/auth/login');
+                  },
+                ),
+              ],
+            ),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String label;
+  const _SectionHeader(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[500], letterSpacing: 0.5),
       ),
     );
   }
@@ -143,7 +197,7 @@ class _WelcomeCard extends StatelessWidget {
         Text('$greeting,', style: const TextStyle(color: Colors.white, fontSize: 14)),
         Text(user?.fullName ?? 'User', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text(user?.role ?? '', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
+        Text(user?.role ?? '', style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12)),
       ]),
     );
   }
@@ -168,7 +222,7 @@ class _StatsRow extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
           ),
           child: Column(children: [
             Icon(s['icon'] as IconData, color: Color(s['color'] as int), size: 24),
@@ -212,7 +266,7 @@ class _QuickActions extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -239,11 +293,11 @@ class _RecentActivity extends StatelessWidget {
       children: items.map<Widget>((item) => ListTile(
         contentPadding: EdgeInsets.zero,
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           child: Icon(Icons.notifications_outlined, size: 18, color: Theme.of(context).colorScheme.primary),
         ),
         title: Text('${item['description'] ?? ''}', style: const TextStyle(fontSize: 13)),
-        subtitle: Text('${item['createdAt'] ?? ''}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        subtitle: Text(formatRelative(item['createdAt']), style: const TextStyle(fontSize: 11, color: Colors.grey)),
       )).toList(),
     );
   }

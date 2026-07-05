@@ -8,18 +8,19 @@ import '../../shared/widgets/reno_app_bar.dart';
 final _leaveRequestsProvider = FutureProvider<List<dynamic>>((ref) async {
   final cache = ref.read(cacheServiceProvider);
   final client = ref.read(apiClientProvider);
-  final list = await cache.getOrFetch(key: 'my_leave_requests', fetch: () async {
-    final r = await client.get('/v1/portal/employee/leave/my-requests');
-    return r.data ?? [];
+  final data = await cache.getOrFetch(key: 'my_leave_requests', fetch: () async {
+    final r = await client.get('/v1/portal/employee/leave');
+    return r.data;
   });
-  return list is List ? list : [];
+  final requests = (data is Map) ? data['requests'] : null;
+  return requests is List ? requests : [];
 });
 
 final _leaveTypesProvider = FutureProvider<List<dynamic>>((ref) async {
   final client = ref.read(apiClientProvider);
-  final r = await client.get('/v1/hr/leave-types');
+  final r = await client.get('/v1/hr/leave/types');
   final d = r.data;
-  return (d is List) ? d : (d is Map ? (d['data'] as List? ?? []) : []);
+  return (d is List) ? d : [];
 });
 
 class LeaveRequestScreen extends ConsumerStatefulWidget {
@@ -77,7 +78,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> with Si
       backgroundColor: Colors.transparent,
       builder: (_) => _NewLeaveSheet(onSubmit: (body) async {
         final client = ref.read(apiClientProvider);
-        await client.post('/v1/portal/employee/leave/requests', data: body);
+        await client.post('/v1/portal/employee/leave', data: body);
         ref.invalidate(_leaveRequestsProvider);
         if (mounted) Navigator.pop(context);
       }),
@@ -124,10 +125,10 @@ class _LeaveCard extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           width: 40, height: 40,
-          decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
           child: Icon(Icons.calendar_month_outlined, color: color, size: 20),
         ),
-        title: Text('${item['leaveType'] ?? 'Leave'}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        title: Text('${item['leaveType']?['name'] ?? 'Leave'}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
         subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const SizedBox(height: 2),
           Text('${item['startDate'] ?? ''} – ${item['endDate'] ?? ''}', style: const TextStyle(fontSize: 12)),
@@ -135,7 +136,7 @@ class _LeaveCard extends StatelessWidget {
         ]),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
           child: Text(status, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.w600)),
         ),
       ),
@@ -207,7 +208,7 @@ class _NewLeaveSheetState extends ConsumerState<_NewLeaveSheet> {
         ]),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          value: _leaveTypeId,
+          initialValue: _leaveTypeId,
           decoration: const InputDecoration(labelText: 'Leave Type'),
           items: types.map<DropdownMenuItem<String>>((t) => DropdownMenuItem(
             value: '${t['id']}',

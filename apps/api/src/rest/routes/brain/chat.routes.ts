@@ -5,8 +5,11 @@ import { buildContext, formatContextForPrompt } from '../../../brain/context.js'
 import { checkQuota, logUsage, estimateCost } from '../../../brain/quota.js'
 import { callClaudeForChat, getClaudeAvailability, getClaudeUsageStats } from '../../../brain/claude.service.js'
 import type { ProviderBadge } from '../../../brain/claude.service.js'
+import { requireAuth } from '../../middleware/auth.js'
 
 export async function brainChatRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   // POST /brain/chat — main NL query endpoint
   app.post('/', async (req, reply) => {
     const { tenantId, userId } = req as any

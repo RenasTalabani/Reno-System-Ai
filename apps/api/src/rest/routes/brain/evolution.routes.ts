@@ -4,8 +4,11 @@ import { learningService, type FeedbackOutcome, type FeedbackSourceType } from '
 import { briefingService } from '../../../brain/briefing.service.js'
 import { boardSimulationService } from '../../../brain/board-simulation.service.js'
 import { semanticSearchService } from '../../../brain/semantic-search.service.js'
+import { requireAuth } from '../../middleware/auth.js'
 
 export async function brainEvolutionRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   // ── Business Memory ────────────────────────────────────────────────────────
 
   app.get('/memory/business', {

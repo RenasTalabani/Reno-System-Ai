@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/app_info/app_version_provider.dart';
 import '../../core/auth/auth_provider.dart';
 
 class TenantScreen extends ConsumerStatefulWidget {
@@ -27,7 +28,15 @@ class _TenantScreenState extends ConsumerState<TenantScreen> {
     setState(() { _loading = true; _error = null; });
 
     final authService = ref.read(authServiceProvider);
-    final err = await authService.resolveTenant(input);
+    String? err;
+    try {
+      err = await authService.resolveTenant(input).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => 'Connection timed out. Check the server URL.',
+      );
+    } catch (e) {
+      err = 'Unexpected error: $e';
+    }
 
     if (!mounted) return;
     setState(() => _loading = false);
@@ -118,7 +127,7 @@ class _TenantScreenState extends ConsumerState<TenantScreen> {
               const Spacer(),
               Center(
                 child: Text(
-                  'Reno System v1.0',
+                  'Reno System ${ref.watch(appVersionProvider).value ?? ''}',
                   style: TextStyle(fontSize: 11, color: Colors.grey[400]),
                 ),
               ),

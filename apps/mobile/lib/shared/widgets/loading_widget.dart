@@ -118,9 +118,9 @@ class PriorityBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: _color().withOpacity(0.12),
+        color: _color().withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _color().withOpacity(0.3)),
+        border: Border.all(color: _color().withValues(alpha: 0.3)),
       ),
       child: Text(
         priority,
@@ -151,7 +151,7 @@ class StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: _color().withOpacity(0.10),
+        color: _color().withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

@@ -35,7 +35,7 @@ export default function LoginPage() {
   const fillDemo = () => {
     setValue('tenantSlug', 'demo', { shouldValidate: true })
     setValue('email', 'admin@demo.com', { shouldValidate: true })
-    setValue('password', 'Demo@123456', { shouldValidate: true })
+    setValue('password', 'Admin1234!', { shouldValidate: true })
   }
 
   const onSubmit = async (data: LoginForm) => {
@@ -167,7 +167,7 @@ export default function LoginPage() {
             <p className="text-xs text-indigo-300 text-center">
               <strong>Click to fill demo credentials</strong>
               <br />
-              <span className="opacity-75">admin@demo.com · Demo@123456 · workspace: demo</span>
+              <span className="opacity-75">admin@demo.com · Admin1234! · workspace: demo</span>
             </p>
           </button>
         </div>

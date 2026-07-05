@@ -29,9 +29,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _init() async {
     await Future.delayed(const Duration(milliseconds: 1200));
+    if (!mounted) return;
 
     // Load branding from prefs
     await ref.read(brandingProvider.notifier).loadFromPrefs();
+    if (!mounted) return;
 
     // Check if we have a stored base URL
     final storage = ref.read(tokenStorageProvider);
@@ -80,7 +82,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(Icons.business_rounded, size: 48, color: Colors.white),
@@ -98,14 +100,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               const SizedBox(height: 8),
               Text(
                 'AI-First Business OS',
-                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14),
               ),
               const SizedBox(height: 48),
               SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   strokeWidth: 2,
                 ),
               ),

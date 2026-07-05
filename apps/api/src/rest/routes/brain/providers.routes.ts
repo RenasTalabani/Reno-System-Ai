@@ -1,7 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import { prisma } from '@reno/database'
+import { requireAuth } from '../../middleware/auth.js'
 
 export async function brainProviderRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   // GET /brain/providers
   app.get('/', async (req, reply) => {
     const { tenantId } = req as any

@@ -1,7 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import { prisma } from '@reno/database'
+import { requireAuth } from '../../middleware/auth.js'
 
 export async function brainProposalsRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', requireAuth)
+
   // GET /brain/proposals — list proposals for this tenant (pending by default)
   app.get('/', async (req, reply) => {
     const { tenantId, userId } = req as any

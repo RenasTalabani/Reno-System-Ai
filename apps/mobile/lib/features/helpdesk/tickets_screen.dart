@@ -199,7 +199,7 @@ class _NewTicketSheetState extends State<_NewTicketSheet> {
         TextField(controller: _descCtrl, decoration: const InputDecoration(labelText: 'Description'), maxLines: 3),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
-          value: _priority,
+          initialValue: _priority,
           decoration: const InputDecoration(labelText: 'Priority'),
           items: ['low', 'medium', 'high', 'critical'].map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
           onChanged: (v) => setState(() => _priority = v ?? 'medium'),

@@ -56,9 +56,11 @@ class _BrainChatScreenState extends ConsumerState<BrainChatScreen> {
       final client = ref.read(apiClientProvider);
       final r = await client.post('/v1/brain/chat', data: {
         'message': text,
-        'context': 'mobile',
       });
-      final reply = r.data?['reply'] ?? r.data?['response'] ?? 'I couldn\'t process that. Please try again.';
+      final reply = r.data?['assistantMessage']?['content'] ??
+          r.data?['reply'] ??
+          r.data?['response'] ??
+          'I couldn\'t process that. Please try again.';
       setState(() {
         _messages.removeLast();
         _messages.add(_ChatMessage(role: 'assistant', content: '$reply'));
@@ -144,7 +146,7 @@ class _ContextChip extends StatelessWidget {
         label: Text(label, style: const TextStyle(fontSize: 11)),
         onPressed: onTap,
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+        backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
       ),
     );
   }
