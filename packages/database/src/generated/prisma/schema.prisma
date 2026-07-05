@@ -558,6 +558,195 @@ model CoreTenant {
   agwKeys                   AgwKey[]
   agwLogs                   AgwLog[]
   agwPolicies               AgwPolicy[]
+  // Phase 74
+  wbhEndpoints              WbhEndpoint[]
+  wbhEvents                 WbhEvent[]
+  wbhDeliveries             WbhDelivery[]
+  wbhSubscriptions          WbhSubscription[]
+  wbhSecrets                WbhSecret[]
+  wbhLogs                   WbhLog[]
+  // Phase 75
+  ebStreams                 EbStream[]
+  ebMessages                EbMessage[]
+  ebConsumerGroups          EbConsumerGroup[]
+  ebConsumers               EbConsumer[]
+  ebConsumerOffsets         EbConsumerOffset[]
+  ebDeadLetters             EbDeadLetter[]
+  // Phase 76
+  k8sClusters               K8sCluster[]
+  k8sNamespaces             K8sNamespace[]
+  k8sDeployments            K8sDeployment[]
+  k8sPods                   K8sPod[]
+  k8sServices               K8sService[]
+  k8sEvents                 K8sEvent[]
+  // Phase 77
+  mrRegions                 MrRegion[]
+  mrEndpoints               MrEndpoint[]
+  mrRoutingPolicies         MrRoutingPolicy[]
+  mrHealthChecks            MrHealthCheck[]
+  mrFailoverEvents          MrFailoverEvent[]
+  mrReplicationConfigs      MrReplicationConfig[]
+  // Phase 78
+  asTargets                 AsTarget[]
+  asPolicies                AsPolicy[]
+  asMetricSamples           AsMetricSample[]
+  asScalingEvents           AsScalingEvent[]
+  asSchedules               AsSchedule[]
+  asRecommendations         AsRecommendation[]
+  // Phase 79
+  qcClusters                QcCluster[]
+  qcNodes                   QcNode[]
+  qcQueues                  QcQueue[]
+  qcMessages                QcMessage[]
+  qcConsumers               QcConsumer[]
+  qcAlerts                  QcAlert[]
+  // Phase 80
+  cdnZones                  CdnZone[]
+  cdnOrigins                CdnOrigin[]
+  cdnCacheRules             CdnCacheRule[]
+  cdnEdgeLocations          CdnEdgeLocation[]
+  cdnPurgeRequests          CdnPurgeRequest[]
+  cdnAnalytics              CdnAnalytic[]
+  // Phase 81
+  ztPolicies                ZtPolicy[]
+  ztDevices                 ZtDevice[]
+  ztAccessRequests          ZtAccessRequest[]
+  ztSegments                ZtSegment[]
+  ztSessionRisks            ZtSessionRisk[]
+  ztViolations              ZtViolation[]
+  // Phase 82
+  socIncidents              SocIncident[]
+  socAlertRules             SocAlertRule[]
+  socThreatIntel            SocThreatIntel[]
+  socPlaybooks              SocPlaybook[]
+  socPlaybookRuns           SocPlaybookRun[]
+  socShifts                 SocShift[]
+  // Phase 83
+  siemLogSources            SiemLogSource[]
+  siemEvents                SiemEvent[]
+  siemCorrelationRules      SiemCorrelationRule[]
+  siemDetections            SiemDetection[]
+  siemSavedQueries          SiemSavedQuery[]
+  siemRetentionPolicies     SiemRetentionPolicy[]
+  // Phase 84
+  caFrameworks              CaFramework[]
+  caControls                CaControl[]
+  caAssessments             CaAssessment[]
+  caEvidences               CaEvidence[]
+  caFindings                CaFinding[]
+  caTasks                   CaTask[]
+  // Phase 85
+  smVaults                  SmVault[]
+  smSecrets                 SmSecret[]
+  smSecretVersions          SmSecretVersion[]
+  smAccessGrants            SmAccessGrant[]
+  smRotationPolicies        SmRotationPolicy[]
+  smAccessLogs              SmAccessLog[]
+  // Phase 86
+  plgPlugins                PlgPlugin[]
+  plgVersions               PlgVersion[]
+  plgInstallations          PlgInstallation[]
+  plgReviews                PlgReview[]
+  plgPermissions            PlgPermission[]
+  plgWebhookEvents          PlgWebhookEvent[]
+  // Phase 87
+  sdkApiSpecs               SdkApiSpec[]
+  sdkTargets                SdkTarget[]
+  sdkBuilds                 SdkBuild[]
+  sdkSnippets               SdkSnippet[]
+  sdkChangelogs             SdkChangelog[]
+  sdkDownloads              SdkDownload[]
+  // Phase 88
+  extExtensions             ExtExtension[]
+  extVersionsRel            ExtVersion[]
+  extInstalls               ExtInstall[]
+  extThemes                 ExtTheme[]
+  extWidgets                ExtWidget[]
+  extRatings                ExtRating[]
+  // Phase 89
+  pubApiClients             PubApiClient[]
+  pubApiKeys                PubApiKey[]
+  pubUsageRecords           PubUsageRecord[]
+  pubQuotas                 PubQuota[]
+  pubDocPages               PubDocPage[]
+  pubStatusIncidents        PubStatusIncident[]
+  // Phase 90
+  devApps                   DevApp[]
+  devSandboxes              DevSandbox[]
+  devLogEntries             DevLogEntry[]
+  devTestRuns               DevTestRun[]
+  devEnvVars                DevEnvVar[]
+  devActivities             DevActivity[]
+  // Phase 91
+  ftDatasets                FtDataset[]
+  ftJobs                    FtJob[]
+  ftModels                  FtModel[]
+  ftEvaluations             FtEvaluation[]
+  ftDeployments             FtDeployment[]
+  ftFeedbacks               FtFeedback[]
+  // Phase 92
+  aigPolicies               AigPolicy[]
+  aigModelRegistry          AigModelEntry[]
+  aigApprovals              AigApproval[]
+  aigUsageLimits            AigUsageLimit[]
+  aigIncidents              AigIncident[]
+  aigReviews                AigReview[]
+  // Phase 93
+  xaiDecisions              XaiDecision[]
+  xaiFactors                XaiFactor[]
+  xaiTraces                 XaiTrace[]
+  xaiCounterfactuals        XaiCounterfactual[]
+  xaiFeatureImportances     XaiFeatureImportance[]
+  xaiReports                XaiReport[]
+  // Phase 94
+  acRegulations             AcRegulation[]
+  acRequirements            AcRequirement[]
+  acAssessments             AcAssessment[]
+  acDataProcessings         AcDataProcessing[]
+  acConsents                AcConsent[]
+  acAuditTrails             AcAuditTrail[]
+  // Phase 95
+  bnSuites                  BnSuite[]
+  bnCases                   BnCase[]
+  bnRuns                    BnRun[]
+  bnResults                 BnResult[]
+  bnBaselines               BnBaseline[]
+  bnRegressions             BnRegression[]
+  // Phase 96
+  licPlans                  LicPlan[]
+  licKeys                   LicKey[]
+  licActivations            LicActivation[]
+  licEntitlements           LicEntitlement[]
+  licMeters                 LicMeter[]
+  licRenewals               LicRenewal[]
+  // Phase 97
+  cpAccounts                CpAccount[]
+  cpContacts                CpContact[]
+  cpSubscriptions           CpSubscription[]
+  cpInvoiceDocs             CpInvoiceDoc[]
+  cpAnnouncements           CpAnnouncement[]
+  cpSupportRequests         CpSupportRequest[]
+  // Phase 98
+  relReleases               RelRelease[]
+  relArtifacts              RelArtifact[]
+  relChannels               RelChannel[]
+  relInstallations          RelInstallation[]
+  relDeployPlans            RelDeployPlan[]
+  relChecklistItems         RelChecklistItem[]
+  // Phase 99
+  dhSpaces                  DhSpace[]
+  dhArticles                DhArticle[]
+  dhArticleVersions         DhArticleVersion[]
+  dhFeedbacks               DhFeedback[]
+  dhGlossaryTerms           DhGlossaryTerm[]
+  dhSearchLogs              DhSearchLog[]
+  // Phase 100
+  certPrograms              CertProgram[]
+  certCriteria              CertCriterion[]
+  certAssessments           CertAssessment[]
+  certCertificates          CertCertificate[]
+  certBadges                CertBadge[]
+  certAuditTrails           CertAuditTrail[]
   // Phase 70
   xpdExportJobs             XpdExportJob[]
   xpdDownloadTokens         XpdDownloadToken[]
@@ -18172,4 +18361,3149 @@ model AgwPolicy {
   @@index([tenantId])
   @@index([apiId])
   @@map("agw_policies")
+}
+
+// ─── Phase 74: Enterprise Webhooks & Event Bus ────────────────────────────────
+
+model WbhEndpoint {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  createdBy    String    @map("created_by") @db.Uuid
+  name         String    @db.VarChar(255)
+  description  String?
+  url          String    @db.VarChar(1000)
+  isActive     Boolean   @default(true) @map("is_active")
+  retryEnabled Boolean   @default(true) @map("retry_enabled")
+  maxRetries   Int       @default(3) @map("max_retries")
+  timeoutMs    Int       @default(10000) @map("timeout_ms")
+  successCount Int       @default(0) @map("success_count")
+  failureCount Int       @default(0) @map("failure_count")
+  lastCalledAt DateTime? @map("last_called_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscriptions WbhSubscription[]
+  deliveries    WbhDelivery[]
+  secrets       WbhSecret[]
+
+  @@index([tenantId])
+  @@map("wbh_endpoints")
+}
+
+model WbhSubscription {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  endpointId String   @map("endpoint_id") @db.Uuid
+  eventType  String   @map("event_type") @db.VarChar(100)
+  filters    Json     @default("{}") @db.JsonB
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  endpoint WbhEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@unique([endpointId, eventType])
+  @@index([tenantId])
+  @@index([tenantId, eventType])
+  @@map("wbh_subscriptions")
+}
+
+model WbhEvent {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  eventType String   @map("event_type") @db.VarChar(100)
+  source    String   @db.VarChar(100)
+  payload   Json     @default("{}") @db.JsonB
+  metadata  Json     @default("{}") @db.JsonB
+  status    String   @default("pending") @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliveries WbhDelivery[]
+
+  @@index([tenantId])
+  @@index([tenantId, eventType])
+  @@index([tenantId, status])
+  @@map("wbh_events")
+}
+
+model WbhDelivery {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  eventId      String    @map("event_id") @db.Uuid
+  endpointId   String    @map("endpoint_id") @db.Uuid
+  status       String    @default("pending") @db.VarChar(20)
+  httpStatus   Int?      @map("http_status")
+  responseBody String?   @map("response_body") @db.Text
+  errorMessage String?   @map("error_message")
+  durationMs   Int?      @map("duration_ms")
+  attemptCount Int       @default(0) @map("attempt_count")
+  nextRetryAt  DateTime? @map("next_retry_at") @db.Timestamptz
+  deliveredAt  DateTime? @map("delivered_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  event    WbhEvent    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  endpoint WbhEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([eventId])
+  @@index([tenantId, status])
+  @@map("wbh_deliveries")
+}
+
+model WbhSecret {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  endpointId String    @map("endpoint_id") @db.Uuid
+  secretHash String    @map("secret_hash") @db.VarChar(128)
+  algorithm  String    @default("sha256") @db.VarChar(20)
+  isActive   Boolean   @default(true) @map("is_active")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  expiresAt  DateTime? @map("expires_at") @db.Timestamptz
+
+  tenant   CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  endpoint WbhEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("wbh_secrets")
+}
+
+model WbhLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String?  @map("entity_id") @db.Uuid
+  details    Json     @default("{}") @db.JsonB
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("wbh_logs")
+}
+
+// =============================================================================
+// PHASE 75 — EVENT BUS
+// =============================================================================
+
+model EbStream {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(200)
+  description  String?  @db.Text
+  partitions   Int      @default(1)
+  retentionMs  BigInt   @default(86400000) @map("retention_ms")
+  maxMsgSize   Int      @default(1048576) @map("max_msg_size")
+  isActive     Boolean  @default(true) @map("is_active")
+  messageCount BigInt   @default(0) @map("message_count")
+  createdBy    String   @map("created_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  messages       EbMessage[]
+  consumerGroups EbConsumerGroup[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("eb_streams")
+}
+
+model EbMessage {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  streamId     String    @map("stream_id") @db.Uuid
+  partitionKey String?   @map("partition_key") @db.VarChar(200)
+  payload      Json      @db.JsonB
+  headers      Json      @default("{}") @db.JsonB
+  offset       BigInt    @default(0)
+  status       String    @default("pending") @db.VarChar(20)
+  attempts     Int       @default(0)
+  publishedBy  String    @map("published_by") @db.Uuid
+  processedAt  DateTime? @map("processed_at") @db.Timestamptz
+  expiresAt    DateTime? @map("expires_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stream     EbStream      @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  deadLetter EbDeadLetter?
+
+  @@index([tenantId, streamId])
+  @@index([tenantId, status])
+  @@map("eb_messages")
+}
+
+model EbConsumerGroup {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  streamId    String   @map("stream_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  maxRetries  Int      @default(3) @map("max_retries")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    CoreTenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stream    EbStream           @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  consumers EbConsumer[]
+  offsets   EbConsumerOffset[]
+
+  @@unique([tenantId, streamId, name])
+  @@index([tenantId])
+  @@map("eb_consumer_groups")
+}
+
+model EbConsumer {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  consumerGroupId String    @map("consumer_group_id") @db.Uuid
+  name            String    @db.VarChar(200)
+  callbackUrl     String?   @map("callback_url") @db.Text
+  isActive        Boolean   @default(true) @map("is_active")
+  lastPollAt      DateTime? @map("last_poll_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  consumerGroup EbConsumerGroup @relation(fields: [consumerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, consumerGroupId])
+  @@map("eb_consumers")
+}
+
+model EbConsumerOffset {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  consumerGroupId String   @map("consumer_group_id") @db.Uuid
+  partition       Int      @default(0)
+  offset          BigInt   @default(0)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  consumerGroup EbConsumerGroup @relation(fields: [consumerGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([consumerGroupId, partition])
+  @@index([tenantId])
+  @@map("eb_consumer_offsets")
+}
+
+model EbDeadLetter {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @map("tenant_id") @db.Uuid
+  messageId  String    @unique @map("message_id") @db.Uuid
+  streamId   String    @map("stream_id") @db.Uuid
+  reason     String    @db.Text
+  attempts   Int       @default(0)
+  payload    Json      @db.JsonB
+  headers    Json      @default("{}") @db.JsonB
+  replayedAt DateTime? @map("replayed_at") @db.Timestamptz
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  message EbMessage  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, streamId])
+  @@map("eb_dead_letters")
+}
+
+// =============================================================================
+// PHASE 76 — KUBERNETES DEPLOYMENT MANAGER
+// =============================================================================
+
+model K8sCluster {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  description String?  @db.Text
+  provider    String   @default("kubernetes") @db.VarChar(50)
+  region      String?  @db.VarChar(100)
+  apiEndpoint String?  @map("api_endpoint") @db.Text
+  kubeVersion String?  @map("kube_version") @db.VarChar(50)
+  status      String   @default("unknown") @db.VarChar(30)
+  nodeCount   Int      @default(0) @map("node_count")
+  cpuCapacity String?  @map("cpu_capacity") @db.VarChar(50)
+  memCapacity String?  @map("mem_capacity") @db.VarChar(50)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdBy   String   @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  namespaces  K8sNamespace[]
+  deployments K8sDeployment[]
+  pods        K8sPod[]
+  services    K8sService[]
+  events      K8sEvent[]
+
+  @@index([tenantId])
+  @@map("k8s_clusters")
+}
+
+model K8sNamespace {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  name        String   @db.VarChar(200)
+  status      String   @default("active") @db.VarChar(30)
+  labels      Json     @default("{}") @db.JsonB
+  annotations Json     @default("{}") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@unique([clusterId, name])
+  @@index([tenantId])
+  @@map("k8s_namespaces")
+}
+
+model K8sDeployment {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  clusterId     String    @map("cluster_id") @db.Uuid
+  namespace     String    @db.VarChar(200)
+  name          String    @db.VarChar(200)
+  image         String    @db.Text
+  replicas      Int       @default(1)
+  readyReplicas Int       @default(0) @map("ready_replicas")
+  strategy      String    @default("RollingUpdate") @db.VarChar(50)
+  status        String    @default("pending") @db.VarChar(30)
+  labels        Json      @default("{}") @db.JsonB
+  envVars       Json      @default("{}") @map("env_vars") @db.JsonB
+  resources     Json      @default("{}") @db.JsonB
+  healthCheck   Json      @default("{}") @map("health_check") @db.JsonB
+  lastRolloutAt DateTime? @map("last_rollout_at") @db.Timestamptz
+  createdBy     String    @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  pods    K8sPod[]
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_deployments")
+}
+
+model K8sPod {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  clusterId    String    @map("cluster_id") @db.Uuid
+  deploymentId String?   @map("deployment_id") @db.Uuid
+  namespace    String    @db.VarChar(200)
+  name         String    @db.VarChar(300)
+  nodeName     String?   @map("node_name") @db.VarChar(200)
+  status       String    @default("pending") @db.VarChar(30)
+  phase        String    @default("Pending") @db.VarChar(50)
+  cpuUsage     String?   @map("cpu_usage") @db.VarChar(50)
+  memUsage     String?   @map("mem_usage") @db.VarChar(50)
+  restartCount Int       @default(0) @map("restart_count")
+  startedAt    DateTime? @map("started_at") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster    K8sCluster     @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  deployment K8sDeployment? @relation(fields: [deploymentId], references: [id])
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_pods")
+}
+
+model K8sService {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  clusterId   String   @map("cluster_id") @db.Uuid
+  namespace   String   @db.VarChar(200)
+  name        String   @db.VarChar(200)
+  serviceType String   @default("ClusterIP") @map("service_type") @db.VarChar(50)
+  clusterIp   String?  @map("cluster_ip") @db.VarChar(50)
+  externalIp  String?  @map("external_ip") @db.VarChar(50)
+  ports       Json     @default("[]") @db.JsonB
+  selector    Json     @default("{}") @db.JsonB
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_services")
+}
+
+// =============================================================================
+// PHASE 77 — MULTI-REGION CONFIGURATION
+// =============================================================================
+
+model MrRegion {
+  id                 String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String                @map("tenant_id") @db.Uuid
+  name               String                @db.VarChar(100)
+  code               String                @db.VarChar(30)
+  provider           String                @default("aws") @db.VarChar(50)
+  status             String                @default("active") @db.VarChar(30)
+  isPrimary          Boolean               @default(false) @map("is_primary")
+  latencyMs          Int?                  @map("latency_ms")
+  capacity           Int                   @default(100)
+  metadata           Json?
+  createdAt          DateTime              @default(now()) @map("created_at")
+  updatedAt          DateTime              @updatedAt @map("updated_at")
+  tenant             CoreTenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  endpoints          MrEndpoint[]
+  healthChecks       MrHealthCheck[]
+  failoverEvents     MrFailoverEvent[]
+  replicationConfigs MrReplicationConfig[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("mr_regions")
+}
+
+model MrEndpoint {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  regionId     String     @map("region_id") @db.Uuid
+  name         String     @db.VarChar(100)
+  url          String     @db.VarChar(500)
+  endpointType String     @default("api") @map("endpoint_type") @db.VarChar(30)
+  status       String     @default("healthy") @db.VarChar(30)
+  weight       Int        @default(100)
+  latencyMs    Int?       @map("latency_ms")
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region       MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, regionId])
+  @@map("mr_endpoints")
+}
+
+model MrRoutingPolicy {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  name       String     @db.VarChar(100)
+  policyType String     @default("latency") @map("policy_type") @db.VarChar(30)
+  isActive   Boolean    @default(true) @map("is_active")
+  rules      Json?
+  metadata   Json?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mr_routing_policies")
+}
+
+model MrHealthCheck {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  regionId  String     @map("region_id") @db.Uuid
+  status    String     @default("healthy") @db.VarChar(30)
+  latencyMs Int?       @map("latency_ms")
+  checkedAt DateTime   @default(now()) @map("checked_at")
+  details   Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region    MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, regionId])
+  @@map("mr_health_checks")
+}
+
+model MrFailoverEvent {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  regionId    String     @map("region_id") @db.Uuid
+  fromRegion  String?    @map("from_region") @db.VarChar(50)
+  toRegion    String?    @map("to_region") @db.VarChar(50)
+  reason      String?    @db.VarChar(255)
+  status      String     @default("completed") @db.VarChar(30)
+  triggeredBy String?    @map("triggered_by") @db.VarChar(50)
+  durationMs  Int?       @map("duration_ms")
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region      MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("mr_failover_events")
+}
+
+model MrReplicationConfig {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  regionId        String     @map("region_id") @db.Uuid
+  sourceRegion    String     @map("source_region") @db.VarChar(50)
+  targetRegion    String     @map("target_region") @db.VarChar(50)
+  replicationType String     @default("async") @map("replication_type") @db.VarChar(30)
+  lagMs           Int?       @map("lag_ms")
+  isActive        Boolean    @default(true) @map("is_active")
+  metadata        Json?
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  region          MrRegion   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, regionId])
+  @@map("mr_replication_configs")
+}
+
+// =============================================================================
+// PHASE 100 — PLATFORM CERTIFICATION (capstone: aggregates enterprise readiness)
+// =============================================================================
+
+model CertProgram {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String           @map("tenant_id") @db.Uuid
+  name        String           @db.VarChar(150)
+  level       String           @default("bronze") @db.VarChar(30)
+  description String?          @db.Text
+  isActive    Boolean          @default(true) @map("is_active")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  tenant      CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  criteria    CertCriterion[]
+  assessments CertAssessment[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("cert_programs")
+}
+
+model CertCriterion {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String      @map("tenant_id") @db.Uuid
+  programId String      @map("program_id") @db.Uuid
+  domain    String      @db.VarChar(50)
+  title     String      @db.VarChar(255)
+  weight    Int         @default(10)
+  autoCheck String?     @map("auto_check") @db.VarChar(100)
+  createdAt DateTime    @default(now()) @map("created_at")
+  tenant    CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  program   CertProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, programId])
+  @@map("cert_criteria")
+}
+
+model CertAssessment {
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String            @map("tenant_id") @db.Uuid
+  programId    String            @map("program_id") @db.Uuid
+  status       String            @default("in-progress") @db.VarChar(30)
+  overallScore Float?            @map("overall_score")
+  domainScores Json?             @map("domain_scores")
+  passed       Boolean           @default(false)
+  runBy        String?           @map("run_by") @db.VarChar(100)
+  startedAt    DateTime          @default(now()) @map("started_at")
+  completedAt  DateTime?         @map("completed_at")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  tenant       CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  program      CertProgram       @relation(fields: [programId], references: [id], onDelete: Cascade)
+  certificates CertCertificate[]
+
+  @@index([tenantId, programId])
+  @@map("cert_assessments")
+}
+
+model CertCertificate {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String         @map("tenant_id") @db.Uuid
+  assessmentId String         @map("assessment_id") @db.Uuid
+  certNumber   String         @map("cert_number") @db.VarChar(50)
+  level        String         @db.VarChar(30)
+  issuedTo     String         @map("issued_to") @db.VarChar(150)
+  status       String         @default("active") @db.VarChar(30)
+  issuedAt     DateTime       @default(now()) @map("issued_at")
+  expiresAt    DateTime?      @map("expires_at")
+  revokedAt    DateTime?      @map("revoked_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  tenant       CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment   CertAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, certNumber])
+  @@index([tenantId])
+  @@map("cert_certificates")
+}
+
+model CertBadge {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  domain    String     @db.VarChar(50)
+  earnedAt  DateTime   @default(now()) @map("earned_at")
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("cert_badges")
+}
+
+model CertAuditTrail {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  action    String     @db.VarChar(50)
+  actor     String     @db.VarChar(100)
+  detail    String?    @db.VarChar(500)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("cert_audit_trails")
+}
+
+// =============================================================================
+// PHASE 99 — DOCUMENTATION HUB
+// =============================================================================
+
+model DhSpace {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String      @map("tenant_id") @db.Uuid
+  name        String      @db.VarChar(100)
+  slug        String      @db.VarChar(100)
+  description String?     @db.Text
+  audience    String      @default("all") @db.VarChar(30)
+  position    Int         @default(0)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  tenant      CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  articles    DhArticle[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("dh_spaces")
+}
+
+model DhArticle {
+  id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String             @map("tenant_id") @db.Uuid
+  spaceId        String             @map("space_id") @db.Uuid
+  title          String             @db.VarChar(255)
+  slug           String             @db.VarChar(255)
+  content        String             @db.Text
+  status         String             @default("draft") @db.VarChar(30)
+  currentVersion Int                @default(1) @map("current_version")
+  viewCount      Int                @default(0) @map("view_count")
+  helpfulYes     Int                @default(0) @map("helpful_yes")
+  helpfulNo      Int                @default(0) @map("helpful_no")
+  tags           Json?
+  publishedAt    DateTime?          @map("published_at")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+  tenant         CoreTenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  space          DhSpace            @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  versions       DhArticleVersion[]
+  feedbacks      DhFeedback[]
+
+  @@unique([tenantId, spaceId, slug])
+  @@index([tenantId, spaceId])
+  @@map("dh_articles")
+}
+
+model DhArticleVersion {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  articleId String     @map("article_id") @db.Uuid
+  version   Int
+  title     String     @db.VarChar(255)
+  content   String     @db.Text
+  editedBy  String?    @map("edited_by") @db.VarChar(100)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  article   DhArticle  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, version])
+  @@index([tenantId, articleId])
+  @@map("dh_article_versions")
+}
+
+model DhFeedback {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  articleId String     @map("article_id") @db.Uuid
+  helpful   Boolean
+  comment   String?    @db.Text
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  article   DhArticle  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, articleId])
+  @@map("dh_feedbacks")
+}
+
+model DhGlossaryTerm {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  term       String     @db.VarChar(100)
+  definition String     @db.Text
+  category   String?    @db.VarChar(50)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, term])
+  @@index([tenantId])
+  @@map("dh_glossary_terms")
+}
+
+model DhSearchLog {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  query       String     @db.VarChar(255)
+  resultCount Int        @default(0) @map("result_count")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("dh_search_logs")
+}
+
+model RelRelease {
+  id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String             @map("tenant_id") @db.Uuid
+  version        String             @db.VarChar(30)
+  codename       String?            @db.VarChar(100)
+  releaseNotes   String?            @map("release_notes") @db.Text
+  status         String             @default("draft") @db.VarChar(30)
+  gaAt           DateTime?          @map("ga_at")
+  metadata       Json?
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+  tenant         CoreTenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  artifacts      RelArtifact[]
+  deployPlans    RelDeployPlan[]
+  checklistItems RelChecklistItem[]
+
+  @@unique([tenantId, version])
+  @@index([tenantId])
+  @@map("rel_releases")
+}
+
+model RelArtifact {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  releaseId   String     @map("release_id") @db.Uuid
+  platform    String     @default("docker") @db.VarChar(30)
+  artifactRef String     @map("artifact_ref") @db.VarChar(500)
+  sizeMb      Int        @default(0) @map("size_mb")
+  checksum    String?    @db.VarChar(128)
+  status      String     @default("built") @db.VarChar(30)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  release     RelRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, releaseId])
+  @@map("rel_artifacts")
+}
+
+model RelChannel {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  name           String     @db.VarChar(50)
+  currentVersion String?    @map("current_version") @db.VarChar(30)
+  autoUpdate     Boolean    @default(false) @map("auto_update")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("rel_channels")
+}
+
+model RelInstallation {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  siteName    String     @map("site_name") @db.VarChar(150)
+  installType String     @default("docker-compose") @map("install_type") @db.VarChar(30)
+  version     String     @db.VarChar(30)
+  channel     String     @default("stable") @db.VarChar(50)
+  status      String     @default("installing") @db.VarChar(30)
+  steps       Json?
+  healthCheck Json?      @map("health_check")
+  installedAt DateTime?  @map("installed_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("rel_installations")
+}
+
+model RelDeployPlan {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  releaseId   String     @map("release_id") @db.Uuid
+  environment String     @default("staging") @db.VarChar(30)
+  strategy    String     @default("blue-green") @db.VarChar(30)
+  status      String     @default("planned") @db.VarChar(30)
+  isDryRun    Boolean    @default(true) @map("is_dry_run")
+  approvedBy  String?    @map("approved_by") @db.VarChar(100)
+  planSteps   Json?      @map("plan_steps")
+  executedAt  DateTime?  @map("executed_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  release     RelRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, releaseId])
+  @@map("rel_deploy_plans")
+}
+
+model RelChecklistItem {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  releaseId  String     @map("release_id") @db.Uuid
+  title      String     @db.VarChar(255)
+  category   String     @default("quality") @db.VarChar(30)
+  isRequired Boolean    @default(true) @map("is_required")
+  isDone     Boolean    @default(false) @map("is_done")
+  doneBy     String?    @map("done_by") @db.VarChar(100)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  release    RelRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, releaseId])
+  @@map("rel_checklist_items")
+}
+
+// =============================================================================
+// PHASE 97 — COMMERCIAL CUSTOMER PORTAL
+// =============================================================================
+
+model CpAccount {
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String             @map("tenant_id") @db.Uuid
+  companyName     String             @map("company_name") @db.VarChar(150)
+  slug            String             @db.VarChar(100)
+  industry        String?            @db.VarChar(100)
+  status          String             @default("trial") @db.VarChar(30)
+  healthScore     Float              @default(70) @map("health_score")
+  mrr             Float              @default(0)
+  metadata        Json?
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  tenant          CoreTenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  contacts        CpContact[]
+  subscriptions   CpSubscription[]
+  invoiceDocs     CpInvoiceDoc[]
+  supportRequests CpSupportRequest[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("cp_accounts")
+}
+
+model CpContact {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  accountId String     @map("account_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  email     String     @db.VarChar(255)
+  role      String     @default("member") @db.VarChar(30)
+  isPrimary Boolean    @default(false) @map("is_primary")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account   CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, accountId])
+  @@map("cp_contacts")
+}
+
+model CpSubscription {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  accountId    String     @map("account_id") @db.Uuid
+  planRef      String     @map("plan_ref") @db.VarChar(100)
+  billingCycle String     @default("monthly") @map("billing_cycle") @db.VarChar(20)
+  amount       Float      @default(0)
+  status       String     @default("active") @db.VarChar(30)
+  startedAt    DateTime   @default(now()) @map("started_at")
+  renewsAt     DateTime?  @map("renews_at")
+  cancelledAt  DateTime?  @map("cancelled_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account      CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, accountId])
+  @@map("cp_subscriptions")
+}
+
+model CpInvoiceDoc {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  accountId String     @map("account_id") @db.Uuid
+  invoiceNo String     @map("invoice_no") @db.VarChar(50)
+  amount    Float
+  currency  String     @default("USD") @db.VarChar(10)
+  status    String     @default("open") @db.VarChar(30)
+  dueDate   DateTime?  @map("due_date")
+  paidAt    DateTime?  @map("paid_at")
+  lineItems Json?      @map("line_items")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account   CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, invoiceNo])
+  @@index([tenantId, accountId])
+  @@map("cp_invoice_docs")
+}
+
+model CpAnnouncement {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  title       String     @db.VarChar(200)
+  body        String     @db.Text
+  audience    String     @default("all") @db.VarChar(30)
+  isPublished Boolean    @default(false) @map("is_published")
+  publishedAt DateTime?  @map("published_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("cp_announcements")
+}
+
+model CpSupportRequest {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  accountId  String     @map("account_id") @db.Uuid
+  subject    String     @db.VarChar(255)
+  body       String?    @db.Text
+  priority   String     @default("normal") @db.VarChar(20)
+  status     String     @default("open") @db.VarChar(30)
+  replies    Json?
+  resolvedAt DateTime?  @map("resolved_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account    CpAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, accountId])
+  @@map("cp_support_requests")
+}
+
+// =============================================================================
+// PHASE 96 — LICENSING ENGINE
+// =============================================================================
+
+model LicPlan {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  name         String     @db.VarChar(100)
+  code         String     @db.VarChar(50)
+  tier         String     @default("starter") @db.VarChar(30)
+  priceMonthly Float      @default(0) @map("price_monthly")
+  priceYearly  Float      @default(0) @map("price_yearly")
+  maxUsers     Int        @default(10) @map("max_users")
+  features     Json?
+  isActive     Boolean    @default(true) @map("is_active")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  keys         LicKey[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("lic_plans")
+}
+
+model LicKey {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String          @map("tenant_id") @db.Uuid
+  planId      String          @map("plan_id") @db.Uuid
+  keyHash     String          @map("key_hash") @db.VarChar(128)
+  keyPrefix   String          @map("key_prefix") @db.VarChar(20)
+  customerRef String          @map("customer_ref") @db.VarChar(150)
+  seats       Int             @default(10)
+  status      String          @default("issued") @db.VarChar(30)
+  issuedAt    DateTime        @default(now()) @map("issued_at")
+  expiresAt   DateTime?       @map("expires_at")
+  metadata    Json?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  tenant      CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan        LicPlan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  activations LicActivation[]
+  renewals    LicRenewal[]
+
+  @@index([tenantId, keyPrefix])
+  @@map("lic_keys")
+}
+
+model LicActivation {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  keyId         String     @map("key_id") @db.Uuid
+  machineRef    String     @map("machine_ref") @db.VarChar(150)
+  hostname      String?    @db.VarChar(150)
+  appVersion    String?    @map("app_version") @db.VarChar(30)
+  isActive      Boolean    @default(true) @map("is_active")
+  activatedAt   DateTime   @default(now()) @map("activated_at")
+  deactivatedAt DateTime?  @map("deactivated_at")
+  lastSeenAt    DateTime   @default(now()) @map("last_seen_at")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  key           LicKey     @relation(fields: [keyId], references: [id], onDelete: Cascade)
+
+  @@unique([keyId, machineRef])
+  @@index([tenantId, keyId])
+  @@map("lic_activations")
+}
+
+model LicEntitlement {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  customerRef String     @map("customer_ref") @db.VarChar(150)
+  feature     String     @db.VarChar(100)
+  enabled     Boolean    @default(true)
+  limitValue  Int?       @map("limit_value")
+  source      String     @default("plan") @db.VarChar(30)
+  expiresAt   DateTime?  @map("expires_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, customerRef, feature])
+  @@index([tenantId, customerRef])
+  @@map("lic_entitlements")
+}
+
+model LicMeter {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  customerRef String     @map("customer_ref") @db.VarChar(150)
+  meterType   String     @map("meter_type") @db.VarChar(50)
+  usedValue   Int        @default(0) @map("used_value")
+  periodStart DateTime   @default(now()) @map("period_start")
+  periodEnd   DateTime?  @map("period_end")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, customerRef, meterType])
+  @@index([tenantId, customerRef])
+  @@map("lic_meters")
+}
+
+model LicRenewal {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  keyId          String     @map("key_id") @db.Uuid
+  previousExpiry DateTime?  @map("previous_expiry")
+  newExpiry      DateTime   @map("new_expiry")
+  amount         Float      @default(0)
+  status         String     @default("completed") @db.VarChar(30)
+  createdAt      DateTime   @default(now()) @map("created_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  key            LicKey     @relation(fields: [keyId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, keyId])
+  @@map("lic_renewals")
+}
+
+// =============================================================================
+// PHASE 95 — AI BENCHMARKING
+// =============================================================================
+
+model BnSuite {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String       @map("tenant_id") @db.Uuid
+  name           String       @db.VarChar(100)
+  category       String       @default("quality") @db.VarChar(30)
+  description    String?      @db.Text
+  metricType     String       @default("accuracy") @map("metric_type") @db.VarChar(30)
+  higherIsBetter Boolean      @default(true) @map("higher_is_better")
+  metadata       Json?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  tenant         CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cases          BnCase[]
+  runs           BnRun[]
+  baselines      BnBaseline[]
+
+  @@index([tenantId])
+  @@map("bn_suites")
+}
+
+model BnCase {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  suiteId   String     @map("suite_id") @db.Uuid
+  name      String     @db.VarChar(150)
+  input     Json
+  expected  Json?
+  weight    Float      @default(1)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  suite     BnSuite    @relation(fields: [suiteId], references: [id], onDelete: Cascade)
+  results   BnResult[]
+
+  @@index([tenantId, suiteId])
+  @@map("bn_cases")
+}
+
+model BnRun {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String         @map("tenant_id") @db.Uuid
+  suiteId      String         @map("suite_id") @db.Uuid
+  modelRef     String         @map("model_ref") @db.VarChar(100)
+  status       String         @default("running") @db.VarChar(30)
+  score        Float?
+  passRate     Float?         @map("pass_rate")
+  latencyMsAvg Int?           @map("latency_ms_avg")
+  totalCases   Int            @default(0) @map("total_cases")
+  startedAt    DateTime       @default(now()) @map("started_at")
+  finishedAt   DateTime?      @map("finished_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  tenant       CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  suite        BnSuite        @relation(fields: [suiteId], references: [id], onDelete: Cascade)
+  results      BnResult[]
+  regressions  BnRegression[]
+
+  @@index([tenantId, suiteId, modelRef])
+  @@map("bn_runs")
+}
+
+model BnResult {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  runId     String     @map("run_id") @db.Uuid
+  caseId    String     @map("case_id") @db.Uuid
+  passed    Boolean    @default(false)
+  score     Float      @default(0)
+  latencyMs Int        @default(0) @map("latency_ms")
+  output    Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  run       BnRun      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  case      BnCase     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, runId])
+  @@map("bn_results")
+}
+
+model BnBaseline {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  suiteId   String     @map("suite_id") @db.Uuid
+  modelRef  String     @map("model_ref") @db.VarChar(100)
+  score     Float
+  passRate  Float      @map("pass_rate")
+  setBy     String?    @map("set_by") @db.VarChar(100)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  suite     BnSuite    @relation(fields: [suiteId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, suiteId, modelRef])
+  @@index([tenantId, suiteId])
+  @@map("bn_baselines")
+}
+
+model BnRegression {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  runId         String     @map("run_id") @db.Uuid
+  suiteRef      String     @map("suite_ref") @db.VarChar(100)
+  baselineScore Float      @map("baseline_score")
+  currentScore  Float      @map("current_score")
+  deltaPct      Float      @map("delta_pct")
+  severity      String     @default("minor") @db.VarChar(20)
+  acknowledged  Boolean    @default(false)
+  createdAt     DateTime   @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  run           BnRun      @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("bn_regressions")
+}
+
+// =============================================================================
+// PHASE 94 — AI COMPLIANCE (EU AI Act / regulatory)
+// =============================================================================
+
+model AcRegulation {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String          @map("tenant_id") @db.Uuid
+  name         String          @db.VarChar(100)
+  code         String          @db.VarChar(30)
+  jurisdiction String          @default("EU") @db.VarChar(50)
+  riskCategory String          @default("limited") @map("risk_category") @db.VarChar(30)
+  description  String?         @db.Text
+  status       String          @default("active") @db.VarChar(30)
+  metadata     Json?
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  tenant       CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requirements AcRequirement[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("ac_regulations")
+}
+
+model AcRequirement {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String       @map("tenant_id") @db.Uuid
+  regulationId     String       @map("regulation_id") @db.Uuid
+  code             String       @db.VarChar(30)
+  title            String       @db.VarChar(255)
+  description      String?      @db.Text
+  complianceStatus String       @default("not-assessed") @map("compliance_status") @db.VarChar(30)
+  evidence         String?      @db.Text
+  metadata         Json?
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+  tenant           CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  regulation       AcRegulation @relation(fields: [regulationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, regulationId])
+  @@map("ac_requirements")
+}
+
+model AcAssessment {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  systemName     String     @map("system_name") @db.VarChar(100)
+  assessmentType String     @default("conformity") @map("assessment_type") @db.VarChar(30)
+  riskLevel      String     @default("limited") @map("risk_level") @db.VarChar(30)
+  score          Float?
+  status         String     @default("in-progress") @db.VarChar(30)
+  findings       Json?
+  completedAt    DateTime?  @map("completed_at")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ac_assessments")
+}
+
+model AcDataProcessing {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  activityName   String     @map("activity_name") @db.VarChar(150)
+  purpose        String     @db.Text
+  legalBasis     String     @default("consent") @map("legal_basis") @db.VarChar(50)
+  dataCategories Json?      @map("data_categories")
+  retentionDays  Int        @default(365) @map("retention_days")
+  isHighRisk     Boolean    @default(false) @map("is_high_risk")
+  dpiaCompleted  Boolean    @default(false) @map("dpia_completed")
+  metadata       Json?
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ac_data_processings")
+}
+
+model AcConsent {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  subjectRef String     @map("subject_ref") @db.VarChar(100)
+  purpose    String     @db.VarChar(255)
+  granted    Boolean    @default(true)
+  grantedAt  DateTime   @default(now()) @map("granted_at")
+  revokedAt  DateTime?  @map("revoked_at")
+  expiresAt  DateTime?  @map("expires_at")
+  metadata   Json?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, subjectRef])
+  @@map("ac_consents")
+}
+
+model AcAuditTrail {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  eventType String     @map("event_type") @db.VarChar(50)
+  systemRef String?    @map("system_ref") @db.VarChar(100)
+  actor     String     @db.VarChar(100)
+  detail    String?    @db.Text
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, eventType])
+  @@map("ac_audit_trails")
+}
+
+// =============================================================================
+// PHASE 93 — AI EXPLAINABILITY
+// =============================================================================
+
+model XaiDecision {
+  id              String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String              @map("tenant_id") @db.Uuid
+  modelRef        String              @map("model_ref") @db.VarChar(100)
+  decisionType    String              @default("classification") @map("decision_type") @db.VarChar(30)
+  inputSummary    String              @map("input_summary") @db.Text
+  outcome         String              @db.VarChar(255)
+  confidence      Float               @default(0)
+  subjectRef      String?             @map("subject_ref") @db.VarChar(100)
+  metadata        Json?
+  createdAt       DateTime            @default(now()) @map("created_at")
+  tenant          CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  factors         XaiFactor[]
+  traces          XaiTrace[]
+  counterfactuals XaiCounterfactual[]
+
+  @@index([tenantId, modelRef])
+  @@map("xai_decisions")
+}
+
+model XaiFactor {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String      @map("tenant_id") @db.Uuid
+  decisionId   String      @map("decision_id") @db.Uuid
+  featureName  String      @map("feature_name") @db.VarChar(100)
+  contribution Float
+  direction    String      @default("positive") @db.VarChar(20)
+  value        String?     @db.VarChar(255)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  tenant       CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  decision     XaiDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, decisionId])
+  @@map("xai_factors")
+}
+
+model XaiTrace {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  decisionId String      @map("decision_id") @db.Uuid
+  stepOrder  Int         @map("step_order")
+  stepName   String      @map("step_name") @db.VarChar(100)
+  detail     String?     @db.Text
+  createdAt  DateTime    @default(now()) @map("created_at")
+  tenant     CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  decision   XaiDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, decisionId])
+  @@map("xai_traces")
+}
+
+model XaiCounterfactual {
+  id                 String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String      @map("tenant_id") @db.Uuid
+  decisionId         String      @map("decision_id") @db.Uuid
+  change             String      @db.VarChar(255)
+  wouldChangeOutcome Boolean     @default(false) @map("would_change_outcome")
+  newOutcome         String?     @map("new_outcome") @db.VarChar(255)
+  createdAt          DateTime    @default(now()) @map("created_at")
+  tenant             CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  decision           XaiDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, decisionId])
+  @@map("xai_counterfactuals")
+}
+
+model XaiFeatureImportance {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  modelRef    String     @map("model_ref") @db.VarChar(100)
+  featureName String     @map("feature_name") @db.VarChar(100)
+  importance  Float
+  rank        Int        @default(0)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, modelRef, featureName])
+  @@index([tenantId, modelRef])
+  @@map("xai_feature_importances")
+}
+
+model XaiReport {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  modelRef   String     @map("model_ref") @db.VarChar(100)
+  reportType String     @default("transparency") @map("report_type") @db.VarChar(30)
+  content    Json
+  status     String     @default("draft") @db.VarChar(30)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, modelRef])
+  @@map("xai_reports")
+}
+
+// =============================================================================
+// PHASE 92 — AI GOVERNANCE
+// =============================================================================
+
+model AigPolicy {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  name        String     @db.VarChar(100)
+  policyArea  String     @default("usage") @map("policy_area") @db.VarChar(30)
+  rules       Json
+  enforcement String     @default("advisory") @db.VarChar(30)
+  isActive    Boolean    @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("aig_policies")
+}
+
+model AigModelEntry {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  modelName      String     @map("model_name") @db.VarChar(100)
+  provider       String     @default("reno-brain") @db.VarChar(30)
+  riskTier       String     @default("low") @map("risk_tier") @db.VarChar(20)
+  approvalStatus String     @default("pending") @map("approval_status") @db.VarChar(30)
+  allowedUses    Json?      @map("allowed_uses")
+  prohibitedUses Json?      @map("prohibited_uses")
+  approvedBy     String?    @map("approved_by") @db.VarChar(100)
+  metadata       Json?
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, modelName, provider])
+  @@index([tenantId])
+  @@map("aig_model_registry")
+}
+
+model AigApproval {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  requestType   String     @map("request_type") @db.VarChar(30)
+  subject       String     @db.VarChar(255)
+  justification String?    @db.Text
+  requestedBy   String     @map("requested_by") @db.VarChar(100)
+  status        String     @default("pending") @db.VarChar(30)
+  decidedBy     String?    @map("decided_by") @db.VarChar(100)
+  decisionNote  String?    @map("decision_note") @db.Text
+  decidedAt     DateTime?  @map("decided_at")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+  @@map("aig_approvals")
+}
+
+model AigUsageLimit {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  scope      String     @default("tenant") @db.VarChar(30)
+  scopeRef   String?    @map("scope_ref") @db.VarChar(100)
+  limitType  String     @default("tokens-per-day") @map("limit_type") @db.VarChar(30)
+  limitValue Int        @map("limit_value")
+  usedValue  Int        @default(0) @map("used_value")
+  action     String     @default("warn") @db.VarChar(20)
+  isActive   Boolean    @default(true) @map("is_active")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("aig_usage_limits")
+}
+
+model AigIncident {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  incidentType String     @map("incident_type") @db.VarChar(50)
+  severity     String     @default("medium") @db.VarChar(20)
+  description  String     @db.Text
+  modelRef     String?    @map("model_ref") @db.VarChar(100)
+  status       String     @default("open") @db.VarChar(30)
+  resolution   String?    @db.Text
+  resolvedAt   DateTime?  @map("resolved_at")
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+  @@map("aig_incidents")
+}
+
+model AigReview {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  reviewType  String     @default("quarterly") @map("review_type") @db.VarChar(30)
+  scope       String     @db.VarChar(255)
+  findings    Json?
+  score       Float?
+  reviewer    String?    @db.VarChar(100)
+  status      String     @default("in-progress") @db.VarChar(30)
+  completedAt DateTime?  @map("completed_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("aig_reviews")
+}
+
+// =============================================================================
+// PHASE 91 — FINE-TUNING STUDIO
+// =============================================================================
+
+model FtDataset {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  name        String     @db.VarChar(100)
+  taskType    String     @default("chat") @map("task_type") @db.VarChar(30)
+  sampleCount Int        @default(0) @map("sample_count")
+  status      String     @default("draft") @db.VarChar(30)
+  samples     Json?
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  jobs        FtJob[]
+
+  @@index([tenantId])
+  @@map("ft_datasets")
+}
+
+model FtJob {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  datasetId    String     @map("dataset_id") @db.Uuid
+  name         String     @db.VarChar(100)
+  baseModel    String     @default("reno-brain-base") @map("base_model") @db.VarChar(100)
+  provider     String     @default("reno-brain") @db.VarChar(30)
+  status       String     @default("queued") @db.VarChar(30)
+  epochs       Int        @default(3)
+  learningRate Float      @default(0.0001) @map("learning_rate")
+  progress     Float      @default(0)
+  trainLoss    Float?     @map("train_loss")
+  metrics      Json?
+  startedAt    DateTime?  @map("started_at")
+  finishedAt   DateTime?  @map("finished_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dataset      FtDataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  models       FtModel[]
+
+  @@index([tenantId, datasetId])
+  @@map("ft_jobs")
+}
+
+model FtModel {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String         @map("tenant_id") @db.Uuid
+  jobId       String         @map("job_id") @db.Uuid
+  name        String         @db.VarChar(100)
+  version     String         @default("1") @db.VarChar(20)
+  provider    String         @default("reno-brain") @db.VarChar(30)
+  status      String         @default("ready") @db.VarChar(30)
+  sizeMb      Int?           @map("size_mb")
+  metadata    Json?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  tenant      CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  job         FtJob          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  evaluations FtEvaluation[]
+  deployments FtDeployment[]
+
+  @@index([tenantId, jobId])
+  @@map("ft_models")
+}
+
+model FtEvaluation {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  modelId       String     @map("model_id") @db.Uuid
+  evalType      String     @default("accuracy") @map("eval_type") @db.VarChar(30)
+  score         Float
+  baselineScore Float?     @map("baseline_score")
+  details       Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  model         FtModel    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, modelId])
+  @@map("ft_evaluations")
+}
+
+model FtDeployment {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  modelId     String     @map("model_id") @db.Uuid
+  environment String     @default("staging") @db.VarChar(30)
+  status      String     @default("pending-approval") @db.VarChar(30)
+  approvedBy  String?    @map("approved_by") @db.VarChar(100)
+  trafficPct  Int        @default(0) @map("traffic_pct")
+  deployedAt  DateTime?  @map("deployed_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  model       FtModel    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, modelId])
+  @@map("ft_deployments")
+}
+
+model FtFeedback {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  modelRef       String     @map("model_ref") @db.VarChar(100)
+  prompt         String     @db.Text
+  completion     String     @db.Text
+  rating         Int        @default(0)
+  correction     String?    @db.Text
+  addedToDataset Boolean    @default(false) @map("added_to_dataset")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, modelRef])
+  @@map("ft_feedbacks")
+}
+
+// =============================================================================
+// PHASE 90 — DEVELOPER CONSOLE
+// =============================================================================
+
+model DevApp {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String        @map("tenant_id") @db.Uuid
+  name        String        @db.VarChar(100)
+  appType     String        @default("api-integration") @map("app_type") @db.VarChar(30)
+  description String?       @db.Text
+  status      String        @default("development") @db.VarChar(30)
+  ownerRef    String?       @map("owner_ref") @db.VarChar(100)
+  metadata    Json?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  tenant      CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sandboxes   DevSandbox[]
+  logEntries  DevLogEntry[]
+  testRuns    DevTestRun[]
+  envVars     DevEnvVar[]
+
+  @@index([tenantId])
+  @@map("dev_apps")
+}
+
+model DevSandbox {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  appId     String     @map("app_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  status    String     @default("stopped") @db.VarChar(30)
+  seedData  Boolean    @default(true) @map("seed_data")
+  expiresAt DateTime?  @map("expires_at")
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app       DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, appId])
+  @@map("dev_sandboxes")
+}
+
+model DevLogEntry {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  appId     String     @map("app_id") @db.Uuid
+  level     String     @default("info") @db.VarChar(20)
+  message   String     @db.Text
+  context   Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app       DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, appId, level])
+  @@map("dev_log_entries")
+}
+
+model DevTestRun {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  appId       String     @map("app_id") @db.Uuid
+  suiteName   String     @map("suite_name") @db.VarChar(100)
+  status      String     @default("running") @db.VarChar(30)
+  totalTests  Int        @default(0) @map("total_tests")
+  passedTests Int        @default(0) @map("passed_tests")
+  failedTests Int        @default(0) @map("failed_tests")
+  durationMs  Int?       @map("duration_ms")
+  results     Json?
+  startedAt   DateTime   @default(now()) @map("started_at")
+  finishedAt  DateTime?  @map("finished_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app         DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, appId])
+  @@map("dev_test_runs")
+}
+
+model DevEnvVar {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  appId       String     @map("app_id") @db.Uuid
+  key         String     @db.VarChar(100)
+  valueSealed String     @map("value_sealed") @db.Text
+  isSecret    Boolean    @default(false) @map("is_secret")
+  environment String     @default("development") @db.VarChar(30)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  app         DevApp     @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@unique([appId, environment, key])
+  @@index([tenantId, appId])
+  @@map("dev_env_vars")
+}
+
+model DevActivity {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  appRef    String     @map("app_ref") @db.VarChar(100)
+  actor     String     @db.VarChar(100)
+  action    String     @db.VarChar(50)
+  detail    String?    @db.VarChar(500)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, appRef])
+  @@map("dev_activities")
+}
+
+// =============================================================================
+// PHASE 89 — PUBLIC API PORTAL
+// =============================================================================
+
+model PubApiClient {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String           @map("tenant_id") @db.Uuid
+  name         String           @db.VarChar(100)
+  clientType   String           @default("server") @map("client_type") @db.VarChar(30)
+  contactEmail String?          @map("contact_email") @db.VarChar(255)
+  status       String           @default("active") @db.VarChar(30)
+  tier         String           @default("free") @db.VarChar(30)
+  metadata     Json?
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  keys         PubApiKey[]
+  usageRecords PubUsageRecord[]
+  quotas       PubQuota[]
+
+  @@index([tenantId])
+  @@map("pub_api_clients")
+}
+
+model PubApiKey {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  clientId   String       @map("client_id") @db.Uuid
+  keyPrefix  String       @map("key_prefix") @db.VarChar(20)
+  keyHash    String       @map("key_hash") @db.VarChar(128)
+  label      String?      @db.VarChar(100)
+  scopes     Json?
+  isActive   Boolean      @default(true) @map("is_active")
+  lastUsedAt DateTime?    @map("last_used_at")
+  expiresAt  DateTime?    @map("expires_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client     PubApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clientId])
+  @@index([keyPrefix])
+  @@map("pub_api_keys")
+}
+
+model PubUsageRecord {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  clientId   String       @map("client_id") @db.Uuid
+  endpoint   String       @db.VarChar(255)
+  method     String       @default("GET") @db.VarChar(10)
+  statusCode Int          @default(200) @map("status_code")
+  latencyMs  Int          @default(0) @map("latency_ms")
+  recordedAt DateTime     @default(now()) @map("recorded_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client     PubApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clientId, recordedAt])
+  @@map("pub_usage_records")
+}
+
+model PubQuota {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  clientId   String       @map("client_id") @db.Uuid
+  quotaType  String       @default("requests-per-day") @map("quota_type") @db.VarChar(30)
+  limitValue Int          @map("limit_value")
+  usedValue  Int          @default(0) @map("used_value")
+  resetsAt   DateTime?    @map("resets_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client     PubApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, quotaType])
+  @@index([tenantId])
+  @@map("pub_quotas")
+}
+
+model PubDocPage {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  title       String     @db.VarChar(200)
+  slug        String     @db.VarChar(200)
+  content     String     @db.Text
+  category    String     @default("guides") @db.VarChar(50)
+  position    Int        @default(0)
+  isPublished Boolean    @default(false) @map("is_published")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("pub_doc_pages")
+}
+
+model PubStatusIncident {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  title        String     @db.VarChar(255)
+  severity     String     @default("minor") @db.VarChar(20)
+  status       String     @default("investigating") @db.VarChar(30)
+  affectedApis Json?      @map("affected_apis")
+  updates      Json?
+  startedAt    DateTime   @default(now()) @map("started_at")
+  resolvedAt   DateTime?  @map("resolved_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("pub_status_incidents")
+}
+
+// =============================================================================
+// PHASE 88 — EXTENSION STORE
+// =============================================================================
+
+model ExtExtension {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String       @map("tenant_id") @db.Uuid
+  name          String       @db.VarChar(100)
+  slug          String       @db.VarChar(100)
+  extType       String       @default("widget") @map("ext_type") @db.VarChar(30)
+  description   String?      @db.Text
+  author        String?      @db.VarChar(100)
+  status        String       @default("draft") @db.VarChar(30)
+  latestVersion String       @default("0.1.0") @map("latest_version") @db.VarChar(30)
+  installCount  Int          @default(0) @map("install_count")
+  avgRating     Float        @default(0) @map("avg_rating")
+  metadata      Json?
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  tenant        CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  versions      ExtVersion[]
+  installs      ExtInstall[]
+  ratings       ExtRating[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("ext_extensions")
+}
+
+model ExtVersion {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  extensionId String       @map("extension_id") @db.Uuid
+  version     String       @db.VarChar(30)
+  changelog   String?      @db.Text
+  bundle      Json?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extension   ExtExtension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+
+  @@unique([extensionId, version])
+  @@index([tenantId, extensionId])
+  @@map("ext_versions")
+}
+
+model ExtInstall {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  extensionId String       @map("extension_id") @db.Uuid
+  version     String       @db.VarChar(30)
+  placement   String       @default("dashboard") @db.VarChar(50)
+  isEnabled   Boolean      @default(true) @map("is_enabled")
+  settings    Json?
+  installedBy String?      @map("installed_by") @db.VarChar(100)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extension   ExtExtension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, extensionId, placement])
+  @@index([tenantId])
+  @@map("ext_installs")
+}
+
+model ExtTheme {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  name       String     @db.VarChar(100)
+  colors     Json
+  typography Json?
+  isDark     Boolean    @default(false) @map("is_dark")
+  isActive   Boolean    @default(false) @map("is_active")
+  author     String?    @db.VarChar(100)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("ext_themes")
+}
+
+model ExtWidget {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  name       String     @db.VarChar(100)
+  widgetType String     @default("chart") @map("widget_type") @db.VarChar(30)
+  dataSource String?    @map("data_source") @db.VarChar(255)
+  config     Json?
+  placement  String     @default("dashboard") @db.VarChar(50)
+  position   Int        @default(0)
+  isVisible  Boolean    @default(true) @map("is_visible")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, placement])
+  @@map("ext_widgets")
+}
+
+model ExtRating {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  extensionId String       @map("extension_id") @db.Uuid
+  rating      Int          @default(5)
+  comment     String?      @db.Text
+  rater       String?      @db.VarChar(100)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  extension   ExtExtension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, extensionId])
+  @@map("ext_ratings")
+}
+
+// =============================================================================
+// PHASE 87 — SDK GENERATOR
+// =============================================================================
+
+model SdkApiSpec {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  name          String     @db.VarChar(100)
+  version       String     @default("1.0.0") @db.VarChar(30)
+  specFormat    String     @default("openapi-3.0") @map("spec_format") @db.VarChar(30)
+  spec          Json
+  status        String     @default("draft") @db.VarChar(30)
+  endpointCount Int        @default(0) @map("endpoint_count")
+  metadata      Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  builds        SdkBuild[]
+
+  @@unique([tenantId, name, version])
+  @@index([tenantId])
+  @@map("sdk_api_specs")
+}
+
+model SdkTarget {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  language    String     @db.VarChar(30)
+  packageName String     @map("package_name") @db.VarChar(100)
+  isEnabled   Boolean    @default(true) @map("is_enabled")
+  config      Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  builds      SdkBuild[]
+
+  @@unique([tenantId, language])
+  @@index([tenantId])
+  @@map("sdk_targets")
+}
+
+model SdkBuild {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  specId      String     @map("spec_id") @db.Uuid
+  targetId    String     @map("target_id") @db.Uuid
+  version     String     @db.VarChar(30)
+  status      String     @default("queued") @db.VarChar(30)
+  artifactRef String?    @map("artifact_ref") @db.VarChar(500)
+  sizeKb      Int?       @map("size_kb")
+  buildLog    Json?      @map("build_log")
+  startedAt   DateTime   @default(now()) @map("started_at")
+  finishedAt  DateTime?  @map("finished_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  spec        SdkApiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+  target      SdkTarget  @relation(fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, specId])
+  @@map("sdk_builds")
+}
+
+model SdkSnippet {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  title       String     @db.VarChar(200)
+  language    String     @db.VarChar(30)
+  endpoint    String     @db.VarChar(255)
+  code        String     @db.Text
+  description String?    @db.Text
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, language])
+  @@map("sdk_snippets")
+}
+
+model SdkChangelog {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  version    String     @db.VarChar(30)
+  changeType String     @default("added") @map("change_type") @db.VarChar(30)
+  summary    String     @db.VarChar(500)
+  details    String?    @db.Text
+  isBreaking Boolean    @default(false) @map("is_breaking")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, version])
+  @@map("sdk_changelogs")
+}
+
+model SdkDownload {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  buildRef     String     @map("build_ref") @db.VarChar(255)
+  language     String     @db.VarChar(30)
+  version      String     @db.VarChar(30)
+  downloadedBy String?    @map("downloaded_by") @db.VarChar(100)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, language])
+  @@map("sdk_downloads")
+}
+
+// =============================================================================
+// PHASE 86 — PLUGIN MARKETPLACE
+// =============================================================================
+
+model PlgPlugin {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String            @map("tenant_id") @db.Uuid
+  name          String            @db.VarChar(100)
+  slug          String            @db.VarChar(100)
+  description   String?           @db.Text
+  category      String            @default("integration") @db.VarChar(50)
+  author        String?           @db.VarChar(100)
+  status        String            @default("draft") @db.VarChar(30)
+  installCount  Int               @default(0) @map("install_count")
+  avgRating     Float             @default(0) @map("avg_rating")
+  latestVersion String            @default("0.1.0") @map("latest_version") @db.VarChar(30)
+  metadata      Json?
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  tenant        CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  versions      PlgVersion[]
+  installations PlgInstallation[]
+  reviews       PlgReview[]
+  permissions   PlgPermission[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("plg_plugins")
+}
+
+model PlgVersion {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  pluginId  String     @map("plugin_id") @db.Uuid
+  version   String     @db.VarChar(30)
+  changelog String?    @db.Text
+  manifest  Json?
+  status    String     @default("published") @db.VarChar(30)
+  downloads Int        @default(0)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin    PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@unique([pluginId, version])
+  @@index([tenantId, pluginId])
+  @@map("plg_versions")
+}
+
+model PlgInstallation {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  pluginId    String     @map("plugin_id") @db.Uuid
+  version     String     @db.VarChar(30)
+  status      String     @default("active") @db.VarChar(30)
+  config      Json?
+  installedBy String?    @map("installed_by") @db.VarChar(100)
+  installedAt DateTime   @default(now()) @map("installed_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin      PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, pluginId])
+  @@index([tenantId])
+  @@map("plg_installations")
+}
+
+model PlgReview {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  pluginId  String     @map("plugin_id") @db.Uuid
+  rating    Int        @default(5)
+  comment   String?    @db.Text
+  reviewer  String?    @db.VarChar(100)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin    PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, pluginId])
+  @@map("plg_reviews")
+}
+
+model PlgPermission {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  pluginId  String     @map("plugin_id") @db.Uuid
+  scope     String     @db.VarChar(100)
+  reason    String?    @db.VarChar(255)
+  isGranted Boolean    @default(false) @map("is_granted")
+  grantedBy String?    @map("granted_by") @db.VarChar(100)
+  grantedAt DateTime?  @map("granted_at")
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plugin    PlgPlugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, pluginId])
+  @@map("plg_permissions")
+}
+
+model PlgWebhookEvent {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  pluginRef String     @map("plugin_ref") @db.VarChar(100)
+  eventType String     @map("event_type") @db.VarChar(50)
+  payload   Json?
+  status    String     @default("delivered") @db.VarChar(30)
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, pluginRef])
+  @@map("plg_webhook_events")
+}
+
+// =============================================================================
+// PHASE 85 — SECRETS MANAGEMENT
+// =============================================================================
+
+model SmVault {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  name        String     @db.VarChar(100)
+  description String?    @db.Text
+  status      String     @default("unlocked") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  secrets     SmSecret[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("sm_vaults")
+}
+
+model SmSecret {
+  id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String            @map("tenant_id") @db.Uuid
+  vaultId        String            @map("vault_id") @db.Uuid
+  key            String            @db.VarChar(200)
+  secretType     String            @default("generic") @map("secret_type") @db.VarChar(30)
+  currentVersion Int               @default(1) @map("current_version")
+  lastRotatedAt  DateTime?         @map("last_rotated_at")
+  expiresAt      DateTime?         @map("expires_at")
+  status         String            @default("active") @db.VarChar(30)
+  metadata       Json?
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  tenant         CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vault          SmVault           @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  versions       SmSecretVersion[]
+  grants         SmAccessGrant[]
+
+  @@unique([tenantId, vaultId, key])
+  @@index([tenantId, vaultId])
+  @@map("sm_secrets")
+}
+
+model SmSecretVersion {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  secretId   String     @map("secret_id") @db.Uuid
+  version    Int
+  cipherText String     @map("cipher_text") @db.Text
+  createdBy  String?    @map("created_by") @db.VarChar(100)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  secret     SmSecret   @relation(fields: [secretId], references: [id], onDelete: Cascade)
+
+  @@unique([secretId, version])
+  @@index([tenantId, secretId])
+  @@map("sm_secret_versions")
+}
+
+model SmAccessGrant {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  secretId    String     @map("secret_id") @db.Uuid
+  granteeType String     @default("user") @map("grantee_type") @db.VarChar(30)
+  granteeRef  String     @map("grantee_ref") @db.VarChar(200)
+  permission  String     @default("read") @db.VarChar(20)
+  expiresAt   DateTime?  @map("expires_at")
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  secret      SmSecret   @relation(fields: [secretId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, secretId])
+  @@map("sm_access_grants")
+}
+
+model SmRotationPolicy {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  name         String     @db.VarChar(100)
+  secretType   String     @default("generic") @map("secret_type") @db.VarChar(30)
+  intervalDays Int        @default(90) @map("interval_days")
+  isActive     Boolean    @default(true) @map("is_active")
+  lastRunAt    DateTime?  @map("last_run_at")
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("sm_rotation_policies")
+}
+
+model SmAccessLog {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  secretRef String     @map("secret_ref") @db.VarChar(255)
+  actor     String     @db.VarChar(100)
+  action    String     @db.VarChar(30)
+  outcome   String     @default("allowed") @db.VarChar(20)
+  context   Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, secretRef])
+  @@map("sm_access_logs")
+}
+
+// =============================================================================
+// PHASE 84 — COMPLIANCE AUTOMATION
+// =============================================================================
+
+model CaFramework {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String         @map("tenant_id") @db.Uuid
+  name        String         @db.VarChar(100)
+  code        String         @db.VarChar(30)
+  version     String         @default("1.0") @db.VarChar(20)
+  description String?        @db.Text
+  status      String         @default("active") @db.VarChar(30)
+  metadata    Json?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  tenant      CoreTenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  controls    CaControl[]
+  assessments CaAssessment[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("ca_frameworks")
+}
+
+model CaControl {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @map("tenant_id") @db.Uuid
+  frameworkId String       @map("framework_id") @db.Uuid
+  code        String       @db.VarChar(30)
+  title       String       @db.VarChar(255)
+  description String?      @db.Text
+  category    String       @default("technical") @db.VarChar(50)
+  status      String       @default("not-implemented") @db.VarChar(30)
+  automated   Boolean      @default(false)
+  metadata    Json?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  tenant      CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  framework   CaFramework  @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  evidences   CaEvidence[]
+  findings    CaFinding[]
+
+  @@index([tenantId, frameworkId])
+  @@map("ca_controls")
+}
+
+model CaAssessment {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String      @map("tenant_id") @db.Uuid
+  frameworkId    String      @map("framework_id") @db.Uuid
+  name           String      @db.VarChar(100)
+  status         String      @default("in-progress") @db.VarChar(30)
+  score          Float?
+  totalControls  Int         @default(0) @map("total_controls")
+  passedControls Int         @default(0) @map("passed_controls")
+  startedAt      DateTime    @default(now()) @map("started_at")
+  completedAt    DateTime?   @map("completed_at")
+  metadata       Json?
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+  tenant         CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  framework      CaFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, frameworkId])
+  @@map("ca_assessments")
+}
+
+model CaEvidence {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  controlId    String     @map("control_id") @db.Uuid
+  title        String     @db.VarChar(255)
+  evidenceType String     @default("document") @map("evidence_type") @db.VarChar(30)
+  content      String?    @db.Text
+  collectedBy  String?    @map("collected_by") @db.VarChar(100)
+  validUntil   DateTime?  @map("valid_until")
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  control      CaControl  @relation(fields: [controlId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, controlId])
+  @@map("ca_evidences")
+}
+
+model CaFinding {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  controlId   String     @map("control_id") @db.Uuid
+  severity    String     @default("medium") @db.VarChar(20)
+  title       String     @db.VarChar(255)
+  description String?    @db.Text
+  status      String     @default("open") @db.VarChar(30)
+  remediation String?    @db.Text
+  dueDate     DateTime?  @map("due_date")
+  resolvedAt  DateTime?  @map("resolved_at")
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  control     CaControl  @relation(fields: [controlId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, controlId])
+  @@map("ca_findings")
+}
+
+model CaTask {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  title       String     @db.VarChar(255)
+  taskType    String     @default("remediation") @map("task_type") @db.VarChar(30)
+  assignee    String?    @db.VarChar(100)
+  status      String     @default("todo") @db.VarChar(30)
+  priority    String     @default("medium") @db.VarChar(20)
+  dueDate     DateTime?  @map("due_date")
+  completedAt DateTime?  @map("completed_at")
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("ca_tasks")
+}
+
+// =============================================================================
+// PHASE 83 — SIEM & LOG INTELLIGENCE
+// =============================================================================
+
+model SiemLogSource {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String      @map("tenant_id") @db.Uuid
+  name         String      @db.VarChar(100)
+  sourceType   String      @default("application") @map("source_type") @db.VarChar(30)
+  format       String      @default("json") @db.VarChar(30)
+  status       String      @default("active") @db.VarChar(30)
+  eventsPerDay Int         @default(0) @map("events_per_day")
+  lastEventAt  DateTime?   @map("last_event_at")
+  metadata     Json?
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  tenant       CoreTenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  events       SiemEvent[]
+
+  @@index([tenantId])
+  @@map("siem_log_sources")
+}
+
+model SiemEvent {
+  id         String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String        @map("tenant_id") @db.Uuid
+  sourceId   String        @map("source_id") @db.Uuid
+  eventType  String        @map("event_type") @db.VarChar(50)
+  severity   String        @default("info") @db.VarChar(20)
+  message    String        @db.Text
+  actor      String?       @db.VarChar(100)
+  targetRes  String?       @map("target_res") @db.VarChar(255)
+  sourceIp   String?       @map("source_ip") @db.VarChar(50)
+  raw        Json?
+  occurredAt DateTime      @default(now()) @map("occurred_at")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  tenant     CoreTenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  source     SiemLogSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, sourceId, eventType])
+  @@index([tenantId, occurredAt])
+  @@map("siem_events")
+}
+
+model SiemCorrelationRule {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String          @map("tenant_id") @db.Uuid
+  name          String          @db.VarChar(100)
+  description   String?         @db.Text
+  eventType     String          @map("event_type") @db.VarChar(50)
+  threshold     Int             @default(5)
+  windowMinutes Int             @default(10) @map("window_minutes")
+  severity      String          @default("high") @db.VarChar(20)
+  isActive      Boolean         @default(true) @map("is_active")
+  metadata      Json?
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  tenant        CoreTenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  detections    SiemDetection[]
+
+  @@index([tenantId])
+  @@map("siem_correlation_rules")
+}
+
+model SiemDetection {
+  id         String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String              @map("tenant_id") @db.Uuid
+  ruleId     String              @map("rule_id") @db.Uuid
+  matchCount Int                 @default(0) @map("match_count")
+  severity   String              @default("high") @db.VarChar(20)
+  status     String              @default("new") @db.VarChar(30)
+  summary    String              @db.Text
+  evidence   Json?
+  detectedAt DateTime            @default(now()) @map("detected_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+  tenant     CoreTenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rule       SiemCorrelationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, ruleId])
+  @@map("siem_detections")
+}
+
+model SiemSavedQuery {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  query     Json
+  createdBy String?    @map("created_by") @db.VarChar(100)
+  runCount  Int        @default(0) @map("run_count")
+  lastRunAt DateTime?  @map("last_run_at")
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("siem_saved_queries")
+}
+
+model SiemRetentionPolicy {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  name           String     @db.VarChar(100)
+  sourceType     String     @default("all") @map("source_type") @db.VarChar(30)
+  retentionDays  Int        @default(90) @map("retention_days")
+  archiveEnabled Boolean    @default(false) @map("archive_enabled")
+  isActive       Boolean    @default(true) @map("is_active")
+  metadata       Json?
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("siem_retention_policies")
+}
+
+// =============================================================================
+// PHASE 82 — SOC DASHBOARD
+// =============================================================================
+
+model SocIncident {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String           @map("tenant_id") @db.Uuid
+  title        String           @db.VarChar(255)
+  severity     String           @default("medium") @db.VarChar(20)
+  status       String           @default("open") @db.VarChar(30)
+  category     String           @default("intrusion") @db.VarChar(50)
+  assignee     String?          @db.VarChar(100)
+  description  String?          @db.Text
+  mttrMinutes  Int?             @map("mttr_minutes")
+  detectedAt   DateTime         @default(now()) @map("detected_at")
+  resolvedAt   DateTime?        @map("resolved_at")
+  metadata     Json?
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+  tenant       CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  playbookRuns SocPlaybookRun[]
+
+  @@index([tenantId, status])
+  @@map("soc_incidents")
+}
+
+model SocAlertRule {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  name            String     @db.VarChar(100)
+  source          String     @default("logs") @db.VarChar(50)
+  condition       String     @db.VarChar(500)
+  severity        String     @default("medium") @db.VarChar(20)
+  isActive        Boolean    @default(true) @map("is_active")
+  triggerCount    Int        @default(0) @map("trigger_count")
+  lastTriggeredAt DateTime?  @map("last_triggered_at")
+  metadata        Json?
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("soc_alert_rules")
+}
+
+model SocThreatIntel {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  indicator     String     @db.VarChar(500)
+  indicatorType String     @map("indicator_type") @db.VarChar(30)
+  threatType    String     @map("threat_type") @db.VarChar(50)
+  confidence    Float      @default(0.5)
+  source        String?    @db.VarChar(100)
+  isActive      Boolean    @default(true) @map("is_active")
+  expiresAt     DateTime?  @map("expires_at")
+  metadata      Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, indicatorType])
+  @@map("soc_threat_intel")
+}
+
+model SocPlaybook {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String           @map("tenant_id") @db.Uuid
+  name        String           @db.VarChar(100)
+  triggerType String           @default("manual") @map("trigger_type") @db.VarChar(30)
+  steps       Json
+  isActive    Boolean          @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  tenant      CoreTenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  runs        SocPlaybookRun[]
+
+  @@index([tenantId])
+  @@map("soc_playbooks")
+}
+
+model SocPlaybookRun {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  playbookId String       @map("playbook_id") @db.Uuid
+  incidentId String?      @map("incident_id") @db.Uuid
+  status     String       @default("running") @db.VarChar(30)
+  stepsTotal Int          @default(0) @map("steps_total")
+  stepsDone  Int          @default(0) @map("steps_done")
+  log        Json?
+  startedAt  DateTime     @default(now()) @map("started_at")
+  finishedAt DateTime?    @map("finished_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  tenant     CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  playbook   SocPlaybook  @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  incident   SocIncident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, playbookId])
+  @@map("soc_playbook_runs")
+}
+
+model SocShift {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  analystName  String     @map("analyst_name") @db.VarChar(100)
+  shiftType    String     @default("day") @map("shift_type") @db.VarChar(20)
+  startsAt     DateTime   @map("starts_at")
+  endsAt       DateTime   @map("ends_at")
+  status       String     @default("scheduled") @db.VarChar(30)
+  handoffNotes String?    @map("handoff_notes") @db.Text
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("soc_shifts")
+}
+
+// =============================================================================
+// PHASE 81 — ZERO TRUST SECURITY
+// =============================================================================
+
+model ZtPolicy {
+  id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String            @map("tenant_id") @db.Uuid
+  name           String            @db.VarChar(100)
+  policyType     String            @default("access") @map("policy_type") @db.VarChar(30)
+  resource       String            @db.VarChar(255)
+  conditions     Json?
+  action         String            @default("allow") @db.VarChar(20)
+  priority       Int               @default(0)
+  isActive       Boolean           @default(true) @map("is_active")
+  metadata       Json?
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  tenant         CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  accessRequests ZtAccessRequest[]
+
+  @@index([tenantId])
+  @@map("zt_policies")
+}
+
+model ZtDevice {
+  id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String            @map("tenant_id") @db.Uuid
+  userId         String?           @map("user_id") @db.Uuid
+  name           String            @db.VarChar(100)
+  deviceType     String            @default("laptop") @map("device_type") @db.VarChar(30)
+  os             String?           @db.VarChar(50)
+  trustLevel     String            @default("unverified") @map("trust_level") @db.VarChar(30)
+  isCompliant    Boolean           @default(false) @map("is_compliant")
+  lastCheckAt    DateTime?         @map("last_check_at")
+  fingerprint    String?           @db.VarChar(255)
+  metadata       Json?
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  tenant         CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  accessRequests ZtAccessRequest[]
+
+  @@index([tenantId])
+  @@map("zt_devices")
+}
+
+model ZtAccessRequest {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  userId    String?    @map("user_id") @db.Uuid
+  deviceId  String?    @map("device_id") @db.Uuid
+  policyId  String?    @map("policy_id") @db.Uuid
+  resource  String     @db.VarChar(255)
+  decision  String     @default("pending") @db.VarChar(20)
+  riskScore Float      @default(0) @map("risk_score")
+  reason    String?    @db.VarChar(500)
+  context   Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  device    ZtDevice?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  policy    ZtPolicy?  @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@map("zt_access_requests")
+}
+
+model ZtSegment {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  name        String     @db.VarChar(100)
+  segmentType String     @default("network") @map("segment_type") @db.VarChar(30)
+  cidr        String?    @db.VarChar(50)
+  services    Json?
+  isolation   String     @default("strict") @db.VarChar(30)
+  isActive    Boolean    @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("zt_segments")
+}
+
+model ZtSessionRisk {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  userId     String?    @map("user_id") @db.Uuid
+  sessionRef String?    @map("session_ref") @db.VarChar(255)
+  riskScore  Float      @default(0) @map("risk_score")
+  riskLevel  String     @default("low") @map("risk_level") @db.VarChar(20)
+  factors    Json?
+  action     String     @default("none") @db.VarChar(30)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("zt_session_risks")
+}
+
+model ZtViolation {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String     @map("tenant_id") @db.Uuid
+  userId        String?    @map("user_id") @db.Uuid
+  violationType String     @map("violation_type") @db.VarChar(50)
+  severity      String     @default("medium") @db.VarChar(20)
+  description   String     @db.Text
+  isResolved    Boolean    @default(false) @map("is_resolved")
+  resolvedAt    DateTime?  @map("resolved_at")
+  metadata      Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  tenant        CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("zt_violations")
+}
+
+// =============================================================================
+// PHASE 80 — CDN & EDGE CONFIGURATION
+// =============================================================================
+
+model CdnZone {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String            @map("tenant_id") @db.Uuid
+  name          String            @db.VarChar(100)
+  domain        String            @db.VarChar(255)
+  status        String            @default("active") @db.VarChar(30)
+  sslMode       String            @default("full") @map("ssl_mode") @db.VarChar(30)
+  cacheLevel    String            @default("standard") @map("cache_level") @db.VarChar(30)
+  metadata      Json?
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  tenant        CoreTenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  origins       CdnOrigin[]
+  cacheRules    CdnCacheRule[]
+  purgeRequests CdnPurgeRequest[]
+  analytics     CdnAnalytic[]
+
+  @@unique([tenantId, domain])
+  @@index([tenantId])
+  @@map("cdn_zones")
+}
+
+model CdnOrigin {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  zoneId    String     @map("zone_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  originUrl String     @map("origin_url") @db.VarChar(500)
+  weight    Int        @default(100)
+  isBackup  Boolean    @default(false) @map("is_backup")
+  status    String     @default("healthy") @db.VarChar(30)
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone      CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, zoneId])
+  @@map("cdn_origins")
+}
+
+model CdnCacheRule {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  zoneId      String     @map("zone_id") @db.Uuid
+  name        String     @db.VarChar(100)
+  pathPattern String     @map("path_pattern") @db.VarChar(255)
+  ttlSeconds  Int        @default(3600) @map("ttl_seconds")
+  cacheable   Boolean    @default(true)
+  priority    Int        @default(0)
+  isActive    Boolean    @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, zoneId])
+  @@map("cdn_cache_rules")
+}
+
+model CdnEdgeLocation {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  code         String     @db.VarChar(30)
+  city         String     @db.VarChar(100)
+  country      String     @db.VarChar(100)
+  status       String     @default("online") @db.VarChar(30)
+  capacityGbps Float      @default(100) @map("capacity_gbps")
+  hitRate      Float      @default(0) @map("hit_rate")
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("cdn_edge_locations")
+}
+
+model CdnPurgeRequest {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  zoneId      String     @map("zone_id") @db.Uuid
+  purgeType   String     @default("url") @map("purge_type") @db.VarChar(30)
+  paths       Json
+  status      String     @default("completed") @db.VarChar(30)
+  requestedBy String?    @map("requested_by") @db.VarChar(100)
+  metadata    Json?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, zoneId])
+  @@map("cdn_purge_requests")
+}
+
+model CdnAnalytic {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  zoneId      String     @map("zone_id") @db.Uuid
+  requests    Int        @default(0)
+  bandwidth   Float      @default(0)
+  cacheHits   Int        @default(0) @map("cache_hits")
+  cacheMisses Int        @default(0) @map("cache_misses")
+  errors4xx   Int        @default(0) @map("errors_4xx")
+  errors5xx   Int        @default(0) @map("errors_5xx")
+  recordedAt  DateTime   @default(now()) @map("recorded_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  zone        CdnZone    @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, zoneId])
+  @@map("cdn_analytics")
+}
+
+// =============================================================================
+// PHASE 79 — MESSAGE QUEUE CLUSTER
+// =============================================================================
+
+model QcCluster {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  engine    String     @default("rabbitmq") @db.VarChar(30)
+  status    String     @default("provisioning") @db.VarChar(30)
+  nodeCount Int        @default(3) @map("node_count")
+  version   String     @default("3.13") @db.VarChar(30)
+  haMode    String     @default("mirrored") @map("ha_mode") @db.VarChar(30)
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  nodes     QcNode[]
+  queues    QcQueue[]
+  alerts    QcAlert[]
+
+  @@index([tenantId])
+  @@map("qc_clusters")
+}
+
+model QcNode {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @map("tenant_id") @db.Uuid
+  clusterId String     @map("cluster_id") @db.Uuid
+  name      String     @db.VarChar(100)
+  role      String     @default("follower") @db.VarChar(30)
+  status    String     @default("running") @db.VarChar(30)
+  cpuUsage  Float      @default(0) @map("cpu_usage")
+  memUsage  Float      @default(0) @map("mem_usage")
+  diskUsage Float      @default(0) @map("disk_usage")
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  tenant    CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster   QcCluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clusterId])
+  @@map("qc_nodes")
+}
+
+model QcQueue {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String       @map("tenant_id") @db.Uuid
+  clusterId     String       @map("cluster_id") @db.Uuid
+  name          String       @db.VarChar(200)
+  queueType     String       @default("classic") @map("queue_type") @db.VarChar(30)
+  durable       Boolean      @default(true)
+  maxLength     Int?         @map("max_length")
+  messageCount  Int          @default(0) @map("message_count")
+  consumerCount Int          @default(0) @map("consumer_count")
+  status        String       @default("active") @db.VarChar(30)
+  metadata      Json?
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  tenant        CoreTenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster       QcCluster    @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  messages      QcMessage[]
+  consumers     QcConsumer[]
+
+  @@unique([tenantId, clusterId, name])
+  @@index([tenantId, clusterId])
+  @@map("qc_queues")
+}
+
+model QcMessage {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String     @map("tenant_id") @db.Uuid
+  queueId     String     @map("queue_id") @db.Uuid
+  payload     Json
+  priority    Int        @default(0)
+  status      String     @default("ready") @db.VarChar(30)
+  deliveredAt DateTime?  @map("delivered_at")
+  ackedAt     DateTime?  @map("acked_at")
+  attempts    Int        @default(0)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  tenant      CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  queue       QcQueue    @relation(fields: [queueId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, queueId, status])
+  @@map("qc_messages")
+}
+
+model QcConsumer {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  queueId    String     @map("queue_id") @db.Uuid
+  name       String     @db.VarChar(100)
+  status     String     @default("active") @db.VarChar(30)
+  prefetch   Int        @default(10)
+  ackedCount Int        @default(0) @map("acked_count")
+  lastSeenAt DateTime   @default(now()) @map("last_seen_at")
+  metadata   Json?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  queue      QcQueue    @relation(fields: [queueId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, queueId])
+  @@map("qc_consumers")
+}
+
+model QcAlert {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  clusterId  String     @map("cluster_id") @db.Uuid
+  alertType  String     @map("alert_type") @db.VarChar(50)
+  severity   String     @default("warning") @db.VarChar(20)
+  message    String     @db.Text
+  isResolved Boolean    @default(false) @map("is_resolved")
+  resolvedAt DateTime?  @map("resolved_at")
+  metadata   Json?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster    QcCluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clusterId])
+  @@map("qc_alerts")
+}
+
+// =============================================================================
+// PHASE 78 — AUTO SCALING ENGINE
+// =============================================================================
+
+model AsTarget {
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String             @map("tenant_id") @db.Uuid
+  name            String             @db.VarChar(100)
+  targetType      String             @default("deployment") @map("target_type") @db.VarChar(30)
+  resourceRef     String             @map("resource_ref") @db.VarChar(255)
+  minReplicas     Int                @default(1) @map("min_replicas")
+  maxReplicas     Int                @default(10) @map("max_replicas")
+  currentReplicas Int                @default(1) @map("current_replicas")
+  desiredReplicas Int                @default(1) @map("desired_replicas")
+  status          String             @default("active") @db.VarChar(30)
+  metadata        Json?
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  tenant          CoreTenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policies        AsPolicy[]
+  metricSamples   AsMetricSample[]
+  scalingEvents   AsScalingEvent[]
+  schedules       AsSchedule[]
+  recommendations AsRecommendation[]
+
+  @@index([tenantId])
+  @@map("as_targets")
+}
+
+model AsPolicy {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  targetId        String     @map("target_id") @db.Uuid
+  name            String     @db.VarChar(100)
+  metricType      String     @default("cpu") @map("metric_type") @db.VarChar(30)
+  threshold       Float      @default(70)
+  comparison      String     @default("gt") @db.VarChar(10)
+  scaleDirection  String     @default("up") @map("scale_direction") @db.VarChar(10)
+  stepSize        Int        @default(1) @map("step_size")
+  cooldownSec     Int        @default(300) @map("cooldown_sec")
+  isActive        Boolean    @default(true) @map("is_active")
+  lastTriggeredAt DateTime?  @map("last_triggered_at")
+  metadata        Json?
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  tenant          CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target          AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, targetId])
+  @@map("as_policies")
+}
+
+model AsMetricSample {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String     @map("tenant_id") @db.Uuid
+  targetId   String     @map("target_id") @db.Uuid
+  metricType String     @map("metric_type") @db.VarChar(30)
+  value      Float
+  recordedAt DateTime   @default(now()) @map("recorded_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  tenant     CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target     AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, targetId, metricType])
+  @@map("as_metric_samples")
+}
+
+model AsScalingEvent {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  targetId     String     @map("target_id") @db.Uuid
+  policyId     String?    @map("policy_id") @db.Uuid
+  eventType    String     @default("scale-up") @map("event_type") @db.VarChar(30)
+  fromReplicas Int        @map("from_replicas")
+  toReplicas   Int        @map("to_replicas")
+  reason       String?    @db.VarChar(255)
+  triggeredBy  String     @default("policy") @map("triggered_by") @db.VarChar(30)
+  status       String     @default("completed") @db.VarChar(30)
+  metadata     Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  tenant       CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target       AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, targetId])
+  @@map("as_scaling_events")
+}
+
+model AsSchedule {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String     @map("tenant_id") @db.Uuid
+  targetId       String     @map("target_id") @db.Uuid
+  name           String     @db.VarChar(100)
+  cronExpr       String     @map("cron_expr") @db.VarChar(100)
+  targetReplicas Int        @map("target_replicas")
+  timezone       String     @default("UTC") @db.VarChar(50)
+  isActive       Boolean    @default(true) @map("is_active")
+  lastRunAt      DateTime?  @map("last_run_at")
+  nextRunAt      DateTime?  @map("next_run_at")
+  metadata       Json?
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  tenant         CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target         AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, targetId])
+  @@map("as_schedules")
+}
+
+model AsRecommendation {
+  id                 String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String     @map("tenant_id") @db.Uuid
+  targetId           String     @map("target_id") @db.Uuid
+  recommendationType String     @default("rightsize") @map("recommendation_type") @db.VarChar(30)
+  currentValue       Int        @map("current_value")
+  recommendedValue   Int        @map("recommended_value")
+  confidence         Float      @default(0.8)
+  rationale          String?    @db.Text
+  status             String     @default("pending") @db.VarChar(30)
+  metadata           Json?
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+  tenant             CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  target             AsTarget   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, targetId])
+  @@map("as_recommendations")
+}
+
+model K8sEvent {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  clusterId  String   @map("cluster_id") @db.Uuid
+  namespace  String?  @db.VarChar(200)
+  eventType  String   @map("event_type") @db.VarChar(30)
+  reason     String   @db.VarChar(200)
+  message    String   @db.Text
+  objectKind String   @map("object_kind") @db.VarChar(50)
+  objectName String   @map("object_name") @db.VarChar(300)
+  count      Int      @default(1)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant  CoreTenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cluster K8sCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, clusterId])
+  @@map("k8s_events")
 }

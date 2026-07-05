@@ -12245,6 +12245,2148 @@ exports.Prisma.AgwPolicyScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.WbhEndpointScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  createdBy: 'createdBy',
+  name: 'name',
+  description: 'description',
+  url: 'url',
+  isActive: 'isActive',
+  retryEnabled: 'retryEnabled',
+  maxRetries: 'maxRetries',
+  timeoutMs: 'timeoutMs',
+  successCount: 'successCount',
+  failureCount: 'failureCount',
+  lastCalledAt: 'lastCalledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WbhSubscriptionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  endpointId: 'endpointId',
+  eventType: 'eventType',
+  filters: 'filters',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WbhEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  eventType: 'eventType',
+  source: 'source',
+  payload: 'payload',
+  metadata: 'metadata',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WbhDeliveryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  eventId: 'eventId',
+  endpointId: 'endpointId',
+  status: 'status',
+  httpStatus: 'httpStatus',
+  responseBody: 'responseBody',
+  errorMessage: 'errorMessage',
+  durationMs: 'durationMs',
+  attemptCount: 'attemptCount',
+  nextRetryAt: 'nextRetryAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WbhSecretScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  endpointId: 'endpointId',
+  secretHash: 'secretHash',
+  algorithm: 'algorithm',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt'
+};
+
+exports.Prisma.WbhLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  details: 'details',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EbStreamScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  partitions: 'partitions',
+  retentionMs: 'retentionMs',
+  maxMsgSize: 'maxMsgSize',
+  isActive: 'isActive',
+  messageCount: 'messageCount',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  streamId: 'streamId',
+  partitionKey: 'partitionKey',
+  payload: 'payload',
+  headers: 'headers',
+  offset: 'offset',
+  status: 'status',
+  attempts: 'attempts',
+  publishedBy: 'publishedBy',
+  processedAt: 'processedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EbConsumerGroupScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  streamId: 'streamId',
+  name: 'name',
+  description: 'description',
+  isActive: 'isActive',
+  maxRetries: 'maxRetries',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbConsumerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  consumerGroupId: 'consumerGroupId',
+  name: 'name',
+  callbackUrl: 'callbackUrl',
+  isActive: 'isActive',
+  lastPollAt: 'lastPollAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EbConsumerOffsetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  consumerGroupId: 'consumerGroupId',
+  partition: 'partition',
+  offset: 'offset',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EbDeadLetterScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  messageId: 'messageId',
+  streamId: 'streamId',
+  reason: 'reason',
+  attempts: 'attempts',
+  payload: 'payload',
+  headers: 'headers',
+  replayedAt: 'replayedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.K8sClusterScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  provider: 'provider',
+  region: 'region',
+  apiEndpoint: 'apiEndpoint',
+  kubeVersion: 'kubeVersion',
+  status: 'status',
+  nodeCount: 'nodeCount',
+  cpuCapacity: 'cpuCapacity',
+  memCapacity: 'memCapacity',
+  isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.K8sNamespaceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  name: 'name',
+  status: 'status',
+  labels: 'labels',
+  annotations: 'annotations',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.K8sDeploymentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  namespace: 'namespace',
+  name: 'name',
+  image: 'image',
+  replicas: 'replicas',
+  readyReplicas: 'readyReplicas',
+  strategy: 'strategy',
+  status: 'status',
+  labels: 'labels',
+  envVars: 'envVars',
+  resources: 'resources',
+  healthCheck: 'healthCheck',
+  lastRolloutAt: 'lastRolloutAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.K8sPodScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  deploymentId: 'deploymentId',
+  namespace: 'namespace',
+  name: 'name',
+  nodeName: 'nodeName',
+  status: 'status',
+  phase: 'phase',
+  cpuUsage: 'cpuUsage',
+  memUsage: 'memUsage',
+  restartCount: 'restartCount',
+  startedAt: 'startedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.K8sServiceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  namespace: 'namespace',
+  name: 'name',
+  serviceType: 'serviceType',
+  clusterIp: 'clusterIp',
+  externalIp: 'externalIp',
+  ports: 'ports',
+  selector: 'selector',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MrRegionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  provider: 'provider',
+  status: 'status',
+  isPrimary: 'isPrimary',
+  latencyMs: 'latencyMs',
+  capacity: 'capacity',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MrEndpointScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regionId: 'regionId',
+  name: 'name',
+  url: 'url',
+  endpointType: 'endpointType',
+  status: 'status',
+  weight: 'weight',
+  latencyMs: 'latencyMs',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MrRoutingPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  policyType: 'policyType',
+  isActive: 'isActive',
+  rules: 'rules',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MrHealthCheckScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regionId: 'regionId',
+  status: 'status',
+  latencyMs: 'latencyMs',
+  checkedAt: 'checkedAt',
+  details: 'details',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MrFailoverEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regionId: 'regionId',
+  fromRegion: 'fromRegion',
+  toRegion: 'toRegion',
+  reason: 'reason',
+  status: 'status',
+  triggeredBy: 'triggeredBy',
+  durationMs: 'durationMs',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MrReplicationConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regionId: 'regionId',
+  sourceRegion: 'sourceRegion',
+  targetRegion: 'targetRegion',
+  replicationType: 'replicationType',
+  lagMs: 'lagMs',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CertProgramScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  level: 'level',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CertCriterionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  programId: 'programId',
+  domain: 'domain',
+  title: 'title',
+  weight: 'weight',
+  autoCheck: 'autoCheck',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CertAssessmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  programId: 'programId',
+  status: 'status',
+  overallScore: 'overallScore',
+  domainScores: 'domainScores',
+  passed: 'passed',
+  runBy: 'runBy',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CertCertificateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  assessmentId: 'assessmentId',
+  certNumber: 'certNumber',
+  level: 'level',
+  issuedTo: 'issuedTo',
+  status: 'status',
+  issuedAt: 'issuedAt',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CertBadgeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  domain: 'domain',
+  earnedAt: 'earnedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CertAuditTrailScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  action: 'action',
+  actor: 'actor',
+  detail: 'detail',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DhSpaceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  audience: 'audience',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DhArticleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  spaceId: 'spaceId',
+  title: 'title',
+  slug: 'slug',
+  content: 'content',
+  status: 'status',
+  currentVersion: 'currentVersion',
+  viewCount: 'viewCount',
+  helpfulYes: 'helpfulYes',
+  helpfulNo: 'helpfulNo',
+  tags: 'tags',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DhArticleVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  articleId: 'articleId',
+  version: 'version',
+  title: 'title',
+  content: 'content',
+  editedBy: 'editedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DhFeedbackScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  articleId: 'articleId',
+  helpful: 'helpful',
+  comment: 'comment',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DhGlossaryTermScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  term: 'term',
+  definition: 'definition',
+  category: 'category',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DhSearchLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  query: 'query',
+  resultCount: 'resultCount',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RelReleaseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  version: 'version',
+  codename: 'codename',
+  releaseNotes: 'releaseNotes',
+  status: 'status',
+  gaAt: 'gaAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RelArtifactScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  releaseId: 'releaseId',
+  platform: 'platform',
+  artifactRef: 'artifactRef',
+  sizeMb: 'sizeMb',
+  checksum: 'checksum',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RelChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  currentVersion: 'currentVersion',
+  autoUpdate: 'autoUpdate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RelInstallationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  siteName: 'siteName',
+  installType: 'installType',
+  version: 'version',
+  channel: 'channel',
+  status: 'status',
+  steps: 'steps',
+  healthCheck: 'healthCheck',
+  installedAt: 'installedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RelDeployPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  releaseId: 'releaseId',
+  environment: 'environment',
+  strategy: 'strategy',
+  status: 'status',
+  isDryRun: 'isDryRun',
+  approvedBy: 'approvedBy',
+  planSteps: 'planSteps',
+  executedAt: 'executedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RelChecklistItemScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  releaseId: 'releaseId',
+  title: 'title',
+  category: 'category',
+  isRequired: 'isRequired',
+  isDone: 'isDone',
+  doneBy: 'doneBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CpAccountScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  companyName: 'companyName',
+  slug: 'slug',
+  industry: 'industry',
+  status: 'status',
+  healthScore: 'healthScore',
+  mrr: 'mrr',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CpContactScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  accountId: 'accountId',
+  name: 'name',
+  email: 'email',
+  role: 'role',
+  isPrimary: 'isPrimary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CpSubscriptionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  accountId: 'accountId',
+  planRef: 'planRef',
+  billingCycle: 'billingCycle',
+  amount: 'amount',
+  status: 'status',
+  startedAt: 'startedAt',
+  renewsAt: 'renewsAt',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CpInvoiceDocScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  accountId: 'accountId',
+  invoiceNo: 'invoiceNo',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  dueDate: 'dueDate',
+  paidAt: 'paidAt',
+  lineItems: 'lineItems',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CpAnnouncementScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  body: 'body',
+  audience: 'audience',
+  isPublished: 'isPublished',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CpSupportRequestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  accountId: 'accountId',
+  subject: 'subject',
+  body: 'body',
+  priority: 'priority',
+  status: 'status',
+  replies: 'replies',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LicPlanScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  tier: 'tier',
+  priceMonthly: 'priceMonthly',
+  priceYearly: 'priceYearly',
+  maxUsers: 'maxUsers',
+  features: 'features',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LicKeyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  planId: 'planId',
+  keyHash: 'keyHash',
+  keyPrefix: 'keyPrefix',
+  customerRef: 'customerRef',
+  seats: 'seats',
+  status: 'status',
+  issuedAt: 'issuedAt',
+  expiresAt: 'expiresAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LicActivationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  keyId: 'keyId',
+  machineRef: 'machineRef',
+  hostname: 'hostname',
+  appVersion: 'appVersion',
+  isActive: 'isActive',
+  activatedAt: 'activatedAt',
+  deactivatedAt: 'deactivatedAt',
+  lastSeenAt: 'lastSeenAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LicEntitlementScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  customerRef: 'customerRef',
+  feature: 'feature',
+  enabled: 'enabled',
+  limitValue: 'limitValue',
+  source: 'source',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LicMeterScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  customerRef: 'customerRef',
+  meterType: 'meterType',
+  usedValue: 'usedValue',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LicRenewalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  keyId: 'keyId',
+  previousExpiry: 'previousExpiry',
+  newExpiry: 'newExpiry',
+  amount: 'amount',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BnSuiteScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  category: 'category',
+  description: 'description',
+  metricType: 'metricType',
+  higherIsBetter: 'higherIsBetter',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BnCaseScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  suiteId: 'suiteId',
+  name: 'name',
+  input: 'input',
+  expected: 'expected',
+  weight: 'weight',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BnRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  suiteId: 'suiteId',
+  modelRef: 'modelRef',
+  status: 'status',
+  score: 'score',
+  passRate: 'passRate',
+  latencyMsAvg: 'latencyMsAvg',
+  totalCases: 'totalCases',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BnResultScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  runId: 'runId',
+  caseId: 'caseId',
+  passed: 'passed',
+  score: 'score',
+  latencyMs: 'latencyMs',
+  output: 'output',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BnBaselineScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  suiteId: 'suiteId',
+  modelRef: 'modelRef',
+  score: 'score',
+  passRate: 'passRate',
+  setBy: 'setBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BnRegressionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  runId: 'runId',
+  suiteRef: 'suiteRef',
+  baselineScore: 'baselineScore',
+  currentScore: 'currentScore',
+  deltaPct: 'deltaPct',
+  severity: 'severity',
+  acknowledged: 'acknowledged',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AcRegulationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  jurisdiction: 'jurisdiction',
+  riskCategory: 'riskCategory',
+  description: 'description',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AcRequirementScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  regulationId: 'regulationId',
+  code: 'code',
+  title: 'title',
+  description: 'description',
+  complianceStatus: 'complianceStatus',
+  evidence: 'evidence',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AcAssessmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  systemName: 'systemName',
+  assessmentType: 'assessmentType',
+  riskLevel: 'riskLevel',
+  score: 'score',
+  status: 'status',
+  findings: 'findings',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AcDataProcessingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  activityName: 'activityName',
+  purpose: 'purpose',
+  legalBasis: 'legalBasis',
+  dataCategories: 'dataCategories',
+  retentionDays: 'retentionDays',
+  isHighRisk: 'isHighRisk',
+  dpiaCompleted: 'dpiaCompleted',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AcConsentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  subjectRef: 'subjectRef',
+  purpose: 'purpose',
+  granted: 'granted',
+  grantedAt: 'grantedAt',
+  revokedAt: 'revokedAt',
+  expiresAt: 'expiresAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AcAuditTrailScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  eventType: 'eventType',
+  systemRef: 'systemRef',
+  actor: 'actor',
+  detail: 'detail',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.XaiDecisionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelRef: 'modelRef',
+  decisionType: 'decisionType',
+  inputSummary: 'inputSummary',
+  outcome: 'outcome',
+  confidence: 'confidence',
+  subjectRef: 'subjectRef',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.XaiFactorScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  decisionId: 'decisionId',
+  featureName: 'featureName',
+  contribution: 'contribution',
+  direction: 'direction',
+  value: 'value',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.XaiTraceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  decisionId: 'decisionId',
+  stepOrder: 'stepOrder',
+  stepName: 'stepName',
+  detail: 'detail',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.XaiCounterfactualScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  decisionId: 'decisionId',
+  change: 'change',
+  wouldChangeOutcome: 'wouldChangeOutcome',
+  newOutcome: 'newOutcome',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.XaiFeatureImportanceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelRef: 'modelRef',
+  featureName: 'featureName',
+  importance: 'importance',
+  rank: 'rank',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.XaiReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelRef: 'modelRef',
+  reportType: 'reportType',
+  content: 'content',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AigPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  policyArea: 'policyArea',
+  rules: 'rules',
+  enforcement: 'enforcement',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AigModelEntryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelName: 'modelName',
+  provider: 'provider',
+  riskTier: 'riskTier',
+  approvalStatus: 'approvalStatus',
+  allowedUses: 'allowedUses',
+  prohibitedUses: 'prohibitedUses',
+  approvedBy: 'approvedBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AigApprovalScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  requestType: 'requestType',
+  subject: 'subject',
+  justification: 'justification',
+  requestedBy: 'requestedBy',
+  status: 'status',
+  decidedBy: 'decidedBy',
+  decisionNote: 'decisionNote',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AigUsageLimitScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  scope: 'scope',
+  scopeRef: 'scopeRef',
+  limitType: 'limitType',
+  limitValue: 'limitValue',
+  usedValue: 'usedValue',
+  action: 'action',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AigIncidentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  incidentType: 'incidentType',
+  severity: 'severity',
+  description: 'description',
+  modelRef: 'modelRef',
+  status: 'status',
+  resolution: 'resolution',
+  resolvedAt: 'resolvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AigReviewScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  reviewType: 'reviewType',
+  scope: 'scope',
+  findings: 'findings',
+  score: 'score',
+  reviewer: 'reviewer',
+  status: 'status',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FtDatasetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  taskType: 'taskType',
+  sampleCount: 'sampleCount',
+  status: 'status',
+  samples: 'samples',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FtJobScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  datasetId: 'datasetId',
+  name: 'name',
+  baseModel: 'baseModel',
+  provider: 'provider',
+  status: 'status',
+  epochs: 'epochs',
+  learningRate: 'learningRate',
+  progress: 'progress',
+  trainLoss: 'trainLoss',
+  metrics: 'metrics',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FtModelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  jobId: 'jobId',
+  name: 'name',
+  version: 'version',
+  provider: 'provider',
+  status: 'status',
+  sizeMb: 'sizeMb',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FtEvaluationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelId: 'modelId',
+  evalType: 'evalType',
+  score: 'score',
+  baselineScore: 'baselineScore',
+  details: 'details',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FtDeploymentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelId: 'modelId',
+  environment: 'environment',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  trafficPct: 'trafficPct',
+  deployedAt: 'deployedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FtFeedbackScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  modelRef: 'modelRef',
+  prompt: 'prompt',
+  completion: 'completion',
+  rating: 'rating',
+  correction: 'correction',
+  addedToDataset: 'addedToDataset',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DevAppScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  appType: 'appType',
+  description: 'description',
+  status: 'status',
+  ownerRef: 'ownerRef',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DevSandboxScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  appId: 'appId',
+  name: 'name',
+  status: 'status',
+  seedData: 'seedData',
+  expiresAt: 'expiresAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DevLogEntryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  appId: 'appId',
+  level: 'level',
+  message: 'message',
+  context: 'context',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DevTestRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  appId: 'appId',
+  suiteName: 'suiteName',
+  status: 'status',
+  totalTests: 'totalTests',
+  passedTests: 'passedTests',
+  failedTests: 'failedTests',
+  durationMs: 'durationMs',
+  results: 'results',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DevEnvVarScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  appId: 'appId',
+  key: 'key',
+  valueSealed: 'valueSealed',
+  isSecret: 'isSecret',
+  environment: 'environment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DevActivityScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  appRef: 'appRef',
+  actor: 'actor',
+  action: 'action',
+  detail: 'detail',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PubApiClientScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  clientType: 'clientType',
+  contactEmail: 'contactEmail',
+  status: 'status',
+  tier: 'tier',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PubApiKeyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientId: 'clientId',
+  keyPrefix: 'keyPrefix',
+  keyHash: 'keyHash',
+  label: 'label',
+  scopes: 'scopes',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PubUsageRecordScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientId: 'clientId',
+  endpoint: 'endpoint',
+  method: 'method',
+  statusCode: 'statusCode',
+  latencyMs: 'latencyMs',
+  recordedAt: 'recordedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PubQuotaScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clientId: 'clientId',
+  quotaType: 'quotaType',
+  limitValue: 'limitValue',
+  usedValue: 'usedValue',
+  resetsAt: 'resetsAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PubDocPageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  slug: 'slug',
+  content: 'content',
+  category: 'category',
+  position: 'position',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PubStatusIncidentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  severity: 'severity',
+  status: 'status',
+  affectedApis: 'affectedApis',
+  updates: 'updates',
+  startedAt: 'startedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExtExtensionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  extType: 'extType',
+  description: 'description',
+  author: 'author',
+  status: 'status',
+  latestVersion: 'latestVersion',
+  installCount: 'installCount',
+  avgRating: 'avgRating',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExtVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  extensionId: 'extensionId',
+  version: 'version',
+  changelog: 'changelog',
+  bundle: 'bundle',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ExtInstallScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  extensionId: 'extensionId',
+  version: 'version',
+  placement: 'placement',
+  isEnabled: 'isEnabled',
+  settings: 'settings',
+  installedBy: 'installedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExtThemeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  colors: 'colors',
+  typography: 'typography',
+  isDark: 'isDark',
+  isActive: 'isActive',
+  author: 'author',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExtWidgetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  widgetType: 'widgetType',
+  dataSource: 'dataSource',
+  config: 'config',
+  placement: 'placement',
+  position: 'position',
+  isVisible: 'isVisible',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExtRatingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  extensionId: 'extensionId',
+  rating: 'rating',
+  comment: 'comment',
+  rater: 'rater',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SdkApiSpecScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  version: 'version',
+  specFormat: 'specFormat',
+  spec: 'spec',
+  status: 'status',
+  endpointCount: 'endpointCount',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SdkTargetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  language: 'language',
+  packageName: 'packageName',
+  isEnabled: 'isEnabled',
+  config: 'config',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SdkBuildScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  specId: 'specId',
+  targetId: 'targetId',
+  version: 'version',
+  status: 'status',
+  artifactRef: 'artifactRef',
+  sizeKb: 'sizeKb',
+  buildLog: 'buildLog',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SdkSnippetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  language: 'language',
+  endpoint: 'endpoint',
+  code: 'code',
+  description: 'description',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SdkChangelogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  version: 'version',
+  changeType: 'changeType',
+  summary: 'summary',
+  details: 'details',
+  isBreaking: 'isBreaking',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SdkDownloadScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  buildRef: 'buildRef',
+  language: 'language',
+  version: 'version',
+  downloadedBy: 'downloadedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PlgPluginScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  category: 'category',
+  author: 'author',
+  status: 'status',
+  installCount: 'installCount',
+  avgRating: 'avgRating',
+  latestVersion: 'latestVersion',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PlgVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pluginId: 'pluginId',
+  version: 'version',
+  changelog: 'changelog',
+  manifest: 'manifest',
+  status: 'status',
+  downloads: 'downloads',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PlgInstallationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pluginId: 'pluginId',
+  version: 'version',
+  status: 'status',
+  config: 'config',
+  installedBy: 'installedBy',
+  installedAt: 'installedAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PlgReviewScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pluginId: 'pluginId',
+  rating: 'rating',
+  comment: 'comment',
+  reviewer: 'reviewer',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PlgPermissionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pluginId: 'pluginId',
+  scope: 'scope',
+  reason: 'reason',
+  isGranted: 'isGranted',
+  grantedBy: 'grantedBy',
+  grantedAt: 'grantedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PlgWebhookEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  pluginRef: 'pluginRef',
+  eventType: 'eventType',
+  payload: 'payload',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SmVaultScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SmSecretScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vaultId: 'vaultId',
+  key: 'key',
+  secretType: 'secretType',
+  currentVersion: 'currentVersion',
+  lastRotatedAt: 'lastRotatedAt',
+  expiresAt: 'expiresAt',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SmSecretVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  secretId: 'secretId',
+  version: 'version',
+  cipherText: 'cipherText',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SmAccessGrantScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  secretId: 'secretId',
+  granteeType: 'granteeType',
+  granteeRef: 'granteeRef',
+  permission: 'permission',
+  expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SmRotationPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  secretType: 'secretType',
+  intervalDays: 'intervalDays',
+  isActive: 'isActive',
+  lastRunAt: 'lastRunAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SmAccessLogScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  secretRef: 'secretRef',
+  actor: 'actor',
+  action: 'action',
+  outcome: 'outcome',
+  context: 'context',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CaFrameworkScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  version: 'version',
+  description: 'description',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CaControlScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  frameworkId: 'frameworkId',
+  code: 'code',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  status: 'status',
+  automated: 'automated',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CaAssessmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  frameworkId: 'frameworkId',
+  name: 'name',
+  status: 'status',
+  score: 'score',
+  totalControls: 'totalControls',
+  passedControls: 'passedControls',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CaEvidenceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  controlId: 'controlId',
+  title: 'title',
+  evidenceType: 'evidenceType',
+  content: 'content',
+  collectedBy: 'collectedBy',
+  validUntil: 'validUntil',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CaFindingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  controlId: 'controlId',
+  severity: 'severity',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  remediation: 'remediation',
+  dueDate: 'dueDate',
+  resolvedAt: 'resolvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CaTaskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  taskType: 'taskType',
+  assignee: 'assignee',
+  status: 'status',
+  priority: 'priority',
+  dueDate: 'dueDate',
+  completedAt: 'completedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiemLogSourceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  sourceType: 'sourceType',
+  format: 'format',
+  status: 'status',
+  eventsPerDay: 'eventsPerDay',
+  lastEventAt: 'lastEventAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiemEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  sourceId: 'sourceId',
+  eventType: 'eventType',
+  severity: 'severity',
+  message: 'message',
+  actor: 'actor',
+  targetRes: 'targetRes',
+  sourceIp: 'sourceIp',
+  raw: 'raw',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SiemCorrelationRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  eventType: 'eventType',
+  threshold: 'threshold',
+  windowMinutes: 'windowMinutes',
+  severity: 'severity',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiemDetectionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ruleId: 'ruleId',
+  matchCount: 'matchCount',
+  severity: 'severity',
+  status: 'status',
+  summary: 'summary',
+  evidence: 'evidence',
+  detectedAt: 'detectedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SiemSavedQueryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  query: 'query',
+  createdBy: 'createdBy',
+  runCount: 'runCount',
+  lastRunAt: 'lastRunAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiemRetentionPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  sourceType: 'sourceType',
+  retentionDays: 'retentionDays',
+  archiveEnabled: 'archiveEnabled',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SocIncidentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  title: 'title',
+  severity: 'severity',
+  status: 'status',
+  category: 'category',
+  assignee: 'assignee',
+  description: 'description',
+  mttrMinutes: 'mttrMinutes',
+  detectedAt: 'detectedAt',
+  resolvedAt: 'resolvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SocAlertRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  source: 'source',
+  condition: 'condition',
+  severity: 'severity',
+  isActive: 'isActive',
+  triggerCount: 'triggerCount',
+  lastTriggeredAt: 'lastTriggeredAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SocThreatIntelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  indicator: 'indicator',
+  indicatorType: 'indicatorType',
+  threatType: 'threatType',
+  confidence: 'confidence',
+  source: 'source',
+  isActive: 'isActive',
+  expiresAt: 'expiresAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SocPlaybookScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  triggerType: 'triggerType',
+  steps: 'steps',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SocPlaybookRunScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  playbookId: 'playbookId',
+  incidentId: 'incidentId',
+  status: 'status',
+  stepsTotal: 'stepsTotal',
+  stepsDone: 'stepsDone',
+  log: 'log',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SocShiftScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  analystName: 'analystName',
+  shiftType: 'shiftType',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  status: 'status',
+  handoffNotes: 'handoffNotes',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ZtPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  policyType: 'policyType',
+  resource: 'resource',
+  conditions: 'conditions',
+  action: 'action',
+  priority: 'priority',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ZtDeviceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  deviceType: 'deviceType',
+  os: 'os',
+  trustLevel: 'trustLevel',
+  isCompliant: 'isCompliant',
+  lastCheckAt: 'lastCheckAt',
+  fingerprint: 'fingerprint',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ZtAccessRequestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  deviceId: 'deviceId',
+  policyId: 'policyId',
+  resource: 'resource',
+  decision: 'decision',
+  riskScore: 'riskScore',
+  reason: 'reason',
+  context: 'context',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ZtSegmentScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  segmentType: 'segmentType',
+  cidr: 'cidr',
+  services: 'services',
+  isolation: 'isolation',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ZtSessionRiskScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  sessionRef: 'sessionRef',
+  riskScore: 'riskScore',
+  riskLevel: 'riskLevel',
+  factors: 'factors',
+  action: 'action',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ZtViolationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  violationType: 'violationType',
+  severity: 'severity',
+  description: 'description',
+  isResolved: 'isResolved',
+  resolvedAt: 'resolvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdnZoneScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  domain: 'domain',
+  status: 'status',
+  sslMode: 'sslMode',
+  cacheLevel: 'cacheLevel',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdnOriginScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  zoneId: 'zoneId',
+  name: 'name',
+  originUrl: 'originUrl',
+  weight: 'weight',
+  isBackup: 'isBackup',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdnCacheRuleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  zoneId: 'zoneId',
+  name: 'name',
+  pathPattern: 'pathPattern',
+  ttlSeconds: 'ttlSeconds',
+  cacheable: 'cacheable',
+  priority: 'priority',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdnEdgeLocationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  code: 'code',
+  city: 'city',
+  country: 'country',
+  status: 'status',
+  capacityGbps: 'capacityGbps',
+  hitRate: 'hitRate',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CdnPurgeRequestScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  zoneId: 'zoneId',
+  purgeType: 'purgeType',
+  paths: 'paths',
+  status: 'status',
+  requestedBy: 'requestedBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CdnAnalyticScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  zoneId: 'zoneId',
+  requests: 'requests',
+  bandwidth: 'bandwidth',
+  cacheHits: 'cacheHits',
+  cacheMisses: 'cacheMisses',
+  errors4xx: 'errors4xx',
+  errors5xx: 'errors5xx',
+  recordedAt: 'recordedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.QcClusterScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  engine: 'engine',
+  status: 'status',
+  nodeCount: 'nodeCount',
+  version: 'version',
+  haMode: 'haMode',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QcNodeScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  name: 'name',
+  role: 'role',
+  status: 'status',
+  cpuUsage: 'cpuUsage',
+  memUsage: 'memUsage',
+  diskUsage: 'diskUsage',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QcQueueScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  name: 'name',
+  queueType: 'queueType',
+  durable: 'durable',
+  maxLength: 'maxLength',
+  messageCount: 'messageCount',
+  consumerCount: 'consumerCount',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QcMessageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  queueId: 'queueId',
+  payload: 'payload',
+  priority: 'priority',
+  status: 'status',
+  deliveredAt: 'deliveredAt',
+  ackedAt: 'ackedAt',
+  attempts: 'attempts',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.QcConsumerScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  queueId: 'queueId',
+  name: 'name',
+  status: 'status',
+  prefetch: 'prefetch',
+  ackedCount: 'ackedCount',
+  lastSeenAt: 'lastSeenAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QcAlertScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  alertType: 'alertType',
+  severity: 'severity',
+  message: 'message',
+  isResolved: 'isResolved',
+  resolvedAt: 'resolvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AsTargetScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  targetType: 'targetType',
+  resourceRef: 'resourceRef',
+  minReplicas: 'minReplicas',
+  maxReplicas: 'maxReplicas',
+  currentReplicas: 'currentReplicas',
+  desiredReplicas: 'desiredReplicas',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AsPolicyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  targetId: 'targetId',
+  name: 'name',
+  metricType: 'metricType',
+  threshold: 'threshold',
+  comparison: 'comparison',
+  scaleDirection: 'scaleDirection',
+  stepSize: 'stepSize',
+  cooldownSec: 'cooldownSec',
+  isActive: 'isActive',
+  lastTriggeredAt: 'lastTriggeredAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AsMetricSampleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  targetId: 'targetId',
+  metricType: 'metricType',
+  value: 'value',
+  recordedAt: 'recordedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AsScalingEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  targetId: 'targetId',
+  policyId: 'policyId',
+  eventType: 'eventType',
+  fromReplicas: 'fromReplicas',
+  toReplicas: 'toReplicas',
+  reason: 'reason',
+  triggeredBy: 'triggeredBy',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AsScheduleScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  targetId: 'targetId',
+  name: 'name',
+  cronExpr: 'cronExpr',
+  targetReplicas: 'targetReplicas',
+  timezone: 'timezone',
+  isActive: 'isActive',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AsRecommendationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  targetId: 'targetId',
+  recommendationType: 'recommendationType',
+  currentValue: 'currentValue',
+  recommendedValue: 'recommendedValue',
+  confidence: 'confidence',
+  rationale: 'rationale',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.K8sEventScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  clusterId: 'clusterId',
+  namespace: 'namespace',
+  eventType: 'eventType',
+  reason: 'reason',
+  message: 'message',
+  objectKind: 'objectKind',
+  objectName: 'objectName',
+  count: 'count',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -13035,7 +15177,169 @@ exports.Prisma.ModelName = {
   AgwConsumer: 'AgwConsumer',
   AgwKey: 'AgwKey',
   AgwLog: 'AgwLog',
-  AgwPolicy: 'AgwPolicy'
+  AgwPolicy: 'AgwPolicy',
+  WbhEndpoint: 'WbhEndpoint',
+  WbhSubscription: 'WbhSubscription',
+  WbhEvent: 'WbhEvent',
+  WbhDelivery: 'WbhDelivery',
+  WbhSecret: 'WbhSecret',
+  WbhLog: 'WbhLog',
+  EbStream: 'EbStream',
+  EbMessage: 'EbMessage',
+  EbConsumerGroup: 'EbConsumerGroup',
+  EbConsumer: 'EbConsumer',
+  EbConsumerOffset: 'EbConsumerOffset',
+  EbDeadLetter: 'EbDeadLetter',
+  K8sCluster: 'K8sCluster',
+  K8sNamespace: 'K8sNamespace',
+  K8sDeployment: 'K8sDeployment',
+  K8sPod: 'K8sPod',
+  K8sService: 'K8sService',
+  MrRegion: 'MrRegion',
+  MrEndpoint: 'MrEndpoint',
+  MrRoutingPolicy: 'MrRoutingPolicy',
+  MrHealthCheck: 'MrHealthCheck',
+  MrFailoverEvent: 'MrFailoverEvent',
+  MrReplicationConfig: 'MrReplicationConfig',
+  CertProgram: 'CertProgram',
+  CertCriterion: 'CertCriterion',
+  CertAssessment: 'CertAssessment',
+  CertCertificate: 'CertCertificate',
+  CertBadge: 'CertBadge',
+  CertAuditTrail: 'CertAuditTrail',
+  DhSpace: 'DhSpace',
+  DhArticle: 'DhArticle',
+  DhArticleVersion: 'DhArticleVersion',
+  DhFeedback: 'DhFeedback',
+  DhGlossaryTerm: 'DhGlossaryTerm',
+  DhSearchLog: 'DhSearchLog',
+  RelRelease: 'RelRelease',
+  RelArtifact: 'RelArtifact',
+  RelChannel: 'RelChannel',
+  RelInstallation: 'RelInstallation',
+  RelDeployPlan: 'RelDeployPlan',
+  RelChecklistItem: 'RelChecklistItem',
+  CpAccount: 'CpAccount',
+  CpContact: 'CpContact',
+  CpSubscription: 'CpSubscription',
+  CpInvoiceDoc: 'CpInvoiceDoc',
+  CpAnnouncement: 'CpAnnouncement',
+  CpSupportRequest: 'CpSupportRequest',
+  LicPlan: 'LicPlan',
+  LicKey: 'LicKey',
+  LicActivation: 'LicActivation',
+  LicEntitlement: 'LicEntitlement',
+  LicMeter: 'LicMeter',
+  LicRenewal: 'LicRenewal',
+  BnSuite: 'BnSuite',
+  BnCase: 'BnCase',
+  BnRun: 'BnRun',
+  BnResult: 'BnResult',
+  BnBaseline: 'BnBaseline',
+  BnRegression: 'BnRegression',
+  AcRegulation: 'AcRegulation',
+  AcRequirement: 'AcRequirement',
+  AcAssessment: 'AcAssessment',
+  AcDataProcessing: 'AcDataProcessing',
+  AcConsent: 'AcConsent',
+  AcAuditTrail: 'AcAuditTrail',
+  XaiDecision: 'XaiDecision',
+  XaiFactor: 'XaiFactor',
+  XaiTrace: 'XaiTrace',
+  XaiCounterfactual: 'XaiCounterfactual',
+  XaiFeatureImportance: 'XaiFeatureImportance',
+  XaiReport: 'XaiReport',
+  AigPolicy: 'AigPolicy',
+  AigModelEntry: 'AigModelEntry',
+  AigApproval: 'AigApproval',
+  AigUsageLimit: 'AigUsageLimit',
+  AigIncident: 'AigIncident',
+  AigReview: 'AigReview',
+  FtDataset: 'FtDataset',
+  FtJob: 'FtJob',
+  FtModel: 'FtModel',
+  FtEvaluation: 'FtEvaluation',
+  FtDeployment: 'FtDeployment',
+  FtFeedback: 'FtFeedback',
+  DevApp: 'DevApp',
+  DevSandbox: 'DevSandbox',
+  DevLogEntry: 'DevLogEntry',
+  DevTestRun: 'DevTestRun',
+  DevEnvVar: 'DevEnvVar',
+  DevActivity: 'DevActivity',
+  PubApiClient: 'PubApiClient',
+  PubApiKey: 'PubApiKey',
+  PubUsageRecord: 'PubUsageRecord',
+  PubQuota: 'PubQuota',
+  PubDocPage: 'PubDocPage',
+  PubStatusIncident: 'PubStatusIncident',
+  ExtExtension: 'ExtExtension',
+  ExtVersion: 'ExtVersion',
+  ExtInstall: 'ExtInstall',
+  ExtTheme: 'ExtTheme',
+  ExtWidget: 'ExtWidget',
+  ExtRating: 'ExtRating',
+  SdkApiSpec: 'SdkApiSpec',
+  SdkTarget: 'SdkTarget',
+  SdkBuild: 'SdkBuild',
+  SdkSnippet: 'SdkSnippet',
+  SdkChangelog: 'SdkChangelog',
+  SdkDownload: 'SdkDownload',
+  PlgPlugin: 'PlgPlugin',
+  PlgVersion: 'PlgVersion',
+  PlgInstallation: 'PlgInstallation',
+  PlgReview: 'PlgReview',
+  PlgPermission: 'PlgPermission',
+  PlgWebhookEvent: 'PlgWebhookEvent',
+  SmVault: 'SmVault',
+  SmSecret: 'SmSecret',
+  SmSecretVersion: 'SmSecretVersion',
+  SmAccessGrant: 'SmAccessGrant',
+  SmRotationPolicy: 'SmRotationPolicy',
+  SmAccessLog: 'SmAccessLog',
+  CaFramework: 'CaFramework',
+  CaControl: 'CaControl',
+  CaAssessment: 'CaAssessment',
+  CaEvidence: 'CaEvidence',
+  CaFinding: 'CaFinding',
+  CaTask: 'CaTask',
+  SiemLogSource: 'SiemLogSource',
+  SiemEvent: 'SiemEvent',
+  SiemCorrelationRule: 'SiemCorrelationRule',
+  SiemDetection: 'SiemDetection',
+  SiemSavedQuery: 'SiemSavedQuery',
+  SiemRetentionPolicy: 'SiemRetentionPolicy',
+  SocIncident: 'SocIncident',
+  SocAlertRule: 'SocAlertRule',
+  SocThreatIntel: 'SocThreatIntel',
+  SocPlaybook: 'SocPlaybook',
+  SocPlaybookRun: 'SocPlaybookRun',
+  SocShift: 'SocShift',
+  ZtPolicy: 'ZtPolicy',
+  ZtDevice: 'ZtDevice',
+  ZtAccessRequest: 'ZtAccessRequest',
+  ZtSegment: 'ZtSegment',
+  ZtSessionRisk: 'ZtSessionRisk',
+  ZtViolation: 'ZtViolation',
+  CdnZone: 'CdnZone',
+  CdnOrigin: 'CdnOrigin',
+  CdnCacheRule: 'CdnCacheRule',
+  CdnEdgeLocation: 'CdnEdgeLocation',
+  CdnPurgeRequest: 'CdnPurgeRequest',
+  CdnAnalytic: 'CdnAnalytic',
+  QcCluster: 'QcCluster',
+  QcNode: 'QcNode',
+  QcQueue: 'QcQueue',
+  QcMessage: 'QcMessage',
+  QcConsumer: 'QcConsumer',
+  QcAlert: 'QcAlert',
+  AsTarget: 'AsTarget',
+  AsPolicy: 'AsPolicy',
+  AsMetricSample: 'AsMetricSample',
+  AsScalingEvent: 'AsScalingEvent',
+  AsSchedule: 'AsSchedule',
+  AsRecommendation: 'AsRecommendation',
+  K8sEvent: 'K8sEvent'
 };
 
 /**
