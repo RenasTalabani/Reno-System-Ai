@@ -1,0 +1,94 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options: [staging, production]
+      version:
+        description: Version to roll back to (e.g. v25.0.0)
+        required: true
+      reason:
+        description: Reason for rollback
+        required: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  rollback:
+    name: Rollback ${{ github.event.inputs.environment }} to ${{ github.event.inputs.version }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve host + compose file
+        id: env
+        run: |
+          ENV="${{ github.event.inputs.environment }}"
+          if [ "$ENV" = "production" ]; then
+            echo "host=${{ secrets.PROD_HOST }}" >> "$GITHUB_OUTPUT"
+            echo "user=${{ secrets.PROD_SSH_USER }}" >> "$GITHUB_OUTPUT"
+            echo "key_var=PROD_SSH_KEY" >> "$GITHUB_OUTPUT"
+            echo "compose=docker-compose.prod.yml" >> "$GITHUB_OUTPUT"
+            echo "api_url=${{ vars.PROD_API_URL }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "host=${{ secrets.STAGING_HOST }}" >> "$GITHUB_OUTPUT"
+            echo "user=${{ secrets.STAGING_SSH_USER }}" >> "$GITHUB_OUTPUT"
+            echo "key_var=STAGING_SSH_KEY" >> "$GITHUB_OUTPUT"
+            echo "compose=docker-compose.staging.yml" >> "$GITHUB_OUTPUT"
+            echo "api_url=${{ vars.STAGING_API_URL }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Execute rollback
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ steps.env.outputs.host }}
+          username: ${{ steps.env.outputs.user }}
+          key: ${{ secrets[steps.env.outputs.key_var] }}
+          script: |
+            set -e
+            cd /opt/reno
+            VERSION="${{ github.event.inputs.version }}"
+            COMPOSE="${{ steps.env.outputs.compose }}"
+            echo "Rolling back to ${VERSION} on ${{ github.event.inputs.environment }}"
+            IMAGE_TAG="${VERSION}" docker compose -f "${COMPOSE}" pull
+            IMAGE_TAG="${VERSION}" docker compose -f "${COMPOSE}" up -d --no-build
+            echo "Rollback complete"
+
+      - name: Health check after rollback
+        run: |
+          API_URL="${{ steps.env.outputs.api_url }}"
+          for i in $(seq 1 12); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${API_URL}/health" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "Rollback healthy after ${i}x5s"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Rollback health check FAILED"
+          exit 1
+
+      - name: Record rollback log
+        if: success()
+        run: |
+          curl -s -X POST "${{ steps.env.outputs.api_url }}/v1/deployment/log" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.PROD_DEPLOY_TOKEN }}" \
+            -d '{
+              "version": "${{ github.event.inputs.version }}",
+              "environment": "${{ github.event.inputs.environment }}",
+              "strategy": "rollback",
+              "deployedBy": "${{ github.actor }}",
+              "healthCheckPassed": true,
+              "metadata": { "reason": "${{ github.event.inputs.reason }}", "triggeredBy": "github_actions_rollback" }
+            }' || true

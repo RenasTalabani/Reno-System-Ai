@@ -1,8 +1,58 @@
 # Reno System
 
+![Node](https://img.shields.io/badge/node-%E2%89%A520-339933?logo=node.js&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A59-F69220?logo=pnpm&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js&logoColor=white)
+![Fastify](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
+![License](https://img.shields.io/badge/license-proprietary-lightgrey)
+![CI](https://github.com/RenasTalabani/Reno-System-Ai/actions/workflows/ci.yml/badge.svg)
+
 **AI-first Business Operating System** — a multi-tenant platform unifying HR, CRM, Sales, Finance, Inventory, Procurement, Manufacturing, Projects, and an AI executive layer (Reno Brain) behind one API, one web app, and one mobile app.
 
 > Private/proprietary project. Source is visible for review purposes; see [License](#license).
+
+---
+
+## Architecture
+
+```mermaid
+graph TB
+    subgraph Clients
+        WEB["Web App<br/>Next.js 15 · React 19"]
+        MOB["Mobile App<br/>Flutter · Riverpod"]
+    end
+
+    subgraph Backend["apps/api — Fastify"]
+        REST["REST API /v1"]
+        AUTH["Auth / JWT / RBAC"]
+        BRAIN["Reno Brain<br/>AI orchestration"]
+        JOBS["Background Jobs<br/>+ KPI collector"]
+    end
+
+    subgraph Data["Data layer"]
+        PG[("PostgreSQL<br/>+ pgvector")]
+        REDIS[("Redis<br/>cache / queues")]
+        MINIO[("MinIO<br/>object storage")]
+    end
+
+    subgraph AI["AI providers"]
+        ANTH["Anthropic"]
+        OAI["OpenAI"]
+    end
+
+    WEB -->|HTTPS/JSON| REST
+    MOB -->|HTTPS/JSON| REST
+    REST --> AUTH
+    REST --> BRAIN
+    REST --> JOBS
+    REST --> PG
+    REST --> REDIS
+    REST --> MINIO
+    BRAIN --> ANTH
+    BRAIN --> OAI
+```
 
 ---
 
